@@ -17,16 +17,22 @@
     maroon: { n: 'Maroon',      bn: 'ম্যারুন',       p: '#6b1d2a', a: '#d4a373' },
     forest: { n: 'Forest',      bn: 'সবুজ',          p: '#1f4d3a', a: '#8ab17d' },
     slate:  { n: 'Slate',       bn: 'স্লেট',         p: '#334155', a: '#38bdf8' },
-    indigo: { n: 'Indigo',      bn: 'ইন্ডিগো',       p: '#312e81', a: '#f472b6' }
+    indigo: { n: 'Indigo',      bn: 'ইন্ডিগো',       p: '#312e81', a: '#f472b6' },
+    emerald:  { n: 'Emerald & Gold', bn: 'এমারেল্ড ও সোনালি', p: '#0a3d33', a: '#c9a24b' },
+    burgundy: { n: 'Burgundy & Rose', bn: 'বারগান্ডি ও রোজ', p: '#5a1230', a: '#d8a47f' },
+    ocean:    { n: 'Ocean & Aqua',   bn: 'ওশান ও অ্যাকোয়া', p: '#063b6e', a: '#3cc4c0' },
+    graphite: { n: 'Graphite & Gold', bn: 'গ্রাফাইট ও সোনালি', p: '#15181d', a: '#c9a227' },
+    plum:     { n: 'Plum & Champagne', bn: 'প্লাম ও শ্যাম্পেন', p: '#4a1942', a: '#e0b97a' },
+    forest:   { n: 'Forest & Brass', bn: 'ফরেস্ট ও ব্রাস', p: '#1f3d2b', a: '#b08d57' }
   };
 
   var TPLS = [
-    { v: 'classic',  en: 'Classic',        bn: 'ক্লাসিক' },
-    { v: 'sidebar',  en: 'Modern sidebar', bn: 'মডার্ন সাইডবার' },
-    { v: 'elegant',  en: 'Elegant',        bn: 'এলিগ্যান্ট' },
-    { v: 'minimal',  en: 'Minimal',        bn: 'মিনিমাল' },
-    { v: 'banner',   en: 'Bold banner',    bn: 'বোল্ড ব্যানার' },
-    { v: 'timeline', en: 'Timeline',       bn: 'টাইমলাইন' }
+    { v: 'classic',  en: 'Classic',        bn: 'ক্লাসিক',        d: 'একক কলাম, ক্লাসিক বিন্যাস|Single column, classic layout' },
+    { v: 'sidebar',  en: 'Modern sidebar', bn: 'মডার্ন সাইডবার', d: 'বাম পাশে রঙিন প্যানেল|Coloured panel on the left' },
+    { v: 'elegant',  en: 'Elegant',        bn: 'এলিগ্যান্ট',     d: 'কেন্দ্রীভূত শিরোনাম, সূক্ষ্ম রেখা|Centred header, fine rules' },
+    { v: 'minimal',  en: 'Minimal',        bn: 'মিনিমাল',        d: 'হালকা টাইপ, অনেক ফাঁকা জায়গা|Light type, generous spacing' },
+    { v: 'banner',   en: 'Bold banner',    bn: 'বোল্ড ব্যানার',  d: 'উপরে রঙিন ব্যানার|Colour banner across the top' },
+    { v: 'timeline', en: 'Timeline',       bn: 'টাইমলাইন',       d: 'তারিখ বাম পাশে, সময়রেখা|Dates on the left, timeline view' }
   ];
 
   /* CV-এর ভেতরের শিরোনাম — CV-র ভাষা অনুযায়ী */
@@ -219,26 +225,102 @@
   }
 
   /* ---------- UI builders ---------- */
-  function renderGallery() {
-    var g = $('tplGrid');
-    g.innerHTML = TPLS.map(function (t) {
+  /* ---------- টেমপ্লেট স্ট্রিপ (ফর্মে) ---------- */
+  var GAL = { open: false, i: 0 };
+  function tplIndex(v) {
+    for (var i = 0; i < TPLS.length; i++) if (TPLS[i].v === v) return i;
+    return 0;
+  }
+  function renderStrip() {
+    var box = $('tplStrip');
+    box.innerHTML = TPLS.map(function (t) {
       var on = S.tpl === t.v;
-      return '<button type="button" class="tt' + (on ? ' on' : '') + '" data-tpl="' + t.v + '" role="radio" aria-checked="' + on + '">' +
-             '<span class="pv-box" data-fit><span class="cvs"></span></span>' +
+      return '<button type="button" class="ctab' + (on ? ' on' : '') + '" data-tpl="' + t.v + '" role="radio" aria-checked="' + on + '">' +
+             '<span class="pv-box ctab-box" data-fit><span class="cvs"></span></span>' +
              '<span class="t">' + t.bn + '|' + t.en + '</span></button>';
     }).join('');
-    g.querySelectorAll('.tt').forEach(function (btn, i) {
-      paint(btn.querySelector('.cvs'), TPLS[i].v);
+    box.querySelectorAll('.ctab').forEach(function (btn, i) { paint(btn.querySelector('.cvs'), TPLS[i].v); });
+    var cur = TPLS[tplIndex(S.tpl)];
+    var th = THEMES[S.th] || THEMES.navy;
+    $('tplName').innerHTML = '<span class="t">' + cur.bn + '|' + cur.en + '</span> · ' +
+      (S.pc || S.ac ? '<span class="t">কাস্টম রং|Custom colours</span>' : '<span class="t">' + th.bn + '|' + th.n + '</span>');
+    var act = box.querySelector('.ctab.on');
+    if (act) box.scrollLeft = act.offsetLeft - box.clientWidth / 2 + act.clientWidth / 2;
+  }
+
+  /* ---------- পূর্ণ স্ক্রিন গ্যালারি ---------- */
+  function buildStage() {
+    $('galStage').innerHTML = TPLS.map(function (t, i) {
+      return '<div class="gs" data-gi="' + i + '"><span class="pv-box" data-fit><span class="cvs"></span></span></div>';
+    }).join('');
+    paintStage();
+  }
+  function paintStage() {
+    if (!GAL.open) return;
+    $('galStage').querySelectorAll('.gs').forEach(function (el, i) {
+      paint(el.querySelector('.cvs'), TPLS[i].v);
     });
+    layoutStage();
+  }
+  function layoutStage() {
+    var st = $('galStage'), w = st.clientWidth;
+    var cw = Math.min(300, Math.max(170, w * 0.62)), gap = cw * 0.8;
+    st.querySelectorAll('.gs').forEach(function (el, i) {
+      var d = i - GAL.i, a = Math.abs(d);
+      el.style.width = cw + 'px';
+      el.style.transform = 'translate(-50%,-50%) translateX(' + (d * gap) + 'px) scale(' + (d === 0 ? 1 : 0.84) + ')';
+      el.style.opacity = a > 1 ? '0' : (d === 0 ? '1' : '0.5');
+      el.style.zIndex = String(10 - a);
+      el.style.pointerEvents = a > 1 ? 'none' : 'auto';
+      el.classList.toggle('act', d === 0);
+    });
+    fitAll();
+  }
+  function renderGalInfo() {
+    var t = TPLS[GAL.i];
+    $('galCount').textContent = (GAL.i + 1) + ' / ' + TPLS.length;
+    $('galInfo').innerHTML = '<b class="t">' + t.bn + '|' + t.en + '</b><span class="t">' + t.d + '</span>';
+    $('galDots').innerHTML = TPLS.map(function (x, i) {
+      return '<button type="button" class="gal-dot' + (i === GAL.i ? ' on' : '') + '" data-gi="' + i + '" aria-label="' + (i + 1) + '"></button>';
+    }).join('');
+  }
+  function goGal(i) {
+    var n = TPLS.length;
+    GAL.i = (i % n + n) % n;
+    renderGalInfo();
+    layoutStage();
+  }
+  function openGal() {
+    GAL.open = true;
+    GAL.i = tplIndex(S.tpl);
+    $('gal').hidden = false;
+    document.body.classList.add('gal-open');
+    buildStage();
+    renderGalInfo();
+    layoutStage();
+    $('galX').focus();
+  }
+  function closeGal() {
+    GAL.open = false;
+    $('gal').hidden = true;
+    document.body.classList.remove('gal-open');
+    renderStrip();
+    fitAll();
+    $('openGal').focus();
+  }
+  function pickGal() {
+    S.tpl = TPLS[GAL.i].v;
+    closeGal();
+    renderAll();
   }
 
   function renderThemes() {
     $('themes').innerHTML = Object.keys(THEMES).map(function (k) {
       var t = THEMES[k];
-      return '<button type="button" class="sw" data-th="' + k + '" aria-pressed="false">' +
-             '<i class="sw-c" style="background:linear-gradient(135deg,' + t.p + ' 50%,' + t.a + ' 50%)"></i>' +
-             '<span class="t">' + t.bn + '|' + t.n + '</span></button>';
+      return '<button type="button" class="sw" data-th="' + k + '" data-title="' + esc(t.bn + '~' + t.n) +
+             '" aria-pressed="false" style="background:linear-gradient(135deg,' + t.p + ' 50%,' + t.a + ' 50%)"></button>';
     }).join('');
+    setPlaceholders();
   }
 
   function syncThemeUI() {
@@ -298,7 +380,8 @@
 
   function renderAll() {
     paint($('sheet'), S.tpl);
-    renderGallery();
+    renderStrip();
+    paintStage();
     syncThemeUI();
     warn();
     fitAll();
@@ -391,6 +474,13 @@
 
   document.addEventListener('click', function (e) {
     var t = e.target;
+    if (t.closest && t.closest('#openGal')) { openGal(); return; }
+    if (t.closest && t.closest('#galX')) { closeGal(); return; }
+    if (t.closest && t.closest('#galPrev')) { goGal(GAL.i - 1); return; }
+    if (t.closest && t.closest('#galNext')) { goGal(GAL.i + 1); return; }
+    if (t.closest && t.closest('#galPick')) { pickGal(); return; }
+    var gi = t.closest && t.closest('[data-gi]');
+    if (gi) { goGal(+gi.getAttribute('data-gi')); return; }
     var tpl = t.closest && t.closest('[data-tpl]');
     if (tpl) { S.tpl = tpl.getAttribute('data-tpl'); renderAll(); return; }
 
@@ -457,6 +547,10 @@
 
   /* ---------- language + placeholders ---------- */
   function setPlaceholders() {
+    document.querySelectorAll('[data-title]').forEach(function (el) {
+      var q = el.getAttribute('data-title').split('~');
+      el.title = isEn() ? q[1] : q[0];
+    });
     document.querySelectorAll('[data-ph]').forEach(function (el) {
       var parts = el.getAttribute('data-ph').split('~');
       el.placeholder = isEn() ? parts[1] : parts[0];
@@ -470,7 +564,24 @@
   renderAll();
   setPlaceholders();
 
-  window.addEventListener('resize', fitAll);
+  /* গ্যালারি: কীবোর্ড ও সোয়াইপ */
+  document.addEventListener('keydown', function (e) {
+    if (!GAL.open) return;
+    if (e.key === 'Escape') closeGal();
+    else if (e.key === 'ArrowLeft') goGal(GAL.i - 1);
+    else if (e.key === 'ArrowRight') goGal(GAL.i + 1);
+  });
+  var sx = null, stage = $('galStage');
+  stage.addEventListener('pointerdown', function (e) { sx = e.clientX; });
+  stage.addEventListener('pointerup', function (e) {
+    if (sx === null) return;
+    var dx = e.clientX - sx;
+    sx = null;
+    if (Math.abs(dx) > 40) goGal(GAL.i + (dx < 0 ? 1 : -1));
+  });
+  stage.addEventListener('pointercancel', function () { sx = null; });
+
+  window.addEventListener('resize', function () { if (GAL.open) layoutStage(); fitAll(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
   /* ---------- scroll reveal (অ্যানিমেশন) ---------- */
   document.documentElement.classList.add('js');
