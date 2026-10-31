@@ -80,8 +80,12 @@
     exp: [], edu: [], proj: []
   };
 
+  /* নমুনা প্রোফাইল ছবি (ডিফল্ট প্লেসহোল্ডার; নিজের ছবি আপলোড করলে সেটাই থাকবে) */
+  var SAMPLE_PHOTO = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#17386A"/><stop offset="1" stop-color="#0B1F3A"/></linearGradient></defs><rect width="360" height="360" fill="url(#g)"/><circle cx="180" cy="142" r="64" fill="#E8C46C"/><path d="M58 360c12-82 62-124 122-124s110 42 122 124z" fill="#E8C46C"/></svg>');
+
   var SAMPLE = {
     name: 'Md. Rahim Uddin',
+    photo: SAMPLE_PHOTO,
     title: 'Economics Graduate | Data Analysis & Research',
     email: 'rahim@example.com', phone: '+880 1XXX-XXXXXX', address: 'Dhaka, Bangladesh',
     links: 'linkedin.com/in/your-name',
@@ -232,14 +236,6 @@
     return 0;
   }
   function renderStrip() {
-    var box = $('tplStrip');
-    box.innerHTML = TPLS.map(function (t) {
-      var on = S.tpl === t.v;
-      return '<button type="button" class="ctab' + (on ? ' on' : '') + '" data-tpl="' + t.v + '" role="radio" aria-checked="' + on + '">' +
-             '<span class="pv-box ctab-box" data-fit><span class="cvs"></span></span>' +
-             '<span class="t">' + t.bn + '|' + t.en + '</span></button>';
-    }).join('');
-    box.querySelectorAll('.ctab').forEach(function (btn, i) { paint(btn.querySelector('.cvs'), TPLS[i].v); });
     var cur = TPLS[tplIndex(S.tpl)];
     var th = THEMES[S.th] || THEMES.navy, c = colors();
     $('tcName').innerHTML = '<span class="t">' + cur.bn + '|' + cur.en + '</span>';
@@ -247,8 +243,6 @@
     $('tcSw').style.background = 'linear-gradient(135deg,' + c.p + ' 50%,' + c.a + ' 50%)';
     $('tcThumb').innerHTML = '<span class="pv-box" data-fit><span class="cvs"></span></span>';
     paint($('tcThumb').querySelector('.cvs'), cur.v);
-    var act = box.querySelector('.ctab.on');
-    if (act) box.scrollLeft = act.offsetLeft - box.clientWidth / 2 + act.clientWidth / 2;
   }
 
   /* ---------- পূর্ণ স্ক্রিন গ্যালারি ---------- */
@@ -404,7 +398,7 @@
   }
 
   function applySample() {
-    var keep = { tpl: S.tpl, th: S.th, pc: S.pc, ac: S.ac, font: S.font, photo: S.photo };
+    var keep = { tpl: S.tpl, th: S.th, pc: S.pc, ac: S.ac, font: S.font };
     S = clone(DEF);
     Object.keys(keep).forEach(function (k) { S[k] = keep[k]; });
     S.lang = 'en';
