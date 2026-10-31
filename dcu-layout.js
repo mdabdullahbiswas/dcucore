@@ -10,7 +10,7 @@
   var root = document.documentElement;
 
   /* ---------- current page ---------- */
-  /* maps a clean path (/cover/lab, /tools#cgpa, /blood) or an href to its page file */
+  /* maps a clean path (/cover#lab, /tools#cgpa, /blood) or an href to its page file */
   function pageOfPath(p) {
     p = String(p || "").split("#")[0].split("?")[0].replace(/\/+$/, "");
     if (/^\/?cover(\/|\.html$|$)/.test(p)) return "cover.html";
@@ -69,7 +69,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var active = file === "cover.html";
     var items = COVER_TYPES.map(function (t, i) {
       return (
-        '<a href="/cover/' + t.v + '" role="menuitemradio" data-cvx-v="' + t.v + '" style="--i:' + i + '">' +
+        '<a href="/cover#' + t.v + '" role="menuitemradio" data-cvx-v="' + t.v + '" style="--i:' + i + '">' +
         '<span class="cvx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
         t.ic + "</svg></span>" +
         "<b><span class=\"cvx-bn\">" + esc(t.bn) + "</span><span class=\"cvx-en\">" + esc(t.en) + "</span></b></a>"
@@ -253,7 +253,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
           var v = a.getAttribute("data-cvx-v");
           var t = document.querySelector('#ctList .ct-tab[data-v="' + v + '"]');
           if (t) t.click();
-          try { history.pushState(null, "", "/cover/" + v); } catch (x) {}
+          try { history.replaceState(null, "", "/cover#" + v); } catch (x) {}
           setCvd(false);
         }
       });
