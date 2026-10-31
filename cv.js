@@ -241,9 +241,12 @@
     }).join('');
     box.querySelectorAll('.ctab').forEach(function (btn, i) { paint(btn.querySelector('.cvs'), TPLS[i].v); });
     var cur = TPLS[tplIndex(S.tpl)];
-    var th = THEMES[S.th] || THEMES.navy;
-    $('tplName').innerHTML = '<span class="t">' + cur.bn + '|' + cur.en + '</span> · ' +
-      (S.pc || S.ac ? '<span class="t">কাস্টম রং|Custom colours</span>' : '<span class="t">' + th.bn + '|' + th.n + '</span>');
+    var th = THEMES[S.th] || THEMES.navy, c = colors();
+    $('tcName').innerHTML = '<span class="t">' + cur.bn + '|' + cur.en + '</span>';
+    $('tcTheme').innerHTML = (S.pc || S.ac) ? '<span class="t">কাস্টম রং|Custom colours</span>' : '<span class="t">' + th.bn + '|' + th.n + '</span>';
+    $('tcSw').style.background = 'linear-gradient(135deg,' + c.p + ' 50%,' + c.a + ' 50%)';
+    $('tcThumb').innerHTML = '<span class="pv-box" data-fit><span class="cvs"></span></span>';
+    paint($('tcThumb').querySelector('.cvs'), cur.v);
     var act = box.querySelector('.ctab.on');
     if (act) box.scrollLeft = act.offsetLeft - box.clientWidth / 2 + act.clientWidth / 2;
   }
