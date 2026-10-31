@@ -309,8 +309,7 @@ body #hdr::after {
 }
 
 @media (hover: hover) and (min-width: 961px) {
-  .dl-dd:hover .dl-menu,
-  .dl-dd:focus-within .dl-menu {
+  .dl-dd:hover .dl-menu {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, 0);
