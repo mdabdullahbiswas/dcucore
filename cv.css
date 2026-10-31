@@ -405,9 +405,38 @@ input:focus,textarea:focus,select:focus{
 /* =====================================================
    6. RESPONSIVE (মোবাইলে সাইডওয়ে স্ক্রল নেই)
    ===================================================== */
+/* মোবাইল/ছোট স্ক্রিন: প্রিভিউ পূর্ণ স্ক্রিন overlay হিসেবে, ফ্লোটিং বাটন দিয়ে খোলে */
+.pv-close,.pv-fab{display:none}
 @media (max-width:960px){
+  .app{z-index:auto}
   .studio{grid-template-columns:minmax(0,1fr)}
-  .pv{position:static;order:-1}
+  .pv{
+    position:fixed;inset:0;z-index:80;margin:0;border-radius:0;border:0;
+    padding:16px;overflow-y:auto;overscroll-behavior:contain;
+    background:var(--bg);animation:none;
+    transform:translateY(100%);opacity:0;visibility:hidden;
+    transition:transform .45s var(--ease),opacity .3s var(--ease),visibility .45s;
+  }
+  .pv.open{transform:none;opacity:1;visibility:visible}
+  .pv.open:hover{transform:none}
+  .pv::before{display:none}
+  .pv-close{
+    display:inline-flex;align-items:center;margin-left:auto;min-height:44px;padding:8px 14px;
+    font:inherit;font-size:13px;font-weight:600;color:var(--ink);
+    background:var(--surface-2);border:1px solid var(--border);border-radius:12px;cursor:pointer;
+  }
+  .pv-close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .pv-h{gap:10px}
+  .pv-fab{
+    position:fixed;right:16px;bottom:18px;z-index:70;
+    display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:12px 20px;
+    font:inherit;font-size:14px;font-weight:700;color:var(--navy);
+    background:var(--brand-grad);border:0;border-radius:99px;cursor:pointer;
+    box-shadow:0 14px 28px -10px rgba(185,138,44,.85);
+    transition:transform .25s var(--ease),box-shadow .25s var(--ease);
+  }
+  .pv-fab:active{transform:scale(.97)}
+  .pv-fab:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 }
 @media (max-width:560px){
   .app{padding:18px 12px 48px}
