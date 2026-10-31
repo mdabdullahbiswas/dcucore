@@ -208,6 +208,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     function setDd(open) {
       if (!dd) return;
       if (open) { setCvd(false); dd.classList.remove("dl-closed"); }
+      else { dd.classList.add("dl-closed"); }
       dd.classList.toggle("open", open);
       ddBtn.setAttribute("aria-expanded", String(open));
     }
@@ -224,7 +225,8 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     function setCvd(open) {
       if (!cvd) return;
-      if (open) { if (dd) setDd(false); markActive(); }
+      if (open) { if (dd) setDd(false); cvd.classList.remove("dl-closed"); markActive(); }
+      else { cvd.classList.add("dl-closed"); }
       cvd.classList.toggle("open", open);
       cvdBtn.setAttribute("aria-expanded", String(open));
     }
