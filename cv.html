@@ -21,6 +21,7 @@
 </head>
 <body>
 <div id="hdr"></div>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <main class="app">
   <div class="hero">
@@ -32,7 +33,7 @@
     <!-- ================= ফর্ম ================= -->
     <div class="ctl">
 
-      <section class="card">
+      <section class="card s1">
         <h2 class="t">টেমপ্লেট ও ডিজাইন|Template &amp; design</h2>
         <div class="tpls" id="tplGrid" role="radiogroup" aria-label="Template · টেমপ্লেট"></div>
 
@@ -51,7 +52,7 @@
         </div>
       </section>
 
-      <section class="card">
+      <section class="card s2">
         <h2 class="t">ব্যক্তিগত তথ্য|Personal details</h2>
         <div class="g2">
           <label class="full"><span class="t">পূর্ণ নাম|Full name</span><input type="text" data-k="name" maxlength="60" autocomplete="name"></label>
@@ -67,7 +68,7 @@
         </div>
       </section>
 
-      <section class="card">
+      <section class="card s3">
         <h2 class="t">পেশাগত সারসংক্ষেপ|Professional summary</h2>
         <label><span class="t">নমুনা থেকে বেছে নিন (ঐচ্ছিক)|Pick a sample (optional)</span>
           <select id="sumPick">
@@ -79,22 +80,22 @@
         <label><span class="t">সারসংক্ষেপ|Summary</span><textarea rows="4" data-k="summary"></textarea></label>
       </section>
 
-      <section class="card">
+      <section class="card s4">
         <div class="card-h"><h2 class="t">কর্ম অভিজ্ঞতা|Work experience</h2><button type="button" class="btn sm" data-add="exp"><span class="t">+ যোগ করুন|+ Add</span></button></div>
         <div class="reps" id="list-exp"></div>
       </section>
 
-      <section class="card">
+      <section class="card s5">
         <div class="card-h"><h2 class="t">শিক্ষাগত যোগ্যতা|Education</h2><button type="button" class="btn sm" data-add="edu"><span class="t">+ যোগ করুন|+ Add</span></button></div>
         <div class="reps" id="list-edu"></div>
       </section>
 
-      <section class="card">
+      <section class="card s6">
         <div class="card-h"><h2 class="t">প্রজেক্ট|Projects</h2><button type="button" class="btn sm" data-add="proj"><span class="t">+ যোগ করুন|+ Add</span></button></div>
         <div class="reps" id="list-proj"></div>
       </section>
 
-      <section class="card">
+      <section class="card s7">
         <h2 class="t">দক্ষতা ও অন্যান্য|Skills &amp; more</h2>
         <label><span class="t">দক্ষতা (কমা দিয়ে আলাদা করুন)|Skills (comma separated)</span><input type="text" data-k="skills"></label>
         <label><span class="t">ভাষাজ্ঞান (কমা দিয়ে আলাদা করুন)|Languages (comma separated)</span><input type="text" data-k="langs"></label>
@@ -110,7 +111,7 @@
     </div>
 
     <!-- ================= লাইভ প্রিভিউ ================= -->
-    <aside class="pv card">
+    <aside class="pv card s8">
       <div class="pv-h"><b class="t">লাইভ প্রিভিউ|Live preview</b><span class="pv-tag">A4</span></div>
       <div id="sheetWrap" class="pv-box" data-fit><div id="sheet" class="cvs"></div></div>
       <div class="warn" id="warn" hidden></div>
