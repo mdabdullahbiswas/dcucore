@@ -10,7 +10,7 @@
   var root = document.documentElement;
 
   /* ---------- current page ---------- */
-  /* maps a clean path (/cover/lab, /tools/cgpa, /blood) or an href to its page file */
+  /* maps a clean path (/cover/lab, /tools#cgpa, /blood) or an href to its page file */
   function pageOfPath(p) {
     p = String(p || "").split("#")[0].split("?")[0].replace(/\/+$/, "");
     if (/^\/?cover(\/|\.html$|$)/.test(p)) return "cover.html";
@@ -35,15 +35,15 @@
   ];
 
   var TOOLS = [
-    { href: "/tools/card", bn: "শেয়ার কার্ড", en: "Share Card" },
-    { href: "/tools/routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
-    { href: "/tools/cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
-    { href: "/tools/exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
+    { href: "/tools#card", bn: "শেয়ার কার্ড", en: "Share Card" },
+    { href: "/tools#routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
+    { href: "/tools#cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
+    { href: "/tools#exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
     { href: "/cv", bn: "সিভি বিল্ডার", en: "CV Builder" },
-    { href: "/tools/frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
-    { href: "/tools/pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
-    { href: "/tools/calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
-    { href: "/tools/result", bn: "রেজাল্ট", en: "Results Portal" }
+    { href: "/tools#frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
+    { href: "/tools#pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
+    { href: "/tools#calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
+    { href: "/tools#result", bn: "রেজাল্ট", en: "Results Portal" }
   ];
 
   var ICON_CHEVRON =
@@ -128,9 +128,9 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var toolLinks = [
       ["/cover", "কভার পেজ"],
       ["/cv", "সিভি বিল্ডার"],
-      ["/tools/routine", "ক্লাস রুটিন"],
-      ["/tools/cgpa", "CGPA ক্যালকুলেটর"],
-      ["/tools/pdf", "PDF টুলকিট"]
+      ["/tools#routine", "ক্লাস রুটিন"],
+      ["/tools#cgpa", "CGPA ক্যালকুলেটর"],
+      ["/tools#pdf", "PDF টুলকিট"]
     ];
     var siteLinks = [
       ["/", "হোম"],
