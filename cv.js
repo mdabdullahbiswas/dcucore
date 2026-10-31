@@ -453,4 +453,17 @@
 
   window.addEventListener('resize', fitAll);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
+  /* ---------- scroll reveal (অ্যানিমেশন) ---------- */
+  document.documentElement.classList.add('js');
+  var cards = document.querySelectorAll('.ctl > .card');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    cards.forEach(function (c) { c.classList.add('rv'); io.observe(c); });
+  } else {
+    cards.forEach(function (c) { c.classList.add('in'); });
+  }
 })();
