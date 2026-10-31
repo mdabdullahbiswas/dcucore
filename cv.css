@@ -1,21 +1,113 @@
-/* cv.css — CV Studio page + A4 résumé templates */
+/* cv.css — CV Studio · Premium Color System
+ * কালার, গ্রেডিয়েন্ট, শ্যাডো, বর্ডার ও অ্যানিমেশন। লেআউট/লজিক অপরিবর্তিত।
+ * A4 শিট (.cvs) নিজের রং ধরে রাখে, যাতে PDF/প্রিন্ট সবসময় সাদা ও একই থাকে।
+ */
 
+/* =====================================================
+   1. TOKENS (:root) — সব কালার এখানে
+   ===================================================== */
 :root{
-  --ink:#111827;--mut:#64748b;--bd:#e3e8ef;--bg:#f6f8fb;--card:#ffffff;--field:#ffffff;--soft:#f1f5f9;
-  --navy:#0b1f3a;--gold:#c9a227;
+  /* বেস নিউট্রাল (Light) */
+  --bg:#F6F8FC;
+  --surface:#FFFFFF;
+  --surface-2:#F1F5F9;
+  --ink:#0F172A;
+  --ink-2:#475569;
+  --muted:#94A3B8;          /* শুধু সাজসজ্জা/ডিসএবেল্ড — টেক্সটে নয় */
+  --border:#E2E8F0;
+
+  /* ব্র্যান্ড */
+  --navy:#0B1F3A;
+  --navy-2:#17386A;
+  --gold:#D4AF37;
+  --gold-light:#E8C46C;
+  --gold-deep:#B98A2C;
+  --brand-grad:linear-gradient(135deg,#E8C46C 0%,#D4AF37 45%,#B98A2C 100%);
+
+  /* স্ট্যাটাস */
+  --ok:#10B981;
+  --warn:#F59E0B;
+  --err:#EF4444;
+  --info:#3B82F6;
+  --err-soft:#FEE2E2;
+  --err-ink:#B91C1C;
+  --warn-soft:#FEF3C7;
+  --warn-ink:#92400E;
+
+  /* শ্যাডো, মোশন */
+  --shadow:0 12px 30px rgba(15,23,42,.07);
+  --shadow-hover:0 22px 44px rgba(15,23,42,.12);
+  --ease:cubic-bezier(.2,.8,.2,1);
+
+  /* ব্যাকগ্রাউন্ড অর্ব */
+  --o1:#2563EB;
+  --o2:#7C3AED;
+  --o3:#059669;
+
   color-scheme:light;
 }
+
+/* ডার্ক মোড — দুই ধরনের সিলেক্টরই */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ink:#e5e7eb;--mut:#94a3b8;--bd:#263244;--bg:#0a1220;--card:#111a2b;--field:#0d1729;--soft:#162238;
+    --bg:#0A0F1E;
+    --surface:#111827;
+    --surface-2:#1A2236;
+    --ink:#F1F5F9;
+    --ink-2:#A8B3C7;
+    --border:#243049;
+    --err-soft:rgba(239,68,68,.16);
+    --err-ink:#FCA5A5;
+    --warn-soft:rgba(245,158,11,.16);
+    --warn-ink:#FCD34D;
+    --shadow:0 14px 34px rgba(0,0,0,.45);
+    --shadow-hover:0 24px 50px rgba(0,0,0,.6);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --ink:#e5e7eb;--mut:#94a3b8;--bd:#263244;--bg:#0a1220;--card:#111a2b;--field:#0d1729;--soft:#162238;
+  --bg:#0A0F1E;
+  --surface:#111827;
+  --surface-2:#1A2236;
+  --ink:#F1F5F9;
+  --ink-2:#A8B3C7;
+  --border:#243049;
+  --err-soft:rgba(239,68,68,.16);
+  --err-ink:#FCA5A5;
+  --warn-soft:rgba(245,158,11,.16);
+  --warn-ink:#FCD34D;
+  --shadow:0 14px 34px rgba(0,0,0,.45);
+  --shadow-hover:0 24px 50px rgba(0,0,0,.6);
   color-scheme:dark;
 }
 
+/* =====================================================
+   2. সেক্টর কালার (৮টি) — প্রতিটির main/soft/deep/grad
+   ===================================================== */
+.s1{--accent:#2563EB;--accent-soft:#DBEAFE;--accent-deep:#1E40AF;--accent-grad:linear-gradient(135deg,#60A5FA,#2563EB)}  /* Sapphire Blue */
+.s2{--accent:#059669;--accent-soft:#D1FAE5;--accent-deep:#065F46;--accent-grad:linear-gradient(135deg,#34D399,#059669)}  /* Emerald Green */
+.s3{--accent:#7C3AED;--accent-soft:#EDE9FE;--accent-deep:#5B21B6;--accent-grad:linear-gradient(135deg,#A78BFA,#7C3AED)}  /* Royal Violet */
+.s4{--accent:#E11D48;--accent-soft:#FFE4E6;--accent-deep:#9F1239;--accent-grad:linear-gradient(135deg,#FB7185,#E11D48)}  /* Rose Crimson */
+.s5{--accent:#D97706;--accent-soft:#FEF3C7;--accent-deep:#92400E;--accent-grad:linear-gradient(135deg,#FBBF24,#D97706)}  /* Amber Orange */
+.s6{--accent:#0891B2;--accent-soft:#CFFAFE;--accent-deep:#155E75;--accent-grad:linear-gradient(135deg,#22D3EE,#0891B2)}  /* Ocean Cyan */
+.s7{--accent:#C026D3;--accent-soft:#FAE8FF;--accent-deep:#86198F;--accent-grad:linear-gradient(135deg,#E879F9,#C026D3)}  /* Fuchsia Pink */
+.s8{--accent:#65A30D;--accent-soft:#ECFCCB;--accent-deep:#3F6212;--accent-grad:linear-gradient(135deg,#A3E635,#65A30D)}  /* Lime Fresh */
+
+/* ডার্ক মোডে সেক্টর শেড: soft = accent ১৫%, deep = main-এর হালকা ভার্সন */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .card{
+    --accent-soft:color-mix(in srgb,var(--accent) 15%,transparent);
+    --accent-deep:color-mix(in srgb,var(--accent) 70%,#ffffff);
+  }
+}
+:root[data-theme="dark"] .card{
+  --accent-soft:color-mix(in srgb,var(--accent) 15%,transparent);
+  --accent-deep:color-mix(in srgb,var(--accent) 70%,#ffffff);
+}
+
+/* =====================================================
+   3. BASE
+   ===================================================== */
 *{box-sizing:border-box}
 html,body{margin:0;max-width:100%}
 body{
@@ -23,98 +115,191 @@ body{
   background:var(--bg);color:var(--ink);line-height:1.5;
   overflow-x:hidden;min-height:100vh;
 }
-.app{max-width:1180px;margin:0 auto;padding:22px 16px 56px}
+.app{max-width:1180px;margin:0 auto;padding:22px 16px 56px;position:relative;z-index:1}
+
+/* ব্যাকগ্রাউন্ড অর্ব — ধীর ফ্লোটিং */
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orbs i{
+  position:absolute;width:460px;height:460px;border-radius:50%;
+  filter:blur(90px);opacity:.13;animation:float 24s ease-in-out infinite;
+}
+.orbs i:nth-child(1){background:var(--o1);top:-160px;left:-140px}
+.orbs i:nth-child(2){background:var(--o2);top:38%;right:-180px;animation-duration:28s;animation-delay:-6s}
+.orbs i:nth-child(3){background:var(--o3);bottom:-200px;left:30%;animation-duration:30s;animation-delay:-12s}
 
 /* ---------- hero ---------- */
+.hero{animation:rise .9s var(--ease) both}
 .hero h1{
   margin:0 0 6px;font:700 clamp(22px,3.4vw,32px)/1.2 'Playfair Display','Noto Serif Bengali',serif;
+  color:var(--ink);
 }
-.hero p{margin:0;color:var(--mut);font-size:15px}
+.hero p{margin:0;color:var(--ink-2);font-size:15px}
 
 /* ---------- layout ---------- */
 .studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:22px;margin-top:22px;align-items:start}
-.ctl{display:grid;gap:16px;min-width:0}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;min-width:0}
-.card h2{font-size:16px;margin:0 0 12px;line-height:1.3}
-.card-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-.card-h h2{margin:0}
+.ctl{display:grid;gap:16px;min-width:0;counter-reset:sec}
+.card{
+  position:relative;overflow:hidden;min-width:0;
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;
+  box-shadow:var(--shadow);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease);
+}
+/* উপরে accent-grad স্ট্রিপ */
+.card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--accent-grad)}
+@media (hover:hover){
+  .card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow-hover)}
+}
+.ctl>.card{counter-increment:sec}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .full{grid-column:1/-1}
 .cust{margin-top:12px}
 
+/* সেকশন হেডিং: বাম পাশে accent-grad গোল নম্বর ব্যাজ */
+.card h2{
+  display:flex;align-items:center;gap:10px;
+  font-size:16px;line-height:1.3;margin:0 0 12px;color:var(--accent-deep);
+}
+.card-h h2{margin:0}
+.card h2::before{
+  content:counter(sec);flex:none;display:inline-grid;place-items:center;
+  width:28px;height:28px;border-radius:50%;background:var(--accent-grad);color:#fff;
+  font:700 13px/1 'Inter',sans-serif;
+  box-shadow:0 0 0 0 var(--accent-soft);
+  animation:glow 3.2s ease-in-out infinite;
+}
+.card-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+
 /* ---------- fields ---------- */
-label{display:grid;gap:5px;font-size:13px;font-weight:600;margin:10px 0 0;min-width:0}
+label{display:grid;gap:5px;font-size:13px;font-weight:600;margin:10px 0 0;min-width:0;color:var(--ink)}
 .g2 label{margin:0}
+.card label:focus-within>span{color:var(--accent-deep);transition:color .25s var(--ease)}
 input:not([type="color"]):not([type="file"]),textarea,select{
   width:100%;font:inherit;font-size:14px;font-weight:400;color:var(--ink);
-  background:var(--field);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;outline:none;min-width:0;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;
+  outline:none;min-width:0;min-height:44px;
+  transition:border-color .25s var(--ease),box-shadow .3s var(--ease),background .25s var(--ease);
 }
-input[type="color"]{width:100%;height:40px;padding:3px;border:1px solid var(--bd);border-radius:10px;background:var(--field);cursor:pointer}
-input[type="file"]{font-size:13px;color:var(--mut);max-width:100%}
-textarea{resize:vertical;min-height:64px}
-input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(11,31,58,.14)}
+textarea{min-height:72px;resize:vertical}
+input[type="color"]{
+  width:100%;height:44px;padding:4px;border:1px solid var(--border);border-radius:12px;
+  background:var(--surface-2);cursor:pointer;
+}
+input[type="file"]{font-size:13px;color:var(--ink-2);max-width:100%}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);background:var(--surface);
+}
+::placeholder{color:var(--muted);opacity:1}
 
 .photo-row{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin-top:12px}
 .photo-l{flex:1 1 220px}
 
 /* ---------- buttons ---------- */
 .btn{
-  font:inherit;font-size:14px;font-weight:600;color:var(--ink);background:var(--soft);
-  border:1px solid var(--bd);border-radius:10px;padding:9px 14px;cursor:pointer;line-height:1.2;
+  position:relative;overflow:hidden;
+  font:inherit;font-size:14px;font-weight:600;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:10px 16px;min-height:44px;cursor:pointer;line-height:1.2;
+  box-shadow:0 1px 2px rgba(15,23,42,.05);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
 }
-.btn:hover{filter:brightness(.97)}
-.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.btn.sm{padding:6px 11px;font-size:13px}
-.btn.pri{background:var(--navy);border-color:var(--navy);color:#fff}
-.btn.wide{width:100%;margin-top:12px;padding:12px 14px}
+.btn::before{ /* ripple */
+  content:"";position:absolute;left:50%;top:50%;width:0;height:0;border-radius:50%;
+  background:rgba(255,255,255,.45);transform:translate(-50%,-50%);opacity:0;
+  transition:width .5s var(--ease),height .5s var(--ease),opacity .5s var(--ease);pointer-events:none;
+}
+.btn:active::before{width:260px;height:260px;opacity:.5;transition:none}
+@media (hover:hover){
+  .btn:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 12px 22px -12px rgba(15,23,42,.35)}
+}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.sm{padding:7px 12px;min-height:38px;font-size:13px}
+.btn.pri{
+  background:var(--brand-grad);border:0;color:var(--navy);font-weight:700;
+  box-shadow:0 10px 22px -10px rgba(185,138,44,.8);
+}
+.btn.pri::after{ /* shimmer sweep */
+  content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);
+  transform:skewX(-20deg);pointer-events:none;
+}
+@media (hover:hover){
+  .btn.pri:hover::after{left:140%;transition:left .8s var(--ease)}
+}
+.btn.wide{width:100%;margin-top:12px;padding:13px 16px}
 .actions{display:flex;flex-wrap:wrap;gap:8px}
 
 /* ---------- template gallery ---------- */
 .tpls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .tt{
-  font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--soft);
-  border:2px solid transparent;border-radius:12px;padding:8px;cursor:pointer;display:grid;gap:7px;text-align:center;min-width:0;
+  font:inherit;font-size:13px;font-weight:600;color:var(--ink);text-align:center;
+  background:var(--surface-2);border:2px solid transparent;border-radius:14px;padding:8px;
+  cursor:pointer;display:grid;gap:7px;min-width:0;min-height:44px;
+  transition:transform .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease),background .25s var(--ease);
 }
-.tt:hover{border-color:var(--bd)}
-.tt.on{border-color:var(--navy);box-shadow:0 6px 16px -10px rgba(11,31,58,.6)}
-.tt:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (hover:hover){
+  .tt:hover{border-color:var(--accent);transform:translateY(-2px)}
+}
+.tt.on{
+  background:var(--accent-grad);color:#fff;border-color:transparent;
+  box-shadow:0 10px 20px -12px var(--accent);
+}
+.tt:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
-.pv-box{display:block;position:relative;overflow:hidden;background:#fff;border-radius:6px;box-shadow:0 1px 6px rgba(0,0,0,.18)}
+.pv-box{display:block;position:relative;overflow:hidden;background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(15,23,42,.18)}
 .tt .pv-box{width:100%}
 .pv-box>.cvs{position:absolute;left:0;top:0;transform-origin:0 0}
 
 /* ---------- colour swatches ---------- */
 .sws{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .sw{
-  font:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--soft);border:2px solid transparent;
-  border-radius:12px;padding:6px 10px 6px 6px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  font:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--surface-2);
+  border:2px solid transparent;border-radius:14px;padding:6px 12px 6px 6px;min-height:44px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:border-color .25s var(--ease),background .25s var(--ease),transform .25s var(--ease);
 }
-.sw.on{border-color:var(--navy)}
-.sw-c{width:22px;height:22px;border-radius:50%;display:block;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
-.sw:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (hover:hover){ .sw:hover{border-color:var(--accent);transform:translateY(-2px)} }
+.sw.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
+.sw-c{width:24px;height:24px;border-radius:50%;display:block;flex:none;box-shadow:inset 0 0 0 1px rgba(15,23,42,.15)}
+.sw:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* ---------- repeaters ---------- */
 .reps{display:grid;gap:10px}
-.rep{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;background:var(--soft);border-radius:12px;padding:10px}
+.rep{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:10px;
+  transition:border-color .25s var(--ease),box-shadow .25s var(--ease);
+}
+.rep:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
 .rep-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rep-g label{margin:0;font-size:12px}
 .rep-g label.wide{grid-column:1/-1}
 .rep-x{
-  width:32px;height:32px;border-radius:50%;border:1px solid var(--bd);background:var(--field);color:var(--ink);
-  font-size:18px;line-height:1;cursor:pointer;
+  width:44px;height:44px;border-radius:50%;border:1px solid rgba(239,68,68,.35);
+  background:var(--err-soft);color:var(--err-ink);font-size:20px;line-height:1;cursor:pointer;
+  transition:transform .25s var(--ease),background .25s var(--ease);
 }
-.rep-x:hover{border-color:#b91c1c;color:#b91c1c}
-.empty{margin:0;color:var(--mut);font-size:13px;padding:8px 0}
+@media (hover:hover){ .rep-x:hover{transform:scale(1.06);background:var(--err);color:#fff;border-color:var(--err)} }
+.rep-x:active{transform:scale(.94)}
+.empty{margin:0;color:var(--ink-2);font-size:13px;padding:8px 0}
 
-.warn{margin-top:10px;font-size:13px;color:#b45309;background:rgba(245,158,11,.12);border-radius:10px;padding:8px 10px}
+.warn{
+  margin-top:10px;font-size:13px;color:var(--warn-ink);
+  background:var(--warn-soft);border:1px solid rgba(245,158,11,.35);border-radius:12px;padding:9px 12px;
+}
 .warn[hidden]{display:none}
-.pv{position:sticky;top:72px}
+
+.pv{position:sticky;top:72px;animation:rise .9s .15s var(--ease) both}
 .pv-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.pv-tag{font-size:12px;font-weight:700;color:var(--mut);border:1px solid var(--bd);border-radius:99px;padding:2px 9px}
-.hint{font-size:12.5px;color:var(--mut);margin:10px 0 0}
+.pv-h b{color:var(--accent-deep)}
+.pv-tag{
+  font-size:12px;font-weight:700;color:var(--accent-deep);
+  background:var(--accent-soft);border:1px solid transparent;border-radius:99px;padding:3px 10px;
+}
+.hint{font-size:12.5px;color:var(--ink-2);margin:10px 0 0}
 
 /* =====================================================
-   A4 RÉSUMÉ SHEET — shared by preview and gallery thumbs
+   A4 RÉSUMÉ SHEET — PDF/প্রিন্টে সবসময় সাদা; রং শুধু --p/--a থেকে
    ===================================================== */
 .cvs{
   display:block;width:794px;min-height:1123px;background:#fff;color:#1f2933;position:relative;
@@ -147,10 +332,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs .hl{min-width:0}
 .cvs .ci{font-size:12.5px;margin-bottom:6px;overflow-wrap:anywhere}
 
-/* --- 1. Classic (default) --- */
-/* uses base styles */
+/* 1. Classic — base */
 
-/* --- 2. Modern sidebar --- */
+/* 2. Modern sidebar */
 .cvs.t-sidebar .grid{display:grid;grid-template-columns:240px 1fr;min-height:1123px}
 .cvs.t-sidebar aside{background:var(--p);color:#fff;padding:40px 22px}
 .cvs.t-sidebar aside h3{color:#fff;border-bottom-color:var(--a)}
@@ -160,7 +344,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs.t-sidebar main{padding:44px 40px}
 .cvs.t-sidebar main .jt{color:var(--p);opacity:.85}
 
-/* --- 3. Elegant (centred) --- */
+/* 3. Elegant (centred) */
 .cvs.t-elegant .pad{padding:52px 60px}
 .cvs.t-elegant .hd{flex-direction:column;justify-content:center;text-align:center}
 .cvs.t-elegant .hl{width:100%}
@@ -170,7 +354,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs.t-elegant h3::after{content:"";display:block;width:56px;height:2px;background:var(--a);margin:6px auto 0}
 .cvs.t-elegant .ch{border-color:var(--a)}
 
-/* --- 4. Minimal --- */
+/* 4. Minimal */
 .cvs.t-minimal .pad{padding:60px 64px}
 .cvs.t-minimal h1{font-weight:300;font-size:40px;letter-spacing:.02em}
 .cvs.t-minimal h3{border-bottom:none;padding:0;color:#6b7280;letter-spacing:.2em;font-size:11px;font-weight:600}
@@ -178,7 +362,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs.t-minimal .ph{width:92px;height:92px;border-color:#e5e7eb}
 .cvs.t-minimal .sec{margin-bottom:22px}
 
-/* --- 5. Bold banner --- */
+/* 5. Bold banner */
 .cvs.t-banner .band{background:var(--p);color:#fff;padding:40px 56px 34px}
 .cvs.t-banner .band h1{color:#fff}
 .cvs.t-banner .band .jt{color:var(--a)}
@@ -186,7 +370,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs.t-banner .pad{padding-top:24px}
 .cvs.t-banner .ct{margin-top:0}
 
-/* --- 6. Timeline --- */
+/* 6. Timeline */
 .cvs.t-timeline .it.tl{
   display:grid;grid-template-columns:118px minmax(0,1fr);gap:16px;
   border-left:2px solid var(--a);padding-left:14px;margin-left:4px;
@@ -194,7 +378,32 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 .cvs.t-timeline .when{color:var(--p);font-size:12px;font-weight:700;padding-top:1px}
 
 /* =====================================================
-   PAGE: responsive
+   4. বাটন/চিপের ভেতরের গাঢ় টেক্সট ও শর্ট-ফরম্যাট
+   ===================================================== */
+.tt .t,.sw .t{color:inherit}
+
+/* =====================================================
+   5. অ্যানিমেশন — পেজ লোড ও স্ক্রল রিভিল
+   ===================================================== */
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes float{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(40px,-30px) scale(1.06)}
+}
+@keyframes glow{
+  0%,100%{box-shadow:0 0 0 0 var(--accent-soft)}
+  50%{box-shadow:0 0 0 6px var(--accent-soft)}
+}
+
+/* JS চালু থাকলে (cv.js-এ .js যোগ হয়) কার্ড নিচ থেকে উঠে আসে */
+.js .ctl>.card.rv:not(.in){opacity:0;transform:translateY(24px) scale(.985)}
+.ctl>.card{transition:transform .7s var(--ease),opacity .7s var(--ease),box-shadow .25s var(--ease),border-color .25s var(--ease)}
+.ctl>.card:nth-child(2){transition-delay:.04s}
+.ctl>.card:nth-child(3){transition-delay:.08s}
+.ctl>.card:nth-child(4){transition-delay:.12s}
+
+/* =====================================================
+   6. RESPONSIVE (মোবাইলে সাইডওয়ে স্ক্রল নেই)
    ===================================================== */
 @media (max-width:960px){
   .studio{grid-template-columns:minmax(0,1fr)}
@@ -209,7 +418,14 @@ input:focus,textarea:focus,select:focus{border-color:var(--navy);box-shadow:0 0 
 }
 
 /* =====================================================
-   PRINT — only the A4 sheet
+   7. REDUCED MOTION
+   ===================================================== */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* =====================================================
+   8. PRINT — শুধু A4 শিট
    ===================================================== */
 @media print{
   @page{size:A4;margin:0}
