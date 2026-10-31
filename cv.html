@@ -35,13 +35,10 @@
 
       <section class="card s1">
         <h2 class="t">টেমপ্লেট ও ডিজাইন|Template &amp; design</h2>
-        <div class="tpls" id="tplGrid" role="radiogroup" aria-label="Template · টেমপ্লেট"></div>
-
-        <label><span class="t">রঙের থিম|Colour theme</span></label>
-        <div class="sws" id="themes"></div>
-        <div class="g2 cust">
-          <label><span class="t">প্রাথমিক রং|Primary colour</span><input type="color" id="cPri" data-col="p"></label>
-          <label><span class="t">অ্যাকসেন্ট রং|Accent colour</span><input type="color" id="cAcc" data-col="a"></label>
+        <div class="tplbar">
+          <div class="tplbar-h"><b class="t">টেমপ্লেট|Template</b><span id="tplName"></span></div>
+          <div class="ct-scroll" id="tplStrip" role="radiogroup" aria-label="Template · টেমপ্লেট"></div>
+          <button type="button" class="btn pri wide" id="openGal"><span class="t">সব টেমপ্লেট ও থিম দেখুন|Browse all templates &amp; themes</span></button>
         </div>
 
         <div class="g2">
@@ -123,6 +120,32 @@
 </main>
 
 <button type="button" class="pv-fab" id="pvFab" aria-expanded="false" aria-controls="pv"><span class="t">লাইভ প্রিভিউ|Live preview</span></button>
+
+<div class="gal" id="gal" hidden role="dialog" aria-modal="true" aria-labelledby="galT">
+  <div class="gal-bg" aria-hidden="true"></div>
+  <header class="gal-top">
+    <div class="gal-t"><b id="galT"><span class="t">টেমপ্লেট ও থিম|Template &amp; theme</span></b><small class="t">সোয়াইপ করুন বা তীর চাপুন|Swipe or use the arrows</small></div>
+    <div class="gal-r"><span class="gal-ct" id="galCount"></span><button type="button" class="gal-x" id="galX" aria-label="বন্ধ করুন · Close">×</button></div>
+  </header>
+  <div class="gal-main">
+    <div class="gal-stage" id="galStage" tabindex="0" aria-roledescription="carousel"></div>
+    <div class="gal-info" id="galInfo" aria-live="polite"></div>
+    <div class="gal-dots" id="galDots"></div>
+    <div class="gal-th">
+      <div class="gal-thh"><b class="t">থিমের রং|Theme colours</b><span class="gal-thn" id="thName"></span></div>
+      <div class="sws" id="themes"></div>
+      <div class="gal-cu"><span class="t">নিজের রং|Custom</span>
+        <label class="cu"><input type="color" id="cPri" data-col="p" aria-label="মূল রং · Primary colour"><i class="t">মূল|Primary</i></label>
+        <label class="cu"><input type="color" id="cAcc" data-col="a" aria-label="অ্যাকসেন্ট রং · Accent colour"><i class="t">অ্যাকসেন্ট|Accent</i></label>
+      </div>
+    </div>
+    <div class="gal-foot">
+      <button type="button" class="gal-nav" id="galPrev" aria-label="আগেরটি · Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button type="button" class="btn pri gal-pick" id="galPick"><span class="t">এটি ব্যবহার করুন|Use this template</span></button>
+      <button type="button" class="gal-nav" id="galNext" aria-label="পরেরটি · Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    </div>
+  </div>
+</div>
 
 <div id="ftr"></div>
 </body>
