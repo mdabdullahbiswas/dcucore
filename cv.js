@@ -75,7 +75,7 @@
 
   /* ফাঁকা অবস্থা (তথ্য মুছুন) */
   var BLANK = {
-    tpl: 'classic', th: 'navy', pc: '', ac: '', font: 'serif', lang: 'en', shape: 'circle', hide: {},
+    tpl: 'classic', th: 'navy', pc: '', ac: '', font: 'serif', lang: 'en', shape: 'circle',
     name: '', title: '', email: '', phone: '', address: '', links: '', photo: '',
     summary: '', skills: '', langs: '', ach: '', refs: '',
     exp: [], edu: [], proj: []
@@ -141,7 +141,6 @@
       }
     } catch (e) { /* storage বন্ধ — কাজ চলবে, শুধু সেভ হবে না */ }
     ['exp', 'edu', 'proj'].forEach(function (k) { if (!Array.isArray(S[k])) S[k] = []; });
-    if (!S.hide || typeof S.hide !== 'object') S.hide = {};
     if (S.shape !== 'rect') S.shape = 'circle';
   }
   function save() {
@@ -257,7 +256,7 @@
     return body ? '<section class="sec"><h3>' + esc(h) + '</h3>' + body + '</section>' : '';
   }
   function entries(list, tl) {
-    return (list || []).filter(function (x) { return x && !x.off && (trim(x.t) || trim(x.s) || trim(x.d)); })
+    return (list || []).filter(function (x) { return x && (trim(x.t) || trim(x.s) || trim(x.d)); })
       .map(function (x) {
         var d = lines(x.d);
         var desc = d.length > 1 ? bullets(d) : (d.length ? '<p>' + esc(d[0]) + '</p>' : '');
@@ -271,27 +270,27 @@
   }
 
   function sheetHTML(tpl) {
-    var d = S, L = LB[d.lang] || LB.en, H = d.hide || {}, tl = tpl === 'timeline', side = tpl === 'sidebar';
+    var d = S, L = LB[d.lang] || LB.en, tl = tpl === 'timeline', side = tpl === 'sidebar';
     var nm = esc(trim(d.name) || L.nameFb);
-    var jt = H.title ? '' : esc(trim(d.title));
+    var jt = esc(trim(d.title));
 
     var contact = [];
-    if (!H.email) contact.push(d.email);
-    if (!H.phone) contact.push(d.phone);
-    if (!H.address) contact.push(d.address);
-    if (!H.links) contact = contact.concat(lines(d.links));
+    contact.push(d.email);
+    contact.push(d.phone);
+    contact.push(d.address);
+    contact = contact.concat(lines(d.links));
     contact = contact.map(trim).filter(Boolean);
 
-    var ph = (d.photo && !H.photo) ? '<img class="ph' + (d.shape === 'rect' ? ' rect' : '') + '" src="' + d.photo + '" alt="">' : '';
+    var ph = d.photo ? '<img class="ph' + (d.shape === 'rect' ? ' rect' : '') + '" src="' + d.photo + '" alt="">' : '';
 
-    var main = sec(L.sum, (!H.summary && trim(d.summary)) ? '<p>' + esc(trim(d.summary)) + '</p>' : '')
-      + sec(L.exp, H.exp ? '' : entries(d.exp, tl))
-      + sec(L.edu, H.edu ? '' : entries(d.edu, tl))
-      + sec(L.proj, H.proj ? '' : entries(d.proj, tl))
-      + sec(L.ach, (!H.ach && lines(d.ach).length) ? bullets(lines(d.ach)) : '')
-      + sec(L.refs, H.refs ? '' : lines(d.refs).map(function (x) { return '<div>' + esc(x) + '</div>'; }).join(''));
-    var skills = sec(L.skills, H.skills ? '' : chips(d.skills));
-    var langs = sec(L.langs, H.langs ? '' : chips(d.langs));
+    var main = sec(L.sum, trim(d.summary) ? '<p>' + esc(trim(d.summary)) + '</p>' : '')
+      + sec(L.exp, entries(d.exp, tl))
+      + sec(L.edu, entries(d.edu, tl))
+      + sec(L.proj, entries(d.proj, tl))
+      + sec(L.ach, lines(d.ach).length ? bullets(lines(d.ach)) : '')
+      + sec(L.refs, lines(d.refs).map(function (x) { return '<div>' + esc(x) + '</div>'; }).join(''));
+    var skills = sec(L.skills, chips(d.skills));
+    var langs = sec(L.langs, chips(d.langs));
 
     if (side) {
       return '<div class="grid"><aside>' + ph +
@@ -380,7 +379,6 @@
         return;
       }
       box.innerHTML = items.map(function (it, i) {
-        var off = !!it.off;
         var fields = def.f.map(function (f) {
           var key = f[0], ta = f[2], ex = f[3] || '';
           var attrs = ' data-list="' + k + '" data-i="' + i + '" data-f="' + key + '"' + (ex ? ' data-ph="' + esc(ex) + '"' : '');
@@ -390,10 +388,8 @@
           return '<div class="fld' + (ta ? ' full' : '') + '"><label><span class="t">' + f[1] + '</span></label>' + ctl +
                  '<div class="fld-foot"><small class="fe" aria-live="polite"></small></div></div>';
         }).join('');
-        return '<div class="rep' + (off ? ' off' : '') + '"><div class="rep-g">' + fields + '</div>' +
+        return '<div class="rep"><div class="rep-g">' + fields + '</div>' +
           '<div class="rep-side">' +
-            '<label class="hide-t"><input type="checkbox" data-off data-list="' + k + '" data-i="' + i + '"' + (off ? ' checked' : '') +
-              '><span class="t">দেখাবেন না|Hide</span></label>' +
             '<button type="button" class="rep-x" data-del="' + k + '" data-i="' + i + '" aria-label="মুছুন · Remove">×</button>' +
           '</div></div>';
       }).join('');
@@ -404,9 +400,6 @@
   function syncForm() {
     document.querySelectorAll('[data-k]').forEach(function (el) {
       el.value = S[el.getAttribute('data-k')] || '';
-    });
-    document.querySelectorAll('[data-hide]').forEach(function (cb) {
-      cb.checked = !!S.hide[cb.getAttribute('data-hide')];
     });
     document.querySelectorAll('[data-shape]').forEach(function (b) {
       b.setAttribute('aria-pressed', b.getAttribute('data-shape') === S.shape ? 'true' : 'false');
@@ -677,18 +670,6 @@ return new Blob(parts,{type:'application/pdf'});
     if (!t || !t.hasAttribute) return;
     if (t.hasAttribute('data-k') || t.hasAttribute('data-f')) t.setAttribute('data-touched', '1');
 
-    if (t.hasAttribute('data-off')) {                       // আইটেম লুকানো
-      var L = t.getAttribute('data-list'), i = +t.getAttribute('data-i');
-      if (S[L] && S[L][i]) S[L][i].off = t.checked;
-      renderLists();
-      renderAll();
-      return;
-    }
-    if (t.hasAttribute('data-hide')) {                      // ফিল্ড/অংশ লুকানো
-      S.hide[t.getAttribute('data-hide')] = t.checked;
-      renderAll();
-      return;
-    }
     if (t.hasAttribute('data-list')) {
       var list = t.getAttribute('data-list'), idx = +t.getAttribute('data-i');
       if (S[list] && S[list][idx]) S[list][idx][t.getAttribute('data-f')] = t.value;
