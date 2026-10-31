@@ -412,9 +412,8 @@ function dragPan(el,cv,xs,ys,get){let st=null;
 
 const TB=['card','frame','cv','routine','cgpa','exam','pdf','calc','result'];
 /* tab from the clean path /tools/<tab>; old #tab links are turned into that path */
-function curTab(){var m=location.pathname.match(/\/tools\/(\w+)\/?$/);return m?m[1]:location.hash.slice(1)}
-function goTab(h){if(curTab()!==h){try{history.pushState(null,'','/tools/'+h)}catch(e){}}go()}
-(function(){var g=location.hash.slice(1);if(TB.includes(g)){try{history.replaceState(null,'','/tools/'+g)}catch(e){}}})();
+function curTab(){return location.hash.slice(1)}
+function goTab(h){if(curTab()!==h)location.hash=h;go()}
 function go(){let h=curTab();if(!TB.includes(h))h='card';$$('main section').forEach(s=>s.classList.toggle('on',s.id==h));$$('.tabs button').forEach(b=>{const o=b.dataset.t==h;b.classList.toggle('on',o);b.setAttribute('aria-selected',o)});if(typeof cvFit=='function')cvFit();scrollTo(0,0);requestAnimationFrame(()=>scrollTo(0,0))}
 $$('.tabs button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));addEventListener('popstate',go);go();
 /* পোর্টাল ফ্রেম শুধু রেজাল্ট ট্যাব খোলা থাকলে লোড হবে */
@@ -422,9 +421,9 @@ function syncRF(){var f=document.getElementById('rf');if(!f)return;if(curTab()==
 addEventListener('popstate',syncRF);syncRF();
 /* এই পেজেই থাকা অবস্থায় মেনু/লিংকে ক্লিক করলে সবসময় ট্যাব বদলাবে */
 document.addEventListener('click',function(e){
-  var a=e.target.closest&&e.target.closest('a[href^="/tools/"]');
-  if(!a||!/^\/tools(\.html)?(\/\w+)?\/?$/.test(location.pathname))return;
-  var h=a.getAttribute('href').split('/').pop();
+  var a=e.target.closest&&e.target.closest('a[href^="/tools#"]');
+  if(!a||!/^\/tools(\.html)?\/?$/.test(location.pathname))return;
+  var h=a.getAttribute('href').split('#').pop();
   if(!h)return;
   e.preventDefault();
   goTab(h);
