@@ -10,32 +10,40 @@
   var root = document.documentElement;
 
   /* ---------- current page ---------- */
-  var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
-  if (!/\.html?$/.test(file)) file = "index.html";
+  /* maps a clean path (/cover/lab, /tools/cgpa, /blood) or an href to its page file */
+  function pageOfPath(p) {
+    p = String(p || "").split("#")[0].split("?")[0].replace(/\/+$/, "");
+    if (/^\/?cover(\/|\.html$|$)/.test(p)) return "cover.html";
+    if (/^\/?tools(\/|\.html$|$)/.test(p)) return "tools.html";
+    var last = (p.split("/").pop() || "").toLowerCase();
+    if (!last || last === "index.html") return "index.html";
+    return /\.html?$/.test(last) ? last : last + ".html";
+  }
+  var file = pageOfPath(location.pathname);
 
   function isCurrent(href) {
-    return href.split("#")[0] === file;
+    return pageOfPath(href) === file;
   }
 
   /* ---------- data ---------- */
   var NAV = [
-    { href: "index.html", label: "হোম" },
-    { href: "cover.html", label: "কভার পেজ" },
-    { href: "blood.html", label: "ডোনার" },
-    { href: "feedback.html", label: "মতামত" },
-    { href: "about.html", label: "আমাদের সম্পর্কে" }
+    { href: "/", label: "হোম" },
+    { href: "/cover", label: "কভার পেজ" },
+    { href: "/blood", label: "ডোনার" },
+    { href: "/feedback", label: "মতামত" },
+    { href: "/about", label: "আমাদের সম্পর্কে" }
   ];
 
   var TOOLS = [
-    { href: "tools.html#card", bn: "শেয়ার কার্ড", en: "Share Card" },
-    { href: "tools.html#routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
-    { href: "tools.html#cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
-    { href: "tools.html#exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
-    { href: "cv.html", bn: "সিভি বিল্ডার", en: "CV Builder" },
-    { href: "tools.html#frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
-    { href: "tools.html#pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
-    { href: "tools.html#calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
-    { href: "tools.html#result", bn: "রেজাল্ট", en: "Results Portal" }
+    { href: "/tools/card", bn: "শেয়ার কার্ড", en: "Share Card" },
+    { href: "/tools/routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
+    { href: "/tools/cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
+    { href: "/tools/exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
+    { href: "/cv", bn: "সিভি বিল্ডার", en: "CV Builder" },
+    { href: "/tools/frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
+    { href: "/tools/pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
+    { href: "/tools/calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
+    { href: "/tools/result", bn: "রেজাল্ট", en: "Results Portal" }
   ];
 
   var ICON_CHEVRON =
@@ -61,7 +69,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var active = file === "cover.html";
     var items = COVER_TYPES.map(function (t, i) {
       return (
-        '<a href="cover.html#' + t.v + '" role="menuitemradio" data-cvx-v="' + t.v + '" style="--i:' + i + '">' +
+        '<a href="/cover/' + t.v + '" role="menuitemradio" data-cvx-v="' + t.v + '" style="--i:' + i + '">' +
         '<span class="cvx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
         t.ic + "</svg></span>" +
         "<b><span class=\"cvx-bn\">" + esc(t.bn) + "</span><span class=\"cvx-en\">" + esc(t.en) + "</span></b></a>"
@@ -79,7 +87,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   /* ---------- header markup ---------- */
   function headerHTML() {
     var links = NAV.map(function (n) {
-      if (n.href === "cover.html") return coverDD();
+      if (n.href === "/cover") return coverDD();
       var cur = isCurrent(n.href) ? ' aria-current="page"' : "";
       return '<a href="' + n.href + '"' + cur + ">" + esc(n.label) + "</a>";
     });
@@ -102,7 +110,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     return (
       '<div class="dl-bar">' +
-      '<a class="dl-brand" href="index.html" aria-label="DCU Unofficial — হোম">' +
+      '<a class="dl-brand" href="/" aria-label="DCU Unofficial — হোম">' +
       '<img src="logo.png" alt="" width="38" height="38">' +
       '<span class="dl-brand-txt"><b>DCU</b><small>Core · শিক্ষার্থী টুলকিট</small></span></a>' +
       '<nav class="dl-nav" id="dlNav" aria-label="প্রধান নেভিগেশন">' + links.join("") + "</nav>" +
@@ -118,17 +126,17 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   /* ---------- footer markup ---------- */
   function footerHTML() {
     var toolLinks = [
-      ["cover.html", "কভার পেজ"],
-      ["cv.html", "সিভি বিল্ডার"],
-      ["tools.html#routine", "ক্লাস রুটিন"],
-      ["tools.html#cgpa", "CGPA ক্যালকুলেটর"],
-      ["tools.html#pdf", "PDF টুলকিট"]
+      ["/cover", "কভার পেজ"],
+      ["/cv", "সিভি বিল্ডার"],
+      ["/tools/routine", "ক্লাস রুটিন"],
+      ["/tools/cgpa", "CGPA ক্যালকুলেটর"],
+      ["/tools/pdf", "PDF টুলকিট"]
     ];
     var siteLinks = [
-      ["index.html", "হোম"],
-      ["blood.html", "ডোনার ডিরেক্টরি"],
-      ["feedback.html", "মতামত দিন"],
-      ["about.html", "আমাদের সম্পর্কে"]
+      ["/", "হোম"],
+      ["/blood", "ডোনার ডিরেক্টরি"],
+      ["/feedback", "মতামত দিন"],
+      ["/about", "আমাদের সম্পর্কে"]
     ];
     function col(title, list) {
       return (
@@ -239,12 +247,13 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       cvd.querySelector(".dl-menu-cvx").addEventListener("click", function (e) {
         var a = e.target.closest("a[data-cvx-v]");
         if (!a) return;
-        var file = (location.pathname.split("/").pop() || "").toLowerCase();
-        if (file === "cover.html" || file === "") {
+        if (file === "cover.html") {
           /* already on the cover page: pick the type here without a reload */
           e.preventDefault();
-          var t = document.querySelector('#ctList .ct-tab[data-v="' + a.getAttribute("data-cvx-v") + '"]');
+          var v = a.getAttribute("data-cvx-v");
+          var t = document.querySelector('#ctList .ct-tab[data-v="' + v + '"]');
           if (t) t.click();
+          try { history.pushState(null, "", "/cover/" + v); } catch (x) {}
           setCvd(false);
         }
       });
