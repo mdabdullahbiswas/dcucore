@@ -152,11 +152,16 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       "<div><b>DCU Unofficial</b>" +
       "<p>শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।</p>" +
       '<div class="dl-badges"><span>✓ ব্রাউজারে চলে</span><span>✓ সার্ভারে আপলোড নেই</span><span>✓ বিনামূল্যে</span></div>' +
-      '<div class="dl-foot-cta"><a class="dl-cta-main" href="/cover">কভার পেজ বানান <i aria-hidden="true">→</i></a>' +
-      '<a class="dl-cta-ghost" href="/tools#card">সব টুলস</a></div>' +
       "</div></div>" +
       col("টুলস", toolLinks) +
       col("সাইট", siteLinks) +
+      '<div class="dl-foot-dev"><h4>ডেভেলপার</h4>' +
+      '<a class="dl-dev-card" href="/about">' +
+      '<img src="devloper.jpg" alt="" width="54" height="54">' +
+      '<span class="dl-dev-txt"><b>মোঃ আব্দুল্লাহ বিশ্বাস</b>' +
+      '<small>Md Abdullah Biswas</small>' +
+      '<em>ওয়েব ডেভেলপার ও ওয়েব ডিজাইনার</em></span>' +
+      '<i aria-hidden="true">→</i></a></div>' +
       "</div>" +
       '<div class="dl-foot-bar"><span class="dl-copy">© <span data-dl-year></span> DCU Core <em>· শিক্ষার্থীদের জন্য, ❤</em></span>' +
       '<span class="dl-disc">এটি একটি শিক্ষার্থী-উদ্যোগ, কোনো সরকারি বা প্রাতিষ্ঠানিক ওয়েবসাইট নয়।</span></div>' +
