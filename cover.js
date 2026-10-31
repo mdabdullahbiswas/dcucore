@@ -2079,10 +2079,7 @@ update();
 "use strict";
 /* tab from the clean path /cover/<tab>; an old #tab link is turned into that path */
 function tabName(){
-  var m=location.pathname.match(/\/cover\/(\w+)\/?$/);if(m)return m[1];
-  var g=(location.hash||'').slice(1);
-  if(g){try{history.replaceState(null,'','/cover/'+g)}catch(e){}}
-  return g;
+  return (location.hash||'').slice(1);
 }
 function fromHash(){
   var v=tabName();if(!v)return;
