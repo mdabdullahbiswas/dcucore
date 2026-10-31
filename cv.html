@@ -55,12 +55,12 @@
       <section class="card s2">
         <h2 class="t">ব্যক্তিগত তথ্য|Personal details</h2>
         <div class="g2">
-          <label class="full"><span class="t">পূর্ণ নাম|Full name</span><input type="text" data-k="name" maxlength="60" autocomplete="name"></label>
-          <label class="full"><span class="t">পদবি / পেশাগত লক্ষ্য|Professional title / objective</span><input type="text" data-k="title" maxlength="90" autocomplete="off"></label>
-          <label><span class="t">ইমেইল|Email</span><input type="email" data-k="email" autocomplete="email"></label>
-          <label><span class="t">মোবাইল|Phone</span><input type="text" data-k="phone" autocomplete="tel"></label>
-          <label class="full"><span class="t">ঠিকানা|Address</span><input type="text" data-k="address" autocomplete="street-address"></label>
-          <label class="full"><span class="t">লিংক (LinkedIn, GitHub, পোর্টফোলিও) — প্রতি লাইনে একটি|Links (LinkedIn, GitHub, portfolio) — one per line</span><textarea rows="2" data-k="links"></textarea></label>
+          <label class="full"><span class="t">পূর্ণ নাম|Full name</span><input type="text" data-k="name" maxlength="60" autocomplete="name" data-ph="যেমন: Md. Rahim Uddin~e.g. Md. Rahim Uddin"></label>
+          <label class="full"><span class="t">পদবি / পেশাগত লক্ষ্য|Professional title / objective</span><input type="text" data-k="title" maxlength="90" autocomplete="off" data-ph="যেমন: Economics Graduate, Data Analyst~e.g. Economics Graduate, Data Analyst"></label>
+          <label><span class="t">ইমেইল|Email</span><input type="email" data-k="email" autocomplete="email" data-ph="যেমন: rahim@example.com~e.g. rahim@example.com"></label>
+          <label><span class="t">মোবাইল|Phone</span><input type="text" data-k="phone" autocomplete="tel" data-ph="যেমন: +880 1XXX-XXXXXX~e.g. +880 1XXX-XXXXXX"></label>
+          <label class="full"><span class="t">ঠিকানা|Address</span><input type="text" data-k="address" autocomplete="street-address" data-ph="যেমন: মিরপুর, ঢাকা~e.g. Mirpur, Dhaka"></label>
+          <label class="full"><span class="t">লিংক (LinkedIn, GitHub, পোর্টফোলিও) — প্রতি লাইনে একটি|Links (LinkedIn, GitHub, portfolio) — one per line</span><textarea rows="2" data-k="links" data-ph="যেমন: linkedin.com/in/your-name~e.g. linkedin.com/in/your-name"></textarea></label>
         </div>
         <div class="photo-row">
           <label class="photo-l"><span class="t">প্রোফাইল ছবি (ঐচ্ছিক)|Profile photo (optional)</span><input type="file" id="photo" accept="image/*"></label>
@@ -77,7 +77,7 @@
             <option value="1" class="t">অভিজ্ঞ পেশাজীবী|Experienced professional</option>
             <option value="2" class="t">গবেষণা ও একাডেমিক|Research &amp; academic</option>
           </select></label>
-        <label><span class="t">সারসংক্ষেপ|Summary</span><textarea rows="4" data-k="summary"></textarea></label>
+        <label><span class="t">সারসংক্ষেপ|Summary</span><textarea rows="4" data-k="summary" data-ph="যেমন: নিজের দক্ষতা ও লক্ষ্য ২–৩ লাইনে লিখুন~e.g. Two or three lines about your skills and goals"></textarea></label>
       </section>
 
       <section class="card s4">
@@ -97,10 +97,10 @@
 
       <section class="card s7">
         <h2 class="t">দক্ষতা ও অন্যান্য|Skills &amp; more</h2>
-        <label><span class="t">দক্ষতা (কমা দিয়ে আলাদা করুন)|Skills (comma separated)</span><input type="text" data-k="skills"></label>
-        <label><span class="t">ভাষাজ্ঞান (কমা দিয়ে আলাদা করুন)|Languages (comma separated)</span><input type="text" data-k="langs"></label>
-        <label><span class="t">অর্জন ও সনদ — প্রতি লাইনে একটি|Achievements &amp; certifications — one per line</span><textarea rows="3" data-k="ach"></textarea></label>
-        <label><span class="t">রেফারেন্স (ঐচ্ছিক) — প্রতি লাইনে একটি|References (optional) — one per line</span><textarea rows="2" data-k="refs"></textarea></label>
+        <label><span class="t">দক্ষতা (কমা দিয়ে আলাদা করুন)|Skills (comma separated)</span><input type="text" data-k="skills" data-ph="যেমন: Excel, SPSS, Teamwork~e.g. Excel, SPSS, Teamwork"></label>
+        <label><span class="t">ভাষাজ্ঞান (কমা দিয়ে আলাদা করুন)|Languages (comma separated)</span><input type="text" data-k="langs" data-ph="যেমন: বাংলা (মাতৃভাষা), English (Professional)~e.g. Bangla (Native), English (Professional)"></label>
+        <label><span class="t">অর্জন ও সনদ — প্রতি লাইনে একটি|Achievements &amp; certifications — one per line</span><textarea rows="3" data-k="ach" data-ph="যেমন: Dean&#39;s List 2024~e.g. Dean&#39;s List 2024"></textarea></label>
+        <label><span class="t">রেফারেন্স (ঐচ্ছিক) — প্রতি লাইনে একটি|References (optional) — one per line</span><textarea rows="2" data-k="refs" data-ph="যেমন: Prof. Karim, Dept. of Economics, 017XXXXXXXX~e.g. Prof. Karim, Dept. of Economics, 017XXXXXXXX"></textarea></label>
       </section>
 
       <div class="actions">
@@ -111,16 +111,18 @@
     </div>
 
     <!-- ================= লাইভ প্রিভিউ ================= -->
-    <aside class="pv card s8">
-      <div class="pv-h"><b class="t">লাইভ প্রিভিউ|Live preview</b><span class="pv-tag">A4</span></div>
+    <aside class="pv card s8" id="pv">
+      <div class="pv-h"><b class="t">লাইভ প্রিভিউ|Live preview</b><span class="pv-tag">A4</span><button type="button" class="pv-close" id="pvClose" aria-label="বন্ধ করুন · Close"><span class="t">বন্ধ করুন|Close</span></button></div>
       <div id="sheetWrap" class="pv-box" data-fit><div id="sheet" class="cvs"></div></div>
       <div class="warn" id="warn" hidden></div>
-      <button type="button" class="btn pri wide" id="pdf"><span class="t">PDF ডাউনলোড / প্রিন্ট|Download PDF / Print</span></button>
-      <p class="hint t">প্রিন্ট ডায়ালগে “Save as PDF” বেছে নিন। লেখা নির্বাচনযোগ্য ও ATS-বান্ধব থাকবে।|In the print dialog choose “Save as PDF”. The text stays selectable and ATS-friendly.</p>
+      <button type="button" class="btn pri wide" id="pdf"><span class="t">PDF ডাউনলোড|Download PDF</span></button>
+      <p class="hint t">ডাউনলোড চাপলে সেভ ডায়ালগ আসবে, সেখানে “Save as PDF” বেছে নিন। লেখা নির্বাচনযোগ্য ও ATS-বান্ধব থাকবে।|Click Download, then choose “Save as PDF” in the dialog. The text stays selectable and ATS-friendly.</p>
       <p class="hint t">আপনার তথ্য শুধু এই ব্রাউজারে সংরক্ষিত থাকে, কোনো সার্ভারে যায় না।|Your data stays in this browser only and is never uploaded.</p>
     </aside>
   </div>
 </main>
+
+<button type="button" class="pv-fab" id="pvFab" aria-expanded="false" aria-controls="pv"><span class="t">লাইভ প্রিভিউ|Live preview</span></button>
 
 <div id="ftr"></div>
 </body>
