@@ -256,6 +256,41 @@ input:focus,textarea:focus,select:focus{
 .ctab .pv-box{width:100%}
 .pv-box>.cvs{position:absolute;left:0;top:0;transform-origin:0 0}
 
+/* ---------- টেমপ্লেট নির্বাচন কার্ড (ট্যাপ করলে গ্যালারি) ---------- */
+.tpl-card{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;
+  width:100%;margin:0;text-align:left;font:inherit;color:var(--ink);cursor:pointer;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:18px;padding:12px 14px;min-height:44px;
+  box-shadow:0 1px 2px rgba(15,23,42,.05);
+  transition:transform .25s var(--ease),border-color .25s var(--ease),box-shadow .25s var(--ease);
+}
+@media (hover:hover){
+  .tpl-card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 16px 30px -18px var(--accent)}
+}
+.tpl-card:active{transform:scale(.985)}
+.tpl-card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.tc-stack{position:relative;display:block;width:84px;height:110px;flex:none}
+.tc-pg{position:absolute;left:0;top:0;width:76px;height:106px;background:#fff;border-radius:7px;box-shadow:0 6px 14px rgba(15,23,42,.18)}
+.tc-b{transform:rotate(-10deg) translate(-4px,3px);opacity:.75}
+.tc-m{transform:rotate(6deg) translate(6px,-2px);opacity:.9}
+.tc-f{position:absolute;left:4px;top:2px;width:76px;height:106px;overflow:hidden;border-radius:7px;background:#fff;box-shadow:0 8px 18px rgba(15,23,42,.22)}
+.tc-f .pv-box{width:76px;box-shadow:none;border-radius:0;background:#fff}
+.tc-txt{display:grid;gap:4px;min-width:0}
+.tc-txt>b{font-size:17px;line-height:1.3;color:var(--ink)}
+.tc-txt>small{font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+.tc-th{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--accent-deep);margin-top:2px}
+.tc-th .sw-c{width:18px;height:18px}
+.tc-go{
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;align-self:center;
+  background:var(--accent-grad);color:#fff;font-size:14px;font-weight:700;border-radius:99px;
+  padding:10px 16px;min-height:44px;box-shadow:0 12px 22px -12px var(--accent);
+}
+.tc-go svg{width:18px;height:18px;flex:none}
+@media (max-width:420px){
+  .tpl-card{grid-template-columns:auto minmax(0,1fr)}
+  .tc-go{grid-column:1/-1;justify-self:stretch;justify-content:center}
+}
+
 /* ---------- গ্যালারি (পূর্ণ স্ক্রিন) ---------- */
 .gal{
   position:fixed;inset:0;z-index:90;display:flex;flex-direction:column;background:var(--bg);
