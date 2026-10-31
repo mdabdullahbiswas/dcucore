@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn" data-ui="brand">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="CV Studio · সিভি স্টুডিও — ৬টি টেমপ্লেট, রঙের থিম, লাইভ A4 প্রিভিউ ও PDF ডাউনলোড।">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0b1f3a">
+<title>CV Studio · সিভি স্টুডিও</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="cv.css">
+<script src="dcu-layout.js" defer></script>
+<script src="dcu-lang.js" defer></script>
+<script src="cv.js" defer></script>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+</head>
+<body>
+<div id="hdr"></div>
+
+<main class="app">
+  <div class="hero">
+    <h1 class="t">সিভি স্টুডিও|CV Studio</h1>
+    <p class="t">তথ্য পূরণ করুন, পাশে A4 সিভি তৈরি হতে দেখুন, তারপর PDF নামান।|Fill in the form, watch your A4 CV build itself, then download it as a PDF.</p>
+  </div>
+
+  <div class="studio">
+    <!-- ================= ফর্ম ================= -->
+    <div class="ctl">
+
+      <section class="card">
+        <h2 class="t">টেমপ্লেট ও ডিজাইন|Template &amp; design</h2>
+        <div class="tpls" id="tplGrid" role="radiogroup" aria-label="Template · টেমপ্লেট"></div>
+
+        <label><span class="t">রঙের থিম|Colour theme</span></label>
+        <div class="sws" id="themes"></div>
+        <div class="g2 cust">
+          <label><span class="t">প্রাথমিক রং|Primary colour</span><input type="color" id="cPri" data-col="p"></label>
+          <label><span class="t">অ্যাকসেন্ট রং|Accent colour</span><input type="color" id="cAcc" data-col="a"></label>
+        </div>
+
+        <div class="g2">
+          <label><span class="t">ফন্ট|Font style</span>
+            <select data-k="font"><option value="serif" class="t">সেরিফ|Serif</option><option value="sans" class="t">সানস|Sans-serif</option></select></label>
+          <label><span class="t">সিভির ভাষা|CV language</span>
+            <select data-k="lang"><option value="en">English</option><option value="bn">বাংলা</option></select></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="t">ব্যক্তিগত তথ্য|Personal details</h2>
+        <div class="g2">
+          <label class="full"><span class="t">পূর্ণ নাম|Full name</span><input type="text" data-k="name" maxlength="60" autocomplete="name"></label>
+          <label class="full"><span class="t">পদবি / পেশাগত লক্ষ্য|Professional title / objective</span><input type="text" data-k="title" maxlength="90" autocomplete="off"></label>
+          <label><span class="t">ইমেইল|Email</span><input type="email" data-k="email" autocomplete="email"></label>
+          <label><span class="t">মোবাইল|Phone</span><input type="text" data-k="phone" autocomplete="tel"></label>
+          <label class="full"><span class="t">ঠিকানা|Address</span><input type="text" data-k="address" autocomplete="street-address"></label>
+          <label class="full"><span class="t">লিংক (LinkedIn, GitHub, পোর্টফোলিও) — প্রতি লাইনে একটি|Links (LinkedIn, GitHub, portfolio) — one per line</span><textarea rows="2" data-k="links"></textarea></label>
+        </div>
+        <div class="photo-row">
+          <label class="photo-l"><span class="t">প্রোফাইল ছবি (ঐচ্ছিক)|Profile photo (optional)</span><input type="file" id="photo" accept="image/*"></label>
+          <button type="button" class="btn" id="photoRm"><span class="t">ছবি সরান|Remove photo</span></button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="t">পেশাগত সারসংক্ষেপ|Professional summary</h2>
+        <label><span class="t">নমুনা থেকে বেছে নিন (ঐচ্ছিক)|Pick a sample (optional)</span>
+          <select id="sumPick">
+            <option value="" class="t">— নমুনা নির্বাচন করুন|— Select a sample —</option>
+            <option value="0" class="t">সদ্য স্নাতক|Recent graduate</option>
+            <option value="1" class="t">অভিজ্ঞ পেশাজীবী|Experienced professional</option>
+            <option value="2" class="t">গবেষণা ও একাডেমিক|Research &amp; academic</option>
+          </select></label>
+        <label><span class="t">সারসংক্ষেপ|Summary</span><textarea rows="4" data-k="summary"></textarea></label>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 class="t">কর্ম অভিজ্ঞতা|Work experience</h2><button type="button" class="btn sm" data-add="exp"><span class="t">+ যোগ করুন|+ Add</span></button></div>
+        <div class="reps" id="list-exp"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 class="t">শিক্ষাগত যোগ্যতা|Education</h2><button type="button" class="btn sm" data-add="edu"><span class="t">+ যোগ করুন|+ Add</span></button></div>
+        <div class="reps" id="list-edu"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-h"><h2 class="t">প্রজেক্ট|Projects</h2><button type="button" class="btn sm" data-add="proj"><span class="t">+ যোগ করুন|+ Add</span></button></div>
+        <div class="reps" id="list-proj"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="t">দক্ষতা ও অন্যান্য|Skills &amp; more</h2>
+        <label><span class="t">দক্ষতা (কমা দিয়ে আলাদা করুন)|Skills (comma separated)</span><input type="text" data-k="skills"></label>
+        <label><span class="t">ভাষাজ্ঞান (কমা দিয়ে আলাদা করুন)|Languages (comma separated)</span><input type="text" data-k="langs"></label>
+        <label><span class="t">অর্জন ও সনদ — প্রতি লাইনে একটি|Achievements &amp; certifications — one per line</span><textarea rows="3" data-k="ach"></textarea></label>
+        <label><span class="t">রেফারেন্স (ঐচ্ছিক) — প্রতি লাইনে একটি|References (optional) — one per line</span><textarea rows="2" data-k="refs"></textarea></label>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn" id="sample"><span class="t">নমুনা তথ্য|Sample data</span></button>
+        <button type="button" class="btn" id="clear"><span class="t">সব মুছুন|Clear all</span></button>
+        <button type="button" class="btn" id="reset"><span class="t">রিসেট|Reset</span></button>
+      </div>
+    </div>
+
+    <!-- ================= লাইভ প্রিভিউ ================= -->
+    <aside class="pv card">
+      <div class="pv-h"><b class="t">লাইভ প্রিভিউ|Live preview</b><span class="pv-tag">A4</span></div>
+      <div id="sheetWrap" class="pv-box" data-fit><div id="sheet" class="cvs"></div></div>
+      <div class="warn" id="warn" hidden></div>
+      <button type="button" class="btn pri wide" id="pdf"><span class="t">PDF ডাউনলোড / প্রিন্ট|Download PDF / Print</span></button>
+      <p class="hint t">প্রিন্ট ডায়ালগে “Save as PDF” বেছে নিন। লেখা নির্বাচনযোগ্য ও ATS-বান্ধব থাকবে।|In the print dialog choose “Save as PDF”. The text stays selectable and ATS-friendly.</p>
+      <p class="hint t">আপনার তথ্য শুধু এই ব্রাউজারে সংরক্ষিত থাকে, কোনো সার্ভারে যায় না।|Your data stays in this browser only and is never uploaded.</p>
+    </aside>
+  </div>
+</main>
+
+<div id="ftr"></div>
+</body>
+</html>
