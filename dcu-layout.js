@@ -155,15 +155,8 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       "</div></div>" +
       col("টুলস", toolLinks) +
       col("সাইট", siteLinks) +
-      '<div class="dl-foot-dev"><h4>ডেভেলপার</h4>' +
-      '<a class="dl-dev-card" href="/about">' +
-      '<img src="devloper.jpg" alt="" width="54" height="54">' +
-      '<span class="dl-dev-txt"><b>মোঃ আব্দুল্লাহ বিশ্বাস</b>' +
-      '<small>Md Abdullah Biswas</small>' +
-      '<em>ওয়েব ডেভেলপার ও ওয়েব ডিজাইনার</em></span>' +
-      '<i aria-hidden="true">→</i></a></div>' +
       "</div>" +
-      '<div class="dl-foot-bar"><span class="dl-copy">© <span data-dl-year></span> DCU Core <em>· শিক্ষার্থীদের জন্য, ❤</em></span>' +
+      '<div class="dl-foot-bar"><span class="dl-copy">© <span data-dl-year></span> DCU Core · Developer by <a class="dl-dev-link" href="/about">Md Abdullah Biswas</a></span>' +
       '<span class="dl-disc">এটি একটি শিক্ষার্থী-উদ্যোগ, কোনো সরকারি বা প্রাতিষ্ঠানিক ওয়েবসাইট নয়।</span></div>' +
       "</footer>"
     );
