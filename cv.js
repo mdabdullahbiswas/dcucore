@@ -42,14 +42,20 @@
   /* repeater সংজ্ঞা: [field, label, isTextarea] */
   var REP = {
     exp:  { add: 'অভিজ্ঞতা যোগ|Add experience', f: [
-      ['t', 'পদবি|Role / position'], ['s', 'প্রতিষ্ঠান|Organisation'],
-      ['p', 'সময়কাল|Period'], ['d', 'কাজের বিবরণ (প্রতি লাইনে একটি)|Details (one point per line)', 1]] },
+      ['t', 'পদবি|Role / position', 0, 'যেমন: Research Assistant~e.g. Research Assistant'],
+      ['s', 'প্রতিষ্ঠান|Organisation', 0, 'যেমন: ABC Research Institute~e.g. ABC Research Institute'],
+      ['p', 'সময়কাল|Period', 0, 'যেমন: জুন ২০২৫ – আগস্ট ২০২৫~e.g. Jun 2025 – Aug 2025'],
+      ['d', 'কাজের বিবরণ (প্রতি লাইনে একটি)|Details (one point per line)', 1, 'যেমন: জরিপের তথ্য বিশ্লেষণ করেছি~e.g. Analysed survey data']] },
     edu:  { add: 'শিক্ষা যোগ|Add education', f: [
-      ['t', 'ডিগ্রি / পরীক্ষা|Degree / exam'], ['s', 'প্রতিষ্ঠান|Institution'],
-      ['p', 'সময়কাল|Period'], ['d', 'ফলাফল / বিবরণ|Result / details', 1]] },
+      ['t', 'ডিগ্রি / পরীক্ষা|Degree / exam', 0, 'যেমন: BSS (Honours) in Economics~e.g. BSS (Honours) in Economics'],
+      ['s', 'প্রতিষ্ঠান|Institution', 0, 'যেমন: Dhaka University~e.g. Dhaka University'],
+      ['p', 'সময়কাল|Period', 0, 'যেমন: ২০২২ – ২০২৬~e.g. 2022 – 2026'],
+      ['d', 'ফলাফল / বিবরণ|Result / details', 1, 'যেমন: CGPA 3.50~e.g. CGPA 3.50']] },
     proj: { add: 'প্রজেক্ট যোগ|Add project', f: [
-      ['t', 'প্রজেক্টের নাম|Project name'], ['s', 'প্রযুক্তি / লিংক|Tech / link'],
-      ['p', 'সময়কাল|Period'], ['d', 'বিবরণ (প্রতি লাইনে একটি)|Details (one point per line)', 1]] }
+      ['t', 'প্রজেক্টের নাম|Project name', 0, 'যেমন: Household Income Survey~e.g. Household Income Survey'],
+      ['s', 'প্রযুক্তি / লিংক|Tech / link', 0, 'যেমন: Excel, SPSS~e.g. Excel, SPSS'],
+      ['p', 'সময়কাল|Period', 0, 'যেমন: ২০২৫~e.g. 2025'],
+      ['d', 'বিবরণ (প্রতি লাইনে একটি)|Details (one point per line)', 1, 'যেমন: ২০০ পরিবারের তথ্য বিশ্লেষণ~e.g. Analysed data of 200 households']] }
   };
 
   var SUMS = [
@@ -61,7 +67,7 @@
      'গবেষণামুখী শিক্ষার্থী, যার তথ্য সংগ্রহ, বিশ্লেষণ ও একাডেমিক লেখালেখির অভিজ্ঞতা রয়েছে। প্রমাণভিত্তিক কাজ ও নিরন্তর শেখার প্রতি অঙ্গীকারবদ্ধ।']
   ];
 
-  var DEF = {
+  var BLANK = {
     tpl: 'classic', th: 'navy', pc: '', ac: '', font: 'serif', lang: 'en',
     name: '', title: '', email: '', phone: '', address: '', links: '', photo: '',
     summary: '', skills: '', langs: '', ach: '', refs: '',
@@ -93,8 +99,11 @@
     ach: "Dean's List 2024\nCertificate in Data Analysis (Online Course)",
     refs: ''
   };
+  /* প্রথমবার ও রিসেটে নমুনা তথ্য থাকে; ব্যবহারকারীর পরিবর্তন সেভ হয় */
+  var DEF = Object.assign(clone(BLANK), clone(SAMPLE));
 
   /* ---------- helpers ---------- */
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -102,7 +111,6 @@
   }
   function trim(x) { return String(x == null ? '' : x).trim(); }
   function lines(s) { return String(s || '').split('\n').map(trim).filter(Boolean); }
-  function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function isEn() { return document.documentElement.getAttribute('data-lang') === 'en'; }
 
   var S = clone(DEF);
@@ -257,14 +265,16 @@
           var key = f[0], ta = f[2];
           var attrs = ' data-list="' + k + '" data-i="' + i + '" data-f="' + key + '"';
           var val = esc(it[key] || '');
+          var ph = ' data-ph="' + esc(f[3] || '') + '"';
           return '<label class="' + (ta ? 'wide' : '') + '"><span class="t">' + f[1] + '</span>' +
-                 (ta ? '<textarea rows="2"' + attrs + '>' + val + '</textarea>'
-                     : '<input type="text"' + attrs + ' value="' + val + '">') + '</label>';
+                 (ta ? '<textarea rows="2"' + attrs + ph + '>' + val + '</textarea>'
+                     : '<input type="text"' + attrs + ph + ' value="' + val + '">') + '</label>';
         }).join('');
         return '<div class="rep"><div class="rep-g">' + fields + '</div>' +
                '<button type="button" class="rep-x" data-del="' + k + '" data-i="' + i + '" aria-label="Remove · মুছুন">×</button></div>';
       }).join('');
     });
+    setPlaceholders();
   }
 
   function syncForm() {
@@ -310,7 +320,6 @@
   function applySample() {
     var keep = { tpl: S.tpl, th: S.th, pc: S.pc, ac: S.ac, font: S.font, photo: S.photo };
     S = clone(DEF);
-    Object.keys(SAMPLE).forEach(function (k) { S[k] = clone(SAMPLE[k]); });
     Object.keys(keep).forEach(function (k) { S[k] = keep[k]; });
     S.lang = 'en';
     syncForm();
@@ -320,7 +329,7 @@
   function clearAll() {
     if (!window.confirm('সিভির সব তথ্য মুছবেন?  ·  Clear all CV details?')) return;
     var keep = { tpl: S.tpl, th: S.th, pc: S.pc, ac: S.ac, font: S.font, lang: S.lang };
-    S = clone(DEF);
+    S = clone(BLANK);
     Object.keys(keep).forEach(function (k) { S[k] = keep[k]; });
     syncForm();
     renderAll();
@@ -421,7 +430,17 @@
     if (t.closest && t.closest('#clear')) { clearAll(); return; }
     if (t.closest && t.closest('#reset')) { resetAll(); return; }
     if (t.closest && t.closest('#pdf')) { printPdf(); return; }
+    if (t.closest && t.closest('#pvFab')) { setPreview(true); return; }
+    if (t.closest && t.closest('#pvClose')) { setPreview(false); return; }
   });
+
+  /* মোবাইলে লাইভ প্রিভিউ (পূর্ণ স্ক্রিন) */
+  function setPreview(open) {
+    var pv = $('pv'), fab = $('pvFab');
+    pv.classList.toggle('open', open);
+    fab.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) { fitAll(); pv.scrollTop = 0; }
+  }
 
   /* print → Save as PDF; গুরুত্বপূর্ণ: শুধু A4 শিট ছাপা হয় (CSS @media print) */
   var titleBefore = null;
@@ -439,7 +458,7 @@
   /* ---------- language + placeholders ---------- */
   function setPlaceholders() {
     document.querySelectorAll('[data-ph]').forEach(function (el) {
-      var parts = el.getAttribute('data-ph').split('|');
+      var parts = el.getAttribute('data-ph').split('~');
       el.placeholder = isEn() ? parts[1] : parts[0];
     });
   }
