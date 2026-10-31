@@ -1,4 +1,9 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/(cover|tools)/(.+\\.(?:js|css|png|jpe?g|svg|webp|ico|json|woff2?|txt|webmanifest))", "destination": "/$2" },
+    { "source": "/cover/:tab", "destination": "/cover.html" },
+    { "source": "/tools/:tab", "destination": "/tools.html" }
+  ]
 }
