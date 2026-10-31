@@ -2074,14 +2074,21 @@ update();
  fill();
 })();
 
-/* Header menu links look like cover.html#lab: open that cover type (on load and on hash change) */
+/* Header menu links look like /cover/lab: open that cover type (on load and on hash change) */
 ;(function(){
 "use strict";
+/* tab from the clean path /cover/<tab>; an old #tab link is turned into that path */
+function tabName(){
+  var m=location.pathname.match(/\/cover\/(\w+)\/?$/);if(m)return m[1];
+  var g=(location.hash||'').slice(1);
+  if(g){try{history.replaceState(null,'','/cover/'+g)}catch(e){}}
+  return g;
+}
 function fromHash(){
-  var v=(location.hash||'').slice(1);if(!v)return;
+  var v=tabName();if(!v)return;
   var t=document.querySelector('#ctList .ct-tab[data-v="'+v+'"]');
   if(t&&t.getAttribute('aria-checked')!=='true')t.click();
 }
-window.addEventListener('hashchange',fromHash);
+window.addEventListener('popstate',fromHash);
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fromHash);else fromHash();
 })();
