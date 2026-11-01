@@ -815,8 +815,8 @@ $('#rqN').onclick=()=>{RS.qs=RS.qs===false;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rdN').onclick=()=>{RS.ds=RS.ds!==true;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rlogo').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bmp=await createImageBitmap(f);const k=Math.min(1,300/Math.max(bmp.width,bmp.height));const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(bmp.width*k));cv.height=Math.max(1,Math.round(bmp.height*k));cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);RS.logo=cv.toDataURL('image/png');sv('dcuRtS',RS);RIok=false;RI.src=RS.logo;syncRS();say('rlmsg',L('লোগো যোগ হয়েছে।|Logo added.'))}catch(err){say('rlmsg',L('এই ফাইলটি লোগো হিসেবে ব্যবহার করা যায়নি।|This file could not be used as a logo.'))}finally{e.target.value=''}};
 $('#rlrm').onclick=()=>{RS.logo='';sv('dcuRtS',RS);syncRS();say('rlmsg',L('লোগো সরানো হয়েছে।|Logo removed.'));rtP()};
-function rtP(nl){
- const c=$('#rcv');if(!c)return;rtHits=[];
+function rtP(nl,SS){
+ const c=$('#rcv');if(!c)return;rtHits=[];const S=SS||1;
  const CM=subjMap(),colOf=r0=>{const k=cKey(r0),h0=RC[k]||subjHex((CM.get(k)||{idx:0}).idx);return{bg:mix(h0,255,.88),bar:h0,ink:mix(h0,0,.35)}};
  const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),gd=(new Date().getDay()+1)%7;
  const sl=[];R.forEach(r=>{if(!sl.some(a=>a.s==r.s&&a.e==r.e))sl.push({s:r.s,e:r.e})});sl.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
@@ -826,7 +826,8 @@ function rtP(nl){
  const lw=150,bw=96,nS=cols.filter(a=>!a.brk).length,nB=cols.filter(a=>a.brk).length;
  let cw=Math.max(150,Math.min(260,Math.floor((1050-lw-nB*bw)/nS)));if(lw+nS*cw+nB*bw<760)cw=Math.ceil((760-lw-nB*bw)/nS);
  const TW=lw+nS*cw+nB*bw,W=Math.max(1130,TW+80),M=(W-TW)/2,RH=100,HD=312,TH=74,FT=210,H=Math.max(800,HD+TH+days.length*RH+FT);
- c.width=W;c.height=H;const x=c.getContext('2d');x.textBaseline='alphabetic';
+ /* ডাউনলোড/PDF-এর সময় S বেশি দিলে ক্যানভাস বেশি রেজোলিউশনে আঁকা হয়, ফলে জুম করলেও লেখা ঝকঝকে থাকে; CSS সাইজ অপরিবর্তিত থাকে */
+ c.width=W*S;c.height=H*S;const x=c.getContext('2d');x.setTransform(S,0,0,S,0,0);x.textBaseline='alphabetic';
  const NV='#0a2240',NV2='#14386b',GD='#d4af37',GL='#e8c46c',GDK='#8a5f0a';
  const rr=(a,b,w,h,r)=>{x.beginPath();x.roundRect(a,b,w,h,r)};
  const T=(t,a,b,ft,col,al,mw)=>{x.font=ft+' '+f;x.fillStyle=col;x.textAlign=al||'left';if(mw)x.fillText(t,a,b,mw);else x.fillText(t,a,b)};
@@ -916,10 +917,12 @@ $('#rba').onclick=()=>{const n=$('#rbn').value.trim()||L('বিরতি|Break'
  if(!s||!e||tm(e)<=tm(s))return w.textContent=L('শুরু ও শেষের সময় সঠিকভাবে দিন।|Enter a valid start and end time.');
  RB.push({n,s,e});w.textContent='';$('#rbn').value=$('#rbs').value=$('#rbe').value='';rbR()};
 rbR();
-const rB=async fn=>{try{return await fn()}catch(e){rtP(1);return await fn()}};
-$('#rpn').onclick=async()=>{try{rtP();dlBlob(await rB(()=>mkBlob($('#rcv'))),'class-routine.png')}catch(e){say('rmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{rtP()}};
+const rB=async(fn,S)=>{try{return await fn()}catch(e){rtP(1,S);return await fn()}};
+/* ডাউনলোড/PDF জুম করলেও যেন ঝকঝকে থাকে, তাই বেশি রেজোলিউশনে আঁকা হয়; কম-শক্তির ডিভাইসে একটু কম */
+const PSC=(()=>{try{const m=navigator.deviceMemory||8,cc=navigator.hardwareConcurrency||8;return(m<=4||cc<=4)?2:3}catch(e){return 2}})();
+$('#rpn').onclick=async()=>{try{rtP(0,PSC);dlBlob(await rB(()=>mkBlob($('#rcv')),PSC),'class-routine.png')}catch(e){say('rmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{rtP()}};
 $('#rsh').onclick=async()=>{try{rtP();await shareImg($('#rcv'),null,'class-routine.png',RS.t||L('ক্লাস রুটিন|Class routine'),'rmsg')}catch(e){say('rmsg',L('শেয়ার করা যায়নি।|Could not share.'))}};
-$('#rpf').onclick=async()=>{try{rtP();const jp=await rB(()=>jb($('#rcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv');
+$('#rpf').onclick=async()=>{try{rtP(0,PSC);const jp=await rB(()=>jb($('#rcv'),.92),PSC),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv');
  /* A4 সাইজের বাইরে যাবে না; কনটেন্টের আকার অনুযায়ী পোর্ট্রেট বা ল্যান্ডস্কেপ বাছা হয় */
  const landscape=c.width>=c.height,pw=landscape?841.89:595.28,ph=landscape?595.28:841.89,mg=22,aw=pw-mg*2,ah=ph-mg*2,sc=Math.min(aw/c.width,ah/c.height),dw=c.width*sc,dh=c.height*sc,dx=(pw-dw)/2,dy=(ph-dh)/2;
  d.addPage([pw,ph]).drawImage(im,{x:dx,y:dy,width:dw,height:dh});pdl(await d.save(),'class-routine.pdf')}catch(e){say('rmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{rtP()}};
