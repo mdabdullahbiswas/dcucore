@@ -172,7 +172,14 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine .bx.rt-pre{opacity:0;transform:translateY(22px) scale(.985)}
 #routine .bx.rt-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
 #routine .bx>h2{color:var(--accent-deep)}
-#rtoday>h2::before{content:"📅"}
+#rtoday>h2::before{content:"📅";counter-increment:0}
+/* "রুটিনের শিরোনাম ও তথ্য" প্যানেলেও সেক্টর-নম্বর ব্যাজ যোগ (h2 নেই বলে আলাদা করে দিতে হচ্ছে) */
+#routine details.bx2>summary.t::before{counter-increment:sec;content:counter(sec);display:inline-grid;place-items:center;width:28px;height:28px;margin-right:10px;border-radius:50%;background:var(--accent-grad);color:#fff;font:800 14px/1 'Cinzel',serif;vertical-align:middle;text-shadow:0 1px 2px rgba(0,0,0,.25);box-shadow:0 0 0 4px var(--accent-soft)}
+#routine details.bx2{border:1px solid var(--border,#E2E8F0);border-radius:14px;padding:14px 16px}
+#routine details.bx2>summary.t{display:flex;align-items:center;color:var(--accent-deep)}
+/* লাইভ প্রিভিউ শিরোনাম: নম্বর ব্যাজ বাদ, বদলে লাইভ-পালস ডট */
+.rt-pvtitle{display:flex;align-items:center;gap:10px;letter-spacing:.01em}
+#rtPv .rt-pvtitle::before{content:"";counter-increment:0;width:10px;height:10px;margin:0;border-radius:50%;background:#10B981;box-shadow:0 0 0 0 rgba(16,185,129,.55);animation:rtLive 1.8s ease-out infinite;flex:none}
 #routine .bt{position:relative;overflow:hidden;background:var(--brand-grad,linear-gradient(135deg,#E8C46C,#D4AF37 45%,#B98A2C));color:#0a2240;border:0;border-radius:12px;font-weight:700;box-shadow:0 10px 22px -10px rgba(185,138,44,.8);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,filter .25s}
 #routine .bt::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);pointer-events:none;animation:rtShine 4.5s 1.2s ease-in-out infinite}
 #routine .bt:hover{transform:translateY(-2px);box-shadow:0 16px 28px -12px rgba(185,138,44,.85);filter:brightness(1.04)}
@@ -325,7 +332,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 </div>
 <aside class="rt-pv" id="rtPv">
 <div class="rt-pvhead"><b class="t">লাইভ প্রিভিউ|Live preview</b><button type="button" class="bs t" id="rtPvClose">বন্ধ|Close</button></div>
-<div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine<span class="rt-badge" aria-hidden="true">✨ PRO</span></h2>
+<div class="bx"><h2 class="t rt-pvtitle">লাইভ প্রিভিউ|Live preview</h2>
 
 <div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div><p class="hint t" style="margin:8px 0 0">ক্লাসের ঘরে ক্লিক করলে ফর্মে এডিট করা যাবে।|Click a class block to edit it in the form.</p>
 <div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" id="rsh">শেয়ার|Share</button></div><p class="hint" id="rmsg" role="status"></p>
