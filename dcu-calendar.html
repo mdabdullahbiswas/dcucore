@@ -381,6 +381,17 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 .xnh .xrb:focus-visible{outline:2px solid var(--gold-light,#fde68a);outline-offset:2px}
 @media(hover:none){.xnh .xrb:hover{transform:none}.xnh .xrb:hover i{transform:none}}
 @media print{.xnh .xrb i{display:none}}
+
+/* ===== Month tabs: full names, active month centered ===== */
+.tabs{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none;padding:6px 0 14px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;min-width:auto;white-space:nowrap;overflow:visible;padding:8px 16px;font-weight:600;border-radius:14px}
+@media(max-width:720px){
+ .tabs{padding-left:calc(50% - 46px);padding-right:calc(50% - 46px);margin:0 -14px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)}
+ .tabs button.on{transform:scale(1.06)}
+}
+@media(min-width:721px){.tabs{justify-content:safe center}}
 </style>
 </head>
 <body>
@@ -507,14 +518,21 @@ function month(y,m){const n=new Date(y,m+1,0).getDate(),st=new Date(y,m,1).getDa
  return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${scene(sc,0)}${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><h2>${GM[m][L=='bn'?0:1]} ${nb(y)}</h2><p>${rng(y,m)}</p><p style="opacity:.9">🌿 ${BM[bi][L=='bn'?0:1]} • ${SN[sc][L=='bn'?0:1]}</p></div></div><div class="g">${g}</div>
  <div class="ls"><h4>📌 ${T('এই মাসের ছুটি ও কারণ','Holidays & reasons')} <small style="color:var(--mut);font-weight:400">(${T('সাপ্তাহিক','weekends')}: ${nb(wk)})</small></h4>${list||`<small style="color:var(--mut)">${T('শুধু সাপ্তাহিক ছুটি (শুক্র-শনি)','Only weekends (Fri–Sat)')}</small>`}</div><div class="pt">${URL_}</div></div></section>`}
 function render(){const A=$('#all');A.innerHTML=Array.from({length:12},(_,i)=>month(Y,i)).join('');A.className=YV?'yr':'';sel(M,true);document.body.classList.toggle('isl',!!info(new Date()).isl);
- $('#tb').innerHTML=GM.map((g,i)=>`<button class="${i==M?'on':''}" data-i="${i}" style="--ac2:${AC[MAPG[bn(new Date(Y,i,16)).m]]}">${g[L=='bn'?0:1]}</button>`).join('');
+ $('#tb').innerHTML=GM.map((g,i)=>`<button class="${i==M?'on':''}" data-i="${i}" style="--ac2:${AC[MAPG[bn(new Date(Y,i,16)).m]]}">${g[L=='bn'?0:1]}</button>`).join('');requestAnimationFrame(()=>ctab(0));
  $('#sub').textContent=T('ঢাকা সেন্ট্রাল ইউনিভার্সিটি • স্টুডেন্ট ক্যালেন্ডার','Dhaka Central University • Student Calendar');
  $('#vw').textContent=YV?T('মাসিক','Monthly'):T('পুরো বছর','Full year');$('#pr').textContent='🖨 '+T('প্রিন্ট','Print');$('#dk').textContent=document.documentElement.dataset.th=='dark'?'☀️':'🌙';$('#lg').textContent=L=='bn'?'EN':'বাং';
  $('#lgd').innerHTML=`<span><i style="background:var(--wk)"></i>${T('শুক্র-শনি সাপ্তাহিক ছুটি','Fri–Sat weekend')}</span><span><i style="background:var(--hol)"></i>${T('সরকারি/বিশ্ববিদ্যালয় ছুটি','Public / University holiday')}</span><span><i style="background:var(--isl)"></i>${T('রমজান মাস','Ramadan')}</span><span>${T('নিচের বামে: বাংলা তারিখ • ডানে: আরবি/হিজরি','Bottom-left: Bangla • right: Hijri')}</span>`;
  $('#pf').innerHTML=`🌐 <a href="https://${URL_}">${URL_}</a><br><small>${T('ইসলামিক তারিখ চাঁদ দেখার উপর ১ দিন এদিক-ওদিক হতে পারে।','Islamic dates may shift by a day with moon sighting.')}</small><br><small>${T('হিজরি সমন্বয়','Hijri adj')}: <button id="ho" style="padding:2px 8px">${OFF>0?'+':''}${nb(OFF)}</button></small>`;
  $('#ho').onclick=()=>{OFF=OFF>=1?-2:OFF+1;for(const k in cache)delete cache[k];render()};cd()}
+function ctab(sm){const t=document.getElementById('tb'),b=t&&t.querySelector('button.on');if(!t||!b)return;
+ const bs=t.querySelectorAll('button');
+ if(matchMedia('(max-width:720px)').matches&&bs.length){t.style.paddingLeft=Math.max(8,(t.clientWidth-bs[0].offsetWidth)/2)+'px';t.style.paddingRight=Math.max(8,(t.clientWidth-bs[bs.length-1].offsetWidth)/2)+'px'}else{t.style.paddingLeft=t.style.paddingRight=''}
+ if(t.scrollWidth<=t.clientWidth+2)return;
+ const l=t.scrollLeft+b.getBoundingClientRect().left-t.getBoundingClientRect().left-(t.clientWidth-b.offsetWidth)/2;
+ t.scrollTo({left:Math.max(0,l),behavior:sm?'smooth':'auto'})}
+addEventListener('load',()=>ctab(0));addEventListener('resize',()=>ctab(0));if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>ctab(0));
 function sel(i,s){M=i;document.querySelectorAll('.m').forEach(e=>{const c=+e.dataset.m==i;e.classList.remove('cur');if(c){void e.offsetWidth;e.classList.add('cur')}});
- if(!s)document.querySelectorAll('#tb button').forEach(b=>b.classList.toggle('on',+b.dataset.i==i))}
+ if(!s){document.querySelectorAll('#tb button').forEach(b=>b.classList.toggle('on',+b.dataset.i==i));ctab(1)}}
 const EV=[
 {k:'ram',n:['রমজান শুরু','Ramadan begins'],f:h=>h.m==8&&h.d==1,i:'🏮',g:'linear-gradient(135deg,#312e81,#6d28d9 55%,#f59e0b)',w:['রমজান মোবারক','Ramadan Mubarak']},
 {k:'fit',n:['ঈদুল ফিতর','Eid ul-Fitr'],f:h=>h.m==9&&h.d==1,i:'🌙',g:'linear-gradient(135deg,#064e3b,#059669 55%,#fbbf24)',w:['ঈদ মোবারক','Eid Mubarak']},
