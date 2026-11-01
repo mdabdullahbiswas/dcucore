@@ -264,6 +264,14 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
  .rt-fab{display:inline-flex;align-items:center;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:999px;padding:13px 22px;background:linear-gradient(135deg,#f6dc8e,#e8c46c 50%,#b98a2c);color:#1d1400;font:700 14px/1 inherit;box-shadow:0 10px 28px rgba(10,26,51,.3);cursor:pointer}
  body.rt-pv-open .rt-fab{opacity:0;pointer-events:none}
 }
+
+/* সময় বাছাই আরো সহজ ও প্রিমিয়াম করার জন্য */
+#routine input[type=time]{font-weight:700;letter-spacing:.3px;cursor:pointer}
+#routine input[type=time]::-webkit-calendar-picker-indicator{filter:invert(32%) sepia(68%) saturate(638%) hue-rotate(358deg) brightness(92%) contrast(94%);cursor:pointer;padding:4px;border-radius:6px;transition:background .2s}
+#routine input[type=time]::-webkit-calendar-picker-indicator:hover{background:rgba(212,175,55,.2)}
+#routine input[type=time]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+#rsq{margin-bottom:2px}
+#rsq .dchip.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
 </style>
 </head>
 <body data-page="tools">
@@ -312,10 +320,23 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <div id="rhqWrap"><label class="t">নিচের উক্তি|Footer quote</label><input id="rhq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div>
 <button type="button" class="rt-tgrow t" id="rsN" aria-pressed="true"><span class="rt-tgic">📝</span><span class="rt-tglb">নিচের নোট দেখান|Show footer note</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
 <div id="rhnWrap"><label class="t">নিচের নোট|Footer note</label><input id="rhn" maxlength="140" data-p="রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice."></div>
+<button type="button" class="rt-tgrow t" id="rdN" aria-pressed="false"><span class="rt-tgic">📅</span><span class="rt-tglb">তৈরির তারিখ দেখান|Show creation date</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
 </details></div>
 <div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
+<label class="t">দ্রুত শুরুর সময় (চাইলে)|Quick start time (optional)</label>
+<div class="dy" id="rsq">
+<button type="button" class="dchip t" data-rs="08:00">৮:০০|8:00</button>
+<button type="button" class="dchip t" data-rs="09:00">৯:০০|9:00</button>
+<button type="button" class="dchip t" data-rs="10:00">১০:০০|10:00</button>
+<button type="button" class="dchip t" data-rs="11:00">১১:০০|11:00</button>
+<button type="button" class="dchip t" data-rs="12:00">১২:০০|12:00</button>
+<button type="button" class="dchip t" data-rs="14:00">২:০০|2:00</button>
+<button type="button" class="dchip t" data-rs="15:00">৩:০০|3:00</button>
+<button type="button" class="dchip t" data-rs="16:00">৪:০০|4:00</button>
+<button type="button" class="dchip t" data-rs="17:00">৫:০০|5:00</button>
+</div>
 <label class="t">ক্লাসের সময়কাল|Class length</label><div class="dy" id="rdq"><button type="button" class="dchip t" data-m="30">৩০ মিনিট|30 min</button><button type="button" class="dchip t" data-m="60">৬০ মিনিট|60 min</button><button type="button" class="dchip t" data-m="90">৯০ মিনিট|90 min</button></div>
 <label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdp"><button type="button" class="dchip t" data-p="all" aria-pressed="false">সব দিন|All days</button></div><div class="dy" id="rdy"></div>
 <button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button> <button class="bs t" id="rcr">ফর্ম খালি করুন|Clear form</button><span id="rw" class="hint" aria-live="polite"></span></div>
@@ -787,10 +808,11 @@ const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q',rhn:'n'};
 Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.value=RS[RFD[id]];el.addEventListener('input',()=>{RS[RFD[id]]=el.value;sv('dcuRtS',RS);rtP()})});
 const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src=(RS.logo||'logo.png');
 const PSW=(btn,on)=>{if(!btn)return;btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on))};
-const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.png'};
+const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;PSW($('#rdN'),RS.ds===true);const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.png'};
 syncRS();
 $('#rsN').onclick=()=>{RS.ns=RS.ns===false;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rqN').onclick=()=>{RS.qs=RS.qs===false;sv('dcuRtS',RS);syncRS();rtP()};
+$('#rdN').onclick=()=>{RS.ds=RS.ds!==true;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rlogo').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bmp=await createImageBitmap(f);const k=Math.min(1,300/Math.max(bmp.width,bmp.height));const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(bmp.width*k));cv.height=Math.max(1,Math.round(bmp.height*k));cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);RS.logo=cv.toDataURL('image/png');sv('dcuRtS',RS);RIok=false;RI.src=RS.logo;syncRS();say('rlmsg',L('লোগো যোগ হয়েছে।|Logo added.'))}catch(err){say('rlmsg',L('এই ফাইলটি লোগো হিসেবে ব্যবহার করা যায়নি।|This file could not be used as a logo.'))}finally{e.target.value=''}};
 $('#rlrm').onclick=()=>{RS.logo='';sv('dcuRtS',RS);syncRS();say('rlmsg',L('লোগো সরানো হয়েছে।|Logo removed.'));rtP()};
 function rtP(nl){
@@ -857,13 +879,15 @@ function rtP(nl){
  g=x.createLinearGradient(M,0,W-M,0);g.addColorStop(0,'rgba(212,175,55,0)');g.addColorStop(.5,GD);g.addColorStop(1,'rgba(212,175,55,0)');x.fillStyle=g;x.fillRect(M,fy,TW,2);
  const q=(RS.q||'').trim()||L('নিয়মিত ক্লাস ও অধ্যবসায়ই সাফল্যের চাবিকাঠি।|Regular classes and perseverance are the key to success.');
  if(RS.qs!==false)T(fit('“'+q+'”','italic 600 24px',TW-60),W/2,fy+54,'italic 600 24px',NV2,'center');
- const by=(RS.b||'').trim();
- T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
+ const by=(RS.b||'').trim(),genS=L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'});
+ const leftS=by?(L('প্রস্তুতকারী|Prepared by')+': '+by+(RS.ds===true?'  ·  '+genS:'')):genS;
+ T(fit(leftS,'700 18px',TW-260),M+10,H-62,'700 18px',NV,'left');
  T('dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  const nt=(RS.n!==undefined?String(RS.n):L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.')).trim();
  if(RS.ns!==false&&nt)T(fit(nt,'500 14px',W-2*M-40),W/2,H-34,'500 14px','#64748b','center')}
-function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));$$('#rsq [data-rs]').forEach(b=>b.classList.toggle('on',b.dataset.rs===s));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 $('#rs').addEventListener('input',rtEnd);$('#rd').addEventListener('input',rtEnd);
+$('#rsq').onclick=e=>{const b=e.target.closest('[data-rs]');if(!b)return;$('#rs').value=b.dataset.rs;rtEnd()};
 $('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=+$('#rd').value===+b.dataset.m?'':b.dataset.m;rtEnd()};
 $('#rdp').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const boxes=$$('#rdy input'),all=boxes.length>0&&boxes.every(i=>i.checked);boxes.forEach(i=>i.checked=!all);rdpSync()};
 function rdpSync(){const boxes=$$('#rdy input'),on=boxes.length>0&&boxes.every(i=>i.checked),b=$('#rdp [data-p]');if(b){b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))}}
@@ -895,7 +919,10 @@ rbR();
 const rB=async fn=>{try{return await fn()}catch(e){rtP(1);return await fn()}};
 $('#rpn').onclick=async()=>{try{rtP();dlBlob(await rB(()=>mkBlob($('#rcv'))),'class-routine.png')}catch(e){say('rmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{rtP()}};
 $('#rsh').onclick=async()=>{try{rtP();await shareImg($('#rcv'),null,'class-routine.png',RS.t||L('ক্লাস রুটিন|Class routine'),'rmsg')}catch(e){say('rmsg',L('শেয়ার করা যায়নি।|Could not share.'))}};
-$('#rpf').onclick=async()=>{try{rtP();const jp=await rB(()=>jb($('#rcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv'),w=842,h=w*c.height/c.width;d.addPage([w,h]).drawImage(im,{x:0,y:0,width:w,height:h});pdl(await d.save(),'class-routine.pdf')}catch(e){say('rmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{rtP()}};
+$('#rpf').onclick=async()=>{try{rtP();const jp=await rB(()=>jb($('#rcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv');
+ /* A4 সাইজের বাইরে যাবে না; কনটেন্টের আকার অনুযায়ী পোর্ট্রেট বা ল্যান্ডস্কেপ বাছা হয় */
+ const landscape=c.width>=c.height,pw=landscape?841.89:595.28,ph=landscape?595.28:841.89,mg=22,aw=pw-mg*2,ah=ph-mg*2,sc=Math.min(aw/c.width,ah/c.height),dw=c.width*sc,dh=c.height*sc,dx=(pw-dw)/2,dy=(ph-dh)/2;
+ d.addPage([pw,ph]).drawImage(im,{x:dx,y:dy,width:dw,height:dh});pdl(await d.save(),'class-routine.pdf')}catch(e){say('rmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{rtP()}};
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>rtP());
 /* ফোকাস টাইমার */
 let TM={t:1500,m:25,end:0,iv:0};
