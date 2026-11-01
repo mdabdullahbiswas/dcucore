@@ -13,7 +13,8 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri',
 .tw{max-width:1100px;margin:0 auto;padding:16px 14px 4px}
 h2{margin:0 0 6px;font-size:20px}
 .tabs{display:flex;gap:8px;overflow-x:auto;margin:14px 0;padding-bottom:4px;scrollbar-width:thin}
-.tabs a.cvst{flex:none;display:inline-flex;align-items:center;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:22px;padding:8px 16px;font-size:14px;font-weight:600;font-family:inherit;text-decoration:none;white-space:nowrap}
+.tabs a.cvst{flex:none;display:inline-flex;align-items:center;border:1.5px solid transparent;background:var(--brand-soft);color:var(--accent-deep);border-radius:22px;padding:8px 16px;font-size:14px;font-weight:600;font-family:inherit;text-decoration:none;white-space:nowrap}
+@media(max-width:640px){.tabs a.cvst{min-height:44px}}
 .tabs button{flex:none;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:22px;padding:8px 16px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 .tabs button.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
 section{display:none}section.on{display:block}
