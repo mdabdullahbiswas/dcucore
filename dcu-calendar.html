@@ -154,8 +154,9 @@ function info(d){const k=+d,c=cache[k];if(c)return c;const h=hj(d),w=d.getDay(),
  if(h.m==8&&h.d==27)o(['শবে কদর','Shab-e-Qadr'],'h');
  const out={h,b:bn(d),r,t,rz:h.m==8,isl:h.m==8||(r&&/ঈদ|আশুরা|শবে/.test(r[0]))};cache[k]=out;return out}
 const AC=['#1d4ed8','#ca8a04','#be185d','#c2410c','#15803d','#0369a1','#4338ca','#0f766e','#7e22ce','#be123c','#b45309','#0e7490'];
-const MAPG=[3,4,5,6,7,8,9,10,11,0,1,2],BNE=['boishakh','joishtho','asharh','srabon','bhadro','ashwin','kartik','agrahayan','poush','magh','falgun','choitro'],IMGBASE='scenes/';
-function img(b){return IMGBASE?`<img class="ph" src="${IMGBASE}${BNE[b]}.jpg" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()"><i class="fx mist"></i><i class="fx ray"></i>${b==2||b==3?'<i class="fx rain"></i>':''}`:''}
+const MAPG=[3,4,5,6,7,8,9,10,11,0,1,2],BNE=['boishakh','joishtho','asharh','srabon','bhadro','ashwin','kartik','agrahayan','poush','magh','falgun','choitro'];
+function img(b){return`<img class="ph" src="${BNE[b]}.jpg" data-x="0" alt="" onload="this.parentNode.classList.add('hi')" onerror="nx(this)"><i class="fx mist"></i><i class="fx ray"></i>${b==2||b==3?'<i class="fx rain"></i>':''}`}
+function nx(el){const e=['jpg','jpeg','png','webp','JPG','PNG'],i=+el.dataset.x+1;if(i<e.length){el.dataset.x=i;el.src=el.src.replace(/\.\w+$/,'.'+e[i])}else el.remove()}
 const sp=(c,R,r,n)=>{let d='';for(let i=0;i<n*2;i++){const a=i*Math.PI/n-Math.PI/2,q=i%2?r:R;d+=(i?'L':'M')+(c+Math.cos(a)*q).toFixed(1)+' '+(c+Math.sin(a)*q).toFixed(1)}return d+'z'};
 const IC={fit:'<path d="M40 8a24 24 0 1 0 6 38 19 19 0 1 1-6-38z" fill="#d4a017"/><path d="'+sp(48,9,5,5).replace(/(\d+\.?\d*) (\d+\.?\d*)/g,(m,a,b)=>(+a+4)+' '+(+b-24))+'" fill="#f59e0b"/>',
 rz:'<path d="M40 8a24 24 0 1 0 6 38 19 19 0 1 1-6-38z" fill="#10b981"/>',
