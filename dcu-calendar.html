@@ -349,6 +349,38 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 }
 @media(hover:none){button:hover{transform:none;box-shadow:none}}
 @media(prefers-reduced-motion:reduce){header{transition:none}}
+
+/* ===== Calendar grid: equal columns, no overflow on small screens ===== */
+.g{grid-template-columns:repeat(7,minmax(0,1fr))}
+.g>*{min-width:0}
+.c{min-width:0;overflow:hidden}
+.c .s{min-width:0;gap:2px}
+.c .s span,.c .s u{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:640px){
+ .g{gap:3px;padding:8px 6px}
+ .c{min-height:72px;padding:4px 3px 3px;border-radius:12px}
+ .c b{font-size:1.55rem}
+ .c .s{font-size:.64rem}
+ .c .s .lb{font-size:.54rem;letter-spacing:-.2px;font-weight:700;line-height:1.15}
+ .c .s:has(.lb){flex-direction:column;align-items:stretch;gap:0}
+ .c .s:has(.lb) u{text-align:right}
+ .c .s .lb{white-space:normal;overflow:visible;text-overflow:clip;word-break:keep-all;overflow-wrap:normal}
+ .dn,.dn.o{font-size:.74rem;padding:6px 0;border-radius:9px}
+}
+
+/* ===== Reminder chip button (inside holiday card) ===== */
+.xnh .xrb{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;max-width:100%;min-height:36px;padding:5px 12px;margin-bottom:4px;
+ border-radius:999px;cursor:pointer;font:inherit;font-size:.82rem;font-weight:700;color:var(--gold-light,#fde68a);
+ background:var(--glass,#ffffff22);border:1px solid var(--glass-ln,#ffffff44);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+ box-shadow:0 6px 16px -8px #0008;transition:transform .2s var(--ease,ease),background .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent;position:relative;z-index:3;overflow:hidden}
+.xnh .xrb i{font-style:normal;font-size:1.15rem;line-height:1;opacity:.85;transition:transform .2s var(--ease,ease)}
+.xnh .xrb:hover{transform:translateY(-1px);box-shadow:0 10px 20px -8px #000a}
+.xnh .xrb:hover i{transform:translateX(3px)}
+.xnh .xrb:active{transform:scale(.96)}
+.xnh .xrb:focus-visible{outline:2px solid var(--gold-light,#fde68a);outline-offset:2px}
+@media(hover:none){.xnh .xrb:hover{transform:none}.xnh .xrb:hover i{transform:none}}
+@media print{.xnh .xrb i{display:none}}
 </style>
 </head>
 <body>
@@ -469,7 +501,7 @@ function month(y,m){const n=new Date(y,m+1,0).getDate(),st=new Date(y,m,1).getDa
  for(let d=1;d<=n;d++){const x=new Date(y,m,d),f=info(x),h=f.t=='h',cls=(h?'h':f.t=='w'?'w':f.rz?'r':'')+(f.isl?' ri':'')+(td.toDateString()==x.toDateString()?' td':'');
   if(f.isl){isl=true;const q=f.r?f.r[L=='bn'?0:1]:HM[8][L=='bn'?0:1];if(!occ.includes(q))occ.push(q)}
   const bl=f.b.d==1?BM[f.b.m][L=='bn'?0:1]:nb(f.b.d),hl=f.h.d==1?HM[f.h.m][L=='bn'?0:1]:bd(f.h.d);
-  g+=`<div class="c ${cls}" data-dt="${y}-${m}-${d}" tabindex="0" style="animation-delay:${d*18}ms" title="${f.r?f.r[L=='bn'?0:1]:''}"><i class="bg">${f.t=='h'&&f.r?ico(f.r[1]):f.rz?ico('Ramadan'):''}</i><b>${d}</b>${(e=>e.length?`<span class="ed">${e.slice(0,4).map(v=>`<s style="background:${EC[v.c]}"></s>`).join('')}</span>`:'')(evs(x))}${h&&f.r?`<em>${f.r[L=='bn'?0:1]}</em>`:''}<div class="s"><span>${bl}</span><u>${hl}</u></div></div>`;
+  g+=`<div class="c ${cls}" data-dt="${y}-${m}-${d}" tabindex="0" style="animation-delay:${d*18}ms" title="${f.r?f.r[L=='bn'?0:1]:''}"><i class="bg">${f.t=='h'&&f.r?ico(f.r[1]):f.rz?ico('Ramadan'):''}</i><b>${d}</b>${(e=>e.length?`<span class="ed">${e.slice(0,4).map(v=>`<s style="background:${EC[v.c]}"></s>`).join('')}</span>`:'')(evs(x))}${h&&f.r?`<em>${f.r[L=='bn'?0:1]}</em>`:''}<div class="s"><span${f.b.d==1?' class="lb"':''}>${bl}</span><u${f.h.d==1?' class="lb"':''}>${hl}</u></div></div>`;
   if(h)list+=`<div><span class="d ${f.isl?'i':''}">${d}</span><span><b>${f.r[L=='bn'?0:1]}</b><br><small style="color:var(--mut)">${DN[(st+d-1)%7][L=='bn'?0:1]} • ${nb(f.b.d)} ${BM[f.b.m][L=='bn'?0:1]} • ${bd(f.h.d)} ${HM[f.h.m][L=='bn'?0:1]}</small></span>${f.isl&&KM[f.r[1]]?`<button class="shb" data-o="${KM[f.r[1]]}" style="margin-left:auto;padding:4px 9px">🎁</button>`:''}</div>`}
  const wk=Array.from({length:n},(_,i)=>info(new Date(y,m,i+1)).t=='w').filter(Boolean).length;
  return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${scene(sc,0)}${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><h2>${GM[m][L=='bn'?0:1]} ${nb(y)}</h2><p>${rng(y,m)}</p><p style="opacity:.9">🌿 ${BM[bi][L=='bn'?0:1]} • ${SN[sc][L=='bn'?0:1]}</p></div></div><div class="g">${g}</div>
@@ -732,14 +764,18 @@ function xbanner(){const e=$('#xnb');if(!e)return;const t=tdy(),n=xnext(),i=L=='
  if(info(t).rz){const p=xpt(t);h+=`<div class="xnh" style="background:linear-gradient(135deg,#312e81,#6d28d9 60%,#f59e0b)"><div class="xn"><b>🌙</b></div><div><small>${T('আজকের রমজান • ঢাকা','Ramadan today • Dhaka')}</small><div class="xrs"><div>${T('সেহরি শেষ','Sehri ends')}<b>${xf(p.fj)}</b></div><div>${T('ইফতার','Iftar')}<b>${xf(p.mg)}</b></div></div></div></div>`}
  if(n){const r=xrun(n.d),ti=n.i==0?T('আজ ছুটি 🎉','Holiday today 🎉'):n.i==1?T('আগামীকাল ছুটি','Holiday tomorrow'):T('আগামী ছুটি আর '+nb(n.i)+' দিন পর','Next holiday in '+n.i+' days'),
   b=xbr(xd(t,-10),xd(t,150)).find(x=>x.s>=t);
-  h+=`<div class="xnh"><div class="xn">${n.i?`<b>${nb(n.i)}</b><small>${T('দিন পর','days')}</small>`:'<b>🎉</b>'}</div><div><small>🔔 ${T('ছুটির রিমাইন্ডার','Holiday reminder')}</small><h3>${ti}</h3><p>${n.f.r[i]} • ${wdy(n.d)}, ${sdt(n.d)}${r&&r.n>=3?`<br>🏖 ${T('টানা '+nb(r.n)+' দিন ছুটি','Long break: '+r.n+' days')} (${sdt(r.a)} – ${sdt(r.b)})`:''}</p>${b?`<p class="xtip">💡 ${sdt(b.s)}${b.k>1?' – '+sdt(b.e):''} ${T(nb(b.k)+' দিন ছুটি নিলে টানা '+nb(b.n)+' দিন ছুটি',`take ${b.k} day(s) off → ${b.n} days in a row`)}</p>`:''}</div></div>`}
+  h+=`<div class="xnh"><div class="xn">${n.i?`<b>${nb(n.i)}</b><small>${T('দিন পর','days')}</small>`:'<b>🎉</b>'}</div><div><button type=\"button\" class=\"xrb\" data-x=\"rm\" aria-haspopup=\"dialog\">🔔 ${T('ছুটির রিমাইন্ডার','Holiday reminder')}${(XS.on&&('Notification' in window)&&Notification.permission=='granted')?' • '+T('চালু','On'):''}<i aria-hidden=\"true\">›</i></button><h3>${ti}</h3><p>${n.f.r[i]} • ${wdy(n.d)}, ${sdt(n.d)}${r&&r.n>=3?`<br>🏖 ${T('টানা '+nb(r.n)+' দিন ছুটি','Long break: '+r.n+' days')} (${sdt(r.a)} – ${sdt(r.b)})`:''}</p>${b?`<p class="xtip">💡 ${sdt(b.s)}${b.k>1?' – '+sdt(b.e):''} ${T(nb(b.k)+' দিন ছুটি নিলে টানা '+nb(b.n)+' দিন ছুটি',`take ${b.k} day(s) off → ${b.n} days in a row`)}</p>`:''}</div></div>`}
  e.innerHTML=h}
 
 /* --- নোটিফিকেশন --- */
+if('serviceWorker' in navigator&&(location.protocol=='https:'||location.hostname=='localhost'||location.hostname=='127.0.0.1'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+function xnotify(t,o){o=o||{};const fb=()=>{try{new Notification(t,o);return true}catch(e){return false}};
+ try{if('serviceWorker' in navigator&&navigator.serviceWorker.getRegistration)return navigator.serviceWorker.getRegistration().then(r=>r&&r.active?r.showNotification(t,o).then(()=>true):fb()).catch(fb)}catch(e){}
+ return Promise.resolve(fb())}
 function xchk(){if(!('Notification' in window)||Notification.permission!='granted'||!XS.on)return;const t=tdy();let seen={};try{seen=JSON.parse(localStorage.xsn||'{}')}catch(e){}
  for(let i=0;i<=7;i++){const d=xd(t,i),f=info(d);if(f.t!='h'||info(xd(d,-1)).t=='h')continue;const nm=f.r[L=='bn'?0:1],big=/ঈদ|Eid/.test(f.r[0]+f.r[1]);if(!(i<=1||i==XS.lead||(i==7&&big)))continue;
   const key=dk(d)+'|'+i;if(seen[key])continue;const r=xrun(d),w=i==0?T('আজ','Today'):i==1?T('আগামীকাল','Tomorrow'):T(nb(i)+' দিন পর','In '+i+' days');
-  try{new Notification('🔔 '+nm,{body:w+' • '+sdt(d)+(r&&r.n>=3?' • 🏖 '+T('টানা '+nb(r.n)+' দিন ছুটি',r.n+' days off'):''),tag:key});seen[key]=1}catch(e){}}
+  seen[key]=1;xnotify('🔔 '+nm,{body:w+' • '+sdt(d)+(r&&r.n>=3?' • 🏖 '+T('টানা '+nb(r.n)+' দিন ছুটি',r.n+' days off'):''),tag:key}).then(ok=>{if(!ok){try{const q=JSON.parse(localStorage.xsn||'{}');delete q[key];localStorage.xsn=JSON.stringify(q)}catch(e){}}})}
  const ks=Object.keys(seen).slice(-60),o={};ks.forEach(k=>o[k]=1);try{localStorage.xsn=JSON.stringify(o)}catch(e){}}
 function xics(y){const p2=n=>String(n).padStart(2,'0'),f8=d=>d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate()),ic=s=>String(s).replace(/([\\;,])/g,'\\$1'),st=new Date().toISOString().replace(/[-:]/g,'').slice(0,15)+'Z',
  o=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DCU Core//Reminders//BN','CALSCALE:GREGORIAN','X-WR-CALNAME:DCU Core '+y+' ⏰'];
@@ -770,9 +806,10 @@ document.body.insertAdjacentHTML('beforeend','<div id="xm"><div class="xmc" id="
 $('#cd').insertAdjacentHTML('afterend','<div id="xnb"></div>');
 $('#pr').insertAdjacentHTML('beforebegin','<button id="xbt"></button><button id="xbn" aria-label="reminders">🔔</button>');
 $('#xbt').onclick=xspanel;$('#xbn').onclick=xnpanel;
-document.addEventListener('click',ev=>{if(ev.target.id=='xm')return xclose();const b=ev.target.closest('[data-x]');if(!b)return;const k=b.dataset.x;
- if(k=='c')xclose();
- else if(k=='tg'){if(XS.on){XS.on=false;xsv();xnpanel()}else if('Notification' in window){Notification.requestPermission().then(p=>{XS.on=p=='granted';xsv();xnpanel();if(XS.on){try{new Notification('DCU Core',{body:T('রিমাইন্ডার চালু হয়েছে ✅','Reminders are on ✅')})}catch(e){}xchk()}})}}
+document.addEventListener('click',ev=>{if(ev.target.id=='xm'){xclose();xbanner();return}const b=ev.target.closest('[data-x]');if(!b)return;const k=b.dataset.x;
+ if(k=='c'){xclose();xbanner()}
+ else if(k=='rm')xnpanel();
+ else if(k=='tg'){if(XS.on){XS.on=false;xsv();xnpanel()}else if('Notification' in window){Notification.requestPermission().then(p=>{XS.on=p=='granted';xsv();xnpanel();if(XS.on){xnotify('DCU Core',{body:T('রিমাইন্ডার চালু হয়েছে ✅','Reminders are on ✅')});xchk()}})}}
  else if(k[0]=='l'&&k.length==2){XS.lead=+k[1];xsv();xnpanel()}
  else if(k=='ics')xics(Y)});
 document.addEventListener('keydown',ev=>{if(ev.key=='Escape'&&$('#xm').classList.contains('o'))xclose()});
