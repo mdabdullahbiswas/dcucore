@@ -270,8 +270,6 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine input[type=time]::-webkit-calendar-picker-indicator{filter:invert(32%) sepia(68%) saturate(638%) hue-rotate(358deg) brightness(92%) contrast(94%);cursor:pointer;padding:4px;border-radius:6px;transition:background .2s}
 #routine input[type=time]::-webkit-calendar-picker-indicator:hover{background:rgba(212,175,55,.2)}
 #routine input[type=time]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
-#rsq{margin-bottom:2px}
-#rsq .dchip.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
 </style>
 </head>
 <body data-page="tools">
@@ -325,18 +323,6 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
-<label class="t">দ্রুত শুরুর সময় (চাইলে)|Quick start time (optional)</label>
-<div class="dy" id="rsq">
-<button type="button" class="dchip t" data-rs="08:00">৮:০০|8:00</button>
-<button type="button" class="dchip t" data-rs="09:00">৯:০০|9:00</button>
-<button type="button" class="dchip t" data-rs="10:00">১০:০০|10:00</button>
-<button type="button" class="dchip t" data-rs="11:00">১১:০০|11:00</button>
-<button type="button" class="dchip t" data-rs="12:00">১২:০০|12:00</button>
-<button type="button" class="dchip t" data-rs="14:00">২:০০|2:00</button>
-<button type="button" class="dchip t" data-rs="15:00">৩:০০|3:00</button>
-<button type="button" class="dchip t" data-rs="16:00">৪:০০|4:00</button>
-<button type="button" class="dchip t" data-rs="17:00">৫:০০|5:00</button>
-</div>
 <label class="t">ক্লাসের সময়কাল|Class length</label><div class="dy" id="rdq"><button type="button" class="dchip t" data-m="30">৩০ মিনিট|30 min</button><button type="button" class="dchip t" data-m="60">৬০ মিনিট|60 min</button><button type="button" class="dchip t" data-m="90">৯০ মিনিট|90 min</button></div>
 <label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdp"><button type="button" class="dchip t" data-p="all" aria-pressed="false">সব দিন|All days</button></div><div class="dy" id="rdy"></div>
 <button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button> <button class="bs t" id="rcr">ফর্ম খালি করুন|Clear form</button><span id="rw" class="hint" aria-live="polite"></span></div>
@@ -886,9 +872,8 @@ function rtP(nl,SS){
  T('dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  const nt=(RS.n!==undefined?String(RS.n):L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.')).trim();
  if(RS.ns!==false&&nt)T(fit(nt,'500 14px',W-2*M-40),W/2,H-34,'500 14px','#64748b','center')}
-function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));$$('#rsq [data-rs]').forEach(b=>b.classList.toggle('on',b.dataset.rs===s));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 $('#rs').addEventListener('input',rtEnd);$('#rd').addEventListener('input',rtEnd);
-$('#rsq').onclick=e=>{const b=e.target.closest('[data-rs]');if(!b)return;$('#rs').value=b.dataset.rs;rtEnd()};
 $('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=+$('#rd').value===+b.dataset.m?'':b.dataset.m;rtEnd()};
 $('#rdp').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const boxes=$$('#rdy input'),all=boxes.length>0&&boxes.every(i=>i.checked);boxes.forEach(i=>i.checked=!all);rdpSync()};
 function rdpSync(){const boxes=$$('#rdy input'),on=boxes.length>0&&boxes.every(i=>i.checked),b=$('#rdp [data-p]');if(b){b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))}}
