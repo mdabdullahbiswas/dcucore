@@ -477,7 +477,7 @@ $('#rta').onclick=()=>{const c=$('#rc').value.trim(),d=$$('#rdy input:checked').
  if(!c||!d.length||!s||!e)return w.textContent=L('কোর্স, দিন, শুরু ও শেষের সময় দিন।|Enter course, days, start and end time.');
  if(tm(e)<=tm(s))return w.textContent=L('শেষের সময় শুরুর পরে হতে হবে।|End time must be after start time.');
  const ov=R.some(r=>r.d.some(z=>d.includes(z))&&tm(r.s)<tm(e)&&tm(s)<tm(r.e));
- R.push({c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e});$('#rc').value=$('#rt').value=$('#rr').value='';
+ R.push({c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e});
  w.textContent=ov?L('⚠️ সময় অন্য ক্লাসের সাথে মিলে গেছে।|⚠️ This overlaps another class.'):'';rtR()};
 $('#rcl').onclick=()=>{if(confirm(L('সব ক্লাস মুছে ফেলবেন?|Delete all classes?'))){R=[];rtR()}};
 
