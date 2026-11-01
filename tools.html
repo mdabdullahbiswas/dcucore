@@ -180,6 +180,10 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine .bs:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 8px 18px -12px var(--accent)}
 #routine .bs:active{transform:scale(.97)}
 #routine .dchip,#routine .rt-tgrow,#routine .bs,#routine .bt{min-height:44px}
+/* উক্তি/নোট ইনপুট বক্স — উপরের টগলের একই সেক্টর-কালারে */
+#routine #rhqWrap,#routine #rhnWrap{margin:-4px 2px 14px;padding:12px 14px 14px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-left:3px solid var(--accent);border-radius:0 0 14px 14px;transition:background .3s,border-color .3s}
+#routine #rhqWrap label,#routine #rhnWrap label{color:var(--accent-deep)}
+#routine #rhqWrap input,#routine #rhnWrap input{background:var(--cd)}
 #routine .dchip{border-radius:999px;border:1.5px solid transparent;background:var(--accent-soft);color:var(--accent-deep);font-weight:600;transition:border-color .2s,transform .2s,box-shadow .25s,background .25s}
 #routine .dchip:hover{border-color:var(--accent);transform:translateY(-1px)}
 #routine .dchip.on{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:0 8px 18px -10px var(--accent)}
