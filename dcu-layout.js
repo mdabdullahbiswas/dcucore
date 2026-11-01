@@ -39,7 +39,7 @@
     { href: "/tools#routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
     { href: "/tools#cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
     { href: "/tools#exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
-    { href: "/cv", bn: "সিভি বিল্ডার", en: "CV Builder" },
+    { href: "/cv", bn: "সিভি স্টুডিও", en: "CV Studio" },
     { href: "/tools#frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
     { href: "/tools#pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
     { href: "/tools#calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
@@ -127,7 +127,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   function footerHTML() {
     var toolLinks = [
       ["/cover", "কভার পেজ"],
-      ["/cv", "সিভি বিল্ডার"],
+      ["/cv", "সিভি স্টুডিও"],
       ["/tools#routine", "ক্লাস রুটিন"],
       ["/tools#cgpa", "CGPA ক্যালকুলেটর"],
       ["/tools#pdf", "PDF টুলকিট"]
