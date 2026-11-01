@@ -114,6 +114,8 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 .dchip.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
 body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--gold)}
 #rd::placeholder{opacity:.6}
+.rsw{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.08)}
+.rcp{width:46px;height:34px;padding:2px;border-radius:8px;margin:0;cursor:pointer}
 </style>
 </head>
 <body data-page="tools">
@@ -157,12 +159,13 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
 <label class="t">ক্লাসের সময়কাল|Class length</label><div class="dy" id="rdq"><button type="button" class="dchip t" data-m="30">৩০ মিনিট|30 min</button><button type="button" class="dchip t" data-m="40">৪০ মিনিট|40 min</button><button type="button" class="dchip t" data-m="50">৫০ মিনিট|50 min</button><button type="button" class="dchip t" data-m="60">৬০ মিনিট|60 min</button><button type="button" class="dchip t" data-m="75">৭৫ মিনিট|75 min</button><button type="button" class="dchip t" data-m="90">৯০ মিনিট|90 min</button></div>
 <label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdp"><button type="button" class="dchip t" data-p="wk">সব কার্যদিবস|Weekdays</button><button type="button" class="dchip t" data-p="all">সব দিন|All days</button><button type="button" class="dchip t" data-p="none">মুছুন|Clear</button></div><div class="dy" id="rdy"></div>
-<button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button><span id="rw" class="hint" aria-live="polite"></span></div>
+<button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button> <button class="bs t" id="rcr">ফর্ম খালি করুন|Clear form</button><span id="rw" class="hint" aria-live="polite"></span></div>
 <div class="bx np"><h2 class="t">বিরতি যোগ করুন|Add a Break</h2>
 <p class="hint t">বিরতি সব দিনের রুটিনে একই সময়ে দেখাবে। নাম ও সময় দিন।|A break appears on every day of the routine. Set its name and time.</p>
 <div class="g3"><div><label class="t">বিরতির নাম|Break name</label><input id="rbn" maxlength="30" data-p="যেমন: দুপুরের খাবার|e.g. Lunch break"></div><div><label class="t">শুরু|Start</label><input id="rbs" type="time"></div><div><label class="t">শেষ|End</label><input id="rbe" type="time"></div></div>
 <button class="bt t" id="rba">বিরতি যোগ করুন|Add Break</button><span id="rbw" class="hint" aria-live="polite"></span>
 <div id="rbl" style="margin-top:10px"></div></div>
+<div class="bx np"><h2 class="t">বিষয়ের রং|Subject Colours</h2><p class="hint t">একই নামের বিষয় একই রঙে দেখাবে। নিজে রং বাছতে চাইলে নিচের ঘর থেকে বাছুন, অথবা "অটো" চাপুন।|Same subject name gets the same colour. Pick your own below, or tap "Auto".</p><div id="rcl"></div></div>
 <div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine</h2>
 <details class="bx2 np" open><summary class="t">রুটিনের শিরোনাম ও তথ্য (ঐচ্ছিক)|Routine header &amp; details (optional)</summary>
 <div class="g3"><div><label class="t">প্রতিষ্ঠানের নাম|Institution</label><input id="rhi" maxlength="70" data-p="যেমন: ঢাকা সেন্ট্রাল ইউনিভার্সিটি|e.g. Dhaka Central University"></div>
@@ -452,7 +455,7 @@ const DN=['শনিবার|Saturday','রবিবার|Sunday','সোম�
 let R=ld('dcuRt',[]);const tm=s=>+s.slice(0,2)*60+ +s.slice(3);
 const hm=m=>{const h=Math.floor(m/60),n=m%60;return((h+11)%12+1)+(n?':'+String(n).padStart(2,'0'):'')+(h<12?' AM':' PM')};
 const hue=c=>{let h=0;for(const ch of c)h=(h*31+ch.charCodeAt(0))%360;return h};
-function rtK(){$('#rdy').innerHTML=DN.map((d,i)=>`<label class="dch"><input type="checkbox" value="${i}"><span>${L(d)}</span></label>`).join('')}
+function rtK(){const keep=$$('#rdy input:checked').map(i=>+i.value);$('#rdy').innerHTML=DN.map((d,i)=>`<label class="dch"><input type="checkbox" value="${i}"><span>${L(d)}</span></label>`).join('');$$('#rdy input').forEach(i=>i.checked=keep.includes(+i.value))}
 function rtC_old(){
  const c=$('#rcv'),x=c.getContext('2d');let mn=480,mx=1020;R.forEach(r=>{mn=Math.min(mn,tm(r.s));mx=Math.max(mx,tm(r.e))});mn=Math.floor(mn/60)*60;mx=Math.ceil(mx/60)*60;
  const lw=96,cw=172,hh=64,rh=104,W=lw+cw*6,H=hh+(mx-mn)/60*rh+8;c.width=W;c.height=H;
@@ -464,7 +467,7 @@ function rtC_old(){
   x.font='700 22px "Hind Siliguri"';x.fillText(r.c,bx+10,by+22,bw-20);x.font='500 17px "Hind Siliguri"';
   let ty=by+46;[hm(tm(r.s))+' – '+hm(tm(r.e)),r.r,r.t].forEach(s=>{if(s&&ty<by+bh-6){x.fillText(s,bx+10,ty,bw-20);ty+=22}})}));
 }
-function rtR(){sv('dcuRt',R);rtK();rtP();
+function rtR(){sv('dcuRt',R);rtK();rtP();rcR();
  const gd=(new Date().getDay()+1)%7,now=new Date().getHours()*60+new Date().getMinutes();
  const td=gd<6?R.filter(r=>r.d.includes(gd)).sort((a,b)=>tm(a.s)-tm(b.s)):[],nx=td.find(r=>tm(r.s)>now);
  $('#rtoday').innerHTML=`<h2>${L('আজকের ক্লাস|Today\'s Classes')}</h2>`+(td.length?td.map(r=>`<div>${hm(tm(r.s))} – ${hm(tm(r.e))} · <b>${esc(r.c)}</b> ${esc(r.r)}</div>`).join('')+(nx?`<div class="hint">${L('পরবর্তী ক্লাস|Next class')}: <b>${esc(nx.c)}</b> — ${tm(nx.s)-now} ${L('মিনিট পর|min from now')}</div>`:''):`<p class="hint">${L('আজ কোনো ক্লাস নেই।|No classes today.')}</p>`);
@@ -584,6 +587,7 @@ Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.v
 const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src='logo.png';
 function rtP(nl){
  const c=$('#rcv');if(!c)return;
+ const CM=subjMap(),colOf=c0=>{const k=sKey(c0),h0=RC[k]||subjHex((CM.get(k)||{idx:0}).idx);return{bg:mix(h0,255,.88),bar:h0,ink:mix(h0,0,.35)}};
  const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),gd=(new Date().getDay()+1)%7;
  const sl=[];R.forEach(r=>{if(!sl.some(a=>a.s==r.s&&a.e==r.e))sl.push({s:r.s,e:r.e})});sl.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
  const mb=RB.filter(b=>tm(b.e)>tm(b.s)).map(b=>({brk:1,man:1,n:b.n,s:b.s,e:b.e}));const cols=[];sl.forEach((a,i)=>{cols.push(a);const n=sl[i+1];if(n&&tm(n.s)-tm(a.e)>=30&&!mb.some(b=>tm(b.s)>=tm(a.e)&&tm(b.e)<=tm(n.s)))cols.push({brk:1,s:a.e,e:n.s})});mb.forEach(b=>cols.push(b));cols.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
@@ -632,10 +636,10 @@ function rtP(nl){
    const it=R.filter(r=>r.s==a.s&&r.e==a.e&&r.d.includes(d)).slice(0,2);
    if(!it.length){T('–',xs[k]+ws[k]/2,mid+8,'600 22px','#b6c0d1','center');return}
    const k2=it.length,bh=(RH-12)/k2;
-   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,hu=hue(r.c),h2=bh-(k2>1?4:0);
-    x.fillStyle=`hsl(${hu},80%,95%)`;rr(bx,by,w,h2,12);x.fill();
-    x.save();rr(bx,by,w,h2,12);x.clip();x.fillStyle=`hsl(${hu},62%,42%)`;x.fillRect(bx,by,5,h2);x.restore();
-    const ln=[[r.c,'800 '+(k2>1?17:20)+'px',`hsl(${hu},65%,28%)`]];
+   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,cc=colOf(r.c),h2=bh-(k2>1?4:0);
+    x.fillStyle=cc.bg;rr(bx,by,w,h2,12);x.fill();
+    x.save();rr(bx,by,w,h2,12);x.clip();x.fillStyle=cc.bar;x.fillRect(bx,by,5,h2);x.restore();
+    const ln=[[r.c,'800 '+(k2>1?17:20)+'px',cc.ink]];
     if(k2==1){if(r.r)ln.push([L('কক্ষ|Room')+': '+r.r,'700 16px','#047857']);if(r.t)ln.push([r.t,'600 14px','#64748b'])}
     else if(r.r)ln[0][0]+=' · '+r.r;
     const gp=k2>1?0:24;let by0=by+h2/2-(ln.length-1)*gp/2+7;
@@ -656,8 +660,22 @@ function rtP(nl){
  T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
 function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 $('#rs').addEventListener('input',rtEnd);$('#rd').addEventListener('input',rtEnd);
-$('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=b.dataset.m;rtEnd()};
+$('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=+$('#rd').value===+b.dataset.m?'':b.dataset.m;rtEnd()};
 $('#rdp').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const k=b.dataset.p,set=k==='all'?[0,1,2,3,4,5,6]:k==='wk'?[0,1,2,3,4,5]:[];$$('#rdy input').forEach(i=>i.checked=set.includes(+i.value))};
+const PAL=['#0ea5e9','#22c55e','#f59e0b','#ef4444','#8b5cf6','#14b8a6','#ec4899','#84cc16','#6366f1','#f97316','#06b6d4','#a855f7'];
+let RC=ld('dcuRtC',{});
+const sKey=c=>String(c||'').trim().toLowerCase();
+function subjMap(){const m=new Map();R.forEach(r=>{const k=sKey(r.c);if(k&&!m.has(k))m.set(k,{name:String(r.c).trim(),idx:m.size})});return m}
+function hx(h,s,l){s/=100;l/=100;const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12,c=l-a*Math.max(-1,Math.min(k-3,9-k,1));return Math.round(255*c).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4)}
+function subjHex(idx){return idx<PAL.length?PAL[idx]:hx((idx*137.5)%360,62,46)}
+function mix(h,t,a){const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));return '#'+c.map(v=>Math.round(v+(t-v)*a).toString(16).padStart(2,'0')).join('')}
+function rcR(){const el=$('#rcl');if(!el)return;const m=subjMap();
+ el.innerHTML=m.size?[...m.entries()].map(([k,v])=>{const h=RC[k]||subjHex(v.idx);return `<div class="fi"><span style="display:flex;align-items:center;gap:10px"><i class="rsw" style="background:${h}"></i><b>${esc(v.name)}</b><small class="hint" style="margin:0">${RC[k]?L('নিজের রং|Custom'):L('অটো|Auto')}</small></span><span style="display:flex;align-items:center;gap:8px"><input type="color" class="rcp" value="${h}" data-ck="${esc(k)}" aria-label="${esc(v.name)}"><button class="ic" data-ca="${esc(k)}">${L('অটো|Auto')}</button></span></div>`}).join(''):`<p class="hint t">${L('ক্লাস যোগ করলে এখানে বিষয়ের রং দেখা যাবে।|Subject colours appear here once you add a class.')}</p>`}
+$('#rcl').addEventListener('input',e=>{const k=e.target.dataset.ck;if(k!==undefined){RC[k]=e.target.value;sv('dcuRtC',RC);rtP()}});
+$('#rcl').addEventListener('change',e=>{if(e.target.dataset.ck!==undefined)rcR()});
+$('#rcl').onclick=e=>{const b=e.target.closest('[data-ca]');if(b){delete RC[b.dataset.ca];sv('dcuRtC',RC);rcR();rtP()}};
+$('#rcr').onclick=()=>{['rc','rt','rr','rs','re','rd'].forEach(i=>$('#'+i).value='');$$('#rdy input').forEach(i=>i.checked=false);rtEnd();$('#rw').textContent=''};
+rcR();
 let RB=ld('dcuRtB',[]);
 function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
 $('#rbl').onclick=e=>{const b=e.target.closest('[data-bi]');if(b){RB.splice(+b.dataset.bi,1);rbR()}};
