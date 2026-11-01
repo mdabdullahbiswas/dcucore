@@ -526,7 +526,7 @@ function cgK(){const cv=$('#cgcv'),x=cv.getContext('2d'),W=1080,H=1350,f=getComp
   if(v){x.fillStyle='#e5a83b';x.beginPath();x.roundRect(330,y-30,Math.max(34,560*v/4),34,17);x.fill()}
   x.fillStyle='#fff';x.textAlign='right';x.fillText(v==null?'—':v.toFixed(2),990,y)});
  x.textAlign='center';x.fillStyle='#e5a83b';x.font='600 32px '+f;x.fillText(GS[C.sc].filter(a=>cn[a[0]]).map(a=>a[0]+'×'+cn[a[0]]).join('   '),W/2,1230,960);
- x.fillStyle='#8fa3c2';x.font='400 28px '+f;x.fillText('dcu-cover-page.vercel.app',W/2,1300)}
+ x.fillStyle='#8fa3c2';x.font='400 28px '+f;x.fillText('dcucore.vercel.app',W/2,1300)}
 $('#cgk').onclick=()=>{const w=$('#cgcw'),on=w.style.display=='none';w.style.display=on?'block':'none';if(on)cgK()};
 $('#cgkp').onclick=async()=>{cgK();dlBlob(await mkBlob($('#cgcv')),'cgpa-result.png')};
 $('#cgks').onclick=()=>{cgK();shareImg($('#cgcv'),null,'cgpa-result.png',SUM,'cgm')};
@@ -637,7 +637,7 @@ function rtP(nl){
  T(fit('“'+q+'”','italic 600 24px',TW-60),W/2,fy+54,'italic 600 24px',NV2,'center');
  const by=(RS.b||'').trim();
  T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
- T('DCU Unofficial · dcu-cover-page.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
+ T('DCU Unofficial · dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
 let RB=ld('dcuRtB',[]);
 function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
