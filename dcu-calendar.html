@@ -381,7 +381,7 @@ function info(d){const k=+d,c=cache[k];if(c)return c;const h=hj(d),w=d.getDay(),
  const ce=evs(d).find(e=>e.h);if(ce)o([ce.t,ce.t],'h');
  const out={h,b:bn(d),r,t,rz:h.m==8,isl:h.m==8||(r&&/ঈদ|আশুরা|শবে/.test(r[0]))};cache[k]=out;return out}
 const AC=['#1d4ed8','#ca8a04','#be185d','#c2410c','#15803d','#0369a1','#4338ca','#0f766e','#7e22ce','#be123c','#b45309','#0e7490'];
-const MAPG=[3,4,5,6,7,8,9,10,11,0,1,2],BNE=['boishakh','joishtho','asharh','srabon','bhadro','ashwin','kartik','agrahayan','poush','magh','falgun','choitro'],IMGBASE='scenes/';
+const MAPG=[3,4,5,6,7,8,9,10,11,0,1,2],BNE=['boishakh','joishtho','asharh','srabon','bhadro','ashwin','kartik','agrahayan','poush','magh','falgun','choitro'],IMGBASE='';
 function img(b){return `<img class="ph" src="${IMG[BNE[b]]}" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()">`}
 const sp=(c,R,r,n)=>{let d='';for(let i=0;i<n*2;i++){const a=i*Math.PI/n-Math.PI/2,q=i%2?r:R;d+=(i?'L':'M')+(c+Math.cos(a)*q).toFixed(1)+' '+(c+Math.sin(a)*q).toFixed(1)}return d+'z'};
 const IC={fit:'<path d="M40 8a24 24 0 1 0 6 38 19 19 0 1 1-6-38z" fill="#d4a017"/><path d="'+sp(48,9,5,5).replace(/(\d+\.?\d*) (\d+\.?\d*)/g,(m,a,b)=>(+a+4)+' '+(+b-24))+'" fill="#f59e0b"/>',
@@ -531,7 +531,7 @@ $('#go').onclick=()=>$('#cv').toBlob(async b=>{const f=new File([b],'dcu-wishes.
  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='dcu-wishes.png';a.click();try{navigator.clipboard.writeText(tx).catch(()=>{})}catch(e){}});
 document.documentElement.dataset.th=localStorage.th||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 $('#dk').onclick=()=>{const d=document.documentElement;d.dataset.th=d.dataset.th=='dark'?'light':'dark';localStorage.th=d.dataset.th;$('#dk').textContent=d.dataset.th=='dark'?'☀️':'🌙'};
-const IMG={"boishakh": "scenes/boishakh.jpg", "joishtho": "scenes/joishtho.jpg", "asharh": "scenes/asharh.jpg", "srabon": "scenes/srabon.jpg", "bhadro": "scenes/bhadro.jpg", "ashwin": "scenes/ashwin.jpg", "kartik": "scenes/kartik.jpg", "agrahayan": "scenes/agrahayan.jpg", "poush": "scenes/poush.jpg", "magh": "scenes/magh.jpg", "falgun": "scenes/falgun.jpg", "choitro": "scenes/choitro.jpg"};
+const IMG={"boishakh": "boishakh.jpg", "joishtho": "joishtho.jpg", "asharh": "asharh.jpg", "srabon": "srabon.jpg", "bhadro": "bhadro.jpg", "ashwin": "ashwin.jpg", "kartik": "kartik.jpg", "agrahayan": "agrahayan.jpg", "poush": "poush.jpg", "magh": "magh.jpg", "falgun": "falgun.jpg", "choitro": "choitro.jpg"};
 /* ===== ডে-পপআপ ===== */
 const DS={
 'Language Martyrs’ Day':['১৯৫২ সালের ভাষা আন্দোলনে প্রাণ বিসর্জনকারী শহিদদের স্মরণে এবং ইউনেস্কো ঘোষিত আন্তর্জাতিক মাতৃভাষা দিবস।','Remembering those who gave their lives in the 1952 Language Movement; also UNESCO’s International Mother Language Day.'],
