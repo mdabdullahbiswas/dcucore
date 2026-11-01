@@ -143,6 +143,11 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ|End</label><input id="re" type="time"></div></div>
 <label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdy"></div>
 <button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button><span id="rw" class="hint" aria-live="polite"></span></div>
+<div class="bx np"><h2 class="t">বিরতি যোগ করুন|Add a Break</h2>
+<p class="hint t">বিরতি সব দিনের রুটিনে একই সময়ে দেখাবে। নাম ও সময় দিন।|A break appears on every day of the routine. Set its name and time.</p>
+<div class="g3"><div><label class="t">বিরতির নাম|Break name</label><input id="rbn" maxlength="30" data-p="যেমন: দুপুরের খাবার|e.g. Lunch break"></div><div><label class="t">শুরু|Start</label><input id="rbs" type="time"></div><div><label class="t">শেষ|End</label><input id="rbe" type="time"></div></div>
+<button class="bt t" id="rba">বিরতি যোগ করুন|Add Break</button><span id="rbw" class="hint" aria-live="polite"></span>
+<div id="rbl" style="margin-top:10px"></div></div>
 <div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine</h2>
 <details class="bx2 np" open><summary class="t">রুটিনের শিরোনাম ও তথ্য (ঐচ্ছিক)|Routine header &amp; details (optional)</summary>
 <div class="g3"><div><label class="t">প্রতিষ্ঠানের নাম|Institution</label><input id="rhi" maxlength="70" data-p="যেমন: ঢাকা সেন্ট্রাল ইউনিভার্সিটি|e.g. Dhaka Central University"></div>
@@ -566,7 +571,7 @@ function rtP(nl){
  const c=$('#rcv');if(!c)return;
  const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),gd=(new Date().getDay()+1)%7;
  const sl=[];R.forEach(r=>{if(!sl.some(a=>a.s==r.s&&a.e==r.e))sl.push({s:r.s,e:r.e})});sl.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
- const cols=[];sl.forEach((a,i)=>{cols.push(a);const n=sl[i+1];if(n&&tm(n.s)-tm(a.e)>=30)cols.push({brk:1,s:a.e,e:n.s})});
+ const mb=RB.filter(b=>tm(b.e)>tm(b.s)).map(b=>({brk:1,man:1,n:b.n,s:b.s,e:b.e}));const cols=[];sl.forEach((a,i)=>{cols.push(a);const n=sl[i+1];if(n&&tm(n.s)-tm(a.e)>=30&&!mb.some(b=>tm(b.s)>=tm(a.e)&&tm(b.e)<=tm(n.s)))cols.push({brk:1,s:a.e,e:n.s})});mb.forEach(b=>cols.push(b));cols.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
  if(!cols.length)cols.push({none:1});
  const days=[...new Set([1,2,3,4,5,...R.flatMap(r=>r.d)])].sort((a,b)=>a-b);
  const lw=150,bw=96,nS=cols.filter(a=>!a.brk).length,nB=cols.filter(a=>a.brk).length;
@@ -601,7 +606,7 @@ function rtP(nl){
  g=x.createLinearGradient(0,HD,0,HD+TH);g.addColorStop(0,NV2);g.addColorStop(1,NV);x.fillStyle=g;x.fillRect(M,HD,TW,TH);x.fillStyle=GD;x.fillRect(M,HD+TH-3,TW,3);
  T(L('বার|Day'),M+lw/2,HD+TH/2+8,'800 22px',GL,'center');
  cols.forEach((a,i)=>{const m=xs[i]+ws[i]/2;if(a.none)return;
-  if(a.brk)T(L('বিরতি|Break'),m,HD+TH/2+8,'800 19px',GL,'center',ws[i]-8);
+  if(a.brk){if(a.man){T(fit(a.n,'800 17px',ws[i]-10),m,HD+TH/2-6,'800 17px',GL,'center');T(nb(hm(tm(a.s)))+' – '+nb(hm(tm(a.e))),m,HD+TH/2+18,'600 14px','#c9d6ea','center',ws[i]-10)}else T(L('বিরতি|Break'),m,HD+TH/2+8,'800 19px',GL,'center',ws[i]-8)}
   else{T(nb(hm(tm(a.s))),m,HD+TH/2-6,'800 19px',GL,'center',ws[i]-10);T('– '+nb(hm(tm(a.e))),m,HD+TH/2+22,'600 16px','#c9d6ea','center',ws[i]-10)}});
  days.forEach((d,i)=>{const y=HD+TH+i*RH,mid=y+RH/2,td=d==gd;
   x.fillStyle=td?'rgba(212,175,55,.17)':i%2?'#ffffff':'#f3f6fd';x.fillRect(M,y,TW,RH);
@@ -623,7 +628,7 @@ function rtP(nl){
    x.fillStyle='#e3e9f5';x.fillRect(M+10,y+RH-1,TW-20,1)});
  cols.forEach((a,k)=>{if(!a.brk)return;const mn=tm(a.e)-tm(a.s);
   g=x.createLinearGradient(0,HD+TH,0,HD+TB2);g.addColorStop(0,'rgba(232,196,108,.28)');g.addColorStop(1,'rgba(232,196,108,.12)');x.fillStyle=g;x.fillRect(xs[k],HD+TH,ws[k],days.length*RH);
-  const my=HD+TH+days.length*RH/2;T(L('বিরতি|Break'),xs[k]+ws[k]/2,my-6,'800 20px',GDK,'center',ws[k]-8);T(nb(mn)+' '+L('মিনিট|min'),xs[k]+ws[k]/2,my+20,'600 15px','#7c5a14','center',ws[k]-8)});
+  const my=HD+TH+days.length*RH/2;T(a.man?fit(a.n,'800 20px',ws[k]-8):L('বিরতি|Break'),xs[k]+ws[k]/2,my-6,'800 20px',GDK,'center');T(a.man?nb(hm(tm(a.s)))+' – '+nb(hm(tm(a.e))):nb(mn)+' '+L('মিনিট|min'),xs[k]+ws[k]/2,my+20,'600 15px','#7c5a14','center',ws[k]-8)});
  if(!R.length)T(L('এখনো কোনো ক্লাস যোগ করা হয়নি।|No classes added yet.'),M+lw+(TW-lw)/2,HD+TH+RH/2+8,'600 22px','#64748b','center');
  x.restore();x.strokeStyle='#d6dfef';x.lineWidth=1.2;rr(M,HD,TW,TB2,14);x.stroke();
  const fy=HD+TB2+34;
@@ -634,6 +639,13 @@ function rtP(nl){
  T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
  T('DCU Unofficial · dcu-cover-page.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
+let RB=ld('dcuRtB',[]);
+function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
+$('#rbl').onclick=e=>{const b=e.target.closest('[data-bi]');if(b){RB.splice(+b.dataset.bi,1);rbR()}};
+$('#rba').onclick=()=>{const n=$('#rbn').value.trim()||L('বিরতি|Break'),s=$('#rbs').value,e=$('#rbe').value,w=$('#rbw');
+ if(!s||!e||tm(e)<=tm(s))return w.textContent=L('শুরু ও শেষের সময় সঠিকভাবে দিন।|Enter a valid start and end time.');
+ RB.push({n,s,e});w.textContent='';$('#rbn').value=$('#rbs').value=$('#rbe').value='';rbR()};
+rbR();
 const rB=async fn=>{try{return await fn()}catch(e){rtP(1);return await fn()}};
 $('#rpn').onclick=async()=>{try{rtP();dlBlob(await rB(()=>mkBlob($('#rcv'))),'class-routine.png')}catch(e){say('rmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{rtP()}};
 $('#rpf').onclick=async()=>{try{rtP();const jp=await rB(()=>jb($('#rcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv'),w=842,h=w*c.height/c.width;d.addPage([w,h]).drawImage(im,{x:0,y:0,width:w,height:h});pdl(await d.save(),'class-routine.pdf')}catch(e){say('rmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{rtP()}};
