@@ -188,12 +188,23 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 <div class="g2"><div class="bx np"><h2 class="t">পরীক্ষা যোগ করুন|Add an Exam</h2>
 <label class="t">কোর্স / পরীক্ষার নাম|Course / exam name</label><input id="xc" data-p="যেমন: CSE-101 মিডটার্ম|e.g. CSE-101 Midterm" maxlength="50">
 <div class="g3"><div><label class="t">তারিখ|Date</label><input id="xd" type="date"></div><div><label class="t">সময় (ঐচ্ছিক)|Time (optional)</label><input id="xt" type="time"></div><div><label class="t">কাঠিন্য|Difficulty</label><select id="xf"><option value="1" class="t">সহজ|Easy</option><option value="2" selected class="t">মধ্যম|Medium</option><option value="3" class="t">কঠিন|Hard</option></select></div></div>
+<label class="t">কক্ষ / সিট (ঐচ্ছিক)|Room / Seat (optional)</label><input id="xr" maxlength="30" data-p="যেমন: ৩০২|e.g. Room 302">
 <label class="t">সিলেবাসের টপিক (প্রতি লাইনে একটি, ঐচ্ছিক)|Syllabus topics (one per line, optional)</label><textarea id="xp"></textarea>
 <button class="bt t" id="xa">পরীক্ষা যোগ করুন|Add Exam</button></div>
 <div class="bx"><h2 class="t">ফোকাস টাইমার|Focus Timer</h2><div class="tmd" id="tmd">25:00</div>
 <div style="text-align:center"><button class="bt t" id="tgo">শুরু|Start</button><button class="bs t" id="trs">রিসেট|Reset</button></div>
 <div style="text-align:center;margin-top:10px"><button class="bs t" data-m="25">ফোকাস ২৫|Focus 25</button> <button class="bs t" data-m="5">বিরতি ৫|Break 5</button> <button class="bs t" data-m="15">দীর্ঘ বিরতি ১৫|Long break 15</button></div>
 <label class="t">প্রতিদিন পড়ার মোট সময় (ঘণ্টা)|Daily study hours</label><input id="xh" type="number" min="1" max="16" value="4"></div></div>
+<div class="bx" id="xposter"><h2 class="t">🎓 প্রিমিয়াম পরীক্ষার রুটিন|🎓 Premium Exam Routine</h2>
+<p class="hint t">যোগ করা সব পরীক্ষা তারিখ অনুযায়ী সাজিয়ে সুন্দর রুটিন পোস্টার তৈরি হয়। PNG বা PDF করে ডাউনলোড ও শেয়ার করুন।|All your exams are sorted by date into a polished routine poster. Download it as PNG or PDF to share.</p>
+<details class="bx2 np" open><summary class="t">রুটিনের শিরোনাম ও তথ্য (ঐচ্ছিক)|Routine header &amp; details (optional)</summary>
+<div class="g3"><div><label class="t">প্রতিষ্ঠানের নাম|Institution</label><input id="xi" maxlength="70" data-p="যেমন: ঢাকা সেন্ট্রাল ইউনিভার্সিটি|e.g. Dhaka Central University"></div>
+<div><label class="t">বিভাগ / বর্ষ|Department / Year</label><input id="xdp" maxlength="70" data-p="যেমন: অর্থনীতি বিভাগ · অনার্স ৩য় বর্ষ|e.g. Economics · Honours 3rd Year"></div>
+<div><label class="t">রুটিনের শিরোনাম|Routine title</label><input id="xtt" maxlength="50" data-p="যেমন: মিডটার্ম পরীক্ষার রুটিন|e.g. Midterm Exam Routine"></div></div>
+<div class="g3"><div><label class="t">প্রস্তুতকারী|Prepared by</label><input id="xby" maxlength="50" data-p="আপনার নাম|Your name"></div>
+<div style="grid-column:span 2"><label class="t">নিচের উক্তি|Footer quote</label><input id="xq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div></div></details>
+<div class="sc" style="margin-top:12px"><canvas id="xcv" width="1130" height="800"></canvas></div>
+<div class="np"><button class="bt t" id="xpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="xpf">PDF ডাউনলোড|Download PDF</button></div><p class="hint" id="xmsg" role="status"></p></div>
 <div id="xl"></div><div class="bx" id="xpl"></div>
 </section>
 
@@ -537,7 +548,7 @@ $('#cgx').onclick=()=>{if(confirm(L('সব তথ্য মুছে ফেল�
 /* ===== ৪. পরীক্ষা প্ল্যানার ===== */
 let E=ld('dcuEx',[]);const DAY=864e5,t0=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
 const nd=e=>Math.round((new Date(e.d+'T00:00')-t0())/DAY),pg=e=>e.tp.length?e.tp.filter(t=>t.x).length/e.tp.length:0,wt=(e,n)=>(+e.f||2)*(1-.6*pg(e))/(n+1);
-function exR(){sv('dcuEx',E);const H=+$('#xh').value||4,A=E.map((e,j)=>({e,j,n:nd(e)})).filter(a=>a.n>=0).sort((a,b)=>a.n-b.n),S=A.reduce((s,a)=>s+(a.n>0?wt(a.e,a.n):0),0);
+function exR(){sv('dcuEx',E);if(typeof xK=='function')xK();const H=+$('#xh').value||4,A=E.map((e,j)=>({e,j,n:nd(e)})).filter(a=>a.n>=0).sort((a,b)=>a.n-b.n),S=A.reduce((s,a)=>s+(a.n>0?wt(a.e,a.n):0),0);
  $('#xl').innerHTML=A.map(({e,j,n})=>{const p=Math.round(pg(e)*100),h=n>0&&S?H*wt(e,n)/S:0;let hl='';if(e.t){const ms=new Date(e.d+'T'+e.t)-new Date();if(ms>0&&n<=1)hl=` · ${Math.floor(ms/36e5)}${L('ঘণ্টা|h')} ${Math.floor(ms%36e5/6e4)}${L('মিনিট|m')}`}
   return `<div class="bx"><div class="hd"><b>${esc(e.c)}</b><span class="gp">${n?n+' '+L('দিন বাকি|days left'):L('আজ পরীক্ষা|Exam today')}${hl}</span></div><div class="hint">${e.d}${e.t?' · '+hm(tm(e.t)):''} · ${L(['','সহজ|Easy','মধ্যম|Medium','কঠিন|Hard'][e.f])}</div>`+
   (e.tp.length?`<div class="pb"><i style="width:${p}%"></i></div><div class="hint">${L('প্রস্তুতি|Progress')}: ${p}%</div>`+e.tp.map((t,k)=>`<label class="ck"><input type="checkbox" data-j="${j}" data-k="${k}"${t.x?' checked':''}>${esc(t.n)}</label>`).join(''):'')+
@@ -548,8 +559,88 @@ function exR(){sv('dcuEx',E);const H=+$('#xh').value||4,A=E.map((e,j)=>({e,j,n:n
 $('#xl').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(b&&confirm(L('এই পরীক্ষা মুছে ফেলবেন?|Delete this exam?'))){E.splice(+b.dataset.del,1);exR()}});
 $('#xl').addEventListener('change',e=>{const d=e.target.dataset;if(d.k!==undefined){E[+d.j].tp[+d.k].x=e.target.checked;exR()}});
 $('#xh').oninput=exR;
-$('#xa').onclick=()=>{const c=$('#xc').value.trim(),d=$('#xd').value;if(!c||!d)return;E.push({c,d,t:$('#xt').value,f:+$('#xf').value,tp:$('#xp').value.split('\n').map(s=>s.trim()).filter(Boolean).map(n=>({n,x:0}))});$('#xc').value=$('#xp').value='';exR()};
+$('#xa').onclick=()=>{const c=$('#xc').value.trim(),d=$('#xd').value;if(!c||!d)return;E.push({c,d,t:$('#xt').value,r:$('#xr').value.trim(),f:+$('#xf').value,tp:$('#xp').value.split('\n').map(s=>s.trim()).filter(Boolean).map(n=>({n,x:0}))});$('#xc').value=$('#xp').value=$('#xr').value='';exR()};
 setInterval(exR,60000);
+
+/* ===== পরীক্ষার রুটিন: প্রিমিয়াম পোস্টার ===== */
+let XS=ld('dcuExS',{});
+const XFD={xi:'i',xdp:'d',xtt:'t',xby:'b',xq:'q'};
+Object.keys(XFD).forEach(id=>{const el=$('#'+id);if(XS[XFD[id]]!==undefined)el.value=XS[XFD[id]];el.addEventListener('input',()=>{XS[XFD[id]]=el.value;sv('dcuExS',XS);xK()})});
+const XI=new Image();let XIok=false;XI.onload=()=>{XIok=true;xK()};XI.src='logo.png';
+function xK(nl){
+ const c=$('#xcv');if(!c)return;
+ const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),
+  A=E.map(e=>({e,n:nd(e)})).sort((a,b)=>(a.e.d+(a.e.t||'')).localeCompare(b.e.d+(b.e.t||''))),
+  W=1130,M=40,RH=62,HD=312,TH=60,FT=210,R=Math.max(A.length,1),H=Math.max(800,HD+TH+R*RH+FT);
+ c.width=W;c.height=H;const x=c.getContext('2d');
+ const NV='#0a2240',NV2='#14386b',GD='#d4af37',GL='#e8c46c',GDK='#8a5f0a';
+ const rr=(a,b,w,h,r)=>{x.beginPath();x.roundRect(a,b,w,h,r)};
+ const T=(t,a,b,ft,col,al,mw)=>{x.font=ft+' '+f;x.fillStyle=col;x.textAlign=al||'left';if(mw)x.fillText(t,a,b,mw);else x.fillText(t,a,b)};
+ const fit=(t,ft,mw)=>{x.font=ft+' '+f;t=String(t);if(x.measureText(t).width<=mw)return t;while(t.length>1&&x.measureText(t+'…').width>mw)t=t.slice(0,-1);return t+'…'};
+ x.textBaseline='alphabetic';
+ /* পটভূমি, রিবন ও ফ্রেম */
+ let g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,'#f3f7ff');g.addColorStop(1,'#ffffff');x.fillStyle=g;x.fillRect(0,0,W,H);
+ g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,NV);g.addColorStop(.5,NV2);g.addColorStop(1,NV);x.fillStyle=g;x.fillRect(0,0,W,16);
+ g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,GDK);g.addColorStop(.5,GL);g.addColorStop(1,GDK);x.fillStyle=g;x.fillRect(0,16,W,5);
+ x.strokeStyle='rgba(212,175,55,.55)';x.lineWidth=2;rr(14,34,W-28,H-48,18);x.stroke();
+ /* লোগো */
+ if(XIok&&!nl){const s=Math.min(XI.width,XI.height);x.save();x.beginPath();x.arc(M+62,122,54,0,7);x.clip();x.drawImage(XI,(XI.width-s)/2,(XI.height-s)/2,s,s,M+8,68,108,108);x.restore();x.strokeStyle=GD;x.lineWidth=3;x.beginPath();x.arc(M+62,122,56,0,7);x.stroke()}
+ /* শিরোনাম */
+ T(fit(XS.i||L('ঢাকা সেন্ট্রাল ইউনিভার্সিটি|Dhaka Central University'),'800 46px',W-2*(M+150)),W/2,108,'800 46px',NV,'center');
+ if((XS.d||'').trim())T(fit(XS.d.trim(),'700 27px',W-2*(M+150)),W/2,150,'700 27px','#0f766e','center');
+ const tt=(XS.t||'').trim()||L('পরীক্ষার রুটিন|Exam Routine');x.font='800 30px '+f;const tw=Math.min(x.measureText(tt).width,W-2*M-160)+72;
+ g=x.createLinearGradient(W/2-tw/2,0,W/2+tw/2,0);g.addColorStop(0,GDK);g.addColorStop(.5,GL);g.addColorStop(1,GDK);x.fillStyle=g;rr(W/2-tw/2,172,tw,52,26);x.fill();
+ T(fit(tt,'800 30px',tw-48),W/2,208,'800 30px',NV,'center');
+ /* সারসংক্ষেপ চিপ */
+ const done=A.filter(a=>a.n<0).length,nx=A.find(a=>a.n>=0);
+ const ch=[[L('মোট পরীক্ষা|Total exams'),nb(A.length)],[L('সম্পন্ন|Completed'),nb(done)],[L('পরবর্তী|Next'),nx?fit(nx.e.c,'800 19px',230)+' · '+(nx.n?nb(nx.n)+' '+L('দিন|days'):L('আজ|Today')):'—']];
+ const cw=ch.map(a=>{x.font='600 16px '+f;const l=x.measureText(a[0]+'  ').width;x.font='800 19px '+f;return[l,x.measureText(a[1]).width+l+36]});
+ let cx=(W-cw.reduce((s,a)=>s+a[1],0)-14*(ch.length-1))/2;
+ ch.forEach((a,i)=>{const w=cw[i][1];x.fillStyle='#fff';rr(cx,248,w,40,20);x.fill();x.strokeStyle='rgba(212,175,55,.8)';x.lineWidth=1.5;x.stroke();
+  T(a[0],cx+18,274,'600 16px',GDK,'left');T(a[1],cx+18+cw[i][0],274,'800 19px',NV,'left');cx+=w+14});
+ /* টেবিল */
+ const cols=[50,170,110,130,340,100,150],hd=[L('ক্রম|SL'),L('তারিখ|Date'),L('বার|Day'),L('সময়|Time'),L('কোর্স / বিষয়|Course / Subject'),L('কক্ষ|Room'),L('অবস্থা|Status')];
+ const cs=[];let acc=M;cols.forEach(w=>{cs.push(acc);acc+=w});
+ x.save();x.shadowColor='rgba(10,34,64,.16)';x.shadowBlur=22;x.shadowOffsetY=8;x.fillStyle='#fff';rr(M,HD,W-2*M,TH+R*RH,14);x.fill();x.restore();
+ x.save();rr(M,HD,W-2*M,TH+R*RH,14);x.clip();
+ g=x.createLinearGradient(0,HD,0,HD+TH);g.addColorStop(0,NV2);g.addColorStop(1,NV);x.fillStyle=g;x.fillRect(M,HD,W-2*M,TH);
+ x.fillStyle=GD;x.fillRect(M,HD+TH-3,W-2*M,3);
+ hd.forEach((t,i)=>T(t,i==4?cs[i]+16:cs[i]+cols[i]/2,HD+TH/2+8,'700 20px',GL,i==4?'left':'center'));
+ const DF=['','#16a34a','#d97706','#dc2626'],DL=['','সহজ|Easy','মধ্যম|Medium','কঠিন|Hard'];
+ if(!A.length)T(L('এখনো কোনো পরীক্ষা যোগ করা হয়নি।|No exams added yet.'),W/2,HD+TH+RH/2+8,'600 22px','#64748b','center');
+ A.forEach((a,i)=>{const e=a.e,y=HD+TH+i*RH,mid=y+RH/2,pst=a.n<0,hl=nx&&a===nx;
+  x.fillStyle=hl?'rgba(212,175,55,.17)':i%2?'#ffffff':'#f3f6fd';x.fillRect(M,y,W-2*M,RH);
+  if(hl){x.fillStyle=GD;x.fillRect(M,y,6,RH)}
+  x.globalAlpha=pst?.55:1;
+  const dt=new Date(e.d+'T00:00');
+  T(nb(i+1),cs[0]+cols[0]/2,mid+7,'700 20px',NV,'center');
+  T(dt.toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),cs[1]+cols[1]/2,mid+7,'700 19px',NV,'center',cols[1]-14);
+  T(dt.toLocaleDateString(loc,{weekday:'long'}),cs[2]+cols[2]/2,mid+7,'600 19px','#475569','center',cols[2]-12);
+  T(e.t?nb(hm(tm(e.t))):'—',cs[3]+cols[3]/2,mid+7,'700 19px',NV,'center',cols[3]-12);
+  T(fit(e.c,'800 22px',cols[4]-26),cs[4]+16,mid-3,'800 22px',NV,'left');
+  const sub=L(DL[e.f]||DL[2])+(e.tp.length?' · '+L('প্রস্তুতি|Prep')+' '+nb(Math.round(pg(e)*100))+'%':'');
+  x.fillStyle=DF[e.f]||DF[2];x.beginPath();x.arc(cs[4]+23,mid+15,5,0,7);x.fill();
+  T(fit(sub,'600 14.5px',cols[4]-48),cs[4]+34,mid+20,'600 14.5px','#64748b','left');
+  T(e.r||'—',cs[5]+cols[5]/2,mid+7,'700 19px',NV,'center',cols[5]-12);
+  const sc=pst?['#64748b','#e8edf5']:a.n==0?['#dc2626','#fee2e2']:a.n<=3?['#b45309','#fef3c7']:['#047857','#d1fae5'],st=pst?L('সম্পন্ন|Done'):a.n==0?L('আজ|Today'):nb(a.n)+' '+L('দিন|days');
+  x.fillStyle=sc[1];rr(cs[6]+16,mid-17,cols[6]-32,34,17);x.fill();T(st,cs[6]+cols[6]/2,mid+7,'800 18px',sc[0],'center',cols[6]-44);
+  x.globalAlpha=1;
+  if(i<A.length-1){x.fillStyle='#e3e9f5';x.fillRect(M+10,y+RH-1,W-2*M-20,1)}});
+ x.restore();
+ x.strokeStyle='#d6dfef';x.lineWidth=1.2;rr(M,HD,W-2*M,TH+R*RH,14);x.stroke();
+ /* ফুটার */
+ const fy=HD+TH+R*RH+34;
+ g=x.createLinearGradient(M,0,W-M,0);g.addColorStop(0,'rgba(212,175,55,0)');g.addColorStop(.5,GD);g.addColorStop(1,'rgba(212,175,55,0)');x.fillStyle=g;x.fillRect(M,fy,W-2*M,2);
+ const q=(XS.q||'').trim()||L('নিয়মিত অধ্যয়নই সাফল্যের চাবিকাঠি।|Consistent study is the key to success.');
+ T(fit('“'+q+'”','italic 600 24px',W-2*M-60),W/2,fy+54,'italic 600 24px',NV2,'center');
+ const by=(XS.b||'').trim();
+ T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
+ T('DCU Unofficial · dcu-cover-page.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
+ T(L('সময়সূচি পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Schedule may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
+const xB=async fn=>{try{return await fn()}catch(e){xK(1);return await fn()}};
+$('#xpn').onclick=async()=>{try{xK();dlBlob(await xB(()=>mkBlob($('#xcv'))),'exam-routine.png')}catch(e){say('xmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{xK()}};
+$('#xpf').onclick=async()=>{try{xK();const jp=await xB(()=>jb($('#xcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#xcv'),w=842,h=w*c.height/c.width;d.addPage([w,h]).drawImage(im,{x:0,y:0,width:w,height:h});pdl(await d.save(),'exam-routine.pdf')}catch(e){say('xmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{xK()}};
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>xK());
 /* ফোকাস টাইমার */
 let TM={t:1500,m:25,end:0,iv:0};
 const tdraw=()=>{$('#tmd').textContent=String(Math.floor(TM.t/60)).padStart(2,'0')+':'+String(TM.t%60).padStart(2,'0')};
