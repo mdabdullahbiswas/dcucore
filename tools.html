@@ -13,6 +13,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri',
 .tw{max-width:1100px;margin:0 auto;padding:16px 14px 4px}
 h2{margin:0 0 6px;font-size:20px}
 .tabs{display:flex;gap:8px;overflow-x:auto;margin:14px 0;padding-bottom:4px;scrollbar-width:thin}
+.tabs a.cvst{flex:none;display:inline-flex;align-items:center;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:22px;padding:8px 16px;font-size:14px;font-weight:600;font-family:inherit;text-decoration:none;white-space:nowrap}
 .tabs button{flex:none;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:22px;padding:8px 16px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer}
 .tabs button.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
 section{display:none}section.on{display:block}
@@ -105,7 +106,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 <main class="tw">
 <div class="pv np">🔒 <b class="t">আপনার তথ্য শুধু আপনার ডিভাইসে থাকে।|Your data stays only on your device.</b> <span class="t">এখানে দেওয়া সব তথ্য, ছবি ও ফাইল আপনার ব্রাউজারেই প্রসেস ও সংরক্ষিত হয়; কোনো সার্ভারে পাঠানো হয় না, তাই কেউ চাইলেও তা দেখতে পারে না।|Everything you enter, including photos and files, is processed and saved in your browser only. Nothing is sent to a server, so nobody else can see it.</span></div>
 <div class="tabs" role="tablist">
-<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
+<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><a class="cvst t" href="/cv">সিভি স্টুডিও|CV Studio</a><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
 </div>
 
 <!-- ============ শেয়ার কার্ড ============ -->
