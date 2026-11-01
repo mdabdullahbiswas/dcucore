@@ -139,6 +139,9 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 body.dark .rt-tgrow,:root[data-theme=dark] .rt-tgrow{background:var(--surface-2);border-color:var(--border)}
 body.dark .rt-tgic,:root[data-theme=dark] .rt-tgic{background:#1A2236}
 .bx[hidden]{display:none!important}
+.rt-logo{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:14px}
+.rt-logo img{width:56px;height:56px;object-fit:contain;border-radius:10px;background:var(--surface-2,#F1F5F9);padding:4px;border:1px solid var(--ln)}
+.rt-logo label,.rt-logo button{cursor:pointer}
 .rt-item:hover{border-color:var(--gold)}
 .rt-item:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .rt-pv #rcv{display:block;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;border-radius:8px}
@@ -198,7 +201,7 @@ body.dark .rt-tgic,:root[data-theme=dark] .rt-tgic{background:#1A2236}
 <div><label class="t">বিভাগ / বর্ষ|Department / Year</label><input id="rhd" maxlength="70" data-p="যেমন: অর্থনীতি বিভাগ · অনার্স ৩য় বর্ষ|e.g. Economics · Honours 3rd Year"></div>
 <div><label class="t">রুটিনের শিরোনাম|Routine title</label><input id="rht" maxlength="50" data-p="যেমন: ক্লাস রুটিন: অনার্স ৩য় বর্ষ|e.g. Class Routine: Honours 3rd Year"></div></div>
 <div class="g3"><div><label class="t">প্রস্তুতকারী|Prepared by</label><input id="rhb" maxlength="50" data-p="আপনার নাম|Your name"></div>
-<div style="grid-column:span 2"><label class="t">নিচের উক্তি|Footer quote</label><input id="rhq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div></div></details></div>
+<div style="grid-column:span 2"><label class="t">নিচের উক্তি|Footer quote</label><input id="rhq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div></div><div class="rt-logo"><img id="rlpv" alt="" src="logo.png"><label class="bs t" for="rlogo">লোগো আপলোড|Upload logo</label><input type="file" id="rlogo" accept="image/*" hidden><button type="button" class="bs t" id="rlrm">লোগো সরান|Remove logo</button><span id="rlmsg" class="hint" aria-live="polite"></span></div><button type="button" class="rt-tgrow t" id="rsN" aria-pressed="true"><span class="rt-tgic">📝</span><span class="rt-tglb">নিচের নোট দেখান|Show footer note</span><span class="rt-sw" aria-hidden="true"><i></i></span></button><div class="g3"><div style="grid-column:span 3"><label class="t">নিচের নোট|Footer note</label><input id="rhn" maxlength="140" data-p="রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice."></div></div></details></div>
 <div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
@@ -221,7 +224,7 @@ body.dark .rt-tgic,:root[data-theme=dark] .rt-tgic{background:#1A2236}
 <div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine</h2>
 
 <div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div><p class="hint t" style="margin:8px 0 0">ক্লাসের ঘরে ক্লিক করলে ফর্মে এডিট করা যাবে।|Click a class block to edit it in the form.</p>
-<div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" onclick="print()">প্রিন্ট / PDF সেভ|Print / Save PDF</button><button class="bs t" id="rcl">সব মুছুন|Clear All</button></div><p class="hint" id="rmsg" role="status"></p>
+<div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" id="rsh">শেয়ার|Share</button><button class="bs t" id="rcAll">সব মুছুন|Clear All</button></div><p class="hint" id="rmsg" role="status"></p>
 </div>
 </aside></div>
 <button type="button" class="rt-fab" id="rtFab" aria-controls="rtPv" aria-expanded="false"><span class="t">প্রিভিউ|Preview</span></button>
@@ -532,7 +535,7 @@ const rec={c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e};
 if(rtEdit!=null&&R[rtEdit]){R[rtEdit]=rec;rtEdit=null;setEditUI(false);w.textContent=L('ক্লাস আপডেট হয়েছে।|Class updated.')}
 else{R.push(rec);w.textContent=''}
 rtR()};
-$('#rcl').onclick=()=>{if(confirm(L('সব ক্লাস মুছে ফেলবেন?|Delete all classes?'))){R=[];rtR()}};
+$('#rcAll').onclick=()=>{if(confirm(L('সব ক্লাস মুছে ফেলবেন?|Delete all classes?'))){R=[];rtEdit=null;setEditUI(false);rtR()}};
 
 /* ===== ক্লাস রুটিন: ফোনে প্রিভিউ শিট (Close / Esc দিয়ে ফর্মে ফেরা) ===== */
 function setRtPv(on){document.body.classList.toggle('rt-pv-open',on);$('#rtFab').setAttribute('aria-expanded',on?'true':'false');
@@ -662,12 +665,17 @@ setInterval(exR,60000);
 
 /* ===== ক্লাস রুটিন: প্রিমিয়াম পোস্টার ===== */
 let RS=ld('dcuRtS',{});
-const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q'};
+const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q',rhn:'n'};
 Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.value=RS[RFD[id]];el.addEventListener('input',()=>{RS[RFD[id]]=el.value;sv('dcuRtS',RS);rtP()})});
-const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src='logo.png';
+const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src=RS.logo||'logo.png';
+const syncLogo=()=>{$('#rlpv').src=RS.logo||'logo.png'};syncLogo();
+const syncN=()=>{const b=$('#rsN');b.classList.toggle('on',RS.ns!==false);b.setAttribute('aria-pressed',String(RS.ns!==false))};syncN();
+$('#rsN').onclick=()=>{RS.ns=RS.ns===false;sv('dcuRtS',RS);syncN();rtP()};
+$('#rlogo').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bmp=await createImageBitmap(f);const k=Math.min(1,300/Math.max(bmp.width,bmp.height));const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(bmp.width*k));cv.height=Math.max(1,Math.round(bmp.height*k));cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);RS.logo=cv.toDataURL('image/png');sv('dcuRtS',RS);RIok=false;RI.src=RS.logo;syncLogo();say('rlmsg',L('লোগো যোগ হয়েছে।|Logo added.'))}catch(err){say('rlmsg',L('এই ফাইলটি লোগো হিসেবে ব্যবহার করা যায়নি।|This file could not be used as a logo.'))}finally{e.target.value=''}};
+$('#rlrm').onclick=()=>{delete RS.logo;sv('dcuRtS',RS);RIok=false;RI.src='logo.png';syncLogo();say('rlmsg',L('লোগো সরানো হয়েছে।|Logo removed.'));rtP()};
 function rtP(nl){
  const c=$('#rcv');if(!c)return;rtHits=[];
- const CM=subjMap(),colOf=c0=>{const k=sKey(c0),h0=RC[k]||subjHex((CM.get(k)||{idx:0}).idx);return{bg:mix(h0,255,.88),bar:h0,ink:mix(h0,0,.35)}};
+ const CM=subjMap(),colOf=r0=>{const k=cKey(r0),h0=RC[k]||subjHex((CM.get(k)||{idx:0}).idx);return{bg:mix(h0,255,.88),bar:h0,ink:mix(h0,0,.35)}};
  const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),gd=(new Date().getDay()+1)%7;
  const sl=[];R.forEach(r=>{if(!sl.some(a=>a.s==r.s&&a.e==r.e))sl.push({s:r.s,e:r.e})});sl.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
  const mb=RB.filter(b=>tm(b.e)>tm(b.s)).map(b=>({brk:1,man:1,n:b.n,s:b.s,e:b.e}));const cols=[];sl.forEach((a,i)=>{cols.push(a);const n=sl[i+1];if(n&&tm(n.s)-tm(a.e)>=30&&!mb.some(b=>tm(b.s)>=tm(a.e)&&tm(b.e)<=tm(n.s)))cols.push({brk:1,s:a.e,e:n.s})});mb.forEach(b=>cols.push(b));cols.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
@@ -711,7 +719,7 @@ function rtP(nl){
    const it=R.filter(r=>r.s==a.s&&r.e==a.e&&r.d.includes(d)).slice(0,2);
    if(!it.length){T('–',xs[k]+ws[k]/2,mid+8,'600 22px','#b6c0d1','center');return}
    const k2=it.length,bh=(RH-12)/k2;
-   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,cc=colOf(r.c),h2=bh-(k2>1?4:0);rtHits.push({x:bx,y:by,w:w,h:h2,i:R.indexOf(r)});
+   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,cc=colOf(r),h2=bh-(k2>1?4:0);rtHits.push({x:bx,y:by,w:w,h:h2,i:R.indexOf(r)});
     x.fillStyle=cc.bg;rr(bx,by,w,h2,12);x.fill();
     x.save();rr(bx,by,w,h2,12);x.clip();x.fillStyle=cc.bar;x.fillRect(bx,by,5,h2);x.restore();
     const ln=[[r.c,'800 '+(k2>1?17:20)+'px',cc.ink]];
@@ -732,20 +740,22 @@ function rtP(nl){
  const by=(RS.b||'').trim();
  T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
  T('dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
- T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
+ const nt=(RS.n!==undefined?String(RS.n):L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.')).trim();
+ if(RS.ns!==false&&nt)T(fit(nt,'500 14px',W-2*M-40),W/2,H-34,'500 14px','#64748b','center')}
 function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
 $('#rs').addEventListener('input',rtEnd);$('#rd').addEventListener('input',rtEnd);
 $('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=+$('#rd').value===+b.dataset.m?'':b.dataset.m;rtEnd()};
 $('#rdp').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const k=b.dataset.p,set=k==='all'?[0,1,2,3,4,5,6]:k==='wk'?[0,1,2,3,4,5]:[];$$('#rdy input').forEach(i=>i.checked=set.includes(+i.value))};
 const PAL=['#0ea5e9','#22c55e','#f59e0b','#ef4444','#8b5cf6','#14b8a6','#ec4899','#84cc16','#6366f1','#f97316','#06b6d4','#a855f7'];
-let RC=ld('dcuRtC',{});
+let RC=ld('dcuRtC',{});Object.keys(RC).forEach(k=>{if(!k.includes('|')){RC[k+'|']=RC[k];delete RC[k]}});
 const sKey=c=>String(c||'').trim().toLowerCase();
-function subjMap(){const m=new Map();R.forEach(r=>{const k=sKey(r.c);if(k&&!m.has(k))m.set(k,{name:String(r.c).trim(),idx:m.size})});return m}
+const cKey=r=>sKey(r.c)+'|'+sKey(r.t);
+function subjMap(){const m=new Map();R.forEach(r=>{const k=cKey(r);if(sKey(r.c)&&!m.has(k))m.set(k,{name:String(r.c).trim(),t:String(r.t||'').trim(),idx:m.size})});return m}
 function hx(h,s,l){s/=100;l/=100;const a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12,c=l-a*Math.max(-1,Math.min(k-3,9-k,1));return Math.round(255*c).toString(16).padStart(2,'0')};return '#'+f(0)+f(8)+f(4)}
 function subjHex(idx){return idx<PAL.length?PAL[idx]:hx((idx*137.5)%360,62,46)}
 function mix(h,t,a){const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));return '#'+c.map(v=>Math.round(v+(t-v)*a).toString(16).padStart(2,'0')).join('')}
 function rcR(){const el=$('#rcl');if(!el)return;const m=subjMap();
- el.innerHTML=m.size?[...m.entries()].map(([k,v])=>{const h=RC[k]||subjHex(v.idx);return `<div class="fi"><span style="display:flex;align-items:center;gap:10px"><i class="rsw" style="background:${h}"></i><b>${esc(v.name)}</b><small class="hint" style="margin:0">${RC[k]?L('নিজের রং|Custom'):L('অটো|Auto')}</small></span><span style="display:flex;align-items:center;gap:8px"><input type="color" class="rcp" value="${h}" data-ck="${esc(k)}" aria-label="${esc(v.name)}"><button class="ic" data-ca="${esc(k)}">${L('অটো|Auto')}</button></span></div>`}).join(''):`<p class="hint t">${L('ক্লাস যোগ করলে এখানে বিষয়ের রং দেখা যাবে।|Subject colours appear here once you add a class.')}</p>`}
+ el.innerHTML=m.size?[...m.entries()].map(([k,v])=>{const h=RC[k]||subjHex(v.idx);return `<div class="fi"><span style="display:flex;align-items:center;gap:10px"><i class="rsw" style="background:${h}"></i><b>${esc(v.name)}${v.t?' · '+esc(v.t):''}</b><small class="hint" style="margin:0">${RC[k]?L('নিজের রং|Custom'):L('অটো|Auto')}</small></span><span style="display:flex;align-items:center;gap:8px"><input type="color" class="rcp" value="${h}" data-ck="${esc(k)}" aria-label="${esc(v.name)}"><button class="ic" data-ca="${esc(k)}">${L('অটো|Auto')}</button></span></div>`}).join(''):`<p class="hint t">${L('ক্লাস যোগ করলে এখানে বিষয়ের রং দেখা যাবে।|Subject colours appear here once you add a class.')}</p>`}
 $('#rcl').addEventListener('input',e=>{const k=e.target.dataset.ck;if(k!==undefined){RC[k]=e.target.value;sv('dcuRtC',RC);rtP()}});
 $('#rcl').addEventListener('change',e=>{if(e.target.dataset.ck!==undefined)rcR()});
 $('#rcl').onclick=e=>{const b=e.target.closest('[data-ca]');if(b){delete RC[b.dataset.ca];sv('dcuRtC',RC);rcR();rtP()}};
@@ -760,6 +770,7 @@ $('#rba').onclick=()=>{const n=$('#rbn').value.trim()||L('বিরতি|Break'
 rbR();
 const rB=async fn=>{try{return await fn()}catch(e){rtP(1);return await fn()}};
 $('#rpn').onclick=async()=>{try{rtP();dlBlob(await rB(()=>mkBlob($('#rcv'))),'class-routine.png')}catch(e){say('rmsg',L('ছবি তৈরি করা যায়নি।|Could not create the image.'))}finally{rtP()}};
+$('#rsh').onclick=async()=>{try{rtP();await shareImg($('#rcv'),null,'class-routine.png',RS.t||L('ক্লাস রুটিন|Class routine'),'rmsg')}catch(e){say('rmsg',L('শেয়ার করা যায়নি।|Could not share.'))}};
 $('#rpf').onclick=async()=>{try{rtP();const jp=await rB(()=>jb($('#rcv'),.92)),{PDFDocument}=await lp(),d=await PDFDocument.create(),im=await d.embedJpg(jp),c=$('#rcv'),w=842,h=w*c.height/c.width;d.addPage([w,h]).drawImage(im,{x:0,y:0,width:w,height:h});pdl(await d.save(),'class-routine.pdf')}catch(e){say('rmsg',L('PDF বানানো যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।|Could not create the PDF. Check your connection and try again.'))}finally{rtP()}};
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>rtP());
 /* ফোকাস টাইমার */
