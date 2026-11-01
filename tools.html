@@ -124,11 +124,10 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 .rt-pv{min-width:0;position:sticky;top:90px}
 .rt-pvhead{display:none}
 .rt-fab{display:none}
-.rt-pv #rcv{display:block;width:max(100%,980px)!important;min-width:0!important;max-width:none!important;height:auto!important}
-.rt-pv .sc{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.rt-pv #rcv{display:block;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;border-radius:8px}
+.rt-pv .sc{background:#fff;border:1px solid rgba(212,175,55,.35);border-radius:14px;padding:8px;box-shadow:0 10px 30px rgba(10,26,51,.12);overflow:hidden}
 @media (max-width:960px){
  .rt-studio{grid-template-columns:minmax(0,1fr)}
- .rt-pv #rcv{width:max(100%,820px)!important}
  .rt-pv{position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#f4f6fa;padding:0 14px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);visibility:hidden;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s linear .38s}
  body.dark .rt-pv{background:#0f172a}
  body.rt-pv-open .rt-pv{transform:none;visibility:visible;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s}
@@ -200,7 +199,7 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <div class="rt-pvhead"><b class="t">লাইভ প্রিভিউ|Live preview</b><button type="button" class="bs t" id="rtPvClose">বন্ধ|Close</button></div>
 <div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine</h2>
 
-<div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div><p class="hint t" style="margin:8px 0 0">ক্লাসের ঘরে ক্লিক করলে ফর্মে এডিট করা যাবে। বড় করে দেখাতে পাশে স্ক্রল করুন।|Click a class block to edit it in the form. Scroll sideways to see the whole routine larger.</p>
+<div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div><p class="hint t" style="margin:8px 0 0">ক্লাসের ঘরে ক্লিক করলে ফর্মে এডিট করা যাবে।|Click a class block to edit it in the form.</p>
 <div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" onclick="print()">প্রিন্ট / PDF সেভ|Print / Save PDF</button><button class="bs t" id="rcl">সব মুছুন|Clear All</button></div><p class="hint" id="rmsg" role="status"></p>
 <div id="rls" class="np"></div></div>
 </aside></div>
