@@ -158,14 +158,14 @@ body.dark .rt-tgic,:root[data-theme=dark] .rt-tgic{background:#1A2236}
 }
 #routine{position:relative;isolation:isolate;overflow-x:clip;--accent:#059669;--accent-soft:#D1FAE5;--accent-deep:#065F46;--accent-grad:linear-gradient(135deg,#34D399,#059669)}
 #routine::before{content:"";position:absolute;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,var(--accent) 0%,transparent 68%);opacity:.12;filter:blur(38px);top:-140px;right:-160px;z-index:-1;pointer-events:none;animation:rtFloat 24s ease-in-out infinite}
-#routine .bx.rt-s1{--accent:var(--s1-main);--accent-soft:var(--s1-soft);--accent-deep:var(--s1-deep);--accent-grad:var(--s1-grad)}
-#routine .bx.rt-s2{--accent:var(--s2-main);--accent-soft:var(--s2-soft);--accent-deep:var(--s2-deep);--accent-grad:var(--s2-grad)}
-#routine .bx.rt-s3{--accent:var(--s3-main);--accent-soft:var(--s3-soft);--accent-deep:var(--s3-deep);--accent-grad:var(--s3-grad)}
-#routine .bx.rt-s4{--accent:var(--s4-main);--accent-soft:var(--s4-soft);--accent-deep:var(--s4-deep);--accent-grad:var(--s4-grad)}
-#routine .bx.rt-s5{--accent:var(--s5-main);--accent-soft:var(--s5-soft);--accent-deep:var(--s5-deep);--accent-grad:var(--s5-grad)}
-#routine .bx.rt-s6{--accent:var(--s6-main);--accent-soft:var(--s6-soft);--accent-deep:var(--s6-deep);--accent-grad:var(--s6-grad)}
-#routine .bx.rt-s7{--accent:var(--s7-main);--accent-soft:var(--s7-soft);--accent-deep:var(--s7-deep);--accent-grad:var(--s7-grad)}
-#routine .bx.rt-s8{--accent:var(--s8-main);--accent-soft:var(--s8-soft);--accent-deep:var(--s8-deep);--accent-grad:var(--s8-grad)}
+#routine .bx.rt-s1,#routine .rt-tgrow.rt-s1{--accent:var(--s1-main);--accent-soft:var(--s1-soft);--accent-deep:var(--s1-deep);--accent-grad:var(--s1-grad)}
+#routine .bx.rt-s2,#routine .rt-tgrow.rt-s2{--accent:var(--s2-main);--accent-soft:var(--s2-soft);--accent-deep:var(--s2-deep);--accent-grad:var(--s2-grad)}
+#routine .bx.rt-s3,#routine .rt-tgrow.rt-s3{--accent:var(--s3-main);--accent-soft:var(--s3-soft);--accent-deep:var(--s3-deep);--accent-grad:var(--s3-grad)}
+#routine .bx.rt-s4,#routine .rt-tgrow.rt-s4{--accent:var(--s4-main);--accent-soft:var(--s4-soft);--accent-deep:var(--s4-deep);--accent-grad:var(--s4-grad)}
+#routine .bx.rt-s5,#routine .rt-tgrow.rt-s5{--accent:var(--s5-main);--accent-soft:var(--s5-soft);--accent-deep:var(--s5-deep);--accent-grad:var(--s5-grad)}
+#routine .bx.rt-s6,#routine .rt-tgrow.rt-s6{--accent:var(--s6-main);--accent-soft:var(--s6-soft);--accent-deep:var(--s6-deep);--accent-grad:var(--s6-grad)}
+#routine .bx.rt-s7,#routine .rt-tgrow.rt-s7{--accent:var(--s7-main);--accent-soft:var(--s7-soft);--accent-deep:var(--s7-deep);--accent-grad:var(--s7-grad)}
+#routine .bx.rt-s8,#routine .rt-tgrow.rt-s8{--accent:var(--s8-main);--accent-soft:var(--s8-soft);--accent-deep:var(--s8-deep);--accent-grad:var(--s8-grad)}
 #routine .bx{background:var(--surface,#fff);border:1px solid var(--border,#E2E8F0);border-radius:18px;box-shadow:0 12px 30px rgba(15,23,42,.07);transition:transform .35s var(--ease,cubic-bezier(.2,.8,.2,1)),box-shadow .35s,border-color .35s}
 #routine .bx:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 22px 44px -20px color-mix(in srgb,var(--accent) 45%,transparent)}
 body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transparent);--accent-deep:color-mix(in srgb,var(--accent) 70%,#fff);background:var(--surface,#111827);border-color:var(--border,#243049)}
@@ -666,7 +666,9 @@ tgR();
 /* ===== ক্লাস রুটিন: প্রতিটি কার্ডে সেক্টর কালার + স্ক্রল রিভিল ===== */
 (function(){const cards=[...document.querySelectorAll('#routine .bx')];cards.forEach((el,i)=>{el.classList.add('rt-s'+(i%8+1));el.style.setProperty('--i',i)});
  if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('rt-in');io.unobserve(en.target)}}),{threshold:.08});cards.forEach(el=>{el.classList.add('rt-pre');io.observe(el)})}
- else cards.forEach(el=>el.classList.add('rt-in'))})();
+ else cards.forEach(el=>el.classList.add('rt-in'));
+ /* টগল বার-কে ঠিক নিচের প্যানেলের মতো একই সেক্টর-কালার দেওয়া */
+ [['tgB','bxB'],['tgC','bxC']].forEach(([tId,pId])=>{const tg=$('#'+tId),pv=$('#'+pId);if(!tg||!pv)return;const sN=[...pv.classList].find(c=>/^rt-s[1-8]$/.test(c));if(sN)tg.classList.add(sN)})})();
 
 /* ===== ৩. CGPA ===== */
 const GS={ugc:[['A+',4],['A',3.75],['A-',3.5],['B+',3.25],['B',3],['B-',2.75],['C+',2.5],['C',2.25],['D',2],['F',0]],
