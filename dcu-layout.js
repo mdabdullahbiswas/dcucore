@@ -1,5 +1,5 @@
 /* dcu-layout.js
- * Shared premium header + footer for every DCU Unofficial page.
+ * Shared premium header + footer for every DCUCore page.
  * Fills the existing <div id="hdr"> and <div id="ftr"> placeholders.
  * Load with:  <script src="dcu-layout.js" defer></script>
  */
@@ -110,7 +110,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     return (
       '<div class="dl-bar">' +
-      '<a class="dl-brand" href="/" aria-label="DCU Unofficial — হোম">' +
+      '<a class="dl-brand" href="/" aria-label="DCUCore — হোম">' +
       '<img src="logo.png" alt="" width="38" height="38">' +
       '<span class="dl-brand-txt"><b>DCU</b><small>Core · শিক্ষার্থী টুলকিট</small></span></a>' +
       '<nav class="dl-nav" id="dlNav" aria-label="প্রধান নেভিগেশন">' + links.join("") + "</nav>" +
@@ -149,7 +149,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       '<footer class="dl-foot">' +
       '<div class="dl-foot-in">' +
       '<div class="dl-foot-brand"><img src="logo.png" alt="" width="52" height="52">' +
-      "<div><b>DCU Unofficial</b>" +
+      "<div><b>DCUCore</b>" +
       "<p>শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।</p>" +
       '<div class="dl-badges"><span>✓ ব্রাউজারে চলে</span><span>✓ সার্ভারে আপলোড নেই</span><span>✓ বিনামূল্যে</span></div>' +
       "</div></div>" +
