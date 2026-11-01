@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DCU Core – স্টুডেন্ট ক্যালেন্ডার | Student Calendar</title>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -326,6 +326,29 @@ input:focus,select:focus,button:focus-visible{outline:none;border-color:var(--ac
 @keyframes tkp{0%,100%{box-shadow:0 1px 0 color-mix(in srgb,var(--on-accent) 35%,transparent) inset,0 10px 22px color-mix(in srgb,var(--night) 35%,transparent)}50%{box-shadow:0 1px 0 color-mix(in srgb,var(--on-accent) 35%,transparent) inset,0 0 20px color-mix(in srgb,var(--gold) 55%,transparent)}}
 @media print{.cd>div:before,.xnh:before{display:none}}
 @media (prefers-reduced-motion:reduce){*::before,*::after,.t i,.xn{animation:none!important;transition:none!important}}
+
+/* ===== Premium compact mobile header ===== */
+header{transition:translate .5s var(--ease),box-shadow .35s var(--ease),padding .35s var(--ease)}
+header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2b) 55%,transparent)}
+@media(max-width:720px){
+ header{flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:6px;
+  padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;border-radius:0 0 22px 22px}
+ header .logo{font-size:1.02rem;gap:10px;line-height:1.15;min-width:0}
+ header .logo>div{min-width:0}
+ header .logo span{width:32px;height:32px;border-radius:10px;font-size:.95rem;flex:0 0 auto}
+ header #sub{font-size:.64rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:calc(100vw - 90px)}
+ header .bar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;gap:6px;margin:0 -14px;padding:3px 14px 5px;
+  scroll-snap-type:x proximity;scroll-padding:0 14px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 26px),transparent 100%);
+  mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 26px),transparent 100%)}
+ header .bar::-webkit-scrollbar{display:none}
+ header .bar>*{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap}
+ header .bar button,header .bar select{min-height:40px;min-width:40px;padding:5px 12px;font-size:.84rem;border-radius:12px}
+ header .bar select{padding-right:6px}
+ header.hide{translate:0 -105%;box-shadow:none}
+}
+@media(hover:none){button:hover{transform:none;box-shadow:none}}
+@media(prefers-reduced-motion:reduce){header{transition:none}}
 </style>
 </head>
 <body>
@@ -790,6 +813,19 @@ document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');i
 const _r5=render;render=function(){_r5();document.body.classList.remove('isl');const a=$('#all');a.classList.remove('xf');void a.offsetWidth;a.classList.add('xf');xrv()};
 
 render();
+
+/* smart header: hide on scroll down, show on scroll up (mobile) */
+(function(){const h=document.querySelector('header');if(!h)return;
+ const mq=matchMedia('(max-width:720px)');let ly=scrollY,tk=false;
+ function upd(){tk=false;const y=Math.max(0,scrollY),d=y-ly;
+  h.classList.toggle('scrolled',y>8);
+  if(!mq.matches||y<90){h.classList.remove('hide')}
+  else if(d>8){h.classList.add('hide')}
+  else if(d<-6){h.classList.remove('hide')}
+  if(Math.abs(d)>6)ly=y}
+ addEventListener('scroll',()=>{if(!tk){tk=true;requestAnimationFrame(upd)}},{passive:true});
+ h.addEventListener('focusin',()=>h.classList.remove('hide'));
+ (mq.addEventListener?mq.addEventListener('change',upd):mq.addListener(upd));upd()})();
 </script>
 </body>
 </html>
