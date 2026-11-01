@@ -172,6 +172,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine .bx.rt-pre{opacity:0;transform:translateY(22px) scale(.985)}
 #routine .bx.rt-in{opacity:1;transform:none;transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
 #routine .bx>h2{color:var(--accent-deep)}
+#rtoday>h2::before{content:"📅"}
 #routine .bt{position:relative;overflow:hidden;background:var(--brand-grad,linear-gradient(135deg,#E8C46C,#D4AF37 45%,#B98A2C));color:#0a2240;border:0;border-radius:12px;font-weight:700;box-shadow:0 10px 22px -10px rgba(185,138,44,.8);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s,filter .25s}
 #routine .bt::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);pointer-events:none;animation:rtShine 4.5s 1.2s ease-in-out infinite}
 #routine .bt:hover{transform:translateY(-2px);box-shadow:0 16px 28px -12px rgba(185,138,44,.85);filter:brightness(1.04)}
