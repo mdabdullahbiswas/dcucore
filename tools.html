@@ -117,6 +117,27 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 .rsw{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.08)}
 .rcp{width:46px;height:34px;padding:2px;border-radius:8px;margin:0;cursor:pointer}
 </style>
+<style>
+/* ক্লাস রুটিন: ফর্ম বাঁয়ে, প্রিভিউ ডানে (পিসি) · ফোনে ফুল-স্ক্রিন প্রিভিউ */
+.rt-studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:clamp(14px,2vw,24px);align-items:start}
+.rt-form{min-width:0}
+.rt-pv{min-width:0;position:sticky;top:90px}
+.rt-pvhead{display:none}
+.rt-fab{display:none}
+.rt-pv #rcv{display:block;width:100%!important;min-width:0!important;height:auto!important;max-width:100%}
+@media (max-width:960px){
+ .rt-studio{grid-template-columns:minmax(0,1fr)}
+ .rt-pv{position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#f4f6fa;padding:0 14px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);visibility:hidden;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s linear .38s}
+ body.dark .rt-pv{background:#0f172a}
+ body.rt-pv-open .rt-pv{transform:none;visibility:visible;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s}
+ body.rt-pv-open{overflow:hidden}
+ .rt-pvhead{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:2;margin:0 -14px 12px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;background:#f4f6fa;border-bottom:1px solid rgba(0,0,0,.08)}
+ body.dark .rt-pvhead{background:#0f172a}
+ .rt-pvhead b{font-size:15px}
+ .rt-fab{display:inline-flex;align-items:center;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:999px;padding:13px 22px;background:linear-gradient(135deg,#f6dc8e,#e8c46c 50%,#b98a2c);color:#1d1400;font:700 14px/1 inherit;box-shadow:0 10px 28px rgba(10,26,51,.3);cursor:pointer}
+ body.rt-pv-open .rt-fab{opacity:0;pointer-events:none}
+}
+</style>
 </head>
 <body data-page="tools">
 <div id="hdr"></div>
@@ -154,7 +175,7 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <!-- ============ ক্লাস রুটিন ============ -->
 <section id="routine" class="sec-2">
 <div class="bx" id="rtoday"></div>
-<div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
+<div class="rt-studio"><div class="rt-form"><div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
 <div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
 <label class="t">ক্লাসের সময়কাল|Class length</label><div class="dy" id="rdq"><button type="button" class="dchip t" data-m="30">৩০ মিনিট|30 min</button><button type="button" class="dchip t" data-m="40">৪০ মিনিট|40 min</button><button type="button" class="dchip t" data-m="50">৫০ মিনিট|50 min</button><button type="button" class="dchip t" data-m="60">৬০ মিনিট|60 min</button><button type="button" class="dchip t" data-m="75">৭৫ মিনিট|75 min</button><button type="button" class="dchip t" data-m="90">৯০ মিনিট|90 min</button></div>
@@ -166,6 +187,9 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <button class="bt t" id="rba">বিরতি যোগ করুন|Add Break</button><span id="rbw" class="hint" aria-live="polite"></span>
 <div id="rbl" style="margin-top:10px"></div></div>
 <div class="bx np"><h2 class="t">বিষয়ের রং|Subject Colours</h2><p class="hint t">একই নামের বিষয় একই রঙে দেখাবে। নিজে রং বাছতে চাইলে নিচের ঘর থেকে বাছুন, অথবা "অটো" চাপুন।|Same subject name gets the same colour. Pick your own below, or tap "Auto".</p><div id="rcl"></div></div>
+</div>
+<aside class="rt-pv" id="rtPv">
+<div class="rt-pvhead"><b class="t">লাইভ প্রিভিউ|Live preview</b><button type="button" class="bs t" id="rtPvClose">বন্ধ|Close</button></div>
 <div class="bx"><h2 class="t">🎓 প্রিমিয়াম ক্লাস রুটিন|🎓 Premium Class Routine</h2>
 <details class="bx2 np" open><summary class="t">রুটিনের শিরোনাম ও তথ্য (ঐচ্ছিক)|Routine header &amp; details (optional)</summary>
 <div class="g3"><div><label class="t">প্রতিষ্ঠানের নাম|Institution</label><input id="rhi" maxlength="70" data-p="যেমন: ঢাকা সেন্ট্রাল ইউনিভার্সিটি|e.g. Dhaka Central University"></div>
@@ -176,6 +200,8 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div>
 <div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" onclick="print()">প্রিন্ট / PDF সেভ|Print / Save PDF</button><button class="bs t" id="rcl">সব মুছুন|Clear All</button></div><p class="hint" id="rmsg" role="status"></p>
 <div id="rls" class="np"></div></div>
+</aside></div>
+<button type="button" class="rt-fab" id="rtFab" aria-controls="rtPv" aria-expanded="false"><span class="t">প্রিভিউ|Preview</span></button>
 </section>
 
 <!-- ============ CGPA ============ -->
@@ -477,9 +503,18 @@ $('#rta').onclick=()=>{const c=$('#rc').value.trim(),d=$$('#rdy input:checked').
  if(!c||!d.length||!s||!e)return w.textContent=L('কোর্স, দিন, শুরু ও শেষের সময় দিন।|Enter course, days, start and end time.');
  if(tm(e)<=tm(s))return w.textContent=L('শেষের সময় শুরুর পরে হতে হবে।|End time must be after start time.');
  const ov=R.some(r=>r.d.some(z=>d.includes(z))&&tm(r.s)<tm(e)&&tm(s)<tm(r.e));
- R.push({c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e});
- w.textContent=ov?L('⚠️ সময় অন্য ক্লাসের সাথে মিলে গেছে।|⚠️ This overlaps another class.'):'';rtR()};
+ if(ov)return w.textContent=L('⚠️ এই সময় অন্য ক্লাসের সাথে মিলে গেছে, তাই ক্লাস যোগ হয়নি। সময় বদলান।|⚠️ This time overlaps another class, so it was not added. Change the time.');
+R.push({c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e});
+ w.textContent='';rtR()};
 $('#rcl').onclick=()=>{if(confirm(L('সব ক্লাস মুছে ফেলবেন?|Delete all classes?'))){R=[];rtR()}};
+
+/* ===== ক্লাস রুটিন: ফোনে প্রিভিউ শিট (Close / Esc দিয়ে ফর্মে ফেরা) ===== */
+function setRtPv(on){document.body.classList.toggle('rt-pv-open',on);$('#rtFab').setAttribute('aria-expanded',on?'true':'false');
+ if(on){$('#rtPv').scrollTop=0;setTimeout(()=>{try{$('#rtPvClose').focus({preventScroll:true})}catch(e){}},380)}
+ else{try{$('#rtFab').focus({preventScroll:true})}catch(e){}}}
+$('#rtFab').onclick=()=>setRtPv(true);$('#rtPvClose').onclick=()=>setRtPv(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('rt-pv-open'))setRtPv(false)});
+addEventListener('resize',()=>{if(innerWidth>960&&document.body.classList.contains('rt-pv-open'))setRtPv(false)});
 
 /* ===== ৩. CGPA ===== */
 const GS={ugc:[['A+',4],['A',3.75],['A-',3.5],['B+',3.25],['B',3],['B-',2.75],['C+',2.5],['C',2.25],['D',2],['F',0]],
