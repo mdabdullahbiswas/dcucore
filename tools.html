@@ -101,6 +101,20 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 @media (max-width:520px){.clg{grid-template-columns:1fr}}
 </style>
 
+<style>
+/* ক্লাস রুটিন: প্রিমিয়াম নির্বাচন (দিন ও সময়কাল) */
+.dy .dch{position:relative;display:inline-flex;align-items:center;gap:6px;margin:0;padding:7px 14px;border-radius:999px;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);font-weight:600;font-size:13.5px;cursor:pointer;user-select:none;transition:background .2s,border-color .2s,box-shadow .2s,transform .15s}
+.dy .dch input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.dy .dch:hover{border-color:var(--gold);transform:translateY(-1px)}
+.dy .dch:has(input:checked){background:linear-gradient(135deg,#e8c46c,#b98a2c);border-color:transparent;color:#0a2240;box-shadow:0 8px 18px -10px rgba(212,175,55,.9)}
+.dy .dch:has(input:checked)::before{content:"✓";font-weight:800;font-size:12px}
+.dy .dch:focus-within{outline:3px solid var(--gold);outline-offset:2px}
+.dchip{border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:999px;padding:7px 14px;font-family:inherit;font-weight:600;font-size:13.5px;cursor:pointer;transition:background .2s,border-color .2s,transform .15s}
+.dchip:hover{border-color:var(--gold);transform:translateY(-1px)}
+.dchip.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--gold)}
+#rd::placeholder{opacity:.6}
+</style>
 </head>
 <body data-page="tools">
 <div id="hdr"></div>
@@ -140,8 +154,9 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 <div class="bx" id="rtoday"></div>
 <div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
-<div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ|End</label><input id="re" type="time"></div></div>
-<label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdy"></div>
+<div><label class="t">শুরু|Start</label><input id="rs" type="time"></div><div><label class="t">শেষ (স্বয়ংক্রিয়)|End (auto)</label><input id="re" type="time"></div><div><label class="t">প্রতি ক্লাস (মিনিট)|Minutes per class</label><input id="rd" type="number" min="5" max="300" step="5" placeholder="যেমন: ৪০|e.g. 40"></div></div>
+<label class="t">ক্লাসের সময়কাল|Class length</label><div class="dy" id="rdq"><button type="button" class="dchip t" data-m="30">৩০ মিনিট|30 min</button><button type="button" class="dchip t" data-m="40">৪০ মিনিট|40 min</button><button type="button" class="dchip t" data-m="50">৫০ মিনিট|50 min</button><button type="button" class="dchip t" data-m="60">৬০ মিনিট|60 min</button><button type="button" class="dchip t" data-m="75">৭৫ মিনিট|75 min</button><button type="button" class="dchip t" data-m="90">৯০ মিনিট|90 min</button></div>
+<label class="t">কোন কোন দিন|Days</label><div class="dy" id="rdp"><button type="button" class="dchip t" data-p="wk">সব কার্যদিবস|Weekdays</button><button type="button" class="dchip t" data-p="all">সব দিন|All days</button><button type="button" class="dchip t" data-p="none">মুছুন|Clear</button></div><div class="dy" id="rdy"></div>
 <button class="bt t" id="rta">ক্লাস যোগ করুন|Add Class</button><span id="rw" class="hint" aria-live="polite"></span></div>
 <div class="bx np"><h2 class="t">বিরতি যোগ করুন|Add a Break</h2>
 <p class="hint t">বিরতি সব দিনের রুটিনে একই সময়ে দেখাবে। নাম ও সময় দিন।|A break appears on every day of the routine. Set its name and time.</p>
@@ -437,7 +452,7 @@ const DN=['শনিবার|Saturday','রবিবার|Sunday','সোম�
 let R=ld('dcuRt',[]);const tm=s=>+s.slice(0,2)*60+ +s.slice(3);
 const hm=m=>{const h=Math.floor(m/60),n=m%60;return((h+11)%12+1)+(n?':'+String(n).padStart(2,'0'):'')+(h<12?' AM':' PM')};
 const hue=c=>{let h=0;for(const ch of c)h=(h*31+ch.charCodeAt(0))%360;return h};
-function rtK(){$('#rdy').innerHTML=DN.map((d,i)=>`<label><input type="checkbox" value="${i}">${L(d)}</label>`).join('')}
+function rtK(){$('#rdy').innerHTML=DN.map((d,i)=>`<label class="dch"><input type="checkbox" value="${i}"><span>${L(d)}</span></label>`).join('')}
 function rtC_old(){
  const c=$('#rcv'),x=c.getContext('2d');let mn=480,mx=1020;R.forEach(r=>{mn=Math.min(mn,tm(r.s));mx=Math.max(mx,tm(r.e))});mn=Math.floor(mn/60)*60;mx=Math.ceil(mx/60)*60;
  const lw=96,cw=172,hh=64,rh=104,W=lw+cw*6,H=hh+(mx-mn)/60*rh+8;c.width=W;c.height=H;
@@ -639,6 +654,10 @@ function rtP(nl){
  T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
  T('dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
+function rtEnd(){const s=$('#rs').value,m=+$('#rd').value;$$('#rdq [data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));if(!s||!(m>0))return;const t=tm(s)+m;$('#re').value=String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')}
+$('#rs').addEventListener('input',rtEnd);$('#rd').addEventListener('input',rtEnd);
+$('#rdq').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;$('#rd').value=b.dataset.m;rtEnd()};
+$('#rdp').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const k=b.dataset.p,set=k==='all'?[0,1,2,3,4,5,6]:k==='wk'?[0,1,2,3,4,5]:[];$$('#rdy input').forEach(i=>i.checked=set.includes(+i.value))};
 let RB=ld('dcuRtB',[]);
 function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
 $('#rbl').onclick=e=>{const b=e.target.closest('[data-bi]');if(b){RB.splice(+b.dataset.bi,1);rbR()}};
