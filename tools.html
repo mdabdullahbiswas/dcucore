@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>DCU Unofficial</title>
+<title>DCUCore</title>
 <meta name="theme-color" content="#0a2240">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
@@ -247,7 +247,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 <!-- ============ সায়েন্টিফিক ক্যালকুলেটর ============ -->
 <section id="calc" class="sec-8"><div class="g2"><div class="bx wmx">
 <div class="wm" id="wm">
-<div class="wtop"><div class="wbr"><b>DCU Calculator</b><small class="t">ঢাকা সেন্ট্রাল ইউনিভার্সিটি|Dhaka Central University</small><small class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</small></div><div class="wsr"><i class="sol"></i><span>DCU Unofficial</span></div></div>
+<div class="wtop"><div class="wbr"><b>DCU Calculator</b><small class="t">ঢাকা সেন্ট্রাল ইউনিভার্সিটি|Dhaka Central University</small><small class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</small></div><div class="wsr"><i class="sol"></i><span>DCUCore</span></div></div>
 <div class="wlcd" id="wlcd"><div id="wst"></div><div id="wl1"></div><div id="wl2">0</div></div>
 <div class="wpills"><button type="button" id="wdeg">DEG</button><button type="button" id="wfrc">FRAC</button><button type="button" id="wnrm">NORM</button><button type="button" class="zm" id="whap" aria-label="Vibration" aria-pressed="true">📳</button><button type="button" class="zm" id="wzm" aria-label="Zoom">🔍</button></div>
 <div class="kgA" id="kgA"></div><div class="kgB" id="kgB"></div>
@@ -418,7 +418,7 @@ async function card(){
  if(ses){y+=10*S;x.font=`700 ${28*S}px "Hind Siliguri"`;const w=x.measureText(ses).width+60*S,h=52*S;x.fillStyle=t.ac;x.beginPath();x.roundRect(cx-w/2,y-h*.72,w,h,h/2);x.fill();x.fillStyle=t.pf;x.fillText(ses,cx,y);y+=h*.9}
  y+=22*S;MS.forEach(m=>T(m,(MS.length>1?28:32)*S,500,t.fg,'"Hind Siliguri"','italic'));
  /* ওয়েবসাইটের লিংক: কখনো কাটা বা চাপা হবে না, জায়গা না হলে ফন্ট ছোট হবে */
- const SITE=(/^https?:$/.test(location.protocol)&&!/^(localhost|127\.|192\.168\.)/.test(location.hostname))?location.host:'dcu-unofficial.vercel.app';
+ const SITE=(/^https?:$/.test(location.protocol)&&!/^(localhost|127\.|192\.168\.)/.test(location.hostname))?location.host:'dcucore.vercel.app';
  let fs=34;x.font=`700 ${fs}px Montserrat,sans-serif`;while(x.measureText(SITE).width>W-200&&fs>12){fs--;x.font=`700 ${fs}px Montserrat,sans-serif`}
  x.fillStyle=t.ac;x.fillText(SITE,cx,H-86);
  cBl=null;const tk=++cTk;c.toBlob(b=>{if(tk==cTk)cBl=b},'image/png');
@@ -637,7 +637,7 @@ function rtP(nl){
  T(fit('“'+q+'”','italic 600 24px',TW-60),W/2,fy+54,'italic 600 24px',NV2,'center');
  const by=(RS.b||'').trim();
  T(by?L('প্রস্তুতকারী|Prepared by')+': '+fit(by,'700 18px',420):L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'}),M+10,H-62,'700 18px',NV,'left');
- T('DCU Unofficial · dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
+ T('DCUCore · dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
  T(L('রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice.'),W/2,H-34,'500 14px','#64748b','center',W-2*M-40)}
 let RB=ld('dcuRtB',[]);
 function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
