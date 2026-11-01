@@ -197,7 +197,7 @@ body.dark .dchip.on{background:var(--gold);color:var(--navy);border-color:var(--
 <div><label class="t">রুটিনের শিরোনাম|Routine title</label><input id="rht" maxlength="50" data-p="যেমন: ক্লাস রুটিন: অনার্স ৩য় বর্ষ|e.g. Class Routine: Honours 3rd Year"></div></div>
 <div class="g3"><div><label class="t">প্রস্তুতকারী|Prepared by</label><input id="rhb" maxlength="50" data-p="আপনার নাম|Your name"></div>
 <div style="grid-column:span 2"><label class="t">নিচের উক্তি|Footer quote</label><input id="rhq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div></div></details>
-<div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div>
+<div class="sc" style="margin-top:12px"><canvas id="rcv" width="1130" height="800"></canvas></div><p class="hint t" style="margin:8px 0 0">ক্লাসের ঘরে ক্লিক করলে ফর্মে এডিট করা যাবে।|Click a class block to edit it in the form.</p>
 <div class="np"><button class="bt t" id="rpn">PNG ডাউনলোড|Download PNG</button><button class="bt t" id="rpf">PDF ডাউনলোড|Download PDF</button><button class="bt t" onclick="print()">প্রিন্ট / PDF সেভ|Print / Save PDF</button><button class="bs t" id="rcl">সব মুছুন|Clear All</button></div><p class="hint" id="rmsg" role="status"></p>
 <div id="rls" class="np"></div></div>
 </aside></div>
@@ -478,7 +478,7 @@ $('#ccp').onclick=async()=>{try{await navigator.clipboard.writeText(capTxt());sa
 
 /* ===== ২. ক্লাস রুটিন ===== */
 const DN=['শনিবার|Saturday','রবিবার|Sunday','সোমবার|Monday','মঙ্গলবার|Tuesday','বুধবার|Wednesday','বৃহস্পতিবার|Thursday'];
-let R=ld('dcuRt',[]);const tm=s=>+s.slice(0,2)*60+ +s.slice(3);
+let R=ld('dcuRt',[]);let rtHits=[],rtEdit=null;const tm=s=>+s.slice(0,2)*60+ +s.slice(3);
 const hm=m=>{const h=Math.floor(m/60),n=m%60;return((h+11)%12+1)+(n?':'+String(n).padStart(2,'0'):'')+(h<12?' AM':' PM')};
 const hue=c=>{let h=0;for(const ch of c)h=(h*31+ch.charCodeAt(0))%360;return h};
 function rtK(){const keep=$$('#rdy input:checked').map(i=>+i.value);$('#rdy').innerHTML=DN.map((d,i)=>`<label class="dch"><input type="checkbox" value="${i}"><span>${L(d)}</span></label>`).join('');$$('#rdy input').forEach(i=>i.checked=keep.includes(+i.value))}
@@ -498,14 +498,16 @@ function rtR(){sv('dcuRt',R);rtK();rtP();rcR();
  const td=gd<6?R.filter(r=>r.d.includes(gd)).sort((a,b)=>tm(a.s)-tm(b.s)):[],nx=td.find(r=>tm(r.s)>now);
  $('#rtoday').innerHTML=`<h2>${L('আজকের ক্লাস|Today\'s Classes')}</h2>`+(td.length?td.map(r=>`<div>${hm(tm(r.s))} – ${hm(tm(r.e))} · <b>${esc(r.c)}</b> ${esc(r.r)}</div>`).join('')+(nx?`<div class="hint">${L('পরবর্তী ক্লাস|Next class')}: <b>${esc(nx.c)}</b> — ${tm(nx.s)-now} ${L('মিনিট পর|min from now')}</div>`:''):`<p class="hint">${L('আজ কোনো ক্লাস নেই।|No classes today.')}</p>`);
  $('#rls').innerHTML=R.map((r,i)=>`<div class="fi"><span><b>${esc(r.c)}</b> · ${r.d.map(d=>L(DN[d]).slice(0,3)).join(', ')} · ${hm(tm(r.s))}–${hm(tm(r.e))}</span><button class="ic" data-i="${i}" aria-label="Delete">✕</button></div>`).join('')}
-$('#rls').onclick=e=>{const b=e.target.closest('.ic');if(b){R.splice(+b.dataset.i,1);rtR()}};
+$('#rls').onclick=e=>{const b=e.target.closest('.ic');if(b){R.splice(+b.dataset.i,1);rtEdit=null;setEditUI(false);rtR()}};
 $('#rta').onclick=()=>{const c=$('#rc').value.trim(),d=$$('#rdy input:checked').map(i=>+i.value),s=$('#rs').value,e=$('#re').value,w=$('#rw');
  if(!c||!d.length||!s||!e)return w.textContent=L('কোর্স, দিন, শুরু ও শেষের সময় দিন।|Enter course, days, start and end time.');
  if(tm(e)<=tm(s))return w.textContent=L('শেষের সময় শুরুর পরে হতে হবে।|End time must be after start time.');
- const ov=R.some(r=>r.d.some(z=>d.includes(z))&&tm(r.s)<tm(e)&&tm(s)<tm(r.e));
- if(ov)return w.textContent=L('⚠️ এই সময় অন্য ক্লাসের সাথে মিলে গেছে, তাই ক্লাস যোগ হয়নি। সময় বদলান।|⚠️ This time overlaps another class, so it was not added. Change the time.');
-R.push({c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e});
- w.textContent='';rtR()};
+ const ov=R.some((r,k)=>k!==rtEdit&&r.d.some(z=>d.includes(z))&&tm(r.s)<tm(e)&&tm(s)<tm(r.e));
+if(ov)return w.textContent=L('⚠️ এই সময় অন্য ক্লাসের সাথে মিলে গেছে, তাই সংরক্ষণ হয়নি। সময় বদলান।|⚠️ This time overlaps another class, so it was not saved. Change the time.');
+const rec={c,t:$('#rt').value.trim(),r:$('#rr').value.trim(),d,s,e};
+if(rtEdit!=null&&R[rtEdit]){R[rtEdit]=rec;rtEdit=null;setEditUI(false);w.textContent=L('ক্লাস আপডেট হয়েছে।|Class updated.')}
+else{R.push(rec);w.textContent=''}
+rtR()};
 $('#rcl').onclick=()=>{if(confirm(L('সব ক্লাস মুছে ফেলবেন?|Delete all classes?'))){R=[];rtR()}};
 
 /* ===== ক্লাস রুটিন: ফোনে প্রিভিউ শিট (Close / Esc দিয়ে ফর্মে ফেরা) ===== */
@@ -515,6 +517,18 @@ function setRtPv(on){document.body.classList.toggle('rt-pv-open',on);$('#rtFab')
 $('#rtFab').onclick=()=>setRtPv(true);$('#rtPvClose').onclick=()=>setRtPv(false);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('rt-pv-open'))setRtPv(false)});
 addEventListener('resize',()=>{if(innerWidth>960&&document.body.classList.contains('rt-pv-open'))setRtPv(false)});
+
+/* ===== ক্লাস রুটিনের ঘরে ক্লিক করলে ফর্মে এডিট ===== */
+function setEditUI(on){$('#rta').textContent=on?L('ক্লাস আপডেট করুন|Update Class'):L('ক্লাস যোগ করুন|Add Class');$('#rcr').textContent=on?L('সম্পাদনা বাতিল|Cancel edit'):L('ফর্ম খালি করুন|Clear form')}
+function rtLoad(i){const r=R[i];if(!r)return;rtEdit=i;
+ $('#rc').value=r.c;$('#rt').value=r.t||'';$('#rr').value=r.r||'';$('#rs').value=r.s;$('#re').value=r.e;$('#rd').value=tm(r.e)-tm(r.s);
+ $$('#rdy input').forEach(x=>x.checked=r.d.includes(+x.value));rtEnd();setEditUI(true);
+ $('#rw').textContent=L('সম্পাদনা চলছে: বদলে "আপডেট" চাপুন।|Editing: change and press "Update".');
+ if(innerWidth<=960)setRtPv(false);
+ $('#rc').scrollIntoView({behavior:'smooth',block:'center'})}
+function rtHitAt(e){const c=$('#rcv'),b=c.getBoundingClientRect(),px=(e.clientX-b.left)*c.width/b.width,py=(e.clientY-b.top)*c.height/b.height;return rtHits.find(q=>px>=q.x&&px<=q.x+q.w&&py>=q.y&&py<=q.y+q.h)}
+$('#rcv').addEventListener('click',e=>{const h=rtHitAt(e);if(h&&R[h.i])rtLoad(h.i)});
+$('#rcv').addEventListener('mousemove',e=>{$('#rcv').style.cursor=rtHitAt(e)?'pointer':'default'});
 
 /* ===== ৩. CGPA ===== */
 const GS={ugc:[['A+',4],['A',3.75],['A-',3.5],['B+',3.25],['B',3],['B-',2.75],['C+',2.5],['C',2.25],['D',2],['F',0]],
@@ -621,7 +635,7 @@ const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q'};
 Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.value=RS[RFD[id]];el.addEventListener('input',()=>{RS[RFD[id]]=el.value;sv('dcuRtS',RS);rtP()})});
 const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src='logo.png';
 function rtP(nl){
- const c=$('#rcv');if(!c)return;
+ const c=$('#rcv');if(!c)return;rtHits=[];
  const CM=subjMap(),colOf=c0=>{const k=sKey(c0),h0=RC[k]||subjHex((CM.get(k)||{idx:0}).idx);return{bg:mix(h0,255,.88),bar:h0,ink:mix(h0,0,.35)}};
  const bn=$lang()!='en',loc=bn?'bn-BD':'en-GB',f=getComputedStyle(document.body).fontFamily,nb=v=>String(v).replace(/\d/g,d=>bn?'০১২৩৪৫৬৭৮৯'[d]:d),gd=(new Date().getDay()+1)%7;
  const sl=[];R.forEach(r=>{if(!sl.some(a=>a.s==r.s&&a.e==r.e))sl.push({s:r.s,e:r.e})});sl.sort((a,b)=>tm(a.s)-tm(b.s)||tm(a.e)-tm(b.e));
@@ -671,7 +685,7 @@ function rtP(nl){
    const it=R.filter(r=>r.s==a.s&&r.e==a.e&&r.d.includes(d)).slice(0,2);
    if(!it.length){T('–',xs[k]+ws[k]/2,mid+8,'600 22px','#b6c0d1','center');return}
    const k2=it.length,bh=(RH-12)/k2;
-   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,cc=colOf(r.c),h2=bh-(k2>1?4:0);
+   it.forEach((r,j)=>{const bx=xs[k]+6,by=y+6+j*bh,w=ws[k]-12,cc=colOf(r.c),h2=bh-(k2>1?4:0);rtHits.push({x:bx,y:by,w:w,h:h2,i:R.indexOf(r)});
     x.fillStyle=cc.bg;rr(bx,by,w,h2,12);x.fill();
     x.save();rr(bx,by,w,h2,12);x.clip();x.fillStyle=cc.bar;x.fillRect(bx,by,5,h2);x.restore();
     const ln=[[r.c,'800 '+(k2>1?17:20)+'px',cc.ink]];
@@ -709,7 +723,7 @@ function rcR(){const el=$('#rcl');if(!el)return;const m=subjMap();
 $('#rcl').addEventListener('input',e=>{const k=e.target.dataset.ck;if(k!==undefined){RC[k]=e.target.value;sv('dcuRtC',RC);rtP()}});
 $('#rcl').addEventListener('change',e=>{if(e.target.dataset.ck!==undefined)rcR()});
 $('#rcl').onclick=e=>{const b=e.target.closest('[data-ca]');if(b){delete RC[b.dataset.ca];sv('dcuRtC',RC);rcR();rtP()}};
-$('#rcr').onclick=()=>{['rc','rt','rr','rs','re','rd'].forEach(i=>$('#'+i).value='');$$('#rdy input').forEach(i=>i.checked=false);rtEnd();$('#rw').textContent=''};
+$('#rcr').onclick=()=>{rtEdit=null;setEditUI(false);['rc','rt','rr','rs','re','rd'].forEach(i=>$('#'+i).value='');$$('#rdy input').forEach(i=>i.checked=false);rtEnd();$('#rw').textContent=''};
 rcR();
 let RB=ld('dcuRtB',[]);
 function rbR(){sv('dcuRtB',RB);$('#rbl').innerHTML=RB.length?RB.map((b,i)=>`<div class="fi"><span><b>${esc(b.n)}</b> · ${hm(tm(b.s))} – ${hm(tm(b.e))}</span><button class="ic" data-bi="${i}" aria-label="মুছুন|Remove">✕</button></div>`).join(''):`<p class="hint t">কোনো বিরতি যোগ করা হয়নি।|No breaks added yet.</p>`;rtP()}
