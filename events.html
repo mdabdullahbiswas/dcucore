@@ -438,9 +438,6 @@ html[data-theme=dark] .ev-badge.vb{color:#0B1F3A;background:linear-gradient(135d
 .ev-dh{display:flex;align-items:center;gap:10px;margin:20px 0 8px;font-size:15px;font-weight:800;color:var(--ink)}
 .ev-dh::before{content:'';width:4px;height:16px;border-radius:4px;background:linear-gradient(180deg,#F6DFA8,#B98A2C);flex:none}
 .ev-desc{font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;font-weight:500;font-size:14.5px;line-height:1.85;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
-.ev-dbody .ev-actions{gap:6px;margin-top:10px}
-.ev-dbody .ev-actions .ev-btn{min-height:32px;padding:5px 11px;font-size:12px;border-radius:10px;gap:6px}
-.ev-dbody .ev-actions .ev-btn svg,.ev-dbody .ev-actions .ev-btn .i{width:14px!important;height:14px!important}
 .ev-own{margin:16px 0 4px;padding:14px;border-radius:18px;background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(212,175,55,.03));border:1px solid rgba(212,175,55,.38)}
 .ev-own-t{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#8a6512;margin-bottom:12px}
 .ev-own-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#F6DFA8,#B98A2C);box-shadow:0 0 0 3px rgba(212,175,55,.22)}
@@ -455,6 +452,25 @@ html[data-theme=dark] .ev-own-t{color:#F3D78A}
 .ev-own-btn.del:hover{background:rgba(239,68,68,.07);border-color:#EF4444}
 html[data-theme=dark] .ev-own-btn.del{color:#FCA5A5}
 @media (max-width:520px){.ev-own-row{grid-template-columns:1fr}}
+
+/* ---------------- ফিল্টার ড্রপডাউন: ছোট, গোল, সোনালি বর্ডার ---------------- */
+#campusChips.ev-chips,#catChips.ev-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow:visible;padding:6px 2px 4px;-webkit-mask-image:none;mask-image:none}
+.ev-flt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ev-flt small{font-size:10px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#8a6512;padding-left:12px}
+html[data-theme=dark] .ev-flt small{color:#F3D78A}
+.ev-fsel{appearance:none;-webkit-appearance:none;width:100%;min-height:38px;box-sizing:border-box;padding:6px 34px 6px 14px;border-radius:999px;border:1.5px solid transparent;
+  background:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B98A2C' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 13px center/12px,
+    linear-gradient(var(--surface),var(--surface)) padding-box,
+    linear-gradient(135deg,#F6DFA8 0%,#D4AF37 50%,#B98A2C 100%) border-box;
+  box-shadow:0 8px 16px -12px rgba(185,138,44,.8);
+  font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;transition:box-shadow .2s,transform .2s var(--ease)}
+.ev-fsel:hover{box-shadow:0 12px 22px -12px rgba(185,138,44,.95);transform:translateY(-1px)}
+.ev-fsel:focus{outline:none;box-shadow:0 0 0 3px rgba(212,175,55,.25),0 12px 22px -12px rgba(185,138,44,.95)}
+@media (max-width:640px){
+  #campusChips.ev-chips,#catChips.ev-chips{grid-template-columns:1fr 1fr;gap:8px}
+  .ev-fsel{font-size:12.5px;padding-left:12px}
+}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
