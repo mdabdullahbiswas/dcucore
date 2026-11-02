@@ -727,7 +727,7 @@ async function initStore(){
     var fs=mods[1];S.fb=fs;S.db=fs.getFirestore(app);
     var au=mods[2];S.au=au;S.auth=au.getAuth(app);
     await au.setPersistence(S.auth,au.browserLocalPersistence).catch(function(){});
-    S.authReady=new Promise(function(res){var first=true;au.onAuthStateChanged(S.auth,function(u){S.user=u||null;if(first){first=false;res()}})});
+    S.authReady=new Promise(function(res){var first=true;au.onAuthStateChanged(S.auth,function(u){S.user=u||null;if(first){first=false;S.authDone=true;res()}})});
     var snap=await withTimeout(fs.getDocs(fs.query(fs.collection(S.db,CFG.collection),fs.where('status','==','approved'),fs.limit(400))),9000);
     S.events=snap.docs.map(function(d){var x=d.data();x.id=d.id;return x});
     S.mode='live';
@@ -753,7 +753,8 @@ async function storeAdd(ev){
 var TRUST_DAILY_LIMIT=3;   /* ভেরিফায়েড হলে দিনে সর্বোচ্চ যত পোস্ট সরাসরি লাইভ হবে */
 async function ensureSignedIn(){
   if(S.mode!=='live')return null;
-  await S.authReady;
+  /* অথ-স্ট্যাটাস আগেই লোড হলে await করা হয় না, নইলে ব্রাউজার পপআপ ব্লক করে */
+  if(!S.authDone)await S.authReady;
   if(S.auth.currentUser){S.user=S.auth.currentUser;return S.user}
   var r=await S.au.signInWithPopup(S.auth,new S.au.GoogleAuthProvider());
   S.user=r.user;return r.user;
