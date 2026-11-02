@@ -170,6 +170,15 @@ dialog.ev-dlg::backdrop{background:rgba(6,16,32,.62);backdrop-filter:blur(4px)}
 .ev-i a{color:var(--gold-deep);font-weight:700}
 .ev-desc{white-space:pre-line;word-break:break-word;color:var(--ink);font-size:15.5px;line-height:1.75}
 .ev-actions{display:flex;flex-wrap:wrap;gap:8px}
+.ev-adlg{width:min(460px,calc(100vw - 20px))}
+.ev-auth-in{padding:28px 24px 22px;display:flex;flex-direction:column;gap:16px}
+.ev-why{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ev-why li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border)}
+.ev-why-i{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--surface);font-size:18px;box-shadow:0 4px 10px -6px rgba(15,23,42,.35)}
+.ev-why b{display:block;font-size:14.5px;color:var(--ink);margin-bottom:2px}
+.ev-why small{display:block;font-size:12.8px;color:var(--ink-2);line-height:1.5}
+.ev-auth-err{margin:0;font-size:13px;color:var(--err);background:color-mix(in srgb,var(--err) 10%,transparent);border-radius:10px;padding:8px 12px}
+.ev-auth-in .ev-btn[disabled]{opacity:.6;cursor:progress}
 .ev-rdlg{width:min(480px,calc(100vw - 20px))}
 .ev-rep-in{padding:28px 24px 22px;display:flex;flex-direction:column;gap:14px}
 .ev-rep-hd{text-align:center;padding-top:6px}
@@ -392,6 +401,29 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 
 <!-- ===== Detail dialog ===== -->
 <dialog class="ev-dlg" id="dDetail" aria-labelledby="dTitle"><div class="ev-dlg-in" id="dBody"></div></dialog>
+
+<!-- ===== Sign-in explainer ===== -->
+<dialog class="ev-dlg ev-adlg" id="dAuth" aria-labelledby="aTitle">
+  <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="ev-dlg-in ev-auth-in">
+    <div class="ev-rep-hd">
+      <span class="ev-rep-ico" aria-hidden="true">🔐</span>
+      <h2 id="aTitle" class="ev-rep-t t">ইভেন্ট পোস্ট করতে সাইন ইন করুন|Sign in to post an event</h2>
+      <p class="ev-rep-s t">কেন লাগে, সেটা এক নজরে:|Here is why we ask you to sign in:</p>
+    </div>
+    <ul class="ev-why">
+      <li><span class="ev-why-i">🛡️</span><div><b class="t">স্প্যাম ও ভুয়া পোস্ট ঠেকানো|Stops spam and fake posts</b><small class="t">প্রতিটি পোস্ট একটি যাচাইকৃত অ্যাকাউন্টের সঙ্গে যুক্ত থাকে।|Every post is tied to a verified account.</small></div></li>
+      <li><span class="ev-why-i">✏️</span><div><b class="t">নিজের পোস্ট সম্পাদনা ও মোছা|Edit and manage your posts</b><small class="t">পরে ভুল ঠিক করতে বা পোস্ট সরাতে পারবেন।|Fix mistakes or remove your post later.</small></div></li>
+      <li><span class="ev-why-i">✔️</span><div><b class="t">যাচাইকৃত আয়োজকের সুবিধা|Verified organizer perks</b><small class="t">বিশ্বস্ত আয়োজক হলে নীল ব্যাজ ও দ্রুত অনুমোদন পেতে পারেন।|Trusted organizers can earn a badge and faster approval.</small></div></li>
+      <li><span class="ev-why-i">🔒</span><div><b class="t">ইমেইল গোপন থাকে|Your email stays private</b><small class="t">শুধু আপনার নাম পোস্টে দেখাবে; ইমেইল কোথাও প্রকাশ হবে না।|Only your name is shown on the post; your email is never published.</small></div></li>
+    </ul>
+    <p class="ev-auth-err" id="aErr" role="alert" hidden></p>
+    <div class="ev-rep-ft">
+      <button type="button" class="ev-btn ghost" data-close id="aCancel"><span class="t">এখন না|Not now</span></button>
+      <button type="button" class="ev-btn" id="aGo"><span class="t">Google দিয়ে চালিয়ে যান|Continue with Google</span></button>
+    </div>
+  </div>
+</dialog>
 
 <!-- ===== Report dialog ===== -->
 <dialog class="ev-dlg ev-rdlg" id="dReport" aria-labelledby="rTitle">
@@ -1448,6 +1480,31 @@ function compress(file){
     img.src=url;
   });
 }
+function showAuthExplainer(){
+  var e=$('#aErr');e.hidden=true;e.textContent='';
+  $('#aGo').disabled=false;
+  var d=$('#dAuth');if(!d.open)d.showModal();
+}
+function authErrText(err){
+  var c=err&&err.code||'';
+  if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return T('সাইন ইন বাতিল হয়েছে। আবার চেষ্টা করুন।|Sign-in was cancelled. Please try again.');
+  if(c==='auth/popup-blocked')return T('ব্রাউজার পপআপ ব্লক করেছে। পপআপ চালু করে আবার চেষ্টা করুন।|Your browser blocked the popup. Allow popups and try again.');
+  if(c==='auth/operation-not-allowed')return T('Google সাইন-ইন এখনো চালু করা হয়নি। অ্যাডমিনকে জানান।|Google sign-in is not enabled yet. Please contact the admin.');
+  if(c==='auth/network-request-failed')return T('ইন্টারনেট সংযোগ যাচাই করুন।|Please check your internet connection.');
+  return T('সাইন ইন সম্পন্ন হয়নি। আবার চেষ্টা করুন।|Sign-in was not completed. Please try again.')+(c?' ('+c+')':'');
+}
+$('#aGo').addEventListener('click',function(){
+  var btn=this,e=$('#aErr');
+  btn.disabled=true;e.hidden=true;
+  ensureSignedIn().then(function(u){
+    $('#dAuth').close();
+    if(u)openPost();
+  }).catch(function(err){
+    console.error('[events] sign-in failed:',err);
+    e.textContent=authErrText(err);e.hidden=false;
+    btn.disabled=false;
+  });
+});
 function openPost(){
   try{
     openPostInner();
@@ -1458,10 +1515,7 @@ function openPost(){
 }
 function openPostInner(){
   if(S.mode==='live'&&!S.user){
-    ensureSignedIn().then(function(u){if(u)openPost()}).catch(function(err){
-      console.error('[events] sign-in failed:',err);
-      toast(T('সাইন ইন সম্পন্ন হয়নি|Sign-in was not completed')+(err&&err.code?' ('+err.code+')':''),true);
-    });
+    showAuthExplainer();
     return;
   }
   var last=safeGet('dcuEv_last',0);
