@@ -394,6 +394,14 @@ dialog.ev-rdlg{width:min(560px,calc(100vw - 20px))}
 .ev-rdlg .ev-rep-ft .ev-btn:not(.ghost){background:linear-gradient(135deg,#F87171,#DC2626);color:#fff;box-shadow:0 14px 24px -14px rgba(220,38,38,.7)}
 .ev-rdlg .ev-rep-ft .ev-btn:not(.ghost):not(:disabled):hover{filter:brightness(1.05)}
 :root[data-theme=dark] .ev-rdlg .ev-ropt{background:var(--surface-2)}
+
+/* ---------------- কার্ড: লেবেলসহ তথ্য গ্রিড ---------------- */
+.ev-info{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-top:14px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:16px}
+.ev-cell{min-width:0}
+.ev-cell.full{grid-column:1/-1}
+.ev-cell small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.ev-cell b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.4}
+.ev-cell .vtick{color:#1D4ED8;font-weight:800}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -1000,15 +1008,16 @@ function cardHTML(e,i,preview){
     '<div class="ev-body">'+
       '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>':'')+'</div>'+
       '<h3><button type="button" data-act="open">'+esc(e.title)+'</button></h3>'+
-      '<div class="ev-meta"><span>'+ic('clock',15)+'<span>'+esc(fmtDay(e.startMs,{weekday:'short',day:'numeric',month:'short'}))+' · '+esc(t1)+'</span></span>'+
-        '<span>'+ic('pin',15)+'<span>'+esc(e.venue)+'</span></span>'+
-        (e.organizer?'<span>'+ic('user',15)+'<span>'+esc(e.organizer)+(e.authorVerified?' ✓':'')+'</span></span>':'')+'</div>'+
       (function(){
-        var f=[];var du=durTxt(e);
-        if(du)f.push('<span>'+ic('clock',13)+esc(du)+'</span>');
-        if(e.audience)f.push('<span>'+ic('users',13)+esc(e.audience)+'</span>');
-        if(okUrl(e.link))f.push('<span class="reg">'+ic('link',13)+esc(T('নিবন্ধন প্রয়োজন|Registration'))+'</span>');
-        return f.length?'<div class="ev-facts">'+f.join('')+'</div>':'';
+        var c=[],du=durTxt(e);
+        function cell(l,v,full){c.push('<div class="ev-cell'+(full?' full':'')+'"><small>'+esc(T(l))+'</small><b>'+v+'</b></div>')}
+        cell('তারিখ ও সময়|Date & time',esc(fmtDay(e.startMs,{weekday:'short',day:'numeric',month:'short'})+' · '+t1),true);
+        cell('স্থান|Venue',esc(e.venue),true);
+        if(e.organizer)cell('আয়োজক|Organizer',esc(e.organizer)+(e.authorVerified?' <span class="vtick">✓</span>':''));
+        if(du)cell('সময়কাল|Duration',esc(du));
+        if(e.audience)cell('কাদের জন্য|Open to',esc(e.audience),true);
+        if(okUrl(e.link))cell('নিবন্ধন|Registration',esc(T('প্রয়োজন|Required')));
+        return '<div class="ev-info">'+c.join('')+'</div>';
       })()+
       '<div class="ev-foot"><span style="display:inline-flex;gap:6px;align-items:center">'+ic('users',15)+nf(e.going||0)+' '+T('জন আগ্রহী|interested')+'</span><span class="rel">'+esc(relText(e,now))+'</span></div>'+
       (preview?'':'<div class="ev-act">'+
