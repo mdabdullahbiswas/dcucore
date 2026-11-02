@@ -217,6 +217,15 @@ a.chip:hover{color:var(--ink);border-color:var(--gold)}
 .foot .btn{min-width:120px;height:46px}
 .ferr{min-height:18px;margin-top:12px;font-size:13px;color:var(--red);font-weight:600}
 
+/* ---------- পোস্টার আপলোড ---------- */
+.pzbox{display:flex;gap:14px;align-items:center;padding:12px;border-radius:18px;border:1px dashed color-mix(in srgb,var(--gold) 45%,var(--ln));background:var(--surface2)}
+.pzprev{flex:none;width:150px;aspect-ratio:16/9;border-radius:12px;overflow:hidden;display:grid;place-items:center;font-size:28px;background:var(--surface);border:1px solid var(--ln)}
+.pzprev img{width:100%;height:100%;object-fit:cover}
+.pzbox b{display:block;font-size:13.5px}
+.pzbox small{display:block;margin:2px 0 8px;font-size:11.5px;font-weight:500;color:var(--mu)}
+.pzbtns{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:520px){.pzbox{flex-direction:column;align-items:stretch}.pzprev{width:100%}}
+
 /* ---------- টোস্ট ---------- */
 .toasts{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
 .toast{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:16px;font-size:13.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,#0b1a33,#08172e);border-left:3px solid var(--gold);box-shadow:var(--shadowLg);animation:tin .4s cubic-bezier(.2,.9,.3,1.2) both}
@@ -462,7 +471,7 @@ onAuthStateChanged(auth, u => {
 });
 
 /* ---------- ডেটা ---------- */
-let E = [], tab = "pending", editingId = null;
+let E = [], tab = "pending", editingId = null, posterVal = "";
 
 async function load() {
   $("list").innerHTML = skeleton();
@@ -590,24 +599,36 @@ function openForm(ev) {
   editingId = ev ? ev.id : null;
   const x = ev || { title:"", cat:"seminar", campus:"all", status:"approved", venue:"", organizer:"", desc:"", link:"", contact:"", startMs:Date.now() + 864e5, endMs:0 };
   const s = splitDT(x.startMs), en = splitDT(x.endMs);
+  posterVal = x.poster || "";
   const o = document.createElement("div"); o.className = "ov";
   o.innerHTML = `<form class="card frm" novalidate>
     <h2>${ev ? "ইভেন্ট সম্পাদনা" : "নতুন ইভেন্ট"}</h2>
     <p class="sub">${ev ? "পরিবর্তন সংরক্ষণের সাথে সাথেই লাইভ হবে।" : "এডমিন হিসেবে তৈরি ইভেন্ট নির্ধারিত অবস্থা অনুযায়ী প্রকাশিত হবে।"}</p>
     <div class="grid2">
-      <label class="fl full">শিরোনাম<input class="inp" name="title" maxlength="90" required value="${esc(x.title)}"></label>
-      <label class="fl">ক্যাটাগরি<select class="inp" name="cat">${CATS.map(c => `<option value="${c.id}"${c.id === x.cat ? " selected" : ""}>${c.em} ${esc(c.bn)}</option>`).join("")}</select></label>
-      <label class="fl">ক্যাম্পাস<select class="inp" name="campus">${CAMPUSES.map(c => `<option value="${c.id}"${c.id === x.campus ? " selected" : ""}>${esc(c.bn)}</option>`).join("")}</select></label>
-      <label class="fl">শুরুর তারিখ<input class="inp" type="date" name="sDate" required value="${s.date}"></label>
-      <label class="fl">শুরুর সময়<input class="inp" type="time" name="sTime" required value="${s.time}"></label>
-      <label class="fl">শেষের তারিখ <small>ঐচ্ছিক</small><input class="inp" type="date" name="eDate" value="${en.date}"></label>
-      <label class="fl">শেষের সময় <small>ঐচ্ছিক</small><input class="inp" type="time" name="eTime" value="${en.time}"></label>
-      <label class="fl">স্থান<input class="inp" name="venue" maxlength="100" value="${esc(x.venue)}"></label>
-      <label class="fl">আয়োজক<input class="inp" name="organizer" maxlength="100" value="${esc(x.organizer)}"></label>
-      <label class="fl full">বিবরণ <small>সর্বোচ্চ ১৫০০ অক্ষর</small><textarea class="inp" name="desc" maxlength="1500">${esc(x.desc)}</textarea></label>
-      <label class="fl">লিংক <small>https:// দিয়ে শুরু</small><input class="inp" name="link" placeholder="https://…" value="${esc(x.link)}"></label>
-      <label class="fl">যোগাযোগ<input class="inp" name="contact" maxlength="120" value="${esc(x.contact)}"></label>
-      <label class="fl full">প্রকাশের অবস্থা<select class="inp" name="status">
+      <label class="fl full">শিরোনাম <small>যেমন: বার্ষিক ক্রীড়া প্রতিযোগিতা ২০২৬</small><input class="inp" name="title" maxlength="90" required placeholder="ইভেন্টের নাম লিখুন" value="${esc(x.title)}"></label>
+      <label class="fl">ক্যাটাগরি <small>যেমন: সেমিনার ও ওয়ার্কশপ, ব্লাড ক্যাম্প</small><select class="inp" name="cat">${CATS.map(c => `<option value="${c.id}"${c.id === x.cat ? " selected" : ""}>${c.em} ${esc(c.bn)}</option>`).join("")}</select></label>
+      <label class="fl">ক্যাম্পাস <small>যেমন: ঢাকা কলেজ, অথবা সব ক্যাম্পাস</small><select class="inp" name="campus">${CAMPUSES.map(c => `<option value="${c.id}"${c.id === x.campus ? " selected" : ""}>${esc(c.bn)}</option>`).join("")}</select></label>
+      <label class="fl">শুরুর তারিখ <small>যেমন: ২০ ডিসেম্বর ২০২৬</small><input class="inp" type="date" name="sDate" required value="${s.date}"></label>
+      <label class="fl">শুরুর সময় <small>যেমন: সকাল ০৯:০০ (বা 09:00 AM)</small><input class="inp" type="time" name="sTime" required value="${s.time}"></label>
+      <label class="fl">শেষের তারিখ <small>ঐচ্ছিক · যেমন: ২১ ডিসেম্বর ২০২৬</small><input class="inp" type="date" name="eDate" value="${en.date}"></label>
+      <label class="fl">শেষের সময় <small>ঐচ্ছিক · যেমন: বিকাল ০৫:০০</small><input class="inp" type="time" name="eTime" value="${en.time}"></label>
+      <label class="fl">স্থান <small>যেমন: কেন্দ্রীয় অডিটোরিয়াম, কলেজ মাঠ</small><input class="inp" name="venue" maxlength="100" placeholder="ইভেন্ট কোথায় হবে" value="${esc(x.venue)}"></label>
+      <label class="fl">আয়োজক <small>যেমন: কম্পিউটার ক্লাব, ক্রীড়া সংসদ</small><input class="inp" name="organizer" maxlength="100" placeholder="কারা আয়োজন করছে" value="${esc(x.organizer)}"></label>
+      <label class="fl full">বিবরণ <small>কী হবে, কারা অংশ নিতে পারবে, কী আনতে হবে — সর্বোচ্চ ১৫০০ অক্ষর</small><textarea class="inp" name="desc" maxlength="1500" placeholder="যেমন: হাতে-কলমে ChatGPT ও Canva শেখানো হবে। নিজের ল্যাপটপ আনুন। আগে নিবন্ধন করলে অগ্রাধিকার।">${esc(x.desc)}</textarea></label>
+      <div class="full pzbox">
+        <div class="pzprev" data-pv></div>
+        <div>
+          <b>ইভেন্ট পোস্টার</b>
+          <small>JPG বা PNG, সর্বোচ্চ ১০ MB। স্বয়ংক্রিয়ভাবে ছোট করে সংরক্ষণ হবে। যেমন: ১৬:৯ অনুপাতের ছবি।</small>
+          <div class="pzbtns">
+            <label class="btn sm">${ic("download")}ছবি বেছে নিন<input type="file" accept="image/*" data-pf hidden></label>
+            <button type="button" class="btn sm dng" data-pz>${ic("trash")}সরান</button>
+          </div>
+        </div>
+      </div>
+      <label class="fl">লিংক <small>যেমন: https://forms.gle/… (https:// দিয়ে শুরু)</small><input class="inp" name="link" placeholder="https://…" value="${esc(x.link)}"></label>
+      <label class="fl">যোগাযোগ <small>যেমন: 01XXXXXXXXX বা info@club.edu</small><input class="inp" name="contact" maxlength="120" placeholder="ফোন বা ইমেইল" value="${esc(x.contact)}"></label>
+      <label class="fl full">প্রকাশের অবস্থা <small>অনুমোদিত হলে সবাই দেখবে; অপেক্ষমাণ হলে শুধু এডমিন দেখবে</small><select class="inp" name="status">
         <option value="approved"${x.status !== "pending" ? " selected" : ""}>অনুমোদিত (লাইভ)</option>
         <option value="pending"${x.status === "pending" ? " selected" : ""}>অপেক্ষমাণ (লুকানো)</option>
       </select></label>
@@ -624,7 +645,37 @@ function openForm(ev) {
   o.querySelector("form").onsubmit = ev2 => { ev2.preventDefault(); save(o.querySelector("form"), close); };
   document.addEventListener("keydown", kd, true);
   document.body.appendChild(o);
+  const pv = o.querySelector("[data-pv]");
+  const paint = () => { pv.innerHTML = posterVal ? `<img src="${esc(posterVal)}" alt="পোস্টার">` : `<span>📷</span>`; };
+  paint();
+  o.querySelector("[data-pf]").onchange = async ev2 => {
+    const file = ev2.target.files[0]; ev2.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast("শুধু ছবির ফাইল দিন", "err");
+    if (file.size > 10 * 1024 * 1024) return toast("ছবি ১০ MB-এর বেশি হতে পারবে না", "err");
+    try { posterVal = await compressImg(file); paint(); }
+    catch (er) { err(er); }
+  };
+  o.querySelector("[data-pz]").onclick = () => { posterVal = ""; paint(); };
   o.querySelector("input[name=title]").focus();
+}
+
+/* ছবি ছোট করে JPEG data URL বানানো (Firestore ডকুমেন্টের ১ MB সীমার মধ্যে রাখতে) */
+async function compressImg(file) {
+  const img = await new Promise((res, rej) => {
+    const u = URL.createObjectURL(file), i = new Image();
+    i.onload = () => { URL.revokeObjectURL(u); res(i); };
+    i.onerror = () => { URL.revokeObjectURL(u); rej(new Error("ছবি পড়া যায়নি")); };
+    i.src = u;
+  });
+  const k = Math.min(1, 960 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas");
+  c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  let q = 0.82, url = c.toDataURL("image/jpeg", q);
+  while (url.length > 300000 && q > 0.4) { q -= 0.1; url = c.toDataURL("image/jpeg", q); }
+  if (url.length > 300000) throw new Error("ছবি খুব বড়, অন্য ছবি দিন");
+  return url;
 }
 
 async function save(form, close) {
@@ -645,7 +696,8 @@ async function save(form, close) {
   const data = {
     title, cat: v("cat"), campus: v("campus"), startMs, endMs,
     venue: v("venue"), organizer: v("organizer"), desc, link, contact: v("contact"),
-    status: v("status") === "pending" ? "pending" : "approved"
+    status: v("status") === "pending" ? "pending" : "approved",
+    poster: posterVal
   };
   const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
   try {
