@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#08172e">
+<title>ইভেন্ট এডমিন · DCUCore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+<script>
+(function(){var t=null;try{t=localStorage.getItem('adminTheme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+:root{
+  --bg:#f4f1ea;--surface:#ffffff;--surface2:#faf7f1;--ink:#0b1626;--mu:#6b7686;--ln:#e8e1d2;
+  --navy:#08172e;--navy2:#123664;--gold:#c9a24a;--gold2:#f1d99a;--gold3:#9a741f;
+  --red:#c8263a;--redSoft:#fde8ea;--green:#0f9d58;--greenSoft:#dff6e9;--amber:#9a6a0b;--amberSoft:#fbf0d4;
+  --goldGrad:linear-gradient(135deg,#f8e8b8,#dcb663 40%,#b8913a 65%,#f3dea4);
+  --shadow:0 1px 1px rgba(11,22,38,.04),0 10px 26px -12px rgba(11,22,38,.2);
+  --shadowLg:0 30px 80px rgba(8,23,46,.28);
+  --r:22px;--ease:cubic-bezier(.2,.8,.2,1);
+  --f:'Plus Jakarta Sans','Hind Siliguri',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --fh:'Playfair Display','Noto Serif Bengali','Hind Siliguri',serif;
+}
+html[data-theme=dark]{
+  --bg:#050c18;--surface:#0c182b;--surface2:#10203a;--ink:#eef2fa;--mu:#8fa0bb;--ln:#1d3050;
+  --redSoft:#3a121a;--greenSoft:#0c2c1d;--amberSoft:#33250a;--amber:#f1c76a;
+  --shadow:0 1px 1px rgba(0,0,0,.4),0 14px 34px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;
+  background:radial-gradient(900px 500px at 90% -10%,rgba(201,165,78,.18),transparent 60%),radial-gradient(800px 600px at -10% 30%,rgba(18,54,100,.16),transparent 60%)}
+html[data-theme=dark] body:before{opacity:.9}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--ease)}
+.ic .d{fill:currentColor;fill-opacity:.18;stroke:none}
+.btn:hover .ic,.tab:hover .ic{transform:scale(1.12) rotate(-4deg)}
+
+/* ---------- টপ বার ---------- */
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 72%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--ln)}
+.top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);opacity:.7}
+.top-in{max-width:1120px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:12px;padding-top:max(10px,env(safe-area-inset-top))}
+.logo{width:44px;height:44px;border-radius:50%;padding:3px;display:grid;place-items:center;background:var(--goldGrad);box-shadow:0 8px 20px rgba(201,162,74,.38);text-decoration:none;flex:none}
+.logo img{width:100%;height:100%;border-radius:50%;object-fit:contain;background:#fff}
+.brand b{display:block;font:700 17px/1.2 var(--fh);background:linear-gradient(90deg,var(--ink),var(--navy2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand span{display:block;font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold3)}
+.sp{flex:1}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:22px 18px 90px}
+
+/* ---------- বাটন ---------- */
+.btn{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 15px;border-radius:13px;font:600 13.5px/1 var(--f);color:var(--ink);white-space:nowrap;
+  background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--ln);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 6px rgba(11,22,38,.06);transition:transform .2s var(--ease),box-shadow .25s,border-color .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(11,22,38,.3);border-color:color-mix(in srgb,var(--gold) 55%,var(--ln))}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.tab:focus-visible,.inp:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.btn.sm{height:34px;padding:0 12px;font-size:12.5px;border-radius:11px}
+.btn.icon{width:40px;padding:0}
+.btn.ok{color:#fff;border-color:transparent;background:linear-gradient(135deg,#22c373,#0b8a4a);box-shadow:0 10px 22px -8px rgba(15,157,88,.55)}
+.btn.dng{color:var(--red);background:var(--redSoft);border-color:transparent}
+.btn.dng:hover{background:linear-gradient(135deg,#e0364b,#a51a2d);color:#fff}
+.btn.gold{color:#2a1c02;border-color:transparent;background:var(--goldGrad);background-size:200% 100%;box-shadow:0 10px 24px -8px rgba(201,162,74,.6)}
+.btn.gold:hover{background-position:100% 0}
+.btn:after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-20deg);transition:left .7s var(--ease);pointer-events:none}
+.btn:hover:after{left:140%}
+
+/* ---------- কার্ড ---------- */
+.card{position:relative;background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 16%,var(--ln));border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* ---------- লগইন গেট ---------- */
+.gate{max-width:440px;margin:min(8vh,60px) auto 0;overflow:hidden;text-align:center;animation:up .6s var(--ease) both;border-radius:28px;box-shadow:var(--shadowLg)}
+.gate-hero{padding:36px 24px 28px;color:#fff;background:radial-gradient(500px 220px at 80% -20%,rgba(201,165,78,.38),transparent 60%),linear-gradient(150deg,#050f20,#08172e 50%,#123664)}
+.gate-hero img{width:86px;height:86px;border-radius:50%;background:#fff;padding:4px;object-fit:contain;margin-bottom:12px;box-shadow:0 0 0 10px rgba(241,217,154,.1),0 0 40px rgba(201,162,74,.45)}
+.gate-hero h1{font:700 26px/1.3 var(--fh);margin:0}
+.gate-hero p{margin-top:4px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold2)}
+.gate-body{padding:24px 26px 28px}
+.gate-body>p{color:var(--mu);font-size:14px;margin-bottom:18px}
+.lf{display:grid;gap:14px;text-align:left}
+.lf label{display:grid;gap:6px;font-size:13px;font-weight:700}
+.inp{box-sizing:border-box;width:100%;height:50px;padding:0 15px;border-radius:14px;border:1px solid var(--ln);background:var(--surface2);color:var(--ink);font:500 14.5px var(--f);transition:border-color .25s,box-shadow .25s}
+.inp::placeholder{color:var(--mu)}
+.inp:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,162,74,.2)}
+textarea.inp{height:auto;min-height:100px;padding:12px 15px;resize:vertical;line-height:1.6}
+select.inp{cursor:pointer}
+.lbtn{width:100%;height:52px;border:0;border-radius:15px;cursor:pointer;font:700 15px var(--f);color:#2a1c02;background:var(--goldGrad);background-size:200% 100%;box-shadow:0 14px 30px -8px rgba(201,162,74,.65);transition:transform .2s,background-position .4s}
+.lbtn:hover{transform:translateY(-2px);background-position:100% 0}
+.lbtn[disabled]{opacity:.65;cursor:wait;transform:none}
+.or{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--mu);font-size:12.5px;font-weight:600}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--ln)}
+.gbtn{width:100%;height:52px;border-radius:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font:700 14.5px var(--f);color:#1f2937;background:#fff;border:1px solid #dadce0;box-shadow:0 2px 6px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s}
+.gbtn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
+.gbtn b{font-weight:800;color:#4285F4}
+.msg{min-height:20px;margin-top:12px;font-size:13px;color:var(--red);font-weight:600}
+
+/* ---------- হিরো / টুলবার ---------- */
+.hero{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 12px;padding:26px 24px 22px;margin-bottom:22px;border-radius:28px;color:#fff;
+  background:radial-gradient(520px 260px at 95% -40%,rgba(201,165,78,.42),transparent 62%),radial-gradient(420px 240px at 0% 130%,rgba(193,33,59,.36),transparent 62%),linear-gradient(135deg,#040a18,#0a2145 62%,#0f2c58);
+  box-shadow:0 34px 60px -30px rgba(4,10,24,.75),0 0 0 1px rgba(243,222,164,.2) inset;animation:up .5s var(--ease) both}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--goldGrad);background-size:200% 100%;animation:flow 5s linear infinite;opacity:.9;z-index:-1}
+@keyframes flow{to{background-position:-200% 0}}
+.hero-txt{flex:1 1 100%}
+.hero h2{font:700 27px/1.3 var(--fh);background:linear-gradient(90deg,#fff,var(--gold2) 55%,#fff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
+.hero p{margin-top:2px;font-size:13px;color:rgba(255,255,255,.64)}
+.who{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(243,222,164,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.who i{position:relative;flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--f);font-style:normal;color:#2a1c02;background:var(--goldGrad)}
+.who i:after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:#22c373;border:2px solid #0b1424;animation:live 2s ease-in-out infinite}
+@keyframes live{0%,100%{box-shadow:0 0 0 0 rgba(34,195,115,.55)}50%{box-shadow:0 0 0 5px rgba(34,195,115,0)}}
+.who small{display:block;font-size:10.5px;color:rgba(255,255,255,.55);line-height:1.1;font-weight:600}
+.who b{display:block;font-size:13px;font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3}
+.tb-r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.hero .btn{color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);box-shadow:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hero .btn:hover{border-color:var(--gold2);background:rgba(255,255,255,.16)}
+.hero .btn.gold{color:#2a1c02;background:var(--goldGrad);border-color:transparent}
+.hero .btn.dng{color:#ffb9c3;background:rgba(193,33,59,.24);border-color:rgba(255,120,140,.3)}
+.hero .btn.dng:hover{background:linear-gradient(135deg,#e0364b,#a51a2d);color:#fff}
+
+/* ---------- পরিসংখ্যান ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{--c:#c9a54e;position:relative;overflow:hidden;width:100%;padding:20px;border-radius:24px;cursor:pointer;text-align:left;font:inherit;color:inherit;
+  background:linear-gradient(165deg,var(--surface) 55%,color-mix(in srgb,var(--surface) 88%,var(--c)));border:1px solid color-mix(in srgb,var(--c) 22%,var(--ln));box-shadow:var(--shadow);
+  transition:transform .35s var(--ease),box-shadow .35s;animation:up .6s var(--ease) both}
+.stat:nth-child(2){animation-delay:.06s}.stat:nth-child(3){animation-delay:.12s}.stat:nth-child(4){animation-delay:.18s}
+.stat:hover{transform:translateY(-5px);box-shadow:0 26px 50px -22px color-mix(in srgb,var(--c) 55%,transparent)}
+.stat:focus-visible{outline:2px solid var(--c);outline-offset:3px}
+.stat:after{content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,var(--c),transparent 70%);opacity:.22}
+.si{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 70%,#000));box-shadow:0 10px 20px -8px color-mix(in srgb,var(--c) 75%,transparent),0 0 0 5px color-mix(in srgb,var(--c) 13%,transparent)}
+.si .ic{width:22px;height:22px}
+.si .ic .d{fill:#fff;fill-opacity:.34}
+.stat b{display:block;margin-top:14px;font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:6px;font-size:13px;font-weight:600;color:var(--mu)}
+.stat small{display:block;margin-top:10px;padding-top:9px;border-top:1px dashed color-mix(in srgb,var(--c) 30%,transparent);font-size:11.5px;font-weight:700;color:color-mix(in srgb,var(--c) 80%,#000)}
+html[data-theme=dark] .stat small{color:var(--c)}
+
+/* ---------- ট্যাব ---------- */
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{all:unset;box-sizing:border-box;cursor:pointer;flex:none;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px;border-radius:999px;font:600 13.5px/1 var(--f);color:var(--mu);white-space:nowrap;
+  background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--ln);transition:transform .25s var(--ease),box-shadow .25s,color .25s,background .25s}
+.tab:hover{color:var(--ink);transform:translateY(-2px);box-shadow:0 10px 22px -10px rgba(11,22,38,.3)}
+.tab .ic{width:16px;height:16px}
+.tab em{font-style:normal;min-width:22px;height:22px;padding:0 7px;border-radius:11px;display:inline-grid;place-items:center;font-size:11.5px;font-weight:800;background:var(--surface2);border:1px solid var(--ln)}
+.tab.on{color:var(--gold2);background:linear-gradient(135deg,var(--navy2),var(--navy));border-color:transparent;box-shadow:0 14px 28px -10px rgba(8,23,46,.6),0 0 0 1px rgba(241,217,154,.35) inset}
+.tab.on em{background:var(--goldGrad);color:#2a1c02;border-color:transparent}
+
+/* ---------- ফিল্টার ---------- */
+.filters{display:grid;grid-template-columns:1fr 200px 230px;gap:10px;margin:10px 0 18px}
+.search{position:relative;display:block}
+.search .ic{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none}
+.search .inp{height:50px;padding-left:48px}
+.search .inp:focus+.ic,.search:focus-within .ic{color:var(--gold)}
+@media(max-width:820px){.filters{grid-template-columns:1fr 1fr}.filters .search{grid-column:1/-1}}
+@media(max-width:520px){.filters{grid-template-columns:1fr}}
+
+/* ---------- ইভেন্ট কার্ড ---------- */
+#list{display:grid;gap:14px}
+#list.fx>*{animation:up .55s var(--ease) both}
+#list.fx>*:nth-child(2){animation-delay:.04s}#list.fx>*:nth-child(3){animation-delay:.08s}#list.fx>*:nth-child(4){animation-delay:.12s}#list.fx>*:nth-child(n+5){animation-delay:.16s}
+.ecard{--c:#c9a54e;display:grid;grid-template-columns:86px 1fr auto;gap:18px;align-items:start;padding:18px 20px;border-radius:24px;transition:transform .35s var(--ease),box-shadow .35s,border-color .3s}
+.ecard:before{content:"";position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:0 4px 4px 0;background:var(--c);opacity:.85}
+.ecard:hover{transform:translateY(-3px);box-shadow:0 26px 48px -26px rgba(8,23,46,.4);border-color:color-mix(in srgb,var(--c) 45%,var(--ln))}
+.thumb{width:86px;height:86px;border-radius:20px;overflow:hidden;display:grid;place-items:center;font-size:34px;background:color-mix(in srgb,var(--c) 14%,var(--surface2));border:1px solid color-mix(in srgb,var(--c) 30%,var(--ln))}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.eh{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.eh h3{font-size:17px;font-weight:700;letter-spacing:-.1px;line-height:1.35}
+.cat{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:700;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid color-mix(in srgb,var(--c) 30%,transparent)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+.pill.ok{color:var(--green);background:var(--greenSoft)}
+.pill.warn{color:var(--amber);background:var(--amberSoft)}
+.rep{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,#e5384f,#8f1425);box-shadow:0 4px 10px -3px rgba(200,38,58,.55)}
+.rep .ic{width:13px;height:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:10px;font-size:12.5px;color:var(--mu);background:var(--surface2);border:1px solid var(--ln);text-decoration:none}
+.chip .ic{width:14px;height:14px;color:var(--gold3)}
+html[data-theme=dark] .chip .ic{color:var(--gold2)}
+a.chip:hover{color:var(--ink);border-color:var(--gold)}
+.desc{margin-top:10px;font-size:13px;color:var(--mu);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:12px;min-width:160px;height:100%}
+.going{text-align:right}
+.going b{display:block;font-size:28px;font-weight:800;letter-spacing:-.6px;line-height:1;font-variant-numeric:tabular-nums;background:var(--goldGrad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.going span{font-size:12px;color:var(--mu);font-weight:600}
+.acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+
+/* ---------- খালি / স্কেলিটন ---------- */
+.sk{height:118px;border-radius:24px;background:linear-gradient(100deg,var(--surface2) 30%,color-mix(in srgb,var(--surface2) 55%,var(--ln)) 50%,var(--surface2) 70%) 0 0/250% 100%;animation:shim 1.4s linear infinite;border:1px solid var(--ln)}
+@keyframes shim{to{background-position:-250% 0}}
+.empty{text-align:center;padding:60px 20px;color:var(--mu)}
+.empty .ic{width:64px;height:64px;padding:15px;border-radius:50%;color:var(--gold);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 20%,transparent),transparent 70%);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent),0 0 0 12px color-mix(in srgb,var(--gold) 7%,transparent);margin-bottom:16px}
+.empty p{font-size:14.5px;font-weight:500}
+
+/* ---------- ডায়ালগ / ফর্ম ---------- */
+.ov{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:18px;overflow-y:auto;background:rgba(3,10,22,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .25s both}
+@keyframes fade{from{opacity:0}}
+.dlg{width:100%;max-width:400px;margin:auto;padding:26px 24px 22px;text-align:center;border-radius:26px;box-shadow:var(--shadowLg);animation:pop .35s var(--ease) both}
+.dlg .di{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;color:var(--red);background:var(--redSoft);box-shadow:0 0 0 8px color-mix(in srgb,var(--red) 10%,transparent)}
+.dlg .di .ic{width:26px;height:26px}
+.dlg p{font-size:15px;font-weight:600;line-height:1.6;margin-bottom:20px;word-break:break-word}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .btn{height:46px;width:100%}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.94)}}
+.frm{width:100%;max-width:700px;margin:auto;padding:24px;border-radius:26px;box-shadow:var(--shadowLg);animation:pop .35s var(--ease) both;text-align:left}
+.frm h2{font:700 22px/1.3 var(--fh)}
+.frm .sub{color:var(--mu);font-size:13px;margin:4px 0 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.full{grid-column:1/-1}
+.fl{display:grid;gap:6px;font-size:13px;font-weight:700}
+.fl small{font-weight:500;color:var(--mu);font-size:11.5px}
+.foot{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap}
+.foot .btn{min-width:120px;height:46px}
+.ferr{min-height:18px;margin-top:12px;font-size:13px;color:var(--red);font-weight:600}
+
+/* ---------- টোস্ট ---------- */
+.toasts{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:16px;font-size:13.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,#0b1a33,#08172e);border-left:3px solid var(--gold);box-shadow:var(--shadowLg);animation:tin .4s cubic-bezier(.2,.9,.3,1.2) both}
+.toast .ic{color:var(--gold2)}
+.toast.err{border-left-color:var(--red)}.toast.err .ic{color:#ffb4ab}
+.toast.out{animation:tout .3s both}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.96)}}
+@keyframes tout{to{opacity:0;transform:translateY(10px)}}
+
+/* ---------- রেসপন্সিভ ---------- */
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){
+  .ecard{grid-template-columns:64px 1fr;padding:15px;gap:14px}
+  .thumb{width:64px;height:64px;font-size:26px;border-radius:16px}
+  .ecard:before{top:14px;bottom:14px}
+  .side{grid-column:1/-1;flex-direction:row;align-items:center;min-width:0;height:auto}
+  .acts{flex:1;justify-content:flex-end}
+  .going{text-align:left}
+}
+@media(max-width:640px){
+  .wrap{padding:16px 14px 90px}.top-in{padding-left:14px;padding-right:14px}
+  .hero{padding:20px 16px 18px;border-radius:24px}.hero h2{font-size:22px}
+  .stat{padding:16px}.stat b{font-size:28px}
+  .tb-r{width:100%;margin-left:0}.tb-r .btn{flex:1;padding:0}.tb-r .btn span{display:none}
+  .grid2{grid-template-columns:1fr}
+  .frm{padding:20px 16px}
+  .who b{max-width:150px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="logo" href="events.html" aria-label="ইভেন্ট হাব"><img src="logo.png" alt="" width="44" height="44" decoding="async"></a>
+  <div class="brand"><b>DCUCore Events</b><span>Admin Console</span></div>
+  <div class="sp"></div>
+  <button class="btn icon" id="theme" type="button" aria-label="থিম বদলান" title="থিম"></button>
+</div></header>
+
+<main class="wrap">
+  <!-- লগইন গেট -->
+  <section id="gate" style="display:none">
+    <div class="card gate">
+      <div class="gate-hero">
+        <img src="logo.png" alt="DCUCore" width="86" height="86" decoding="async">
+        <h1>ইভেন্ট এডমিন</h1>
+        <p>DCUCore · Campus Events</p>
+      </div>
+      <div class="gate-body">
+        <p>এই পেজটি শুধু অনুমোদিত এডমিনের জন্য। চালিয়ে যেতে আপনার আইডি ও পাসওয়ার্ড দিন।</p>
+        <form id="lf" class="lf" autocomplete="on" novalidate>
+          <label>এডমিন আইডি
+            <input class="inp" id="lid" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="আইডি বা ইমেইল" required>
+          </label>
+          <label>পাসওয়ার্ড
+            <input class="inp" id="lpw" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          </label>
+          <button id="login" class="lbtn" type="submit">লগ ইন</button>
+        </form>
+        <div class="or">অথবা</div>
+        <button id="glogin" class="gbtn" type="button"><b>G</b> Google দিয়ে সাইন ইন</button>
+        <p id="gmsg" class="msg"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- অ্যাপ -->
+  <section id="app" style="display:none">
+    <div class="hero">
+      <div class="hero-txt">
+        <h2>ইভেন্ট ব্যবস্থাপনা</h2>
+        <p>ইভেন্ট অনুমোদন, সম্পাদনা, রিপোর্ট ও উপস্থিতি — সব এক জায়গায়</p>
+      </div>
+      <div class="who"><i id="whoA">A</i><div><small>সাইন ইন</small><b id="who"></b></div></div>
+      <div class="tb-r">
+        <button class="btn gold" id="new" type="button"></button>
+        <button class="btn" id="ref" type="button"></button>
+        <button class="btn" id="csv" type="button"></button>
+        <button class="btn" id="site" type="button"></button>
+        <button class="btn dng" id="out" type="button"></button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+
+    <div class="filters">
+      <label class="search">
+        <input class="inp" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, স্থান, আয়োজক বা বিবরণ দিয়ে খুঁজুন…">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </label>
+      <select class="inp" id="fcat" aria-label="ক্যাটাগরি"></select>
+      <select class="inp" id="fcamp" aria-label="ক্যাম্পাস"></select>
+    </div>
+
+    <div id="list"></div>
+  </section>
+</main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* ---------- কনফিগ (admin.html-এর সাথে মিল) ---------- */
+const ADMIN_ID = "admin";
+const ID_DOMAIN = "dcu-blood-bank.app";
+const ADMIN_EMAIL = ADMIN_ID + "@" + ID_DOMAIN;
+const ADMIN_LOGINS = [ADMIN_EMAIL, "mdabdullahbiswas48@gmail.com"];
+const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
+const EVENTS = "events";
+const TZ = "Asia/Dhaka";
+
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "events-admin");
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+/* ---------- ইভেন্টের ক্যাটাগরি ও ক্যাম্পাস (events.html-এর সাথে মিল) ---------- */
+const CAMPUSES = [
+  {id:"all",bn:"ঢাকা সেন্ট্রাল ইউনিভার্সিটি (সব ক্যাম্পাস)"},
+  {id:"dhaka",bn:"ঢাকা কলেজ"},
+  {id:"eden",bn:"ইডেন মহিলা কলেজ"},
+  {id:"titumir",bn:"সরকারি তিতুমীর কলেজ"},
+  {id:"bangla",bn:"সরকারি বাঙলা কলেজ"},
+  {id:"badrunnesa",bn:"বেগম বদরুন্নেসা সরকারি মহিলা কলেজ"},
+  {id:"suhrawardy",bn:"সরকারি শহীদ সোহরাওয়ার্দী কলেজ"},
+  {id:"nazrul",bn:"কবি নজরুল সরকারি কলেজ"}
+];
+const CATS = [
+  {id:"seminar",em:"🎤",c:"#2563EB",bn:"সেমিনার ও ওয়ার্কশপ"},
+  {id:"cultural",em:"🎭",c:"#C026D3",bn:"সাংস্কৃতিক"},
+  {id:"sports",em:"⚽",c:"#059669",bn:"খেলাধুলা"},
+  {id:"club",em:"🤝",c:"#7C3AED",bn:"ক্লাব ও সংগঠন"},
+  {id:"career",em:"💼",c:"#D97706",bn:"ক্যারিয়ার ও চাকরি মেলা"},
+  {id:"blood",em:"🩸",c:"#E11D48",bn:"ব্লাড ক্যাম্প ও সেবা"},
+  {id:"academic",em:"📢",c:"#0891B2",bn:"একাডেমিক ও নোটিশ"},
+  {id:"festival",em:"🎉",c:"#65A30D",bn:"উৎসব ও অন্যান্য"}
+];
+const CAT = Object.fromEntries(CATS.map(x => [x.id, x]));
+const CAMP = Object.fromEntries(CAMPUSES.map(x => [x.id, x]));
+const catOf = id => CAT[id] || { id:"", em:"📌", c:"#64748b", bn:"অন্যান্য" };
+const campOf = id => CAMP[id] || CAMP.all;
+
+/* ---------- হেল্পার ---------- */
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const safeUrl = u => /^https?:\/\/[^\s"'<>]+$/i.test(u || "") ? esc(u) : "";
+const safeImg = p => typeof p === "string" && (p.startsWith("data:image/") || p.startsWith("https://firebasestorage.googleapis.com/")) ? esc(p) : "";
+const fmt = ms => ms ? new Intl.DateTimeFormat("bn-BD", { timeZone: TZ, day:"numeric", month:"short", year:"numeric", hour:"numeric", minute:"2-digit" }).format(ms) : "—";
+const dayKey = ms => { const p = {}; new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23" }).formatToParts(ms).forEach(x => p[x.type] = x.value); return p; };
+const splitDT = ms => { if (!ms) return { date:"", time:"" }; const p = dayKey(ms); return { date:`${p.year}-${p.month}-${p.day}`, time:`${p.hour}:${p.minute}` }; };
+const toMs = (d, t) => { if (!d || !t) return 0; const v = new Date(`${d}T${t}:00+06:00`).getTime(); return isNaN(v) ? 0 : v; };
+const isLive = e => e.status === "approved";
+const endOf = e => e.endMs || e.startMs || 0;
+const isUp = e => endOf(e) >= Date.now();
+const today = ms => dayKey(ms).year + dayKey(ms).month + dayKey(ms).day;
+const skeleton = () => '<div class="sk"></div>'.repeat(3);
+
+/* ---------- আইকন ---------- */
+const ICON = {
+  refresh:'<path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 3.8v4.7h-4.7"/>',
+  download:'<path class="d" d="M5 16h14v3a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"/>',
+  logout:'<path class="d" d="M4 5a1 1 0 0 1 1-1h4v16H5a1 1 0 0 1-1-1z"/><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M15.5 7.5 20 12l-4.5 4.5M20 12H10"/>',
+  check:'<path d="M4.8 12.7 9.6 17.5 19.2 7.2"/>',
+  trash:'<path class="d" d="M6 8h12l-1 11.2a1.5 1.5 0 0 1-1.5 1.3h-7A1.5 1.5 0 0 1 7 19.2z"/><path d="M4 7.5h16M9.5 7.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2.5M6 8l1 11.2a1.5 1.5 0 0 0 1.5 1.3h7a1.5 1.5 0 0 0 1.5-1.3L18 8M10 11.5v5M14 11.5v5"/>',
+  undo:'<path d="M8.5 5 4 9.5 8.5 14"/><path d="M4 9.5h9.5a5.5 5.5 0 0 1 0 11H10"/>',
+  pin:'<path class="d" d="M12 21.2s7-5.9 7-11.2a7 7 0 0 0-14 0c0 5.3 7 11.2 7 11.2z"/><path d="M12 21.2s7-5.9 7-11.2a7 7 0 0 0-14 0c0 5.3 7 11.2 7 11.2z"/><circle cx="12" cy="10" r="2.6"/>',
+  cal:'<rect class="d" x="3.8" y="5" width="16.4" height="15.4" rx="3"/><rect x="3.8" y="5" width="16.4" height="15.4" rx="3"/><path d="M3.8 10h16.4M8.5 3v4M15.5 3v4"/>',
+  clock:'<circle class="d" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 1.9"/>',
+  alert:'<path class="d" d="M10.3 4.2a2 2 0 0 1 3.4 0l8 13.6a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3z"/><path d="M10.3 4.2a2 2 0 0 1 3.4 0l8 13.6a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3z"/><path d="M12 9.5v4.6M12 17.4v.1"/>',
+  flag:'<path class="d" d="M5 4.5h12.2l-2.3 4 2.3 4H5z"/><path d="M5 21V3.5M5 4.5h12.2l-2.3 4 2.3 4H5"/>',
+  users:'<circle class="d" cx="9" cy="8" r="3.6"/><circle cx="9" cy="8" r="3.6"/><path d="M2.6 20.2a6.4 6.4 0 0 1 12.8 0M16 4.6a3.6 3.6 0 0 1 0 6.8M18.2 14.6a6.2 6.2 0 0 1 3.2 5.6"/>',
+  star:'<path class="d" d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.6l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/><path d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.6l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',
+  sun:'<circle class="d" cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+  moon:'<path class="d" d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/><path d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/>',
+  inbox:'<path class="d" d="M3 13.2 6.2 5.6A1.5 1.5 0 0 1 7.6 4.7h8.8a1.5 1.5 0 0 1 1.4.9L21 13.2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 13.2 6.2 5.6A1.5 1.5 0 0 1 7.6 4.7h8.8a1.5 1.5 0 0 1 1.4.9L21 13.2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 13.2h4.8l1.2 2.8h6l1.2-2.8H21"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  link:'<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+  globe:'<circle class="d" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 2.6 15.2 0 18M12 3c-2.6 2.8-2.6 15.2 0 18"/>'
+};
+const ic = (n, c = "") => `<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n] || ""}</svg>`;
+
+/* ---------- থিম ---------- */
+function paintTheme() { const dk = document.documentElement.dataset.theme === "dark"; $("theme").innerHTML = ic(dk ? "sun" : "moon"); $("theme").title = dk ? "লাইট মোড" : "ডার্ক মোড"; }
+$("theme").onclick = () => { const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = t; try { localStorage.setItem("adminTheme", t); } catch (e) {} paintTheme(); };
+paintTheme();
+$("new").innerHTML = ic("plus") + "<span>নতুন ইভেন্ট</span>";
+$("ref").innerHTML = ic("refresh") + "<span>রিফ্রেশ</span>";
+$("csv").innerHTML = ic("download") + "<span>CSV</span>";
+$("site").innerHTML = ic("globe") + "<span>ইভেন্ট পেজ</span>";
+$("out").innerHTML = ic("logout") + "<span>সাইন আউট</span>";
+$("site").onclick = () => window.open("events.html", "_blank", "noopener");
+
+/* ---------- টোস্ট ও কনফার্ম ---------- */
+function toast(msg, type) {
+  const t = document.createElement("div"); t.className = "toast" + (type === "err" ? " err" : "");
+  t.innerHTML = ic(type === "err" ? "alert" : "check"); const s = document.createElement("span"); s.textContent = msg; t.appendChild(s);
+  $("toasts").appendChild(t);
+  setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 320); }, type === "err" ? 4800 : 2600);
+}
+const err = e => toast("কাজটি সম্পন্ন হয়নি: " + (e.code || e.message), "err");
+function ask(msg, okLabel) {
+  return new Promise(res => {
+    const o = document.createElement("div"); o.className = "ov";
+    o.innerHTML = `<div class="card dlg" role="dialog" aria-modal="true"><div class="di">${ic("trash")}</div><p></p><div class="row2"><button type="button" class="btn" data-r="0">বাতিল</button><button type="button" class="btn dng" data-r="1"></button></div></div>`;
+    o.querySelector("p").textContent = msg; o.querySelector("[data-r='1']").textContent = okLabel || "হ্যাঁ, মুছুন";
+    const done = v => { document.removeEventListener("keydown", kd, true); o.remove(); res(v); };
+    const kd = e => { if (e.key === "Escape") { e.preventDefault(); done(false); } };
+    o.onclick = e => { if (e.target === o) done(false); const b = e.target.closest("[data-r]"); if (b) done(b.dataset.r === "1"); };
+    document.addEventListener("keydown", kd, true); document.body.appendChild(o); o.querySelector("[data-r='0']").focus();
+  });
+}
+
+/* ---------- লগইন / অথ ---------- */
+const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+const LERR = { "auth/invalid-credential":"আইডি বা পাসওয়ার্ড ভুল।", "auth/wrong-password":"আইডি বা পাসওয়ার্ড ভুল।", "auth/user-not-found":"আইডি বা পাসওয়ার্ড ভুল।", "auth/invalid-email":"আইডি সঠিক নয়।", "auth/too-many-requests":"অনেকবার ভুল চেষ্টা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।", "auth/network-request-failed":"ইন্টারনেট সংযোগ পরীক্ষা করুন।" };
+$("glogin").onclick = () => { $("gmsg").textContent = ""; persistReady.then(() => signInWithPopup(auth, new GoogleAuthProvider())).catch(e => $("gmsg").textContent = "সাইন ইন সম্ভব হয়নি: " + e.code); };
+$("lf").onsubmit = async ev => {
+  ev.preventDefault();
+  const id = $("lid").value.trim().toLowerCase(), pw = $("lpw").value, btn = $("login");
+  if (!id || !pw) { $("gmsg").textContent = "আইডি ও পাসওয়ার্ড দুটোই দিন।"; return; }
+  $("gmsg").textContent = ""; btn.disabled = true; btn.textContent = "যাচাই হচ্ছে...";
+  try { await persistReady; await signInWithEmailAndPassword(auth, id.includes("@") ? id : id + "@" + ID_DOMAIN, pw); $("lpw").value = ""; }
+  catch (e) { $("gmsg").textContent = LERR[e.code] || ("লগ ইন সম্ভব হয়নি: " + e.code); }
+  finally { btn.disabled = false; btn.textContent = "লগ ইন"; }
+};
+$("out").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, u => {
+  if (!u) { $("gate").style.display = "block"; $("app").style.display = "none"; return; }
+  const isPw = ADMIN_LOGINS.includes((u.email || "").toLowerCase());
+  const isG = u.email === GOOGLE_ADMIN_EMAIL && u.emailVerified;
+  if (!isPw && !isG) { $("gmsg").textContent = "এই অ্যাকাউন্টের প্রবেশাধিকার নেই।"; signOut(auth); return; }
+  $("gate").style.display = "none"; $("app").style.display = "block";
+  const nm = (isG || u.email !== ADMIN_EMAIL) ? u.email : ADMIN_ID;
+  $("who").textContent = nm; $("whoA").textContent = (nm[0] || "A").toUpperCase();
+  fillFilters(); load();
+});
+
+/* ---------- ডেটা ---------- */
+let E = [], tab = "pending", editingId = null;
+
+async function load() {
+  $("list").innerHTML = skeleton();
+  try {
+    const snap = await getDocs(collection(db, EVENTS));
+    E = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    render(true);
+  } catch (e) {
+    $("list").innerHTML = `<div class="card empty">${ic("alert")}<p>ইভেন্ট লোড হয়নি: ${esc(e.code || e.message)}<br><span style="font-size:12.5px">(Firestore Rules ও এডমিন আইডি/ইমেইল দেখুন)</span></p></div>`;
+  }
+}
+
+async function patch(id, data, okMsg, btn) {
+  const e = E.find(x => x.id === id); if (!e) return;
+  if (btn) btn.disabled = true;
+  try { await updateDoc(doc(db, EVENTS, id), data); Object.assign(e, data); render(); toast(okMsg); }
+  catch (er) { if (btn) btn.disabled = false; err(er); }
+}
+
+/* ---------- ট্যাব ও ফিল্টার ---------- */
+const TABS = [
+  ["pending", "অপেক্ষমাণ", "clock", e => !isLive(e)],
+  ["upcoming", "আসন্ন", "cal", e => isLive(e) && isUp(e)],
+  ["past", "অতীত", "check", e => isLive(e) && !isUp(e)],
+  ["reported", "রিপোর্টেড", "flag", e => (e.reports || 0) > 0],
+  ["all", "সব ইভেন্ট", "inbox", () => true]
+];
+const EMPTY_MSG = { pending:"কোনো ইভেন্ট অনুমোদনের অপেক্ষায় নেই।", upcoming:"কোনো আসন্ন ইভেন্ট নেই।", past:"কোনো অতীত ইভেন্ট নেই।", reported:"কোনো রিপোর্টেড ইভেন্ট নেই।", all:"এখনো কোনো ইভেন্ট নেই।" };
+
+function fillFilters() {
+  $("fcat").innerHTML = `<option value="">সব ক্যাটাগরি</option>` + CATS.map(c => `<option value="${c.id}">${c.em} ${esc(c.bn)}</option>`).join("");
+  $("fcamp").innerHTML = `<option value="">সব ক্যাম্পাস</option>` + CAMPUSES.filter(c => c.id !== "all").map(c => `<option value="${c.id}">${esc(c.bn)}</option>`).join("");
+}
+const matchQ = e => {
+  const q = $("q").value.trim().toLowerCase(), cat = $("fcat").value, camp = $("fcamp").value;
+  const text = [e.title, e.venue, e.organizer, e.desc].map(x => String(x || "")).join(" ").toLowerCase();
+  return (!q || text.includes(q)) && (!cat || e.cat === cat) && (!camp || e.campus === camp);
+};
+
+/* ---------- রেন্ডার ---------- */
+function render(animate) {
+  const live = E.filter(isLive).length, pend = E.length - live;
+  const upN = E.filter(e => isLive(e) && isUp(e)).length;
+  const todayN = E.filter(e => isLive(e) && today(e.startMs) === today(Date.now())).length;
+  const going = E.reduce((s, e) => s + (e.going || 0), 0);
+  const repN = E.filter(e => (e.reports || 0) > 0).length;
+
+  $("stats").innerHTML = [
+    ["মোট ইভেন্ট", E.length, "cal", "#c9a54e", "all", `লাইভ ${live}টি`],
+    ["অপেক্ষমাণ অনুমোদন", pend, "clock", "#e5a83b", "pending", pend ? "পর্যালোচনা প্রয়োজন" : "সব নিষ্পন্ন ✓"],
+    ["আসন্ন ইভেন্ট", upN, "star", "#2b8cff", "upcoming", `আজ ${todayN}টি`],
+    ["মোট “যাবে”", going, "users", "#0f9d58", "all", repN ? `${repN}টি ইভেন্টে রিপোর্ট` : "কোনো রিপোর্ট নেই"]
+  ].map(([label, n, icn, c, go, sub]) => `<button type="button" class="card stat" data-go="${go}" style="--c:${c}"><div class="si">${ic(icn)}</div><b>${n}</b><span>${label}</span><small>${sub}</small></button>`).join("");
+
+  const cnt = fn => E.filter(fn).length;
+  $("tabs").innerHTML = TABS.map(([k, l, i, fn]) => `<button type="button" class="tab${k === tab ? " on" : ""}" data-t="${k}" role="tab" aria-selected="${k === tab}">${ic(i)}<span>${l}</span><em>${cnt(fn)}</em></button>`).join("");
+
+  const fn = TABS.find(t => t[0] === tab)[3];
+  let L = E.filter(fn).filter(matchQ);
+  L.sort((a, b) => tab === "pending" || tab === "upcoming" ? (a.startMs || 0) - (b.startMs || 0) : (b.startMs || 0) - (a.startMs || 0));
+  const L0 = $("list"); L0.classList.toggle("fx", !!animate); L0.innerHTML = L.length
+    ? L.map(card).join("")
+    : `<div class="card empty">${ic("inbox")}<p>${$("q").value || $("fcat").value || $("fcamp").value ? "এই ফিল্টারে কিছু পাওয়া যায়নি।" : EMPTY_MSG[tab]}</p></div>`;
+}
+
+function card(e) {
+  const c = catOf(e.cat), cp = campOf(e.campus), live = isLive(e), reps = e.reports || 0;
+  const img = safeImg(e.poster), link = safeUrl(e.link);
+  return `<article class="card ecard" style="--c:${c.c}">
+    <div class="thumb">${img ? `<img src="${img}" alt="" loading="lazy">` : `<span>${c.em}</span>`}</div>
+    <div>
+      <div class="eh">
+        <h3>${esc(e.title)}</h3>
+        ${live ? `<span class="pill ok">লাইভ</span>` : `<span class="pill warn">অপেক্ষমাণ</span>`}
+        ${reps ? `<span class="rep">${ic("flag")}${reps}</span>` : ""}
+      </div>
+      <div class="chips">
+        <span class="cat">${c.em} ${esc(c.bn)}</span>
+        <span class="chip">${ic("pin")}${esc(cp.bn)}${e.venue ? " · " + esc(e.venue) : ""}</span>
+        <span class="chip">${ic("cal")}${fmt(e.startMs)}${e.endMs ? " – " + fmt(e.endMs) : ""}</span>
+        ${e.organizer ? `<span class="chip">${ic("users")}${esc(e.organizer)}</span>` : ""}
+        ${e.contact ? `<span class="chip">${ic("pin")}${esc(e.contact)}</span>` : ""}
+        ${link ? `<a class="chip" href="${link}" target="_blank" rel="noopener noreferrer">${ic("link")}লিংক</a>` : ""}
+      </div>
+      ${e.desc ? `<p class="desc">${esc(e.desc)}</p>` : ""}
+    </div>
+    <div class="side">
+      <div class="going"><b>${e.going || 0}</b><span>যাবে</span></div>
+      <div class="acts">
+        ${live
+          ? `<button class="btn sm" data-a="undo" data-id="${esc(e.id)}">${ic("undo")}প্রত্যাহার</button>`
+          : `<button class="btn sm ok" data-a="ok" data-id="${esc(e.id)}">${ic("check")}অনুমোদন</button>`}
+        <button class="btn sm" data-a="edit" data-id="${esc(e.id)}">${ic("edit")}সম্পাদনা</button>
+        ${reps ? `<button class="btn sm" data-a="rep0" data-id="${esc(e.id)}">${ic("check")}রিপোর্ট মুছুন</button>` : ""}
+        <button class="btn sm dng" data-a="del" data-id="${esc(e.id)}">${ic("trash")}মুছুন</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ---------- ইন্টারঅ্যাকশন ---------- */
+$("tabs").onclick = e => { const b = e.target.closest("button[data-t]"); if (b) { tab = b.dataset.t; render(true); } };
+$("stats").onclick = e => { const b = e.target.closest("button[data-go]"); if (b) { tab = b.dataset.go; render(true); } };
+$("q").oninput = () => render(false);
+$("fcat").onchange = $("fcamp").onchange = () => render(false);
+$("ref").onclick = load;
+
+$("list").onclick = async e => {
+  const b = e.target.closest("button[data-a]"); if (!b) return;
+  const a = b.dataset.a, id = b.dataset.id, ev = E.find(x => x.id === id); if (!ev) return;
+  if (a === "ok") return patch(id, { status: "approved" }, "ইভেন্ট অনুমোদন করা হয়েছে", b);
+  if (a === "undo") return patch(id, { status: "pending" }, "ইভেন্ট অপেক্ষমাণে ফেরানো হয়েছে", b);
+  if (a === "rep0") return patch(id, { reports: 0 }, "রিপোর্ট মুছে ফেলা হয়েছে", b);
+  if (a === "edit") return openForm(ev);
+  if (a === "del") {
+    if (!(await ask(`"${ev.title}" ইভেন্টটি স্থায়ীভাবে মুছে ফেলবেন?`))) return;
+    b.disabled = true;
+    try { await deleteDoc(doc(db, EVENTS, id)); E = E.filter(x => x.id !== id); render(false); toast("ইভেন্ট মুছে ফেলা হয়েছে"); }
+    catch (er) { b.disabled = false; err(er); }
+  }
+};
+
+/* ---------- ফর্ম (নতুন / সম্পাদনা) ---------- */
+function openForm(ev) {
+  editingId = ev ? ev.id : null;
+  const x = ev || { title:"", cat:"seminar", campus:"all", status:"approved", venue:"", organizer:"", desc:"", link:"", contact:"", startMs:Date.now() + 864e5, endMs:0 };
+  const s = splitDT(x.startMs), en = splitDT(x.endMs);
+  const o = document.createElement("div"); o.className = "ov";
+  o.innerHTML = `<form class="card frm" novalidate>
+    <h2>${ev ? "ইভেন্ট সম্পাদনা" : "নতুন ইভেন্ট"}</h2>
+    <p class="sub">${ev ? "পরিবর্তন সংরক্ষণের সাথে সাথেই লাইভ হবে।" : "এডমিন হিসেবে তৈরি ইভেন্ট নির্ধারিত অবস্থা অনুযায়ী প্রকাশিত হবে।"}</p>
+    <div class="grid2">
+      <label class="fl full">শিরোনাম<input class="inp" name="title" maxlength="90" required value="${esc(x.title)}"></label>
+      <label class="fl">ক্যাটাগরি<select class="inp" name="cat">${CATS.map(c => `<option value="${c.id}"${c.id === x.cat ? " selected" : ""}>${c.em} ${esc(c.bn)}</option>`).join("")}</select></label>
+      <label class="fl">ক্যাম্পাস<select class="inp" name="campus">${CAMPUSES.map(c => `<option value="${c.id}"${c.id === x.campus ? " selected" : ""}>${esc(c.bn)}</option>`).join("")}</select></label>
+      <label class="fl">শুরুর তারিখ<input class="inp" type="date" name="sDate" required value="${s.date}"></label>
+      <label class="fl">শুরুর সময়<input class="inp" type="time" name="sTime" required value="${s.time}"></label>
+      <label class="fl">শেষের তারিখ <small>ঐচ্ছিক</small><input class="inp" type="date" name="eDate" value="${en.date}"></label>
+      <label class="fl">শেষের সময় <small>ঐচ্ছিক</small><input class="inp" type="time" name="eTime" value="${en.time}"></label>
+      <label class="fl">স্থান<input class="inp" name="venue" maxlength="100" value="${esc(x.venue)}"></label>
+      <label class="fl">আয়োজক<input class="inp" name="organizer" maxlength="100" value="${esc(x.organizer)}"></label>
+      <label class="fl full">বিবরণ <small>সর্বোচ্চ ১৫০০ অক্ষর</small><textarea class="inp" name="desc" maxlength="1500">${esc(x.desc)}</textarea></label>
+      <label class="fl">লিংক <small>https:// দিয়ে শুরু</small><input class="inp" name="link" placeholder="https://…" value="${esc(x.link)}"></label>
+      <label class="fl">যোগাযোগ<input class="inp" name="contact" maxlength="120" value="${esc(x.contact)}"></label>
+      <label class="fl full">প্রকাশের অবস্থা<select class="inp" name="status">
+        <option value="approved"${x.status !== "pending" ? " selected" : ""}>অনুমোদিত (লাইভ)</option>
+        <option value="pending"${x.status === "pending" ? " selected" : ""}>অপেক্ষমাণ (লুকানো)</option>
+      </select></label>
+    </div>
+    <p class="ferr" role="alert"></p>
+    <div class="foot">
+      <button type="button" class="btn" data-x="1">বাতিল</button>
+      <button type="submit" class="btn gold">${ev ? "সংরক্ষণ করুন" : "প্রকাশ করুন"}</button>
+    </div>
+  </form>`;
+  const close = () => { document.removeEventListener("keydown", kd, true); o.remove(); };
+  const kd = e => { if (e.key === "Escape") close(); };
+  o.onclick = e => { if (e.target === o || e.target.closest("[data-x]")) close(); };
+  o.querySelector("form").onsubmit = ev2 => { ev2.preventDefault(); save(o.querySelector("form"), close); };
+  document.addEventListener("keydown", kd, true);
+  document.body.appendChild(o);
+  o.querySelector("input[name=title]").focus();
+}
+
+async function save(form, close) {
+  const v = k => String(new FormData(form).get(k) ?? "").trim();
+  const fail = m => { form.querySelector(".ferr").textContent = m; };
+  fail("");
+  const title = v("title");
+  if (!title || title.length > 90) return fail("শিরোনাম ১ থেকে ৯০ অক্ষরের মধ্যে হতে হবে।");
+  const startMs = toMs(v("sDate"), v("sTime"));
+  if (!startMs) return fail("শুরুর তারিখ ও সময় সঠিকভাবে দিন।");
+  const endMs = v("eDate") && v("eTime") ? toMs(v("eDate"), v("eTime")) : 0;
+  if (endMs && endMs <= startMs) return fail("শেষের সময় শুরুর সময়ের পরে হতে হবে।");
+  const link = v("link");
+  if (link && !/^https?:\/\/\S+$/i.test(link)) return fail("লিংক অবশ্যই https:// দিয়ে শুরু হতে হবে।");
+  const desc = v("desc");
+  if (desc.length > 1500) return fail("বিবরণ ১৫০০ অক্ষরের বেশি হতে পারবে না।");
+
+  const data = {
+    title, cat: v("cat"), campus: v("campus"), startMs, endMs,
+    venue: v("venue"), organizer: v("organizer"), desc, link, contact: v("contact"),
+    status: v("status") === "pending" ? "pending" : "approved"
+  };
+  const btn = form.querySelector("button[type=submit]"); btn.disabled = true;
+  try {
+    if (editingId) {
+      await updateDoc(doc(db, EVENTS, editingId), data);
+      Object.assign(E.find(x => x.id === editingId), data);
+      toast("ইভেন্ট সংরক্ষণ করা হয়েছে");
+    } else {
+      const ref = await addDoc(collection(db, EVENTS), { ...data, going: 0, reports: 0, createdMs: Date.now() });
+      E.unshift({ id: ref.id, ...data, going: 0, reports: 0 });
+      toast("নতুন ইভেন্ট প্রকাশ করা হয়েছে");
+    }
+    close(); render(false);
+  } catch (er) { btn.disabled = false; err(er); }
+}
+$("new").onclick = () => openForm(null);
+
+/* ---------- CSV ---------- */
+$("csv").onclick = () => {
+  const c = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const iso = ms => ms ? new Date(ms).toISOString() : "";
+  const rows = [["Title","Category","Campus","Start","End","Venue","Organizer","Status","Going","Reports","Link","Created"]]
+    .concat(E.map(e => [e.title, e.cat, e.campus, iso(e.startMs), iso(e.endMs), e.venue, e.organizer, e.status, e.going || 0, e.reports || 0, e.link, iso(e.createdMs)]));
+  const a = document.createElement("a");
+  a.download = "events.csv";
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + rows.map(r => r.map(c).join(",")).join("\n")], { type: "text/csv" }));
+  a.click();
+  toast("CSV ডাউনলোড হচ্ছে");
+};
+</script>
+</body>
+</html>
