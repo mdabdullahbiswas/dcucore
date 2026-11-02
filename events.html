@@ -332,6 +332,68 @@ body{transition:background-color .25s,color .25s}
   .sa-brand{font-size:19px}
   .sa-seg button{padding:5px 9px;min-width:34px}
 }
+
+/* ---------------- আমার ইভেন্ট: প্রিমিয়াম লেআউট ---------------- */
+dialog.ev-dlg:has(.ev-mine-in){width:min(680px,calc(100vw - 20px))}
+.ev-mine-in{padding:30px 26px 26px}
+.ev-mine-in .ev-rep-hd{text-align:left;padding-top:0;display:flex;flex-direction:column;align-items:flex-start;gap:0;padding-right:52px}
+.ev-mine-in .ev-rep-ico{width:52px;height:52px;border-radius:16px}
+.ev-mine-in .ev-rep-t{margin:14px 0 4px;font-size:22px}
+.ev-mine-list{display:grid;gap:12px;margin-top:20px}
+.ev-mine-card{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;padding:14px;border-radius:20px;background:var(--surface-2);border:1px solid var(--border);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.ev-mine-card:hover{transform:translateY(-2px);box-shadow:0 18px 34px -20px rgba(11,31,58,.5);border-color:color-mix(in srgb,var(--c) 45%,var(--border))}
+.ev-mine-th{width:76px;height:76px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#000),var(--c));display:grid;place-items:center;font-size:30px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.ev-mine-th img{width:100%;height:100%;object-fit:cover}
+.ev-mine-body{min-width:0;display:flex;flex-direction:column;gap:4px}
+.ev-mine-t{font-weight:800;font-size:16px;color:var(--ink);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-mine-m{font-size:12.8px;color:var(--ink-2)}
+.ev-mine-st{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px}
+.ev-mine-st::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.ev-mine-st.live{background:rgba(16,185,129,.12);color:#047857}
+.ev-mine-st.wait{background:rgba(212,175,55,.18);color:#8a6512}
+.ev-mine-act{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;padding-top:12px;border-top:1px dashed var(--border)}
+.ev-mine-act .ev-btn.sm{min-height:36px}
+.ev-mine-act .ev-btn svg{width:14px;height:14px}
+.ev-mine-act .ev-del{color:var(--err);border-color:rgba(239,68,68,.35)}
+.ev-mine-act .ev-del:hover{border-color:var(--err);color:var(--err);background:rgba(239,68,68,.06)}
+.ev-mine-empty{text-align:center;padding:38px 16px 20px;color:var(--ink-2)}
+.ev-mine-empty-ico{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--surface-2);font-size:28px;margin-bottom:12px}
+.ev-mine-empty p{margin:0;font-size:14px;line-height:1.6}
+@media (max-width:520px){
+  .ev-mine-in{padding:26px 18px 20px}
+  .ev-mine-card{grid-template-columns:64px 1fr;gap:12px;padding:12px}
+  .ev-mine-th{width:64px;height:64px}
+}
+:root[data-theme=dark] .ev-mine-card{background:var(--surface-2)}
+
+/* ---------------- কার্ড: বিস্তারিত তথ্য ---------------- */
+.ev-snip{margin:8px 0 0;font-size:13px;color:var(--ink-2);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ev-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ev-facts span{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:999px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-facts span.reg{color:#1D4ED8;background:rgba(37,99,235,.08);border-color:rgba(37,99,235,.22)}
+/* ---------------- রিপোর্ট বাটন ও পপ-আপ ---------------- */
+.ev-rep{align-self:center;display:inline-flex;align-items:center;gap:7px;margin-top:6px;padding:8px 16px;border-radius:999px;background:rgba(239,68,68,.06);color:#B91C1C;border:1px solid rgba(239,68,68,.22);font-size:12.5px;font-weight:700;text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s}
+.ev-rep:hover{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.45)}
+.ev-rep svg{width:14px;height:14px}
+dialog.ev-rdlg{width:min(560px,calc(100vw - 20px))}
+.ev-rdlg .ev-rep-in{padding:30px 26px 24px}
+.ev-rdlg .ev-rep-hd{padding-right:44px}
+.ev-rdlg .ev-rep-ico{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,#FCA5A5,#DC2626);box-shadow:0 14px 26px -14px rgba(220,38,38,.7)}
+.ev-rdlg .ev-rep-t{font-size:22px;margin-top:14px}
+.ev-rdlg .ev-rep-s{font-size:13.5px}
+.ev-rdlg .ev-rep-opts{gap:10px;margin-top:6px}
+.ev-rdlg .ev-ropt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 16px;border-radius:16px;background:var(--surface-2);border:1.5px solid var(--border);color:var(--ink);font:inherit;font-weight:600;font-size:14.5px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+.ev-rdlg .ev-ropt:hover{border-color:rgba(220,38,38,.35)}
+.ev-rdlg .ev-ropt[aria-checked=true]{border-color:#DC2626;background:rgba(220,38,38,.05);box-shadow:0 0 0 3px rgba(220,38,38,.12)}
+.ev-rdlg .ev-ropt .dot{width:19px;height:19px;border-radius:50%;border:2px solid var(--muted);flex:none;background:var(--surface)}
+.ev-rdlg .ev-ropt[aria-checked=true] .dot{border-color:#DC2626;background:#DC2626;box-shadow:inset 0 0 0 4px #fff}
+.ev-rdlg .ev-rep-note{margin-top:6px;border-radius:16px;padding:14px 16px;background:var(--surface-2);min-height:84px}
+.ev-rep-foot{margin:0;font-size:12px;color:var(--ink-2);text-align:center}
+.ev-rdlg .ev-rep-ft{margin-top:4px}
+.ev-rdlg .ev-rep-ft .ev-btn{min-height:46px;border-radius:14px}
+.ev-rdlg .ev-rep-ft .ev-btn:not(.ghost){background:linear-gradient(135deg,#F87171,#DC2626);color:#fff;box-shadow:0 14px 24px -14px rgba(220,38,38,.7)}
+.ev-rdlg .ev-rep-ft .ev-btn:not(.ghost):not(:disabled):hover{filter:brightness(1.05)}
+:root[data-theme=dark] .ev-rdlg .ev-ropt{background:var(--surface-2)}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -411,9 +473,13 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <!-- ===== Detail dialog ===== -->
 <dialog class="ev-dlg" id="dDetail" aria-labelledby="dTitle"><div class="ev-dlg-in" id="dBody"></div></dialog>
 <dialog class="ev-dlg" id="dMine" aria-labelledby="mineTitle" style="width:min(680px,calc(100vw - 20px))">
-  <div class="ev-dlg-in">
+  <div class="ev-dlg-in ev-mine-in">
     <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <h2 id="mineTitle" class="t">আমার ইভেন্টসমূহ|My events</h2>
+    <div class="ev-rep-hd">
+      <span class="ev-rep-ico" aria-hidden="true">🗂️</span>
+      <h2 id="mineTitle" class="ev-rep-t t">আমার ইভেন্টসমূহ|My events</h2>
+      <p class="ev-rep-s t" id="mineSub"></p>
+    </div>
     <div id="mineBody"></div>
   </div>
 </dialog>
@@ -451,6 +517,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
       <p class="ev-rep-s" id="rSub"></p>
     </div>
     <div class="ev-rep-opts" id="rOpts" role="radiogroup"></div>
+    <p class="ev-rep-foot t">🔒 আপনার নাম বা ইমেইল রিপোর্টের সাথে সংরক্ষণ হয় না।|🔒 Your name or email is not stored with the report.</p>
     <textarea id="rNote" class="ev-rep-note" rows="3" maxlength="300"></textarea>
     <div class="ev-rep-ft">
       <button type="button" class="ev-btn ghost" data-close id="rCancel"></button>
@@ -913,6 +980,14 @@ function posterHTML(e,cat){
   return (img?'<img src="'+esc(e.poster)+'" alt="" loading="lazy" decoding="async">':'')+(img?'':'<span class="em" aria-hidden="true">'+cat.em+'</span>');
 }
 function vBadge(){return '<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>'}
+function durTxt(e){
+  if(!e.endMs)return '';
+  var h=(e.endMs-e.startMs)/36e5;
+  if(h<=0)return '';
+  if(h>=24)return nf(Math.round(h/24*10)/10)+' '+T('দিন|days');
+  if(h<1)return nf(Math.round(h*60))+' '+T('মিনিট|min');
+  return nf(Math.round(h))+' '+T('ঘণ্টা|hours');
+}
 function cardHTML(e,i,preview){
   var cat=CAT[e.cat]||CAT.festival,cp=CAMP[e.campus]||CAMP.all,now=S.now;
   var live=now>=e.startMs&&now<=endOf(e),ended=now>endOf(e),today=!ended&&dayKey(e.startMs)===dayKey(now);
@@ -926,7 +1001,15 @@ function cardHTML(e,i,preview){
       '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>':'')+'</div>'+
       '<h3><button type="button" data-act="open">'+esc(e.title)+'</button></h3>'+
       '<div class="ev-meta"><span>'+ic('clock',15)+'<span>'+esc(fmtDay(e.startMs,{weekday:'short',day:'numeric',month:'short'}))+' · '+esc(t1)+'</span></span>'+
-        '<span>'+ic('pin',15)+'<span>'+esc(e.venue)+'</span></span></div>'+
+        '<span>'+ic('pin',15)+'<span>'+esc(e.venue)+'</span></span>'+
+        (e.organizer?'<span>'+ic('user',15)+'<span>'+esc(e.organizer)+(e.authorVerified?' ✓':'')+'</span></span>':'')+'</div>'+
+      (function(){
+        var f=[];var du=durTxt(e);
+        if(du)f.push('<span>'+ic('clock',13)+esc(du)+'</span>');
+        if(e.audience)f.push('<span>'+ic('users',13)+esc(e.audience)+'</span>');
+        if(okUrl(e.link))f.push('<span class="reg">'+ic('link',13)+esc(T('নিবন্ধন প্রয়োজন|Registration'))+'</span>');
+        return f.length?'<div class="ev-facts">'+f.join('')+'</div>':'';
+      })()+
       '<div class="ev-foot"><span style="display:inline-flex;gap:6px;align-items:center">'+ic('users',15)+nf(e.going||0)+' '+T('জন আগ্রহী|interested')+'</span><span class="rel">'+esc(relText(e,now))+'</span></div>'+
       (preview?'':'<div class="ev-act">'+
         '<button type="button" class="ev-btn sm'+(goes?' on':'')+'" data-act="go" aria-pressed="'+goes+'">'+ic(goes?'check':'users',16)+(goes?T('যাচ্ছি|Going'):T('আমি যাব|I\'m going'))+'</button>'+
@@ -1085,7 +1168,7 @@ function openDetail(id,quiet){
       '<button type="button" class="ev-btn ghost sm" data-d="copy">'+ic('copy',15)+T('লিংক কপি|Copy link')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-d="card">'+ic('card',15)+T('শেয়ার কার্ড বানান|Make a share card')+'</button>'+
     '</div>'+
-    '<button type="button" class="ev-rep" data-d="report">'+ic('flag',12)+' '+T('ভুল বা বিভ্রান্তিকর? রিপোর্ট করুন|Wrong or misleading? Report')+'</button>'+
+    '<button type="button" class="ev-rep" data-d="report">'+ic('flag',14)+' '+T('ভুল বা বিভ্রান্তিকর? রিপোর্ট করুন|Wrong or misleading? Report')+'</button>'+
    '</div>';
   $('#dBody').innerHTML=h;
   if(isOwner(e))$('#dBody').insertAdjacentHTML('beforeend','<div class="ev-actions"><button type="button" class="ev-btn ghost sm" data-own="edit" data-id="'+esc(id)+'">'+T('এডিট করুন|Edit')+'</button><button type="button" class="ev-btn ghost sm" data-own="del" data-id="'+esc(id)+'">'+T('মুছুন|Delete')+'</button></div>');
@@ -1596,7 +1679,7 @@ function showAuthExplainer(kind){
     t.innerHTML='<span class="t">'+T(AUTH_MINE_HTML.title)+'</span>';
     sub.innerHTML='<span class="t">'+T(AUTH_MINE_HTML.sub)+'</span>';
     ul.innerHTML=AUTH_MINE_HTML.items.map(function(it){
-      return '<li><span class="ev-why-i">'+it[0]+'</span><div><b class="t">'+it[1]+'</b><small class="t">'+it[2]+'</small></div></li>';
+      return '<li><span class="ev-why-i">'+it[0]+'</span><div><b class="t">'+T(it[1])+'</b><small class="t">'+T(it[2])+'</small></div></li>';
     }).join('');
   }else{
     t.innerHTML=AUTH.orig.title;sub.innerHTML=AUTH.orig.sub;ul.innerHTML=AUTH.orig.ul;
@@ -1700,14 +1783,28 @@ async function openMine(){
 }
 function renderMine(){
   var list=S.mineList||[],b=$('#mineBody');
-  if(!list.length){b.innerHTML='<p class="sub t">'+T('আপনি এখনও কোনো ইভেন্ট পোস্ট করেননি।|You have not posted any events yet.')+'</p>';return}
-  b.innerHTML=list.map(function(e){
-    var st=e.status==='approved'?T('লাইভ|Live'):T('অনুমোদনের অপেক্ষায়|Awaiting approval');
-    return '<div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 0">'+
-      '<div style="min-width:0;flex:1"><b>'+esc(e.title)+'</b><div class="t" style="font-size:12.5px;color:var(--ink-2)">'+esc(longDate(e.startMs))+' · '+st+'</div></div>'+
-      '<div style="display:flex;gap:8px"><button type="button" class="ev-btn ghost sm" data-mine="edit" data-id="'+esc(e.id)+'">'+T('এডিট|Edit')+'</button>'+
-      '<button type="button" class="ev-btn ghost sm" data-mine="del" data-id="'+esc(e.id)+'">'+T('মুছুন|Delete')+'</button></div></div>';
-  }).join('');
+  $('#mineSub').innerHTML='<span class="t">'+(list.length?T('আপনার পোস্ট ও তার অবস্থা|Your posts and their status'):T('পোস্ট করলে এখানে দেখতে পাবেন|Posts you create will appear here'))+'</span>';
+  if(!list.length){
+    b.innerHTML='<div class="ev-mine-empty"><div class="ev-mine-empty-ico" aria-hidden="true">✨</div><p class="t">'+T('আপনি এখনও কোনো ইভেন্ট পোস্ট করেননি।|You have not posted any events yet.')+'</p></div>';
+    return;
+  }
+  b.innerHTML='<div class="ev-mine-list">'+list.map(function(e){
+    var cat=CAT[e.cat]||CAT.festival;
+    var live=e.status==='approved';
+    var st=live?T('লাইভ|Live'):T('অনুমোদনের অপেক্ষায়|Awaiting approval');
+    var th=e.poster?'<img src="'+esc(e.poster)+'" alt="">':'<span aria-hidden="true">'+cat.em+'</span>';
+    return '<article class="ev-mine-card" style="--c:'+cat.c+'">'+
+      '<div class="ev-mine-th">'+th+'</div>'+
+      '<div class="ev-mine-body">'+
+        '<div class="ev-mine-t">'+esc(e.title)+'</div>'+
+        '<div class="ev-mine-m">'+esc(longDate(e.startMs))+' · '+esc(timeStr(e.startMs))+'</div>'+
+        '<span class="ev-mine-st '+(live?'live':'wait')+'"><span class="t">'+st+'</span></span>'+
+      '</div>'+
+      '<div class="ev-mine-act">'+
+        '<button type="button" class="ev-btn sm" data-mine="edit" data-id="'+esc(e.id)+'"><span class="t">'+T('এডিট|Edit')+'</span></button>'+
+        '<button type="button" class="ev-btn ghost sm ev-del" data-mine="del" data-id="'+esc(e.id)+'"><span class="t">'+T('মুছুন|Delete')+'</span></button>'+
+      '</div></article>';
+  }).join('')+'</div>';
 }
 function openEdit(id){
   var e=(S.mineList||[]).find(function(x){return x.id===id})||byId(id);
