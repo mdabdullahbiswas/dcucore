@@ -1053,7 +1053,7 @@ $('#rSend').addEventListener('click',async function(){
   var id=repId,note=$('#rNote').value.trim();
   S.reported[id]={r:repSel,n:note,t:Date.now()};safeSet('dcuEv_rep',S.reported);
   try{await storeBump(id,'reports',1)}catch(x){}
-  if(S.mode==='live'){try{await S.fb.addDoc(S.fb.collection(S.db,'reports'),{eventId:String(id).slice(0,200),reason:repSel,note:note.slice(0,300),createdMs:Date.now()})}catch(x){}}
+  if(S.mode==='live'){try{await S.fb.addDoc(S.fb.collection(S.db,'event_reports'),{eventId:String(id).slice(0,200),reason:repSel,note:note.slice(0,300),createdMs:Date.now()})}catch(x){}}
   $('#dReport').close();
   if($('#dDetail').open)$('#dDetail').close();
   toast(T('রিপোর্ট পাঠানো হয়েছে, ধন্যবাদ|Report sent, thank you'));
