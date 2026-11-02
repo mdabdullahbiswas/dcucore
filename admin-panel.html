@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<title>এডমিন প্যানেল · DCUCore</title>
+<style>
+:root{--bg:#f4f1ea;--s:#ffffff;--ink:#0b1626;--mu:#6b7686;--ln:#e8e1d2;--navy:#08172e;--gold:#c9a24a;--gold2:#f1d99a}
+@media (prefers-color-scheme: dark){:root{--bg:#050c18;--s:#0c182b;--ink:#eef2fa;--mu:#8fa0bb;--ln:#1d3050;--navy:#10203a}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+.bar{position:sticky;top:0;z-index:5;height:56px;display:flex;align-items:center;gap:8px;padding:env(safe-area-inset-top,0) 14px 0;background:var(--s);border-bottom:1px solid var(--ln)}
+.brand{font-weight:700;font-size:15px;margin-right:auto;white-space:nowrap}
+.brand span{color:var(--gold);font-weight:600}
+.tabs{display:flex;gap:8px}
+.tab{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--ln);background:transparent;color:var(--mu);font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,#123664,var(--navy));color:var(--gold2);border-color:transparent}
+.pane{height:calc(100% - 56px)}
+iframe{display:block;width:100%;height:100%;border:0}
+@media (max-width:520px){.brand{font-size:13.5px}.tab{padding:0 12px;font-size:13px}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="brand">DCUCore <span>· এডমিন</span></div>
+  <nav class="tabs" role="tablist" aria-label="এডমিন বিভাগ">
+    <button class="tab" role="tab" data-k="blood" type="button">🩸 ব্লাড ডোনার</button>
+    <button class="tab" role="tab" data-k="events" type="button">🎉 ইভেন্ট</button>
+  </nav>
+</header>
+<main class="pane" id="panes"></main>
+<script>
+(function () {
+  var PAGES = { blood: "admin.html?embed=1", events: "events-admin.html?embed=1" };
+  var frames = {};
+  function show(k) {
+    if (!PAGES[k]) k = "blood";
+    if (!frames[k]) {
+      var f = document.createElement("iframe");
+      f.src = PAGES[k]; f.title = k === "blood" ? "ব্লাড ডোনার এডমিন" : "ইভেন্ট এডমিন";
+      frames[k] = f; document.getElementById("panes").appendChild(f);
+    }
+    for (var key in frames) frames[key].hidden = key !== k;
+    document.querySelectorAll(".tab").forEach(function (t) {
+      t.setAttribute("aria-selected", String(t.getAttribute("data-k") === k));
+    });
+  }
+  document.querySelectorAll(".tab").forEach(function (t) {
+    t.addEventListener("click", function () { location.hash = t.getAttribute("data-k"); });
+  });
+  window.addEventListener("hashchange", function () { show(location.hash.slice(1)); });
+  show(location.hash.slice(1) || "blood");
+})();
+</script>
+</body>
+</html>
