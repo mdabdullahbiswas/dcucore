@@ -471,6 +471,22 @@ html[data-theme=dark] .ev-flt small{color:#F3D78A}
   #campusChips.ev-chips,#catChips.ev-chips{grid-template-columns:1fr 1fr;gap:8px}
   .ev-fsel{font-size:12.5px;padding-left:12px}
 }
+
+/* ---------------- ফিল্টার: এক সারিতে, ছোট বক্স, লেখা আগের আকারে ---------------- */
+.ev-flt-row{display:flex;gap:10px;align-items:flex-start;padding:8px 2px 4px}
+#campusChips.ev-chips,#catChips.ev-chips{display:block;flex:1 1 0;min-width:0;margin:0;padding:0;overflow:visible;-webkit-mask-image:none;mask-image:none}
+.ev-flt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.ev-fsel{min-height:38px;padding:6px 36px 6px 16px;font-size:14.5px;font-weight:600;line-height:1.3}
+@media (max-width:640px){
+  .ev-flt-row{gap:8px}
+  .ev-fsel{font-size:14.5px;padding-left:14px;padding-right:32px}
+}
+
+/* ---------------- শেয়ার কার্ড: সব বাটন এক সারিতে, সোশ্যাল আইকন ---------------- */
+.ev-cm-one{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.ev-cm-one::-webkit-scrollbar{display:none}
+.ev-cm-one .ev-btn{flex:0 0 auto;white-space:nowrap}
+.ev-cm-one .ev-btn.ico{width:38px;min-width:38px;padding:0;justify-content:center}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -537,8 +553,10 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
       <button type="button" class="ev-btn ghost" id="vSaved" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 011 1v17l-7-4-7 4V4a1 1 0 011-1z"/></svg><span class="t">সেভ করা|Saved</span> <b id="savedN"></b></button>
       <button type="button" class="ev-btn ghost" id="vMine"><span class="t">আমার ইভেন্ট|My events</span></button>
     </div>
-    <div class="ev-chips" id="campusChips" role="group" aria-label="Campus" data-al="ক্যাম্পাস|Campus"></div>
-    <div class="ev-chips" id="catChips" role="group" aria-label="Category" data-al="ধরন|Category" style="padding-top:2px"></div>
+    <div class="ev-flt-row">
+      <div class="ev-chips" id="campusChips" role="group" aria-label="Campus" data-al="ক্যাম্পাস|Campus"></div>
+      <div class="ev-chips" id="catChips" role="group" aria-label="Category" data-al="ধরন|Category"></div>
+    </div>
     <div class="ev-note" id="note"></div>
   </div>
 
@@ -1602,14 +1620,12 @@ function cmBuild(){
     '<div class="ev-cm-row">'+opt('data-cm-cs',CM_CS,CM.cs)+'</div>'+
     '<label class="ev-cm-lab" for="cmCap">'+T('ক্যাপশন (এডিট করা যাবে)|Caption (editable)')+'</label>'+
     '<textarea id="cmCap" rows="4" maxlength="500"></textarea>'+
-    '<div class="ev-cm-acts">'+
+    '<div class="ev-cm-acts ev-cm-one">'+
       '<button type="button" class="ev-btn sm" data-cm-act="dl">'+ic('download',15)+T('ডাউনলোড|Download')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-cm-act="share">'+ic('share',15)+T('শেয়ার|Share')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-cm-act="copy">'+ic('copy',15)+T('ছবি কপি|Copy image')+'</button>'+
-    '</div>'+
-    '<div class="ev-cm-acts">'+
-      '<a class="ev-btn ghost sm" id="cmWa" target="_blank" rel="noopener noreferrer">'+ic('wa',15)+'WhatsApp</a>'+
-      '<a class="ev-btn ghost sm" id="cmFb" target="_blank" rel="noopener noreferrer">Facebook</a>'+
+      '<a class="ev-btn ghost sm ico" id="cmWa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">'+ic('wa',16)+'</a>'+
+      '<a class="ev-btn ghost sm ico" id="cmFb" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg></a>'+
       '<button type="button" class="ev-btn ghost sm" data-cm-act="capcopy">'+ic('copy',15)+T('ক্যাপশন কপি|Copy caption')+'</button>'+
     '</div>'+
     '<p class="ev-cm-hint">'+T('ছবি ডাউনলোড করে ইনস্টাগ্রাম স্টোরি, ফেসবুক বা WhatsApp-এ দিন, ক্যাপশনটিও সঙ্গে নিন।|Download the image and post it to Instagram, Facebook or WhatsApp, with the caption.')+'</p>';
