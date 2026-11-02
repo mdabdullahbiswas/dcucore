@@ -171,6 +171,14 @@ dialog.ev-dlg::backdrop{background:rgba(6,16,32,.62);backdrop-filter:blur(4px)}
 .ev-desc{white-space:pre-line;word-break:break-word;color:var(--ink);font-size:15.5px;line-height:1.75}
 .ev-actions{display:flex;flex-wrap:wrap;gap:8px}
 .ev-adlg{width:min(460px,calc(100vw - 20px))}
+.ev-pp{margin:16px 0 4px;padding:16px;border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 12%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--gold) 45%,var(--border))}
+.ev-pp-hd{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.ev-pp-ico{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:var(--brand-grad);font-size:20px}
+.ev-pp-hd b{display:block;font-size:15px;color:var(--ink)}
+.ev-pp-hd small{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:2px}
+.ev-pp-txt{width:100%;box-sizing:border-box;font-size:12.5px;line-height:1.55;font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--surface-2);color:var(--ink);border:1px solid var(--border);border-radius:12px;padding:10px 12px;resize:vertical}
+.ev-pp-ft{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ev-pp-ft a.ev-btn{text-decoration:none}
 .ev-auth-in{padding:28px 24px 22px;display:flex;flex-direction:column;gap:16px}
 .ev-why{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .ev-why li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border)}
@@ -478,9 +486,18 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
           <div><label for="fEnd"><span class="t">শেষ|End</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fEnd" type="time"><div class="ev-err" data-e="end"></div></div>
         </div>
 
+        <div class="ev-2">
+          <div><label for="fEndDate"><span class="t">শেষ তারিখ|End date</span> <small class="t">(বহুদিনের ইভেন্ট হলে — ঐচ্ছিক)|(multi-day only — optional)</small></label><input id="fEndDate" type="date"><div class="ev-err" data-e="endDate"></div></div>
+          <div><label for="fAudience"><span class="t">কাদের জন্য উন্মুক্ত|Open to</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fAudience" maxlength="100" data-p="যেমন: সব শিক্ষার্থী, শুধু বিবিএ বিভাগ|e.g. All students, BBA dept only"></div>
+        </div>
+
         <label for="fVenue"><span class="t">স্থান|Venue</span> <em>*</em></label>
         <input id="fVenue" maxlength="100" data-p="যেমন: কেন্দ্রীয় অডিটোরিয়াম, ঢাকা কলেজ|e.g. Central Auditorium, Dhaka College">
         <div class="ev-err" data-e="venue"></div>
+
+        <label for="fMap"><span class="t">গুগল ম্যাপ লোকেশন|Google Maps location</span> <small class="t">(লিংক পেস্ট করুন — ঐচ্ছিক)|(paste a link — optional)</small></label>
+        <input id="fMap" type="url" inputmode="url" maxlength="300" placeholder="https://maps.app.goo.gl/…">
+        <div class="ev-err" data-e="map"></div>
 
         <label for="fOrg"><span class="t">আয়োজক|Organizer</span> <small class="t">(ক্লাব/বিভাগ — ঐচ্ছিক)|(club / department — optional)</small></label>
         <input id="fOrg" maxlength="70" data-p="যেমন: কম্পিউটার ক্লাব|e.g. Computer Club">
@@ -497,6 +514,21 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
         <span class="ev-lab"><span class="t">পোস্টার|Poster</span> <small style="font-weight:500;color:var(--ink-2)" class="t">(ঐচ্ছিক, ছবি স্বয়ংক্রিয়ভাবে ছোট হবে)|(optional, auto-compressed)</small></span>
         <label class="ev-up" id="upBox" style="font-weight:500"><input id="fPoster" type="file" accept="image/jpeg,image/png,image/webp"><span id="upTxt">ছবি বেছে নিতে ক্লিক করুন</span></label>
         <div class="ev-err" data-e="poster"></div>
+
+        <div class="ev-pp">
+          <div class="ev-pp-hd">
+            <span class="ev-pp-ico" aria-hidden="true">🎨</span>
+            <div>
+              <b class="t">প্রিমিয়াম পোস্টারের রেডি প্রম্পট|Ready premium poster prompt</b>
+              <small class="t">উপরের তথ্য দিয়ে নিচের প্রম্পটটি কপি করে ChatGPT-তে দিন — পোস্টার তৈরি হবে।|Copy this prompt (auto-filled from your details) and paste it into ChatGPT to create your poster.</small>
+            </div>
+          </div>
+          <textarea id="fPrompt" class="ev-pp-txt" readonly rows="7"></textarea>
+          <div class="ev-pp-ft">
+            <button type="button" class="ev-btn sm" id="pCopy"><span class="t">প্রম্পট কপি করুন|Copy prompt</span></button>
+            <a class="ev-btn ghost sm" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer"><span class="t">ChatGPT খুলুন|Open ChatGPT</span></a>
+          </div>
+        </div>
 
         <input class="ev-hp" id="fHp" tabindex="-1" aria-hidden="true" autocomplete="off" name="website">
 
@@ -769,7 +801,7 @@ async function initStore(){
   }
 }
 async function storeAdd(ev){
-  var data={title:ev.title,cat:ev.cat,campus:ev.campus,startMs:ev.startMs,endMs:ev.endMs||0,venue:ev.venue,organizer:ev.organizer,desc:ev.desc,link:ev.link,contact:ev.contact,poster:ev.poster,going:0,reports:0,status:ev.status||(CFG.requireApproval?'pending':'approved'),createdMs:Date.now()};
+  var data={title:ev.title,cat:ev.cat,campus:ev.campus,startMs:ev.startMs,endMs:ev.endMs||0,venue:ev.venue,organizer:ev.organizer,audience:ev.audience||'',mapUrl:ev.mapUrl||'',desc:ev.desc,link:ev.link,contact:ev.contact,poster:ev.poster,going:0,reports:0,status:ev.status||(CFG.requireApproval?'pending':'approved'),createdMs:Date.now()};
   if(ev.authorUid){data.authorUid=ev.authorUid;data.authorName=ev.authorName;data.authorVerified=ev.authorVerified===true}
   if(S.mode==='live'){
     var ref=await S.fb.addDoc(S.fb.collection(S.db,CFG.collection),data);
@@ -999,8 +1031,9 @@ function icsDownload(e){
 function openDetail(id,quiet){
   var e=byId(id);if(!e)return;curId=id;
   var cat=CAT[e.cat]||CAT.festival,cp=CAMP[e.campus]||CAMP.all,goes=!!S.going[id],sv=!!S.saved[id],ended=Date.now()>endOf(e);
-  var time=timeStr(e.startMs)+(e.endMs?' – '+timeStr(e.endMs):'');
-  var map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.venue+' '+cp.en);
+  var multi=!!(e.endMs&&dayKey(e.endMs)!==dayKey(e.startMs));
+  var time=timeStr(e.startMs)+(e.endMs?' – '+(multi?longDate(e.endMs)+' '+timeStr(e.endMs):timeStr(e.endMs)):'');
+  var map=okUrl(e.mapUrl)?e.mapUrl:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.venue+' '+cp.en);
   var row=function(i,l,v){return '<div class="ev-i">'+ic(i)+'<div><small>'+l+'</small><b>'+v+'</b></div></div>'};
   var h='<button type="button" class="ev-x" data-close aria-label="Close">'+ic('x',18)+'</button>'+
    '<div class="ev-dposter" style="--c:'+cat.c+'">'+posterHTML(e,cat)+'</div>'+
@@ -1011,6 +1044,7 @@ function openDetail(id,quiet){
       row('cal',T('তারিখ ও সময়|Date & time'),esc(longDate(e.startMs))+'<br>'+esc(time)+' <span style="color:var(--ink-2)">('+esc(relText(e,Date.now()))+')</span>')+
       row('pin',T('স্থান|Venue'),esc(e.venue)+' <br><a href="'+map+'" target="_blank" rel="noopener noreferrer">'+T('ম্যাপে খুঁজুন|Find on map')+'</a>')+
       (e.organizer?row('user',T('আয়োজক|Organizer'),esc(e.organizer)+(e.authorVerified?' '+vBadge():'')):'')+
+      (e.audience?row('users',T('কাদের জন্য|Open to'),esc(e.audience)):'')+
       row('users',T('আগ্রহী|Interested'),nf(e.going||0)+' '+T('জন|people'))+
       (e.contact?row('phone',T('যোগাযোগ|Contact'),esc(e.contact)):'')+
     '</div>'+
@@ -1432,12 +1466,42 @@ async function openCard(id){
 /* ---------------- পোস্ট ফর্ম ---------------- */
 var poster='',pDraftKey='dcuEv_draft';
 var F=function(id){return $('#'+id)};
-function fields(){return {title:F('fTitle').value.trim(),cat:F('fCat').value,campus:F('fCampus').value,date:F('fDate').value,start:F('fStart').value,end:F('fEnd').value,venue:F('fVenue').value.trim(),organizer:F('fOrg').value.trim(),desc:F('fDesc').value.trim(),link:F('fLink').value.trim(),contact:F('fContact').value.trim()}}
+function fields(){return {title:F('fTitle').value.trim(),cat:F('fCat').value,campus:F('fCampus').value,date:F('fDate').value,start:F('fStart').value,end:F('fEnd').value,endDate:F('fEndDate').value,venue:F('fVenue').value.trim(),organizer:F('fOrg').value.trim(),audience:F('fAudience').value.trim(),mapUrl:F('fMap').value.trim(),desc:F('fDesc').value.trim(),link:F('fLink').value.trim(),contact:F('fContact').value.trim()}}
+/* শেষের সময়: শেষ তারিখ থাকলে সেটি, নইলে শুরুর তারিখ; শেষ সময় না থাকলে দিনের শেষ */
+function endOfMs(v){
+  if(!v.date)return null;
+  if(v.endDate)return dhakaMs(v.endDate,v.end||'23:59');
+  if(v.end)return dhakaMs(v.date,v.end);
+  return null;
+}
 function saveDraft(){var v=fields();safeSet(pDraftKey,v)}
-function loadDraft(){var v=safeGet(pDraftKey,null);if(!v)return;F('fTitle').value=v.title||'';F('fCat').value=v.cat||'';F('fCampus').value=v.campus||'';F('fDate').value=v.date||'';F('fStart').value=v.start||'';F('fEnd').value=v.end||'';F('fVenue').value=v.venue||'';F('fOrg').value=v.organizer||'';F('fDesc').value=v.desc||'';F('fLink').value=v.link||'';F('fContact').value=v.contact||''}
+function loadDraft(){var v=safeGet(pDraftKey,null);if(!v)return;F('fTitle').value=v.title||'';F('fCat').value=v.cat||'';F('fCampus').value=v.campus||'';F('fDate').value=v.date||'';F('fStart').value=v.start||'';F('fEnd').value=v.end||'';F('fEndDate').value=v.endDate||'';F('fVenue').value=v.venue||'';F('fOrg').value=v.organizer||'';F('fAudience').value=v.audience||'';F('fMap').value=v.mapUrl||'';F('fDesc').value=v.desc||'';F('fLink').value=v.link||'';F('fContact').value=v.contact||''}
 function todayStr(){return dayKey(Date.now())}
+function buildPosterPrompt(v){
+  var cat=CAT[v.cat]?nm(CAT[v.cat],'l'):'—', cp=CAMP[v.campus]?nm(CAMP[v.campus],'l'):'—';
+  var dt=v.date?v.date.split('-').reverse().join('/'):'—';
+  var tm=v.start?v.start+(v.end?' – '+v.end:''):'—';
+  var dates=v.endDate?dt+' – '+v.endDate.split('-').reverse().join('/'):dt;
+  return [
+    'Create a premium, high-end event poster (portrait 4:5, 1080×1350 px) for a university campus event in Bangladesh.',
+    '',
+    'Event title (render exactly in Bangla): '+(v.title||'[ইভেন্টের নাম]'),
+    'Date: '+dates,
+    'Time: '+tm,
+    'Venue: '+(v.venue||'[স্থান]'),
+    'Organized by: '+(v.organizer||'—'),
+    'Open to: '+(v.audience||'সবাই'),
+    'Campus: '+cp+'   |   Category: '+cat,
+    '',
+    'Design direction: luxurious dark-navy and metallic gold palette (navy #0B1F3A, gold #D4AF37), a fine gold double frame, soft spotlight gradient behind the headline, elegant bold Bangla typography with a refined serif or modern Bangla display face, generous whitespace, one subtle visual motif that fits the category, no clutter.',
+    'Layout: date in a small gold badge at the top-left; event title large and centered; organizer and open-to line under the title; time and venue with minimal line icons near the bottom; small footer text: dcucore.vercel.app',
+    'Rules: spell all text exactly as given, add no extra words, keep Bangla text crisp and correctly shaped, high contrast, readable on a phone screen.'
+  ].join('\n');
+}
+function updatePosterPrompt(){var b=$('#fPrompt');if(b)b.value=buildPosterPrompt(fields())}
 function previewRender(){
-  var v=fields(),ms=v.date&&v.start?dhakaMs(v.date,v.start):null,em=v.date&&v.end?dhakaMs(v.date,v.end):null;
+  var v=fields(),ms=v.date&&v.start?dhakaMs(v.date,v.start):null,em=endOfMs(v);
+  updatePosterPrompt();
   var e={id:'preview',title:v.title||T('আপনার ইভেন্টের নাম|Your event title'),cat:v.cat||'festival',campus:v.campus||'all',startMs:ms||Date.now()+864e5,endMs:em&&ms&&em>ms?em:0,venue:v.venue||T('স্থান|Venue'),going:0,poster:poster};
   $('#pPrev').innerHTML=cardHTML(e,0,true);
   F('cTitle').textContent=v.title.length+' / 90';F('cDesc').textContent=v.desc.length+' / 1500';
@@ -1455,7 +1519,10 @@ function validate(){
   if(!v.start)bad('start','fStart',T('সময় দিন|Pick a time'));
   if(ms&&ms<Date.now()-30*60e3)bad('date','fDate',T('অতীতের তারিখ দেওয়া যাবে না|Date can’t be in the past'));
   if(ms&&ms>Date.now()+400*864e5)bad('date','fDate',T('তারিখ অনেক দূরে|Date is too far ahead'));
-  if(v.end){em=dhakaMs(v.date,v.end);if(ms&&em&&em<=ms)bad('end','fEnd',T('শেষের সময় শুরুর পরে হতে হবে|End must be after start')) }
+  if(v.endDate&&v.date&&v.endDate<v.date)bad('endDate','fEndDate',T('শেষ তারিখ শুরুর তারিখের পরে হতে হবে|End date must be on or after the start date'));
+  em=endOfMs(v);
+  if(ms&&em&&em<=ms)bad('end','fEnd',T('শেষের সময় শুরুর পরে হতে হবে|End must be after start'));
+  if(v.mapUrl&&!okUrl(v.mapUrl))bad('map','fMap',T('সঠিক গুগল ম্যাপ লিংক দিন (https://…)|Enter a valid Google Maps link (https://…)'));
   if(v.venue.length<3)bad('venue','fVenue',T('স্থান লিখুন|Enter the venue'));
   if(v.desc.length<20)bad('desc','fDesc',T('অন্তত ২০ অক্ষরে বিস্তারিত লিখুন|Write at least 20 characters'));
   if(v.link&&!okUrl(v.link))bad('link','fLink',T('সঠিক লিংক দিন (https://…)|Enter a valid link (https://…)'));
@@ -1541,7 +1608,7 @@ async function submitPost(ev){
       var canAuto=trust.autoApprove===true&&(await countTodayAuto(u.uid))<TRUST_DAILY_LIMIT;
       extra={authorUid:u.uid,authorName:String(u.displayName||u.email||'ব্যবহারকারী').slice(0,80),authorVerified:trust.verified===true,status:canAuto?'approved':'pending'};
     }
-    var e=await storeAdd(Object.assign({title:r.v.title,cat:r.v.cat,campus:r.v.campus,startMs:r.ms,endMs:r.em||0,venue:r.v.venue,organizer:r.v.organizer,desc:r.v.desc,link:r.v.link,contact:r.v.contact,poster:poster},extra));
+    var e=await storeAdd(Object.assign({title:r.v.title,cat:r.v.cat,campus:r.v.campus,startMs:r.ms,endMs:r.em||0,venue:r.v.venue,organizer:r.v.organizer,audience:r.v.audience,mapUrl:r.v.mapUrl,desc:r.v.desc,link:r.v.link,contact:r.v.contact,poster:poster},extra));
     safeSet('dcuEv_last',Date.now());
     try{localStorage.removeItem(pDraftKey)}catch(x){}
     resetForm();
@@ -1604,6 +1671,12 @@ $('#vCal').addEventListener('click',function(){S.view='cal';renderAll()});
 $('#goCal').addEventListener('click',function(){S.view='cal';renderAll();$('#bar').scrollIntoView({behavior:'smooth'})});
 $('#vSaved').addEventListener('click',function(){S.f.saved=!S.f.saved;refresh()});
 $('#openPost').addEventListener('click',openPost);
+$('#pCopy').addEventListener('click',function(){
+  var txt=$('#fPrompt').value,b=this;
+  var done=function(){var old=b.innerHTML;b.innerHTML='<span class="t">'+T('কপি হয়েছে ✓|Copied ✓')+'</span>';setTimeout(function(){b.innerHTML=old},1600)};
+  function selCopy(){var t=$('#fPrompt');t.removeAttribute('readonly');t.select();try{document.execCommand('copy');done()}catch(x){toast(T('কপি করা যায়নি, হাতে কপি করুন|Could not copy, please copy manually'),true)}t.setAttribute('readonly','')}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,selCopy)}else selCopy();
+});
 $('#pForm').addEventListener('submit',submitPost);
 function clearErr(ev){
   var t=ev.target;if(!t||!t.classList)return;t.classList.remove('bad');
