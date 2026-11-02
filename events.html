@@ -1449,8 +1449,19 @@ function compress(file){
   });
 }
 function openPost(){
+  try{
+    openPostInner();
+  }catch(err){
+    console.error('[events] openPost failed:',err);
+    toast(T('ফর্ম খুলতে সমস্যা হয়েছে|Could not open the form')+' ('+((err&&err.message)||err)+')',true);
+  }
+}
+function openPostInner(){
   if(S.mode==='live'&&!S.user){
-    ensureSignedIn().then(function(u){if(u)openPost()}).catch(function(){toast(T('সাইন ইন সম্পন্ন হয়নি|Sign-in was not completed'),true)});
+    ensureSignedIn().then(function(u){if(u)openPost()}).catch(function(err){
+      console.error('[events] sign-in failed:',err);
+      toast(T('সাইন ইন সম্পন্ন হয়নি|Sign-in was not completed')+(err&&err.code?' ('+err.code+')':''),true);
+    });
     return;
   }
   var last=safeGet('dcuEv_last',0);
