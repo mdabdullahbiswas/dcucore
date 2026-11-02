@@ -241,6 +241,8 @@ dialog.ev-dlg::backdrop{background:rgba(6,16,32,.62);backdrop-filter:blur(4px)}
 .ev-cm-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .ev-cm-hint{margin:8px 0 0;font-size:12.5px;color:var(--ink-2)}
 @media (max-width:760px){.ev-cm{grid-template-columns:1fr;padding:56px 14px 16px}.ev-cm-prev canvas{max-height:52vh}}
+.ev-badge.vb{color:#7a5200;background:linear-gradient(135deg,#fff6d6,#f3d78a);border:1px solid #d9b354}
+html[data-theme=dark] .ev-badge.vb{color:#f3d78a;background:rgba(201,162,74,.16);border-color:rgba(201,162,74,.45)}
 </style>
 <!-- STANDALONE:START css -->
 <style id="standalone-css">
@@ -673,9 +675,13 @@ async function initStore(){
   if(!CFG.useFirebase){S.events=demoLoad();S.mode='demo';return}
   try{
     var base='https://www.gstatic.com/firebasejs/10.8.0/';
-    var mods=await withTimeout(Promise.all([import(base+'firebase-app.js'),import(base+'firebase-firestore.js')]),7000);
-    var app;try{app=mods[0].getApp('events')}catch(e){app=mods[0].initializeApp(CFG.firebase,'events')}
+    var mods=await withTimeout(Promise.all([import(base+'firebase-app.js'),import(base+'firebase-firestore.js'),import(base+'firebase-auth.js')]),7000);
+    /* blood.html-এর মতো ডিফল্ট অ্যাপ ব্যবহার: তাই একবার সাইন ইন করলে দুই পেজেই সেশন থাকে */
+    var app;try{app=mods[0].getApp()}catch(e){app=mods[0].initializeApp(CFG.firebase)}
     var fs=mods[1];S.fb=fs;S.db=fs.getFirestore(app);
+    var au=mods[2];S.au=au;S.auth=au.getAuth(app);
+    await au.setPersistence(S.auth,au.browserLocalPersistence).catch(function(){});
+    S.authReady=new Promise(function(res){var first=true;au.onAuthStateChanged(S.auth,function(u){S.user=u||null;if(first){first=false;res()}})});
     var snap=await withTimeout(fs.getDocs(fs.query(fs.collection(S.db,CFG.collection),fs.where('status','==','approved'),fs.limit(400))),9000);
     S.events=snap.docs.map(function(d){var x=d.data();x.id=d.id;return x});
     S.mode='live';
@@ -685,7 +691,8 @@ async function initStore(){
   }
 }
 async function storeAdd(ev){
-  var data={title:ev.title,cat:ev.cat,campus:ev.campus,startMs:ev.startMs,endMs:ev.endMs||0,venue:ev.venue,organizer:ev.organizer,desc:ev.desc,link:ev.link,contact:ev.contact,poster:ev.poster,going:0,reports:0,status:CFG.requireApproval?'pending':'approved',createdMs:Date.now()};
+  var data={title:ev.title,cat:ev.cat,campus:ev.campus,startMs:ev.startMs,endMs:ev.endMs||0,venue:ev.venue,organizer:ev.organizer,desc:ev.desc,link:ev.link,contact:ev.contact,poster:ev.poster,going:0,reports:0,status:ev.status||(CFG.requireApproval?'pending':'approved'),createdMs:Date.now()};
+  if(ev.authorUid){data.authorUid=ev.authorUid;data.authorName=ev.authorName;data.authorVerified=ev.authorVerified===true}
   if(S.mode==='live'){
     var ref=await S.fb.addDoc(S.fb.collection(S.db,CFG.collection),data);
     data.id=ref.id;
@@ -695,6 +702,25 @@ async function storeAdd(ev){
   }
   if(data.status==='approved')S.events.push(data);
   return data;
+}
+/* ---------------- সাইন ইন ও ভেরিফায়েড আয়োজক ---------------- */
+var TRUST_DAILY_LIMIT=3;   /* ভেরিফায়েড হলে দিনে সর্বোচ্চ যত পোস্ট সরাসরি লাইভ হবে */
+async function ensureSignedIn(){
+  if(S.mode!=='live')return null;
+  await S.authReady;
+  if(S.auth.currentUser){S.user=S.auth.currentUser;return S.user}
+  var r=await S.au.signInWithPopup(S.auth,new S.au.GoogleAuthProvider());
+  S.user=r.user;return r.user;
+}
+async function loadTrust(uid){
+  try{var s=await S.fb.getDoc(S.fb.doc(S.db,'user_trust',uid));return s.exists()?s.data():{}}catch(x){return {}}
+}
+async function countTodayAuto(uid){
+  try{
+    var snap=await S.fb.getDocs(S.fb.query(S.fb.collection(S.db,CFG.collection),S.fb.where('authorUid','==',uid)));
+    var t=dayKey(Date.now());
+    return snap.docs.filter(function(d){var x=d.data();return x.status==='approved'&&dayKey(x.createdMs||0)===t}).length;
+  }catch(x){return 0}
 }
 async function storeBump(id,field,delta){
   var e=byId(id);if(e)e[field]=Math.max(0,(e[field]||0)+delta);
@@ -751,6 +777,7 @@ function posterHTML(e,cat){
   var img=/^data:image\/(jpeg|png|webp);base64,/.test(e.poster||'')||/^https:\/\/firebasestorage\.googleapis\.com\//.test(e.poster||'');
   return (img?'<img src="'+esc(e.poster)+'" alt="" loading="lazy" decoding="async">':'')+(img?'':'<span class="em" aria-hidden="true">'+cat.em+'</span>');
 }
+function vBadge(){return '<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>'}
 function cardHTML(e,i,preview){
   var cat=CAT[e.cat]||CAT.festival,cp=CAMP[e.campus]||CAMP.all,now=S.now;
   var live=now>=e.startMs&&now<=endOf(e),ended=now>endOf(e),today=!ended&&dayKey(e.startMs)===dayKey(now);
@@ -761,7 +788,7 @@ function cardHTML(e,i,preview){
     '<button type="button" class="ev-poster" data-act="open" aria-label="'+esc(e.title)+'">'+posterHTML(e,cat)+
       '<span class="ev-date"><b>'+fmtDay(e.startMs,{day:'numeric'})+'</b><i>'+fmtDay(e.startMs,{month:'short'})+'</i></span>'+flag+'</button>'+
     '<div class="ev-body">'+
-      '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span></div>'+
+      '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>':'')+'</div>'+
       '<h3><button type="button" data-act="open">'+esc(e.title)+'</button></h3>'+
       '<div class="ev-meta"><span>'+ic('clock',15)+'<span>'+esc(fmtDay(e.startMs,{weekday:'short',day:'numeric',month:'short'}))+' · '+esc(t1)+'</span></span>'+
         '<span>'+ic('pin',15)+'<span>'+esc(e.venue)+'</span></span></div>'+
@@ -904,7 +931,7 @@ function openDetail(id,quiet){
     '<div class="ev-info">'+
       row('cal',T('তারিখ ও সময়|Date & time'),esc(longDate(e.startMs))+'<br>'+esc(time)+' <span style="color:var(--ink-2)">('+esc(relText(e,Date.now()))+')</span>')+
       row('pin',T('স্থান|Venue'),esc(e.venue)+' <br><a href="'+map+'" target="_blank" rel="noopener noreferrer">'+T('ম্যাপে খুঁজুন|Find on map')+'</a>')+
-      (e.organizer?row('user',T('আয়োজক|Organizer'),esc(e.organizer)):'')+
+      (e.organizer?row('user',T('আয়োজক|Organizer'),esc(e.organizer)+(e.authorVerified?' '+vBadge():'')):'')+
       row('users',T('আগ্রহী|Interested'),nf(e.going||0)+' '+T('জন|people'))+
       (e.contact?row('phone',T('যোগাযোগ|Contact'),esc(e.contact)):'')+
     '</div>'+
@@ -1341,6 +1368,10 @@ function compress(file){
   });
 }
 function openPost(){
+  if(S.mode==='live'&&!S.user){
+    ensureSignedIn().then(function(u){if(u)openPost()}).catch(function(){toast(T('সাইন ইন সম্পন্ন হয়নি|Sign-in was not completed'),true)});
+    return;
+  }
   var last=safeGet('dcuEv_last',0);
   renderSelects();F('fDate').min=todayStr();
   $('#pWrap').hidden=false;$('#pDone').hidden=true;
@@ -1357,7 +1388,14 @@ async function submitPost(ev){
   var r=validate();if(!r)return;
   var btn=F('pSubmit');btn.disabled=true;
   try{
-    var e=await storeAdd({title:r.v.title,cat:r.v.cat,campus:r.v.campus,startMs:r.ms,endMs:r.em||0,venue:r.v.venue,organizer:r.v.organizer,desc:r.v.desc,link:r.v.link,contact:r.v.contact,poster:poster});
+    var extra={};
+    if(S.mode==='live'){
+      var u=await ensureSignedIn();
+      var trust=await loadTrust(u.uid);
+      var canAuto=trust.autoApprove===true&&(await countTodayAuto(u.uid))<TRUST_DAILY_LIMIT;
+      extra={authorUid:u.uid,authorName:String(u.displayName||u.email||'ব্যবহারকারী').slice(0,80),authorVerified:trust.verified===true,status:canAuto?'approved':'pending'};
+    }
+    var e=await storeAdd(Object.assign({title:r.v.title,cat:r.v.cat,campus:r.v.campus,startMs:r.ms,endMs:r.em||0,venue:r.v.venue,organizer:r.v.organizer,desc:r.v.desc,link:r.v.link,contact:r.v.contact,poster:poster},extra));
     safeSet('dcuEv_last',Date.now());
     try{localStorage.removeItem(pDraftKey)}catch(x){}
     resetForm();
