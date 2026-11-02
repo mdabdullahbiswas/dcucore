@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ক্যাম্পাস বাস লাইভ ট্র্যাকার</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { fontFamily: { bn: ['"Hind Siliguri"', 'sans-serif'] } } }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Hind Siliguri', sans-serif;
+      transition: background-color .5s ease, color .5s ease;
+    }
+
+    /* ---------- Glassmorphism ---------- */
+    .glass {
+      background: rgba(255, 255, 255, .7);
+      border: 1px solid rgba(255, 255, 255, .6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px -12px rgba(15, 23, 42, .25);
+      transition: background-color .5s ease, border-color .5s ease, box-shadow .5s ease;
+    }
+    .dark .glass {
+      background: rgba(30, 41, 59, .45);
+      border-color: rgba(255, 255, 255, .08);
+      box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+
+    /* ---------- 3D cards ---------- */
+    .card3d {
+      transform-style: preserve-3d;
+      transition: transform .25s ease, box-shadow .3s ease;
+      will-change: transform;
+    }
+    .card3d:hover { box-shadow: 0 25px 50px -15px rgba(99, 102, 241, .35); }
+
+    /* ---------- Toggle switch ---------- */
+    .switch {
+      position: relative; width: 52px; height: 28px; border-radius: 999px;
+      background: #94a3b8; transition: background .4s ease; flex-shrink: 0;
+    }
+    .switch::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 22px; height: 22px; border-radius: 50%; background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+      transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+    }
+    .switch.on { background: #10b981; }
+    .switch.on::after { transform: translateX(24px); }
+    .switch.theme.on { background: #4f46e5; }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      padding: .5rem 1rem; border-radius: .75rem; font-weight: 600; color: #fff;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      box-shadow: 0 6px 16px -6px rgba(99, 102, 241, .6);
+      transition: transform .15s ease, filter .2s ease;
+    }
+    .btn:hover { filter: brightness(1.1); }
+    .btn:active { transform: scale(.96); }
+
+    /* ---------- Map ---------- */
+    .dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.9); }
+    .bus-pin { font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .4)); animation: bob 1.2s ease-in-out infinite alternate; }
+    @keyframes bob { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+    .leaflet-container { font-family: 'Hind Siliguri', sans-serif; border-radius: 1rem; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 overflow-x-hidden">
+
+  <!-- Background glow -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-0">
+    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 dark:bg-indigo-600/20 blur-3xl"></div>
+    <div class="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-cyan-400/30 dark:bg-cyan-500/15 blur-3xl"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 mx-3 mt-3 rounded-2xl px-4 py-3 glass flex items-center justify-between gap-3" style="z-index:2000">
+    <div class="flex items-center gap-3">
+      <span class="text-3xl">🚌</span>
+      <div>
+        <h1 class="font-bold text-lg leading-tight">ক্যাম্পাস বাস ট্র্যাকার</h1>
+        <p class="text-xs opacity-70">লাইভ লোকেশন • ETA • ভিড়ের অবস্থা</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="liveBadge" class="hidden sm:inline-block text-xs px-3 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold">সিমুলেশন</span>
+      <div class="flex items-center gap-2">
+        <span class="text-sm">☀️</span>
+        <button id="themeToggle" aria-label="থিম পরিবর্তন" class="switch theme"></button>
+        <span class="text-sm">🌙</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-7xl mx-auto p-3 md:p-6 grid gap-5 lg:grid-cols-3">
+
+    <!-- Map -->
+    <section class="lg:col-span-2 glass card3d rounded-3xl p-3">
+      <div id="map" class="h-[440px] md:h-[500px] w-full rounded-2xl"></div>
+    </section>
+
+    <!-- Right column cards -->
+    <div class="grid gap-5 content-start">
+
+      <!-- Speed & ETA -->
+      <div class="card3d glass rounded-3xl p-5">
+        <p class="text-sm opacity-70">বর্তমান গতি</p>
+        <div class="flex items-end gap-2 mt-1">
+          <span id="speed" class="text-5xl font-bold">০</span>
+          <span class="mb-2 opacity-70">কিমি/ঘণ্টা</span>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-indigo-500/10 p-3">
+            <p class="text-xs opacity-70">পরবর্তী স্টপ</p>
+            <p id="nextStop" class="font-semibold mt-1">—</p>
+          </div>
+          <div class="rounded-2xl bg-cyan-500/10 p-3">
+            <p class="text-xs opacity-70">আনুমানিক পৌঁছানো (ETA)</p>
+            <p id="nextEta" class="font-semibold mt-1">—</p>
+          </div>
+        </div>
+        <p id="busState" class="mt-3 text-sm opacity-80"></p>
+      </div>
+
+      <!-- Crowd -->
+      <div class="card3d glass rounded-3xl p-5">
+        <p class="text-sm opacity-70">ভিড়ের অবস্থা</p>
+        <p id="crowdLabel" class="text-2xl font-bold mt-1">—</p>
+        <div class="mt-3 h-3 rounded-full bg-slate-300/60 dark:bg-white/10 overflow-hidden">
+          <div id="crowdBar" class="h-full rounded-full transition-all duration-700" style="width:0%"></div>
+        </div>
+        <p id="crowdCount" class="text-sm mt-2 opacity-80"></p>
+        <div class="mt-4 flex gap-2">
+          <button id="occMinus" class="btn flex-1">− যাত্রী</button>
+          <button id="occPlus" class="btn flex-1">+ যাত্রী</button>
+        </div>
+      </div>
+
+      <!-- Location sharing -->
+      <div class="card3d glass rounded-3xl p-5">
+        <div class="flex items-center justify-between gap-3">
+          <p class="font-semibold">লোকেশন শেয়ার (ড্রাইভার)</p>
+          <button id="shareToggle" class="switch" aria-label="লোকেশন শেয়ার"></button>
+        </div>
+        <p id="shareState" class="text-sm mt-2 opacity-80">বন্ধ — সিমুলেশন চলছে</p>
+        <p id="coords" class="text-xs mt-2 font-mono opacity-70"></p>
+        <p class="text-xs mt-3 opacity-60">
+          টিপস: এই পেজটি দুই ট্যাবে খুলুন। একটিতে শেয়ার চালু করলে অন্যটিতে বাসের লোকেশন রিয়েল-টাইমে আপডেট হবে।
+        </p>
+      </div>
+    </div>
+
+    <!-- Stop timeline -->
+    <section class="lg:col-span-3 glass card3d rounded-3xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold text-lg">স্টপ সমূহ ও ETA</h2>
+        <span class="text-xs opacity-60">রুট: লুপ (চক্রাকার)</span>
+      </div>
+      <div id="timeline" class="flex gap-3 overflow-x-auto pb-2"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl glass text-sm font-medium opacity-0 translate-y-4 transition-all duration-500 pointer-events-none" style="z-index:3000"></div>
+
+  <!-- Leaflet -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <script>
+  (() => {
+    /* ===================== CONFIG ===================== */
+    const KEY = 'campusBus:live';        // shared "database" key (localStorage)
+    const THEME_KEY = 'campusBus:theme';
+    const CAP = 40;                       // bus capacity
+    const EARTH_R = 6371000;
+
+    // Demo coordinates — আপনার ক্যাম্পাসের আসল কোঅর্ডিনেট দিয়ে বদলে নিন
+    const STOPS = [
+      { name: 'প্রধান ফটক',        lat: 23.7335, lng: 90.3918 },
+      { name: 'প্রশাসনিক ভবন',     lat: 23.7349, lng: 90.3931 },
+      { name: 'লাইব্রেরি',          lat: 23.7362, lng: 90.3946 },
+      { name: 'বিজ্ঞান ভবন',       lat: 23.7371, lng: 90.3964 },
+      { name: 'ছাত্র হল',          lat: 23.7356, lng: 90.3985 },
+      { name: 'ক্যাফেটেরিয়া',      lat: 23.7340, lng: 90.3972 },
+      { name: 'খেলার মাঠ',         lat: 23.7322, lng: 90.3950 }
+    ];
+    const ROUTE = [...STOPS, STOPS[0]];   // closed loop
+
+    /* ===================== GEO HELPERS ===================== */
+    const toRad = d => d * Math.PI / 180;
+    const hav = (a, b) => {
+      const dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
+      const x = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+      return 2 * EARTH_R * Math.asin(Math.sqrt(x));
+    };
+
+    // cumulative distance along route
+    const cum = [0];
+    for (let i = 1; i < ROUTE.length; i++) cum[i] = cum[i - 1] + hav(ROUTE[i - 1], ROUTE[i]);
+    const TOTAL = cum[cum.length - 1];
+    const stopCum = STOPS.map((_, i) => cum[i]);
+
+    function posAt(d) {
+      let i = 0;
+      while (i < ROUTE.length - 2 && cum[i + 1] <= d) i++;
+      const seg = (cum[i + 1] - cum[i]) || 1;
+      const t = (d - cum[i]) / seg;
+      return {
+        lat: ROUTE[i].lat + (ROUTE[i + 1].lat - ROUTE[i].lat) * t,
+        lng: ROUTE[i].lng + (ROUTE[i + 1].lng - ROUTE[i].lng) * t
+      };
+    }
+
+    /* ===================== SIMULATION ===================== */
+    const sim = { dist: 0, speed: 0, dwellUntil: 0, arrived: -1, occ: 14 };
+    const rand = (a, b) => a + Math.random() * (b - a);
+
+    function stepSim(dt) {
+      const now = Date.now();
+      if (now < sim.dwellUntil) { sim.speed = 0; return; }
+
+      const target = rand(18, 26);
+      sim.speed += (target - sim.speed) * 0.3;
+      sim.dist = (sim.dist + (sim.speed / 3.6) * dt) % TOTAL;
+
+      // stop detection
+      for (let i = 0; i < STOPS.length; i++) {
+        const ahead = (stopCum[i] - sim.dist + TOTAL) % TOTAL;
+        if (ahead < 25 && sim.arrived !== i) {
+          sim.arrived = i;
+          sim.dwellUntil = now + 8000;          // 8 sec dwell
+          sim.speed = 0;
+          sim.occ = Math.max(0, Math.min(CAP, sim.occ + Math.round(rand(-6, 8))));
+          break;
+        }
+      }
+      if (sim.arrived >= 0) {
+        const away = (sim.dist - stopCum[sim.arrived] + TOTAL) % TOTAL;
+        if (away > 60) sim.arrived = -1;
+      }
+    }
+
+    /* ===================== SHARED STATE (localStorage) ===================== */
+    function readLive() {
+      try {
+        const d = JSON.parse(localStorage.getItem(KEY));
+        if (d && Date.now() - d.ts < 15000) return d;   // fresh within 15 sec
+      } catch (e) {}
+      return null;
+    }
+    function publish(patch) {
+      const cur = JSON.parse(localStorage.getItem(KEY) || '{}');
+      localStorage.setItem(KEY, JSON.stringify({ ...cur, ...patch, ts: Date.now() }));
+    }
+
+    /* ===================== DOM ===================== */
+    const $ = id => document.getElementById(id);
+    const els = {
+      themeToggle: $('themeToggle'), liveBadge: $('liveBadge'),
+      speed: $('speed'), nextStop: $('nextStop'), nextEta: $('nextEta'), busState: $('busState'),
+      crowdLabel: $('crowdLabel'), crowdBar: $('crowdBar'), crowdCount: $('crowdCount'),
+      occMinus: $('occMinus'), occPlus: $('occPlus'),
+      shareToggle: $('shareToggle'), shareState: $('shareState'), coords: $('coords'),
+      timeline: $('timeline'), toast: $('toast')
+    };
+
+    /* ===================== THEME ===================== */
+    function applyTheme(dark) {
+      document.documentElement.classList.toggle('dark', dark);
+      els.themeToggle.classList.toggle('on', dark);
+      localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+      if (window.busMap) setTimeout(() => window.busMap.invalidateSize(), 50);
+    }
+    els.themeToggle.addEventListener('click', () =>
+      applyTheme(!document.documentElement.classList.contains('dark')));
+    applyTheme((localStorage.getItem(THEME_KEY) || 'dark') === 'dark');
+
+    /* ===================== MAP ===================== */
+    const map = L.map('map', { zoomControl: false }).setView([STOPS[0].lat, STOPS[0].lng], 16);
+    window.busMap = map;
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    L.polyline(ROUTE.map(p => [p.lat, p.lng]), {
+      color: '#22d3ee', weight: 5, opacity: .85, dashArray: '10 8'
+    }).addTo(map);
+    map.fitBounds(L.latLngBounds(ROUTE.map(p => [p.lat, p.lng])), { padding: [30, 30] });
+
+    STOPS.forEach((s, i) => {
+      L.circleMarker([s.lat, s.lng], {
+        radius: 8, color: '#fff', weight: 2, fillColor: '#6366f1', fillOpacity: 1
+      }).bindTooltip(`${i + 1}. ${s.name}`, { direction: 'top' }).addTo(map);
+    });
+
+    const busMarker = L.marker([STOPS[0].lat, STOPS[0].lng], {
+      icon: L.divIcon({ className: '', html: '<div class="bus-pin">🚌</div>', iconSize: [40, 40], iconAnchor: [20, 20] })
+    }).addTo(map);
+
+    /* ===================== CROWD ===================== */
+    function crowdInfo(occ) {
+      const r = occ / CAP;
+      if (r < 0.5) return { label: 'Seat Available (সিট খালি)', text: 'text-emerald-500', bar: 'bg-emerald-500' };
+      if (r < 0.8) return { label: 'Medium (মাঝারি ভিড়)', text: 'text-amber-500', bar: 'bg-amber-500' };
+      return { label: 'Full (ভর্তি)', text: 'text-rose-500', bar: 'bg-rose-500' };
+    }
+
+    function changeOcc(delta) {
+      sim.occ = Math.max(0, Math.min(CAP, sim.occ + delta));
+      if (mode || readLive()) publish({ occupancy: sim.occ });
+      render();
+    }
+    els.occMinus.addEventListener('click', () => changeOcc(-1));
+    els.occPlus.addEventListener('click', () => changeOcc(1));
+
+    /* ===================== LOCATION SHARING ===================== */
+    let mode = null;          // null | 'gps' | 'sim'
+    let watchId = null;
+    let lastFix = null;
+
+    function updateShareUI() {
+      els.shareToggle.classList.toggle('on', !!mode);
+      if (mode === 'gps') els.shareState.textContent = '🟢 GPS দিয়ে লোকেশন শেয়ার হচ্ছে';
+      else if (mode === 'sim') els.shareState.textContent = '🟡 সিমুলেটেড লোকেশন শেয়ার হচ্ছে';
+      else els.shareState.textContent = 'বন্ধ — সিমুলেশন চলছে';
+    }
+
+    function startSimShare() {
+      mode = 'sim';
+      updateShareUI();
+    }
+
+    function startSharing() {
+      if (!navigator.geolocation) {
+        toast('এই ব্রাউজারে GPS নেই — সিমুলেটেড মোডে শেয়ার হচ্ছে');
+        return startSimShare();
+      }
+      mode = 'gps';
+      updateShareUI();
+      watchId = navigator.geolocation.watchPosition(p => {
+        const now = Date.now();
+        const c = { lat: p.coords.latitude, lng: p.coords.longitude };
+        let speedKmh = 0;
+        if (p.coords.speed != null && !isNaN(p.coords.speed)) speedKmh = p.coords.speed * 3.6;
+        else if (lastFix) speedKmh = hav(lastFix, c) / Math.max((now - lastFix.ts) / 1000, 1) * 3.6;
+        lastFix = { ...c, ts: now };
+        publish({ ...c, speed: speedKmh });
+      }, err => {
+        toast('GPS পাওয়া যায়নি (অনুমতি বা সিগন্যাল সমস্যা) — সিমুলেশনে যাচ্ছি');
+        if (watchId != null) navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        startSimShare();
+      }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 10000 });
+    }
+
+    function stopSharing() {
+      if (watchId != null) navigator.geolocation.clearWatch(watchId);
+      watchId = null;
+      mode = null;
+      lastFix = null;
+      localStorage.removeItem(KEY);        // viewers fall back to simulation
+      updateShareUI();
+    }
+
+    els.shareToggle.addEventListener('click', () => {
+      mode ? stopSharing() : startSharing();
+      render();
+    });
+
+    /* ===================== RENDER ===================== */
+    function formatEta(sec) {
+      if (sec < 45) return 'প্রায় পৌঁছে গেছে';
+      const m = Math.max(1, Math.round(sec / 60));
+      return m.toLocaleString('bn-BD') + ' মিনিট';
+    }
+
+    function render() {
+      const live = readLive();
+      const usingLive = !!live;
+      const pos = usingLive ? { lat: live.lat, lng: live.lng } : posAt(sim.dist);
+      const speed = usingLive ? (live.speed || 0) : sim.speed;
+      const occ = usingLive && typeof live.occupancy === 'number' ? live.occupancy : sim.occ;
+
+      // ETA calculation
+      const speedMs = Math.max(speed, 12) / 3.6;
+      const remaining = STOPS.map((s, i) =>
+        usingLive ? hav(pos, s) * 1.25 : (stopCum[i] - sim.dist + TOTAL) % TOTAL
+      );
+      let next = -1, best = Infinity;
+      remaining.forEach((d, i) => { if (d > 20 && d < best) { best = d; next = i; } });
+      if (next < 0) next = 0;
+
+      const etaSec = {};
+      for (let j = 0; j < STOPS.length; j++) {
+        const k = (next + j) % STOPS.length;
+        etaSec[k] = remaining[k] / speedMs + j * 30;   // 30 sec dwell per intermediate stop
+      }
+
+      // Speed + next stop
+      els.speed.textContent = Math.round(speed).toLocaleString('bn-BD');
+      els.nextStop.textContent = STOPS[next].name;
+      els.nextEta.textContent = formatEta(etaSec[next]);
+
+      // Bus state
+      if (usingLive) els.busState.textContent = '📡 ড্রাইভার লাইভ শেয়ার করছেন';
+      else if (Date.now() < sim.dwellUntil) els.busState.textContent = '🛑 স্টপে যাত্রী উঠা-নামা চলছে';
+      else els.busState.textContent = '🚍 রুটে চলছে (সিমুলেশন)';
+
+      // Live badge
+      els.liveBadge.textContent = usingLive ? '● লাইভ' : 'সিমুলেশন';
+      els.liveBadge.className = 'hidden sm:inline-block text-xs px-3 py-1 rounded-full font-semibold ' +
+        (usingLive ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400');
+
+      // Crowd
+      const ci = crowdInfo(occ);
+      els.crowdLabel.textContent = ci.label;
+      els.crowdLabel.className = 'text-2xl font-bold mt-1 ' + ci.text;
+      els.crowdBar.className = 'h-full rounded-full transition-all duration-700 ' + ci.bar;
+      els.crowdBar.style.width = (occ / CAP * 100) + '%';
+      els.crowdCount.textContent = `${occ.toLocaleString('bn-BD')} / ${CAP.toLocaleString('bn-BD')} জন যাত্রী`;
+
+      // Coordinates
+      els.coords.textContent = `📍 ${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)}`;
+
+      // Map
+      const ll = [pos.lat, pos.lng];
+      busMarker.setLatLng(ll);
+      if (!map.getBounds().contains(ll)) map.panTo(ll, { animate: true });
+
+      // Timeline
+      els.timeline.innerHTML = STOPS.map((s, k) => {
+        const isNext = k === next;
+        return `
+          <div class="min-w-[170px] rounded-2xl p-4 border transition-all duration-300 ${
+            isNext ? 'border-cyan-400 bg-cyan-400/15 shadow-lg shadow-cyan-500/20'
+                   : 'border-slate-300/60 dark:border-white/10 bg-white/50 dark:bg-white/5'}">
+            <p class="text-xs opacity-60">স্টপ ${(k + 1).toLocaleString('bn-BD')}</p>
+            <p class="font-semibold mt-1">${s.name}</p>
+            <p class="text-sm mt-2 ${isNext ? 'text-cyan-500 font-semibold' : 'opacity-70'}">
+              ${isNext ? '⏳ পরবর্তী • ' : ''}${formatEta(etaSec[k])}
+            </p>
+          </div>`;
+      }).join('');
+    }
+
+    /* ===================== TOAST ===================== */
+    function toast(msg) {
+      els.toast.textContent = msg;
+      els.toast.classList.remove('opacity-0', 'translate-y-4');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => els.toast.classList.add('opacity-0', 'translate-y-4'), 3000);
+    }
+
+    /* ===================== 3D TILT EFFECT ===================== */
+    document.querySelectorAll('.card3d').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = `perspective(900px) rotateX(${-y * 8}deg) rotateY(${x * 10}deg) translateZ(6px)`;
+      });
+      card.addEventListener('mouseleave', () => card.style.transform = '');
+    });
+
+    /* ===================== MAIN LOOP ===================== */
+    setInterval(() => {
+      stepSim(1);
+      if (mode === 'sim') {
+        const p = posAt(sim.dist);
+        publish({ lat: p.lat, lng: p.lng, speed: sim.speed, occupancy: sim.occ });
+      }
+      render();
+    }, 1000);
+
+    // Update instantly when another tab changes shared data
+    window.addEventListener('storage', e => { if (e.key === KEY) render(); });
+
+    render();
+  })();
+  </script>
+</body>
+</html>
