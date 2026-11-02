@@ -255,11 +255,14 @@ a.chip:hover{color:var(--ink);border-color:var(--gold)}
   .who b{max-width:150px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+html.embed .top{display:none}
+html.embed .wrap{padding-top:12px}
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
+<script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed");</script>
 </head>
 <body>
 <header class="top"><div class="top-in">
@@ -309,6 +312,7 @@ a.chip:hover{color:var(--ink);border-color:var(--gold)}
         <button class="btn" id="ref" type="button"></button>
         <button class="btn" id="csv" type="button"></button>
         <button class="btn" id="site" type="button"></button>
+        <button class="btn" id="users" type="button"></button>
         <button class="btn dng" id="out" type="button"></button>
       </div>
     </div>
@@ -333,7 +337,7 @@ a.chip:hover{color:var(--ink);border-color:var(--gold)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc, query, where, runTransaction, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /* ---------- কনফিগ (admin.html-এর সাথে মিল) ---------- */
 const ADMIN_ID = "admin";
@@ -344,7 +348,7 @@ const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
 const EVENTS = "events";
 const TZ = "Asia/Dhaka";
 
-const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "events-admin");
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-admin");
 const auth = getAuth(app), db = getFirestore(app);
 const $ = id => document.getElementById(id);
 
@@ -423,6 +427,8 @@ $("csv").innerHTML = ic("download") + "<span>CSV</span>";
 $("site").innerHTML = ic("globe") + "<span>ইভেন্ট পেজ</span>";
 $("out").innerHTML = ic("logout") + "<span>সাইন আউট</span>";
 $("site").onclick = () => window.open("events.html", "_blank", "noopener");
+$("users").innerHTML = ic("star") + "<span>ব্যাজ ও ব্যবহারকারী</span>";
+$("users").onclick = openUsers;
 
 /* ---------- টোস্ট ও কনফার্ম ---------- */
 function toast(msg, type) {
@@ -472,13 +478,19 @@ onAuthStateChanged(auth, u => {
 
 /* ---------- ডেটা ---------- */
 let E = [], tab = "pending", editingId = null, posterVal = "";
+let TRUST = {};   /* user_trust/{uid} সব ডকুমেন্ট */
+let USERS = {};   /* সব জানা ব্যবহারকারী: ডোনার + ইভেন্ট আয়োজক + ট্রাস্ট */
 
 async function load() {
   $("list").innerHTML = skeleton();
   try {
     const snap = await getDocs(collection(db, EVENTS));
     E = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    try { const ts = await getDocs(collection(db, "user_trust")); TRUST = {}; ts.docs.forEach(d => TRUST[d.id] = d.data()); }
+    catch (e) { TRUST = {}; }
+    await buildUsers();
     render(true);
+    await checkTrustReports();
   } catch (e) {
     $("list").innerHTML = `<div class="card empty">${ic("alert")}<p>ইভেন্ট লোড হয়নি: ${esc(e.code || e.message)}<br><span style="font-size:12.5px">(Firestore Rules ও এডমিন আইডি/ইমেইল দেখুন)</span></p></div>`;
   }
@@ -552,6 +564,7 @@ function card(e) {
         <span class="cat">${c.em} ${esc(c.bn)}</span>
         <span class="chip">${ic("pin")}${esc(cp.bn)}${e.venue ? " · " + esc(e.venue) : ""}</span>
         <span class="chip">${ic("cal")}${fmt(e.startMs)}${e.endMs ? " – " + fmt(e.endMs) : ""}</span>
+        ${e.authorName ? `<span class="chip">${ic("users")}${esc(e.authorName)}${e.authorVerified ? " ✓" : ""}</span>` : ""}
         ${e.organizer ? `<span class="chip">${ic("users")}${esc(e.organizer)}</span>` : ""}
         ${e.contact ? `<span class="chip">${ic("pin")}${esc(e.contact)}</span>` : ""}
         ${link ? `<a class="chip" href="${link}" target="_blank" rel="noopener noreferrer">${ic("link")}লিংক</a>` : ""}
@@ -564,12 +577,159 @@ function card(e) {
         ${live
           ? `<button class="btn sm" data-a="undo" data-id="${esc(e.id)}">${ic("undo")}প্রত্যাহার</button>`
           : `<button class="btn sm ok" data-a="ok" data-id="${esc(e.id)}">${ic("check")}অনুমোদন</button>`}
+        ${!live && e.authorUid ? `<button class="btn sm dng" data-a="rej" data-id="${esc(e.id)}">${ic("trash")}প্রত্যাখ্যান</button>` : ""}
+        ${e.authorUid && TRUST[e.authorUid] && TRUST[e.authorUid].autoApprove === true ? `<button class="btn sm dng" data-a="untrust" data-id="${esc(e.id)}">${ic("alert")}ভেরিফিকেশন বন্ধ</button>` : ""}
         <button class="btn sm" data-a="edit" data-id="${esc(e.id)}">${ic("edit")}সম্পাদনা</button>
         ${reps ? `<button class="btn sm" data-a="rep0" data-id="${esc(e.id)}">${ic("check")}রিপোর্ট মুছুন</button>` : ""}
         <button class="btn sm dng" data-a="del" data-id="${esc(e.id)}">${ic("trash")}মুছুন</button>
       </div>
     </div>
   </article>`;
+}
+
+/* ---------- ট্রাস্ট: অনুমোদন গণনা, প্রত্যাখ্যান, রিপোর্ট-ভিত্তিক বন্ধ ---------- */
+const TRUST_STREAK = 3;        /* পরপর এতগুলো ম্যানুয়াল অনুমোদনে ভেরিফায়েড */
+const TRUST_REPORT_LIMIT = 3;  /* ভেরিফায়েড আয়োজকের অটো-অনুমোদিত পোস্টে মোট এতগুলো রিপোর্ট হলে ভেরিফিকেশন বন্ধ */
+
+async function approveEv(ev, btn) {
+  if (btn) btn.disabled = true;
+  const evRef = doc(db, EVENTS, ev.id);
+  try {
+    if (!ev.authorUid) {
+      await updateDoc(evRef, { status: "approved" });
+      toast("ইভেন্ট অনুমোদন করা হয়েছে"); await load(); return;
+    }
+    const tRef = doc(db, "user_trust", ev.authorUid);
+    let res = null;
+    await runTransaction(db, async (tx) => {
+      /* সব read আগে, write পরে */
+      const es = await tx.get(evRef);
+      const ts = await tx.get(tRef);
+      res = null;
+      if (!es.exists() || es.data().status !== "pending") { res = "stale"; return; }
+      const prev = ts.exists() ? ts.data() : {};
+      const streak = (prev.approvedStreak || 0) + 1;
+      const verified = prev.verified === true || streak >= TRUST_STREAK;
+      tx.update(evRef, { status: "approved", authorVerified: verified });
+      tx.set(tRef, { approvedStreak: streak, verified, autoApprove: verified, updatedMs: Date.now() }, { merge: true });
+      res = { verified, streak };
+    });
+    if (res === "stale") { toast("এই ইভেন্টটি আগেই অনুমোদিত হয়েছে"); await load(); return; }
+    if (res.verified) {
+      await setAuthorBadges(ev.authorUid, true);
+      toast("অনুমোদন দেওয়া হয়েছে — আয়োজক এখন যাচাইকৃত");
+    } else {
+      toast(`ইভেন্ট অনুমোদন করা হয়েছে (পরপর ${res.streak}/${TRUST_STREAK})`);
+    }
+    await load();
+  } catch (er) { if (btn) btn.disabled = false; err(er); }
+}
+
+async function rejectEv(ev, btn) {
+  if (!(await ask(`"${ev.title}" প্রত্যাখ্যান করবেন? এতে এই আয়োজকের পরপর অনুমোদনের গণনা শূন্য হবে।`, "হ্যাঁ, প্রত্যাখ্যান"))) return;
+  if (btn) btn.disabled = true;
+  try {
+    const evRef = doc(db, EVENTS, ev.id);
+    if (ev.authorUid) {
+      const tRef = doc(db, "user_trust", ev.authorUid);
+      await runTransaction(db, async (tx) => {
+        tx.delete(evRef);
+        tx.set(tRef, { approvedStreak: 0, updatedMs: Date.now() }, { merge: true });
+      });
+    } else {
+      await deleteDoc(evRef);
+    }
+    E = E.filter(x => x.id !== ev.id); render(false); toast("ইভেন্ট প্রত্যাখ্যান করা হয়েছে");
+  } catch (er) { if (btn) btn.disabled = false; err(er); }
+}
+
+async function setAuthorBadges(uid, flag) {
+  const snap = await getDocs(query(collection(db, EVENTS), where("authorUid", "==", uid)));
+  const batch = writeBatch(db);
+  let n = 0;
+  snap.docs.forEach(d => { if ((d.data().authorVerified === true) !== flag) { batch.update(d.ref, { authorVerified: flag }); n++; } });
+  if (n) await batch.commit();
+}
+
+async function revokeTrust(uid, btn, auto) {
+  if (!auto && !(await ask("এই আয়োজকের ভেরিফিকেশন বন্ধ করবেন? পরের পোস্টগুলো আবার এডমিনের অনুমোদনের অপেক্ষায় থাকবে।", "হ্যাঁ, বন্ধ করুন"))) return;
+  if (btn) btn.disabled = true;
+  try {
+    await setDoc(doc(db, "user_trust", uid), { approvedStreak: 0, verified: false, autoApprove: false, updatedMs: Date.now() }, { merge: true });
+    await setAuthorBadges(uid, false);
+    toast(auto ? "রিপোর্ট বেশি হওয়ায় ভেরিফিকেশন স্বয়ংক্রিয়ভাবে বন্ধ করা হয়েছে" : "ভেরিফিকেশন বন্ধ করা হয়েছে", auto ? "err" : undefined);
+    await load();
+  } catch (er) { if (btn) btn.disabled = false; err(er); }
+}
+
+/* অ্যাডমিন পেজ খুললেই: ভেরিফায়েড আয়োজকের অটো-অনুমোদিত পোস্টে রিপোর্ট সীমা ছাড়ালে ভেরিফিকেশন বন্ধ */
+async function checkTrustReports() {
+  const sums = {};
+  E.forEach(e => { if (e.authorUid && e.authorVerified === true) sums[e.authorUid] = (sums[e.authorUid] || 0) + (e.reports || 0); });
+  const bad = Object.keys(sums).filter(uid => sums[uid] >= TRUST_REPORT_LIMIT && TRUST[uid] && TRUST[uid].autoApprove === true);
+  if (bad.length) await revokeTrust(bad[0], null, true);
+}
+
+/* ---------- ব্যবহারকারী ও ভেরিফায়েড ব্যাজ (যে কাউকে ব্যাজ দেওয়া/সরানো) ---------- */
+async function buildUsers() {
+  USERS = {};
+  try {
+    const ds = await getDocs(collection(db, "donors"));
+    ds.docs.forEach(d => { const x = d.data(); USERS[d.id] = { uid: d.id, name: x.name || "", email: x.email || "" }; });
+  } catch (e) {}
+  E.forEach(e => { if (e.authorUid) USERS[e.authorUid] = Object.assign({ uid: e.authorUid, name: e.authorName || "" }, USERS[e.authorUid] || {}); });
+  Object.keys(TRUST).forEach(uid => { USERS[uid] = Object.assign({ uid }, USERS[uid] || {}); });
+}
+
+async function setVerified(uid, flag) {
+  const data = { verified: flag, autoApprove: flag, updatedMs: Date.now() };
+  if (!flag) data.approvedStreak = 0;
+  await setDoc(doc(db, "user_trust", uid), data, { merge: true });
+  await setAuthorBadges(uid, flag);
+  TRUST[uid] = Object.assign({}, TRUST[uid] || {}, data);
+  if (!USERS[uid]) USERS[uid] = { uid };
+  E.forEach(e => { if (e.authorUid === uid) e.authorVerified = flag; });
+  render(false);
+  toast(flag ? "ব্যাজ দেওয়া হয়েছে" : "ব্যাজ সরানো হয়েছে");
+}
+
+function paintUsers(o) {
+  const q = (o.querySelector("#uq").value || "").trim().toLowerCase();
+  const isOn = uid => !!(TRUST[uid] && TRUST[uid].verified === true);
+  const list = Object.values(USERS)
+    .filter(u => !q || [u.name, u.authorName, u.email, u.uid].join(" ").toLowerCase().includes(q))
+    .sort((a, b) => (isOn(b.uid) - isOn(a.uid)) || String(a.name || a.authorName || "").localeCompare(String(b.name || b.authorName || "")));
+  o.querySelector("#ulist").innerHTML = list.length ? list.map(u => {
+    const on = isOn(u.uid);
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--ln);background:var(--surface2)">
+      <div style="min-width:0;text-align:left"><b style="display:block;font-size:13.5px">${esc(u.name || u.authorName || "নাম নেই")}${on ? " ✓" : ""}</b><small style="color:var(--mu);font-size:11.5px;word-break:break-all">${esc(u.email || u.uid)}</small></div>
+      <button class="btn sm ${on ? "dng" : "ok"}" type="button" data-uid="${esc(u.uid)}" data-on="${on ? 0 : 1}">${on ? "ব্যাজ সরান" : "ব্যাজ দিন"}</button>
+    </div>`;
+  }).join("") : `<p style="color:var(--mu);text-align:center;padding:16px">কোনো ব্যবহারকারী পাওয়া যায়নি।</p>`;
+}
+
+function openUsers() {
+  const o = document.createElement("div"); o.className = "ov";
+  o.innerHTML = `<div class="card frm" role="dialog" aria-modal="true">
+    <h2>ভেরিফায়েড ব্যাজ</h2>
+    <p class="sub">যে কাউকে ব্যাজ দিতে বা সরাতে পারবেন। ব্যাজধারীর পোস্ট সরাসরি লাইভ হবে (দিনে সর্বোচ্চ ৩টি)।</p>
+    <input class="inp" id="uq" type="search" autocomplete="off" placeholder="নাম, ইমেইল বা UID দিয়ে খুঁজুন…">
+    <div id="ulist" style="margin-top:14px;display:grid;gap:10px;max-height:55vh;overflow:auto"></div>
+    <div class="foot"><button type="button" class="btn" data-x="1">বন্ধ করুন</button></div>
+  </div>`;
+  const close = () => { document.removeEventListener("keydown", kd, true); o.remove(); };
+  const kd = e => { if (e.key === "Escape") close(); };
+  o.addEventListener("click", async ev => {
+    if (ev.target === o || ev.target.closest("[data-x]")) return close();
+    const b = ev.target.closest("button[data-uid]"); if (!b) return;
+    b.disabled = true;
+    try { await setVerified(b.dataset.uid, b.dataset.on === "1"); paintUsers(o); }
+    catch (er) { b.disabled = false; err(er); }
+  });
+  o.querySelector("#uq").oninput = () => paintUsers(o);
+  document.addEventListener("keydown", kd, true);
+  document.body.appendChild(o);
+  paintUsers(o);
 }
 
 /* ---------- ইন্টারঅ্যাকশন ---------- */
@@ -582,7 +742,9 @@ $("ref").onclick = load;
 $("list").onclick = async e => {
   const b = e.target.closest("button[data-a]"); if (!b) return;
   const a = b.dataset.a, id = b.dataset.id, ev = E.find(x => x.id === id); if (!ev) return;
-  if (a === "ok") return patch(id, { status: "approved" }, "ইভেন্ট অনুমোদন করা হয়েছে", b);
+  if (a === "ok") return approveEv(ev, b);
+  if (a === "rej") return rejectEv(ev, b);
+  if (a === "untrust") return revokeTrust(ev.authorUid, b, false);
   if (a === "undo") return patch(id, { status: "pending" }, "ইভেন্ট অপেক্ষমাণে ফেরানো হয়েছে", b);
   if (a === "rep0") return patch(id, { reports: 0 }, "রিপোর্ট মুছে ফেলা হয়েছে", b);
   if (a === "edit") return openForm(ev);
