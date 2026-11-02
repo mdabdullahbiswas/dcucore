@@ -487,6 +487,11 @@ html[data-theme=dark] .ev-flt small{color:#F3D78A}
 .ev-cm-one::-webkit-scrollbar{display:none}
 .ev-cm-one .ev-btn{flex:0 0 auto;white-space:nowrap}
 .ev-cm-one .ev-btn.ico{width:38px;min-width:38px;padding:0;justify-content:center}
+
+/* ---------------- আইকন: ধারাবাহিক আকার ও ব্র্যান্ড আইকন ---------------- */
+.goog-ico{display:inline-flex;margin-right:2px}
+.goog-ico svg{display:block}
+.ev-why-i svg{display:block}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -569,9 +574,9 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <dialog class="ev-dlg" id="dDetail" aria-labelledby="dTitle"><div class="ev-dlg-in" id="dBody"></div></dialog>
 <dialog class="ev-dlg" id="dMine" aria-labelledby="mineTitle" style="width:min(680px,calc(100vw - 20px))">
   <div class="ev-dlg-in ev-mine-in">
-    <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button type="button" class="ev-x" data-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="ev-rep-hd">
-      <span class="ev-rep-ico" aria-hidden="true">🗂️</span>
+      <span class="ev-rep-ico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px" aria-hidden="true"><path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></span>
       <h2 id="mineTitle" class="ev-rep-t t">আমার ইভেন্টসমূহ|My events</h2>
       <p class="ev-rep-s t" id="mineSub"></p>
     </div>
@@ -581,38 +586,38 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 
 <!-- ===== Sign-in explainer ===== -->
 <dialog class="ev-dlg ev-adlg" id="dAuth" aria-labelledby="aTitle">
-  <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="ev-x" data-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in ev-auth-in">
     <div class="ev-rep-hd">
-      <span class="ev-rep-ico" aria-hidden="true">🔐</span>
+      <span class="ev-rep-ico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span>
       <h2 id="aTitle" class="ev-rep-t t">ইভেন্ট পোস্ট করতে সাইন ইন করুন|Sign in to post an event</h2>
       <p class="ev-rep-s t">কেন লাগে, সেটা এক নজরে:|Here is why we ask you to sign in:</p>
     </div>
     <ul class="ev-why">
-      <li><span class="ev-why-i">🛡️</span><div><b class="t">স্প্যাম ও ভুয়া পোস্ট ঠেকানো|Stops spam and fake posts</b><small class="t">প্রতিটি পোস্ট একটি যাচাইকৃত অ্যাকাউন্টের সঙ্গে যুক্ত থাকে।|Every post is tied to a verified account.</small></div></li>
-      <li><span class="ev-why-i">✏️</span><div><b class="t">নিজের পোস্ট সম্পাদনা ও মোছা|Edit and manage your posts</b><small class="t">পরে ভুল ঠিক করতে বা পোস্ট সরাতে পারবেন।|Fix mistakes or remove your post later.</small></div></li>
-      <li><span class="ev-why-i">✔️</span><div><b class="t">যাচাইকৃত আয়োজকের সুবিধা|Verified organizer perks</b><small class="t">বিশ্বস্ত আয়োজক হলে নীল ব্যাজ ও দ্রুত অনুমোদন পেতে পারেন।|Trusted organizers can earn a badge and faster approval.</small></div></li>
-      <li><span class="ev-why-i">🔒</span><div><b class="t">ইমেইল গোপন থাকে|Your email stays private</b><small class="t">শুধু আপনার নাম পোস্টে দেখাবে; ইমেইল কোথাও প্রকাশ হবে না।|Only your name is shown on the post; your email is never published.</small></div></li>
+      <li><span class="ev-why-i"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><div><b class="t">স্প্যাম ও ভুয়া পোস্ট ঠেকানো|Stops spam and fake posts</b><small class="t">প্রতিটি পোস্ট একটি যাচাইকৃত অ্যাকাউন্টের সঙ্গে যুক্ত থাকে।|Every post is tied to a verified account.</small></div></li>
+      <li><span class="ev-why-i"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></span><div><b class="t">নিজের পোস্ট সম্পাদনা ও মোছা|Edit and manage your posts</b><small class="t">পরে ভুল ঠিক করতে বা পোস্ট সরাতে পারবেন।|Fix mistakes or remove your post later.</small></div></li>
+      <li><span class="ev-why-i"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><path d="M12 2.5l2.4 2.1 3.1-.2.9 3 2.6 1.7-1.2 2.9 1.2 2.9-2.6 1.7-.9 3-3.1-.2L12 21.5l-2.4-2.1-3.1.2-.9-3-2.6-1.7 1.2-2.9-1.2-2.9 2.6-1.7.9-3 3.1.2z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></svg></span><div><b class="t">যাচাইকৃত আয়োজকের সুবিধা|Verified organizer perks</b><small class="t">বিশ্বস্ত আয়োজক হলে নীল ব্যাজ ও দ্রুত অনুমোদন পেতে পারেন।|Trusted organizers can earn a badge and faster approval.</small></div></li>
+      <li><span class="ev-why-i"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span><div><b class="t">ইমেইল গোপন থাকে|Your email stays private</b><small class="t">শুধু আপনার নাম পোস্টে দেখাবে; ইমেইল কোথাও প্রকাশ হবে না।|Only your name is shown on the post; your email is never published.</small></div></li>
     </ul>
     <p class="ev-auth-err" id="aErr" role="alert" hidden></p>
     <div class="ev-rep-ft">
       <button type="button" class="ev-btn ghost" data-close id="aCancel"><span class="t">এখন না|Not now</span></button>
-      <button type="button" class="ev-btn" id="aGo"><span class="t">Google দিয়ে চালিয়ে যান|Continue with Google</span></button>
+      <button type="button" class="ev-btn" id="aGo"><span class="goog-ico"><svg class="i" viewBox="0 0 24 24" style="width:17px;height:17px" aria-hidden="true"><path fill="currentColor" stroke="none" d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.79 4.13-1.15 1.15-2.93 2.4-6.05 2.4-4.83 0-8.6-3.89-8.6-8.72s3.77-8.72 8.6-8.72c2.6 0 4.51 1.03 5.91 2.35l2.31-2.31C18.75 1.44 16.13 0 12.48 0 5.87 0 .31 5.39.31 12s5.56 12 12.17 12c3.57 0 6.27-1.17 8.37-3.36 2.16-2.16 2.84-5.21 2.84-7.67 0-.76-.05-1.47-.17-2.05H12.48z"/></svg></span><span class="t">Google দিয়ে চালিয়ে যান|Continue with Google</span></button>
     </div>
   </div>
 </dialog>
 
 <!-- ===== Report dialog ===== -->
 <dialog class="ev-dlg ev-rdlg" id="dReport" aria-labelledby="rTitle">
-  <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="ev-x" data-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in ev-rep-in">
     <div class="ev-rep-hd">
-      <span class="ev-rep-ico" aria-hidden="true">🚩</span>
+      <span class="ev-rep-ico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px" aria-hidden="true"><path d="M4 22V4M4 4h12l-2 4 2 4H4"/></svg></span>
       <h2 id="rTitle" class="ev-rep-t"></h2>
       <p class="ev-rep-s" id="rSub"></p>
     </div>
     <div class="ev-rep-opts" id="rOpts" role="radiogroup"></div>
-    <p class="ev-rep-foot t">🔒 আপনার নাম বা ইমেইল রিপোর্টের সাথে সংরক্ষণ হয় না।|🔒 Your name or email is not stored with the report.</p>
+    <p class="ev-rep-foot t"><svg class="i" viewBox="0 0 24 24" style="width:13px;height:13px" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg> আপনার নাম বা ইমেইল রিপোর্টের সাথে সংরক্ষণ হয় না।|Your name or email is not stored with the report.</p>
     <textarea id="rNote" class="ev-rep-note" rows="3" maxlength="300"></textarea>
     <div class="ev-rep-ft">
       <button type="button" class="ev-btn ghost" data-close id="rCancel"></button>
@@ -623,7 +628,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 
 <!-- ===== Share card maker ===== -->
 <dialog class="ev-dlg" id="dCard" aria-labelledby="cmTitle">
-  <button type="button" class="ev-x" data-cm-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="ev-x" data-cm-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in">
     <div class="ev-cm">
       <div class="ev-cm-prev"><canvas id="cmCanvas" role="img" aria-label="Share card preview"></canvas></div>
@@ -634,7 +639,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 
 <!-- ===== Post dialog ===== -->
 <dialog class="ev-dlg" id="dPost" aria-labelledby="pTitle" style="width:min(980px,calc(100vw - 20px))">
-  <button type="button" class="ev-x" data-close aria-label="Close" data-al="বন্ধ করুন|Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="ev-x" data-close aria-label="Close" title="Close" data-al="বন্ধ করুন|Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in">
     <div class="ev-form" id="pWrap">
       <form id="pForm" novalidate autocomplete="off">
@@ -688,7 +693,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 
         <div class="ev-pp">
           <div class="ev-pp-hd">
-            <span class="ev-pp-ico" aria-hidden="true">🎨</span>
+            <span class="ev-pp-ico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
             <div>
               <b class="t">প্রিমিয়াম পোস্টারের রেডি প্রম্পট|Ready premium poster prompt</b>
               <small class="t">উপরের তথ্য দিয়ে নিচের প্রম্পটটি কপি করে ChatGPT-তে দিন — পোস্টার তৈরি হবে।|Copy this prompt (auto-filled from your details) and paste it into ChatGPT to create your poster.</small>
@@ -727,10 +732,10 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 </dialog>
 
 <dialog class="ev-dlg ev-adlg" id="dConfirm" aria-labelledby="cfTitle">
-  <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="ev-x" data-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in ev-auth-in">
     <div class="ev-rep-hd">
-      <span class="ev-rep-ico" aria-hidden="true">📝</span>
+      <span class="ev-rep-ico" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:26px;height:26px" aria-hidden="true"><rect x="6" y="4" width="12" height="18" rx="2"/><path d="M9 4V2.5h6V4M9 12h6M9 16h4"/></svg></span>
       <h2 id="cfTitle" class="ev-rep-t t"></h2>
       <p class="ev-rep-s t" id="cfSub"></p>
     </div>
@@ -872,14 +877,14 @@ var CAMPUSES=[
   {id:'nazrul',     bn:'কবি নজরুল সরকারি কলেজ',en:'Kabi Nazrul Govt. College',sb:'কবি নজরুল',se:'Kabi Nazrul'}
 ];
 var CATS=[
-  {id:'seminar', em:'🎤',c:'#2563EB',bn:'সেমিনার ও ওয়ার্কশপ',en:'Seminar & Workshop'},
-  {id:'cultural',em:'🎭',c:'#C026D3',bn:'সাংস্কৃতিক',en:'Cultural'},
-  {id:'sports',  em:'⚽',c:'#059669',bn:'খেলাধুলা',en:'Sports'},
-  {id:'club',    em:'🤝',c:'#7C3AED',bn:'ক্লাব ও সংগঠন',en:'Club & Society'},
-  {id:'career',  em:'💼',c:'#D97706',bn:'ক্যারিয়ার ও চাকরি মেলা',en:'Career & Job Fair'},
-  {id:'blood',   em:'🩸',c:'#E11D48',bn:'ব্লাড ক্যাম্প ও সেবা',en:'Blood Camp & Service'},
-  {id:'academic',em:'📢',c:'#0891B2',bn:'একাডেমিক ও নোটিশ',en:'Academic & Notice'},
-  {id:'festival',em:'🎉',c:'#65A30D',bn:'উৎসব ও অন্যান্য',en:'Festival & Other'}
+  {id:'seminar', em:'🎤',ic:'mic',c:'#2563EB',bn:'সেমিনার ও ওয়ার্কশপ',en:'Seminar & Workshop'},
+  {id:'cultural',em:'🎭',ic:'music',c:'#C026D3',bn:'সাংস্কৃতিক',en:'Cultural'},
+  {id:'sports',  em:'⚽',ic:'trophy',c:'#059669',bn:'খেলাধুলা',en:'Sports'},
+  {id:'club',    em:'🤝',ic:'users',c:'#7C3AED',bn:'ক্লাব ও সংগঠন',en:'Club & Society'},
+  {id:'career',  em:'💼',ic:'briefcase',c:'#D97706',bn:'ক্যারিয়ার ও চাকরি মেলা',en:'Career & Job Fair'},
+  {id:'blood',   em:'🩸',ic:'drop',c:'#E11D48',bn:'ব্লাড ক্যাম্প ও সেবা',en:'Blood Camp & Service'},
+  {id:'academic',em:'📢',ic:'megaphone',c:'#0891B2',bn:'একাডেমিক ও নোটিশ',en:'Academic & Notice'},
+  {id:'festival',em:'🎉',ic:'sparkle',c:'#65A30D',bn:'উৎসব ও অন্যান্য',en:'Festival & Other'}
 ];
 var CAMP=Object.create(null),CAT=Object.create(null);
 CAMPUSES.forEach(function(x){CAMP[x.id]=x});CATS.forEach(function(x){CAT[x.id]=x});
@@ -907,15 +912,38 @@ var ICON={
   user:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   link:'<path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/>',
   phone:'<path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/>',
-  left:'<path d="M15 18l-6-6 6-6"/>',right:'<path d="M9 18l6-6-6-6"/>',
+  left:'<path d="M15 18l-6-6 6-6"/>',
+  right:'<path d="M9 18l6-6-6-6"/>',
   x:'<path d="M6 6l12 12M18 6L6 18"/>',
   download:'<path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
   flag:'<path d="M4 22V4M4 4h12l-2 4 2 4H4"/>',
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>',
   map:'<path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/>',
-  wa:'<path d="M21 11.5a8.4 8.4 0 01-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1121 11.5z"/>',
-  card:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>'
+  wa:'<path fill="currentColor" stroke="none" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.05 21.79h-.0a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26C2.17 6.55 6.6 2.12 12.05 2.12c2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 012.89 6.99c0 5.45-4.44 9.88-9.88 9.88zM20.46 3.49A11.82 11.82 0 0012.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 005.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 00-3.48-8.42z"/>',
+  card:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+  fb:'<path fill="currentColor" stroke="none" d="M9.1 23.69v-7.98H6.63v-3.67h2.47v-1.58c0-4.09 1.85-5.98 5.86-5.98.4 0 .96.04 1.47.1.45.06.86.14 1.14.2v3.33a8.6 8.6 0 00-.65-.04c-.7 0-1.26.1-1.68.31a1.7 1.7 0 00-.68.62c-.26.42-.37 1-.37 1.75v1.3h3.92l-.39 2.1-.29 1.56h-3.24v8.25C19.4 23.24 24 18.18 24 12.04 24 5.41 18.63.04 12 .04S0 5.41 0 12.04c0 5.63 3.87 10.35 9.1 11.65z"/>',
+  goog:'<path fill="currentColor" stroke="none" d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.79 4.13-1.15 1.15-2.93 2.4-6.05 2.4-4.83 0-8.6-3.89-8.6-8.72s3.77-8.72 8.6-8.72c2.6 0 4.51 1.03 5.91 2.35l2.31-2.31C18.75 1.44 16.13 0 12.48 0 5.87 0 .31 5.39.31 12s5.56 12 12.17 12c3.57 0 6.27-1.17 8.37-3.36 2.16-2.16 2.84-5.21 2.84-7.67 0-.76-.05-1.47-.17-2.05H12.48z"/>',
+  pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
+  badge:'<path d="M12 2.5l2.4 2.1 3.1-.2.9 3 2.6 1.7-1.2 2.9 1.2 2.9-2.6 1.7-.9 3-3.1-.2L12 21.5l-2.4-2.1-3.1.2-.9-3-2.6-1.7 1.2-2.9-1.2-2.9 2.6-1.7.9-3 3.1.2z"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/>',
+  clipboard:'<rect x="6" y="4" width="12" height="18" rx="2"/><path d="M9 4V2.5h6V4M9 12h6M9 16h4"/>',
+  folder:'<path d="M3 6a2 2 0 012-2h4l2 2h8a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>',
+  sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/>',
+  hourglass:'<path d="M6 2h12M6 22h12M7 2c0 5 5 6 5 10s-5 5-5 10M17 2c0 5-5 6-5 10s5 5 5 10"/>',
+  mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0014 0v-2M12 19v3"/>',
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  trophy:'<path d="M8 21h8M12 17v4M7 4H4v3a4 4 0 004 4M17 4h3v3a4 4 0 01-4 4M7 4h10v5a5 5 0 01-10 0z"/>',
+  briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2M3 13h18"/>',
+  drop:'<path d="M12 2.5s6.5 7 6.5 12a6.5 6.5 0 01-13 0c0-5 6.5-12 6.5-12z"/>',
+  megaphone:'<path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1zM15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/>',
+  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  beaker:'<path d="M9 2h6M10 2v6L4.5 18a2 2 0 001.7 3h11.6a2 2 0 001.7-3L14 8V2"/>',
+  envelope:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>'
 };
+function catIco(c,n){return ic((c&&c.ic)||'sparkle',n)}
 var ic=function(n,s){return '<svg class="i" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px"':'')+' aria-hidden="true">'+ICON[n]+'</svg>'};
 
 /* তারিখ (ঢাকা সময়) */
@@ -1094,7 +1122,7 @@ function cardHTML(e,i,preview){
     '<button type="button" class="ev-poster" data-act="open" aria-label="'+esc(e.title)+'">'+posterHTML(e,cat)+
       '<span class="ev-date"><b>'+fmtDay(e.startMs,{day:'numeric'})+'</b><i>'+fmtDay(e.startMs,{month:'short'})+'</i></span>'+flag+'</button>'+
     '<div class="ev-body">'+
-      '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">'+VSEAL+'<span>'+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span></span>':'')+'</div>'+
+      '<div class="ev-badges"><span class="ev-badge">'+catIco(cat,13)+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">'+VSEAL+'<span>'+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span></span>':'')+'</div>'+
       '<h3><button type="button" data-act="open">'+esc(e.title)+'</button></h3>'+
       (function(){
         var c=[],du=durTxt(e);
@@ -1110,8 +1138,8 @@ function cardHTML(e,i,preview){
       '<div class="ev-foot"><span style="display:inline-flex;gap:6px;align-items:center">'+ic('users',15)+nf(e.going||0)+' '+T('জন আগ্রহী|interested')+'</span><span class="rel">'+esc(relText(e,now))+'</span></div>'+
       (preview?'':'<div class="ev-act">'+
         '<button type="button" class="ev-btn sm'+(goes?' on':'')+'" data-act="go" aria-pressed="'+goes+'">'+ic(goes?'check':'users',16)+(goes?T('যাচ্ছি|Going'):T('আমি যাব|I\'m going'))+'</button>'+
-        '<button type="button" class="ev-btn ghost sm ico'+(sv?' on':'')+'" data-act="save" aria-pressed="'+sv+'" aria-label="'+T('সেভ|Save')+'">'+ic('bookmark',16)+'</button>'+
-        '<button type="button" class="ev-btn ghost sm ico" data-act="share" aria-label="'+T('শেয়ার|Share')+'">'+ic('share',16)+'</button></div>')+
+        '<button type="button" class="ev-btn ghost sm ico'+(sv?' on':'')+'" data-act="save" aria-pressed="'+sv+'" aria-label="'+T('সেভ|Save')+'" title="'+T('সেভ|Save')+'">'+ic('bookmark',16)+'</button>'+
+        '<button type="button" class="ev-btn ghost sm ico" data-act="share" aria-label="'+T('শেয়ার|Share')+'" title="'+T('শেয়ার|Share')+'">'+ic('share',16)+'</button></div>')+
     '</div></article>';
 }
 
@@ -1136,7 +1164,7 @@ function renderView(){
 }
 function emptyHTML(){
   var f=S.f,filtered=f.q||f.campus||f.cat||f.saved||f.day||f.when!=='upcoming';
-  return '<div class="ev-empty"><div class="big">'+(f.saved?'🔖':'🗓️')+'</div><h3>'+(f.saved?T('এখনও কিছু সেভ করা হয়নি|Nothing saved yet'):filtered?T('কোনো ইভেন্ট পাওয়া যায়নি|No events found'):T('এখনও কোনো ইভেন্ট নেই|No events yet'))+'</h3>'+
+  return '<div class="ev-empty"><div class="big">'+ic(f.saved?'bookmark':'cal',40)+'</div><h3>'+(f.saved?T('এখনও কিছু সেভ করা হয়নি|Nothing saved yet'):filtered?T('কোনো ইভেন্ট পাওয়া যায়নি|No events found'):T('এখনও কোনো ইভেন্ট নেই|No events yet'))+'</h3>'+
     '<p>'+(filtered?T('ফিল্টার বদলে দেখুন, অথবা এই ক্যাম্পাসের প্রথম ইভেন্টটি আপনিই পোস্ট করুন।|Try changing the filters, or be the first to post one for this campus.'):T('আপনার ক্যাম্পাসের অনুষ্ঠান সবাইকে জানাতে প্রথম পোস্টটি করুন।|Post the first one and let everyone know.'))+'</p>'+
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+(filtered?'<button type="button" class="ev-btn ghost" data-act="reset">'+T('ফিল্টার মুছুন|Clear filters')+'</button>':'')+'<button type="button" class="ev-btn" data-act="post">'+ic('x',16).replace(ICON.x,'<path d="M12 5v14M5 12h14"/>')+T('ইভেন্ট পোস্ট করুন|Post an event')+'</button></div></div>';
 }
@@ -1201,7 +1229,7 @@ function renderNote(){
   $('#vSaved').setAttribute('aria-pressed',f.saved);$('#vSaved').classList.toggle('on',f.saved);
 }
 function renderDemo(){
-  $('#demoBox').innerHTML=S.mode==='demo'?'<div class="ev-demo" role="note"><span>🧪</span><span>'+T('ডেমো মোড: এখানে দেখা ইভেন্ট ও আপনার পোস্ট শুধু এই ব্রাউজারে থাকবে। সবার জন্য চালু করতে ফাইলের ভেতরের Firestore Rules যোগ করুন।|Demo mode: events and your posts are stored only in this browser. Add the Firestore rules (see the top of the script) to go live for everyone.')+'</span></div>':'';
+  $('#demoBox').innerHTML=S.mode==='demo'?'<div class="ev-demo" role="note"><span>'+ic('beaker',14)+'</span><span>'+T('ডেমো মোড: এখানে দেখা ইভেন্ট ও আপনার পোস্ট শুধু এই ব্রাউজারে থাকবে। সবার জন্য চালু করতে ফাইলের ভেতরের Firestore Rules যোগ করুন।|Demo mode: events and your posts are stored only in this browser. Add the Firestore rules (see the top of the script) to go live for everyone.')+'</span></div>':'';
 }
 function renderStats(){
   var up=visibleBase().filter(function(e){return endOf(e)>=S.now}),cps={},go=0;
@@ -1249,10 +1277,10 @@ function openDetail(id,quiet){
   var time=timeStr(e.startMs)+(e.endMs?' – '+(multi?longDate(e.endMs)+' '+timeStr(e.endMs):timeStr(e.endMs)):'');
   var map=okUrl(e.mapUrl)?e.mapUrl:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(e.venue+' '+cp.en);
   var row=function(i,l,v){return '<div class="ev-i">'+ic(i)+'<div><small>'+l+'</small><b>'+v+'</b></div></div>'};
-  var h='<button type="button" class="ev-x" data-close aria-label="Close">'+ic('x',18)+'</button>'+
+  var h='<button type="button" class="ev-x" data-close aria-label="Close" title="Close">'+ic('x',18)+'</button>'+
    '<div class="ev-dposter" style="--c:'+cat.c+'">'+posterHTML(e,cat)+'</div>'+
    '<div class="ev-dbody" style="--c:'+cat.c+'">'+
-    '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'l'))+'</span>'+(ended?'<span class="ev-badge cp">'+T('শেষ হয়েছে|Ended')+'</span>':'')+'</div>'+
+    '<div class="ev-badges"><span class="ev-badge">'+catIco(cat,13)+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'l'))+'</span>'+(ended?'<span class="ev-badge cp">'+T('শেষ হয়েছে|Ended')+'</span>':'')+'</div>'+
     '<h2 id="dTitle">'+esc(e.title)+'</h2>'+
     '<div class="ev-info">'+
       row('cal',T('তারিখ ও সময়|Date & time'),esc(longDate(e.startMs))+'<br>'+esc(time)+' <span style="color:var(--ink-2)">('+esc(relText(e,Date.now()))+')</span>')+
@@ -1303,7 +1331,7 @@ async function toggleGo(id){
   var on=!S.going[id];
   if(on)S.going[id]=1;else delete S.going[id];safeSet('dcuEv_going',S.going);
   try{await storeBump(id,'going',on?1:-1)}catch(x){if(on)delete S.going[id];else S.going[id]=1;safeSet('dcuEv_going',S.going);toast(T('এখন সংরক্ষণ করা যায়নি, পরে চেষ্টা করুন|Could not save, try again later'),true)}
-  toast(on?T('আপনার আগ্রহ জানানো হয়েছে 🎉|Marked as going 🎉'):T('সরানো হয়েছে|Removed'));
+  toast(on?T('আপনার আগ্রহ জানানো হয়েছে|Marked as going'):T('সরানো হয়েছে|Removed'));
   refresh();renderNext();if($('#dDetail').open&&curId===id)openDetail(id,true);
 }
 function toggleSave(id){
@@ -1359,7 +1387,7 @@ var CM_TAG=[['none','কোনোটি নয়|None'],['invite','আমন্
 var CM_CS=[['invite','আমন্ত্রণ|Invitation'],['full','বিস্তারিত|Detailed'],['short','সংক্ষিপ্ত|Short']];
 var CM_FM=[['story','স্টোরি 9:16|Story 9:16'],['post','পোস্ট 4:5|Post 4:5'],['square','বর্গ 1:1|Square 1:1']];
 var CM_TH=[['auto','ক্যাটাগরি|Category'],['gold','সোনালি|Gold'],['light','হালকা|Light']];
-var cmSeq=0,cmRaf=0;
+var cmSeq=0,cmRaf=0,cmImgs={};
 function hexRGB(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]}
 function hexA(h,a){var c=hexRGB(h);return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'}
 function cmShade(h,f){var c=hexRGB(h);return 'rgb('+Math.round(c[0]*f)+','+Math.round(c[1]*f)+','+Math.round(c[2]*f)+')'}
@@ -1402,6 +1430,17 @@ function cmStar(ctx,x,y,r1,r2){ctx.beginPath();for(var i=0;i<10;i++){var r=i%2?r
 var cmNoiseTile=null;
 function cmNoise(ctx){if(!cmNoiseTile){var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d'),d=x.createImageData(128,128);for(var i=0;i<d.data.length;i+=4){var v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);cmNoiseTile=c}return ctx.createPattern(cmNoiseTile,'repeat')}
 
+function cmIconImg(name,color){
+  var key=name+'|'+color;
+  if(!cmImgs[key]){
+    var im=new Image();
+    im.onload=function(){cmSched()};
+    im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICON[name]+'</svg>');
+    cmImgs[key]=im;
+  }
+  var ok=cmImgs[key];
+  return (ok.complete&&ok.naturalWidth)?ok:null;
+}
 function cmDraw(ctx,W,H,st,dry){
   var e=st.e,cat=st.cat,cp=st.cp,P=st.pal,k=st.k,PAD=72,PH=Math.round(H*st.ph),maxW=W-PAD*2;
   var R=function(v){return Math.round(v*k)};
@@ -1498,8 +1537,8 @@ function cmDraw(ctx,W,H,st,dry){
   }
   y+=tl.length*tlh+R(28);
 
-  var rows=[['📅',longDate(e.startMs)+' · '+time],['📍',e.venue]];
-  if(e.startMs>Date.now())rows.push(['⏳',relText(e,Date.now())]);
+  var rows=[['cal',longDate(e.startMs)+' · '+time],['pin',e.venue]];
+  if(e.startMs>Date.now())rows.push(['hourglass',relText(e,Date.now())]);
   rows.forEach(function(r){
     ctx.font=F(500,40);
     var txt=cmFit(ctx,r[1],maxW-R(76));
@@ -1507,7 +1546,8 @@ function cmDraw(ctx,W,H,st,dry){
       var rc=R(25),rx=PAD+rc,ry=y+R(24);
       ctx.beginPath();ctx.arc(rx,ry,rc,0,Math.PI*2);ctx.fillStyle=P.panel;ctx.fill();
       ctx.lineWidth=Math.max(1.5,R(2));ctx.strokeStyle=cmMetal(ctx,rx-rc,ry-rc,rx+rc,ry+rc,P.metal);ctx.stroke();
-      ctx.font='400 '+R(26)+'px '+EMO;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=P.ink2;ctx.fillText(r[0],rx,ry+1);
+      var rim=cmIconImg(r[0],P.ink2);
+      if(rim){ctx.drawImage(rim,rx-R(16),ry-R(16),R(32),R(32))}else{ctx.font='400 '+R(26)+'px '+EMO;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=P.ink2;ctx.fillText('•',rx,ry+1)}
       ctx.textAlign='left';ctx.textBaseline='top';ctx.font=F(500,40);ctx.fillStyle=P.ink2;ctx.fillText(txt,PAD+R(76),y);
     }
     y+=R(60);
@@ -1625,7 +1665,7 @@ function cmBuild(){
       '<button type="button" class="ev-btn ghost sm" data-cm-act="share">'+ic('share',15)+T('শেয়ার|Share')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-cm-act="copy">'+ic('copy',15)+T('ছবি কপি|Copy image')+'</button>'+
       '<a class="ev-btn ghost sm ico" id="cmWa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">'+ic('wa',16)+'</a>'+
-      '<a class="ev-btn ghost sm ico" id="cmFb" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0022 12z"/></svg></a>'+
+      '<a class="ev-btn ghost sm ico" id="cmFb" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">'+ic('fb',16)+'</a>'+
       '<button type="button" class="ev-btn ghost sm" data-cm-act="capcopy">'+ic('copy',15)+T('ক্যাপশন কপি|Copy caption')+'</button>'+
     '</div>'+
     '<p class="ev-cm-hint">'+T('ছবি ডাউনলোড করে ইনস্টাগ্রাম স্টোরি, ফেসবুক বা WhatsApp-এ দিন, ক্যাপশনটিও সঙ্গে নিন।|Download the image and post it to Instagram, Facebook or WhatsApp, with the caption.')+'</p>';
@@ -1800,10 +1840,10 @@ var AUTH_MINE_HTML={
   title:'আমার ইভেন্ট দেখতে সাইন ইন করুন|Sign in to see your events',
   sub:'আপনার সব পোস্ট ও তার অবস্থা এক জায়গায়:|All your posts and their status in one place:',
   items:[
-    ['✏️','এডিট ও মোছা|Edit and delete','পোস্ট করার পর যেকোনো সময় তথ্য ঠিক করুন বা পোস্ট সরান।|Fix details or remove a post anytime.'],
-    ['📋','অনুমোদনের অবস্থা|Approval status','অপেক্ষমাণ ও লাইভ পোস্ট আলাদাভাবে দেখুন।|See pending and live posts separately.'],
-    ['🔒','শুধু আপনার পোস্ট|Only your posts','অন্যদের পোস্ট বা ইমেইল এখানে দেখা যায় না।|Posts by others and emails are never shown here.'],
-    ['🛡️','একই অ্যাকাউন্ট|Same account','যে Google অ্যাকাউন্ট দিয়ে পোস্ট করেছেন, সব সেখানেই থাকে।|Everything stays with the Google account you post with.']
+    ['pen','এডিট ও মোছা|Edit and delete','পোস্ট করার পর যেকোনো সময় তথ্য ঠিক করুন বা পোস্ট সরান।|Fix details or remove a post anytime.'],
+    ['clipboard','অনুমোদনের অবস্থা|Approval status','অপেক্ষমাণ ও লাইভ পোস্ট আলাদাভাবে দেখুন।|See pending and live posts separately.'],
+    ['lock','শুধু আপনার পোস্ট|Only your posts','অন্যদের পোস্ট বা ইমেইল এখানে দেখা যায় না।|Posts by others and emails are never shown here.'],
+    ['shield','একই অ্যাকাউন্ট|Same account','যে Google অ্যাকাউন্ট দিয়ে পোস্ট করেছেন, সব সেখানেই থাকে।|Everything stays with the Google account you post with.']
   ]
 };
 function showAuthExplainer(kind){
@@ -1815,7 +1855,7 @@ function showAuthExplainer(kind){
     t.innerHTML='<span class="t">'+T(AUTH_MINE_HTML.title)+'</span>';
     sub.innerHTML='<span class="t">'+T(AUTH_MINE_HTML.sub)+'</span>';
     ul.innerHTML=AUTH_MINE_HTML.items.map(function(it){
-      return '<li><span class="ev-why-i">'+it[0]+'</span><div><b class="t">'+T(it[1])+'</b><small class="t">'+T(it[2])+'</small></div></li>';
+      return '<li><span class="ev-why-i">'+ic(it[0],18)+'</span><div><b class="t">'+T(it[1])+'</b><small class="t">'+T(it[2])+'</small></div></li>';
     }).join('');
   }else{
     t.innerHTML=AUTH.orig.title;sub.innerHTML=AUTH.orig.sub;ul.innerHTML=AUTH.orig.ul;
@@ -1889,7 +1929,7 @@ async function submitPost(ev){
     resetForm();
     var pend=e.status==='pending';
     $('#pWrap').hidden=true;var done=$('#pDone');done.hidden=false;
-    done.innerHTML='<div class="tick">✓</div><h2>'+(pend?T('জমা হয়েছে!|Submitted!'):T('পোস্ট হয়ে গেছে!|Published!'))+'</h2><p>'+(pend?T('অ্যাডমিন অনুমোদনের পর ইভেন্টটি সবাই দেখতে পাবে।|Everyone will see it once an admin approves it.'):T('আপনার ইভেন্ট এখন সবার জন্য দৃশ্যমান। বন্ধুদের সঙ্গে শেয়ার করুন!|Your event is now visible to everyone. Share it with friends!'))+'</p>'+
+    done.innerHTML='<div class="tick">'+ic('check',26)+'</div><h2>'+(pend?T('জমা হয়েছে!|Submitted!'):T('পোস্ট হয়ে গেছে!|Published!'))+'</h2><p>'+(pend?T('অ্যাডমিন অনুমোদনের পর ইভেন্টটি সবাই দেখতে পাবে।|Everyone will see it once an admin approves it.'):T('আপনার ইভেন্ট এখন সবার জন্য দৃশ্যমান। বন্ধুদের সঙ্গে শেয়ার করুন!|Your event is now visible to everyone. Share it with friends!'))+'</p>'+
       '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'+(pend?'':'<button type="button" class="ev-btn" data-view="'+esc(e.id)+'">'+T('ইভেন্ট দেখুন|View event')+'</button><button type="button" class="ev-btn ghost" data-sharep="'+esc(e.id)+'">'+ic('share',16)+T('শেয়ার|Share')+'</button>')+'<button type="button" class="ev-btn ghost" data-close>'+T('বন্ধ করুন|Close')+'</button></div>';
     refresh();renderNext();
   }catch(err){
@@ -1921,14 +1961,14 @@ function renderMine(){
   var list=S.mineList||[],b=$('#mineBody');
   $('#mineSub').innerHTML='<span class="t">'+(list.length?T('আপনার পোস্ট ও তার অবস্থা|Your posts and their status'):T('পোস্ট করলে এখানে দেখতে পাবেন|Posts you create will appear here'))+'</span>';
   if(!list.length){
-    b.innerHTML='<div class="ev-mine-empty"><div class="ev-mine-empty-ico" aria-hidden="true">✨</div><p class="t">'+T('আপনি এখনও কোনো ইভেন্ট পোস্ট করেননি।|You have not posted any events yet.')+'</p></div>';
+    b.innerHTML='<div class="ev-mine-empty"><div class="ev-mine-empty-ico" aria-hidden="true">'+ic('sparkle',28)+'</div><p class="t">'+T('আপনি এখনও কোনো ইভেন্ট পোস্ট করেননি।|You have not posted any events yet.')+'</p></div>';
     return;
   }
   b.innerHTML='<div class="ev-mine-list">'+list.map(function(e){
     var cat=CAT[e.cat]||CAT.festival;
     var live=e.status==='approved';
     var st=live?T('লাইভ|Live'):T('অনুমোদনের অপেক্ষায়|Awaiting approval');
-    var th=e.poster?'<img src="'+esc(e.poster)+'" alt="">':'<span aria-hidden="true">'+cat.em+'</span>';
+    var th=e.poster?'<img src="'+esc(e.poster)+'" alt="">':'<span aria-hidden="true">'+catIco(cat,30)+'</span>';
     return '<article class="ev-mine-card" style="--c:'+cat.c+'">'+
       '<div class="ev-mine-th">'+th+'</div>'+
       '<div class="ev-mine-body">'+
@@ -1993,7 +2033,7 @@ async function submitEdit(){
     exitEdit();
     var pend=status==='pending';
     $('#pWrap').hidden=true;var done=$('#pDone');done.hidden=false;
-    done.innerHTML='<div class="tick">✓</div><h2>'+T('আপডেট হয়েছে!|Updated!')+'</h2><p>'+(pend?T('পরিবর্তনগুলো অনুমোদনের পর আবার সবার কাছে দেখা যাবে।|Changes will be visible to everyone after approval.'):T('পরিবর্তনগুলো এখন সবার জন্য দৃশ্যমান।|Changes are now visible to everyone.'))+'</p>'+
+    done.innerHTML='<div class="tick">'+ic('check',26)+'</div><h2>'+T('আপডেট হয়েছে!|Updated!')+'</h2><p>'+(pend?T('পরিবর্তনগুলো অনুমোদনের পর আবার সবার কাছে দেখা যাবে।|Changes will be visible to everyone after approval.'):T('পরিবর্তনগুলো এখন সবার জন্য দৃশ্যমান।|Changes are now visible to everyone.'))+'</p>'+
       '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button type="button" class="ev-btn ghost" data-close>'+T('বন্ধ করুন|Close')+'</button></div>';
     refresh();renderNext();
   }catch(err){
@@ -2026,26 +2066,26 @@ async function askPostConfirm(r){
   var isEdit=!!EDIT.id,trusted=false;
   if(S.mode==='live'&&S.user){try{trusted=(await loadTrust(S.user.uid)).autoApprove===true}catch(x){}}
   var items=[
-    [trusted?'🚀':'🛡️',
+    [trusted?'badge':'shield',
      trusted?'সরাসরি প্রকাশ|Published directly':'অ্যাডমিন অনুমোদন|Admin approval',
      isEdit
        ?(trusted?'পরিবর্তনগুলো সরাসরি সবার কাছে দৃশ্যমান হবে।|Your changes go live for everyone straight away.'
                 :'পরিবর্তনের পর পোস্টটি আবার অ্যাডমিনের অনুমোদনের অপেক্ষায় থাকবে।|After editing, the post waits for admin approval again.')
        :(trusted?'বিশ্বস্ত আয়োজক হিসেবে আপনার পোস্ট সরাসরি সবার কাছে প্রকাশ পাবে।|As a trusted organizer, your post goes live for everyone straight away.'
                 :'অ্যাডমিন অনুমোদন করলে পোস্টটি সবাই দেখতে পাবে। অনুমোদনের আগে শুধু আপনি দেখবেন।|Once an admin approves it, everyone can see it. Until then, only you can.')],
-    ['⏰','শেষ সময়ের নিয়ম|End time rule',
+    ['hourglass','শেষ সময়ের নিয়ম|End time rule',
      r.em
        ?'শেষ সময় পেরোলে পোস্টটি আসন্ন তালিকা থেকে সরে গিয়ে "শেষ হয়েছে" অংশে যাবে।|After the end time, the post moves out of upcoming events and into Past.'
        :'শেষ সময় না দিলে শুরুর ৩ ঘণ্টা পর পোস্টটি আসন্ন তালিকা থেকে সরে যাবে।|With no end time, the post leaves upcoming events 3 hours after it starts.'],
-    ['✏️','যেকোনো সময় বদলানো|Change anytime',
+    ['pen','যেকোনো সময় বদলানো|Change anytime',
      'আমার ইভেন্ট থেকে যেকোনো সময় তথ্য ঠিক করতে বা পোস্ট মুছতে পারবেন।|Edit details or delete the post anytime from My events.'],
-    ['🔒','আপনার তথ্য নিরাপদ|Your details are safe',
+    ['lock','আপনার তথ্য নিরাপদ|Your details are safe',
      'ইমেইল কোথাও প্রকাশ হবে না; শুধু আপনার নাম পোস্টে দেখাবে।|Your email is never shown; only your name appears on the post.']
   ];
   $('#cfTitle').innerHTML='<span class="t">'+T(isEdit?'পরিবর্তন সংরক্ষণের আগে জেনে নিন|Before you save your changes':'পোস্ট করার আগে জেনে নিন|Before you publish')+'</span>';
   $('#cfSub').innerHTML='<span class="t">'+T(isEdit?'আপনার পরিবর্তনগুলো যেভাবে কাজ করবে:|How your changes will work:':'আপনার ইভেন্ট যেভাবে দেখাবে:|How your event will be shown:')+'</span>';
   $('#cfList').innerHTML=items.map(function(it){
-    return '<li><span class="ev-why-i">'+it[0]+'</span><div><b class="t">'+T(it[1])+'</b><small class="t">'+T(it[2])+'</small></div></li>';
+    return '<li><span class="ev-why-i">'+ic(it[0],18)+'</span><div><b class="t">'+T(it[1])+'</b><small class="t">'+T(it[2])+'</small></div></li>';
   }).join('');
   $('#cfOkTxt').textContent=T(isEdit?'ঠিক আছে, সংরক্ষণ করুন|Looks good, save':'ঠিক আছে, পোস্ট করুন|Looks good, post');
   var d=$('#dConfirm');if(!d.open)d.showModal();
