@@ -98,6 +98,7 @@ svg.i{width:1em;height:1em;flex:none;stroke:currentColor;fill:none;stroke-width:
 .ev-card{--c:var(--gold);position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 12px 30px rgba(15,23,42,.07);transition:transform .28s var(--ease),box-shadow .28s var(--ease),border-color .28s;animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0)*45ms)}
 .ev-card:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 24px 46px -22px color-mix(in srgb,var(--c) 55%,transparent)}
 .ev-card.past{filter:saturate(.45);opacity:.85}
+.ev-card{cursor:pointer}.ev-prev .ev-card{cursor:default}.ev-card .ev-btn{cursor:pointer}
 .ev-poster{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;padding:0;overflow:hidden;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 70%,#000),var(--c));color:#fff;text-align:left}
 .ev-poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
 .ev-card:hover .ev-poster img{transform:scale(1.06)}
@@ -1186,11 +1187,10 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.fillStyle=cmMetal(ctx,PAD+maxW-R(20),H-152,PAD+maxW,H-128,P.metal);cmDiamond(ctx,PAD+maxW-R(6),H-139,R(9));ctx.fill();
     ctx.textAlign='left';ctx.textBaseline='middle';
     ctx.font=F(700,32,SERIF);cmLS(ctx,4);
-    var bw=ctx.measureText('DCUCORE').width;
-    ctx.fillStyle=cmMetal(ctx,PAD,H-110,PAD+bw,H-74,P.metal);ctx.fillText('DCUCORE',PAD,H-92);
+    var domain='dcucore.vercel.app';
+    var bw=ctx.measureText(domain).width;
+    ctx.fillStyle=cmMetal(ctx,PAD,H-110,PAD+bw,H-74,P.metal);ctx.fillText(domain,PAD,H-92);
     cmLS(ctx,0);
-    ctx.font=F(500,30);ctx.fillStyle=P.ink2;
-    ctx.fillText('  ·  '+T('ক্যাম্পাস ইভেন্ট হাব|Campus Event Hub'),PAD+bw,H-92);
 
     /* double gold frame */
     cmRR(ctx,26,26,W-52,H-52,34);ctx.lineWidth=3;ctx.strokeStyle=cmMetal(ctx,0,0,W,H,P.metal);ctx.stroke();
@@ -1426,6 +1426,8 @@ document.addEventListener('click',function(e){
     else if(act==='reset')resetFilters();
     else if(act==='post')openPost();
     return}
+  var evc=t.closest('.ev-card');
+  if(evc&&!evc.closest('.ev-prev')&&!t.closest('a,button,input,select,textarea,label')){var cid=evc.getAttribute('data-id');if(cid){openDetail(cid);return}}
   var d=t.closest('[data-d]');
   if(d&&curId){var k=d.getAttribute('data-d');
     if(k==='go')toggleGo(curId);else if(k==='save')toggleSave(curId);else if(k==='share')doShare(curId);
