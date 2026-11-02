@@ -170,6 +170,24 @@ dialog.ev-dlg::backdrop{background:rgba(6,16,32,.62);backdrop-filter:blur(4px)}
 .ev-i a{color:var(--gold-deep);font-weight:700}
 .ev-desc{white-space:pre-line;word-break:break-word;color:var(--ink);font-size:15.5px;line-height:1.75}
 .ev-actions{display:flex;flex-wrap:wrap;gap:8px}
+.ev-rdlg{width:min(480px,calc(100vw - 20px))}
+.ev-rep-in{padding:28px 24px 22px;display:flex;flex-direction:column;gap:14px}
+.ev-rep-hd{text-align:center;padding-top:6px}
+.ev-rep-ico{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:18px;background:var(--brand-grad);font-size:26px;box-shadow:0 12px 24px -12px rgba(185,138,44,.8)}
+.ev-rep-t{margin:12px 0 4px;font-size:20px;font-weight:800;color:var(--ink)}
+.ev-rep-s{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.ev-rep-opts{display:grid;gap:8px}
+.ev-ropt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 14px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-weight:600;font-size:14.5px;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.ev-ropt:hover{border-color:var(--gold);transform:translateX(2px)}
+.ev-ropt .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex:none;display:grid;place-items:center}
+.ev-ropt[aria-checked=true]{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--surface))}
+.ev-ropt[aria-checked=true] .dot{border-color:var(--gold-deep);background:var(--brand-grad)}
+.ev-ropt[aria-checked=true] .dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--navy)}
+.ev-rep-note{width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;background:var(--surface-2);color:var(--ink);resize:vertical}
+.ev-rep-note:focus{outline:none;border-color:var(--gold)}
+.ev-rep-ft{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.ev-rep-ft .ev-btn{flex:1;min-width:140px}
+.ev-rep-ft .ev-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 .ev-rep{align-self:flex-start;background:none;border:0;color:var(--ink-2);font-size:12.5px;text-decoration:underline;padding:2px}
 .ev-form{display:grid;grid-template-columns:1.25fr 1fr;gap:0}
 .ev-form form{padding:24px;display:flex;flex-direction:column;gap:2px}
@@ -375,6 +393,24 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <!-- ===== Detail dialog ===== -->
 <dialog class="ev-dlg" id="dDetail" aria-labelledby="dTitle"><div class="ev-dlg-in" id="dBody"></div></dialog>
 
+<!-- ===== Report dialog ===== -->
+<dialog class="ev-dlg ev-rdlg" id="dReport" aria-labelledby="rTitle">
+  <button type="button" class="ev-x" data-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="ev-dlg-in ev-rep-in">
+    <div class="ev-rep-hd">
+      <span class="ev-rep-ico" aria-hidden="true">🚩</span>
+      <h2 id="rTitle" class="ev-rep-t"></h2>
+      <p class="ev-rep-s" id="rSub"></p>
+    </div>
+    <div class="ev-rep-opts" id="rOpts" role="radiogroup"></div>
+    <textarea id="rNote" class="ev-rep-note" rows="3" maxlength="300"></textarea>
+    <div class="ev-rep-ft">
+      <button type="button" class="ev-btn ghost" data-close id="rCancel"></button>
+      <button type="button" class="ev-btn" id="rSend" disabled></button>
+    </div>
+  </div>
+</dialog>
+
 <!-- ===== Share card maker ===== -->
 <dialog class="ev-dlg" id="dCard" aria-labelledby="cmTitle">
   <button type="button" class="ev-x" data-cm-close aria-label="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
@@ -548,6 +584,15 @@ top.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'
  *          && math.abs(request.resource.data.going - resource.data.going) <= 1
  *          && math.abs(request.resource.data.reports - resource.data.reports) <= 1;
  *      allow delete: if false;   // মোছা শুধু অ্যাডমিন (Console) থেকে
+ *    }
+ *
+ *    match /reports/{reportId} {
+ *      allow create: if request.resource.data.keys().hasOnly(['eventId','reason','note','createdMs'])
+ *          && request.resource.data.eventId is string && request.resource.data.eventId.size() <= 200
+ *          && request.resource.data.reason in ['date','venue','fake','abuse','other']
+ *          && request.resource.data.note is string && request.resource.data.note.size() <= 300
+ *          && math.abs(request.resource.data.createdMs - request.time.toMillis()) < 60000;
+ *      allow read, update, delete: if false;   // পড়া শুধু অ্যাডমিন (Console) থেকে
  *    }
  * ===================================================================== */
 (function(){
@@ -976,12 +1021,45 @@ function toggleSave(id){
   toast(S.saved[id]?T('সেভ করা হয়েছে|Saved'):T('সেভ থেকে সরানো হয়েছে|Removed from saved'));
   refresh();if($('#dDetail').open&&curId===id)openDetail(id,true);
 }
-async function doReport(id){
-  if(!confirm(T('এই ইভেন্টটি কি ভুল বা বিভ্রান্তিকর? রিপোর্ট করলে এটি আপনার কাছ থেকে লুকিয়ে যাবে।|Is this event wrong or misleading? Reporting hides it from you.')))return;
-  S.reported[id]=1;safeSet('dcuEv_rep',S.reported);
-  try{await storeBump(id,'reports',1)}catch(x){}
-  $('#dDetail').close();toast(T('রিপোর্ট পাঠানো হয়েছে, ধন্যবাদ|Report sent, thank you'));refresh();renderNext();
+var REP_REASONS=[
+  {k:'date',  bn:'ভুল তারিখ বা সময়',       en:'Wrong date or time'},
+  {k:'venue', bn:'ভুল ভেন্যু বা ঠিকানা',    en:'Wrong venue or address'},
+  {k:'fake',  bn:'ভুয়া বা প্রতারণামূলক',     en:'Fake or scam'},
+  {k:'abuse', bn:'আপত্তিকর বা অশোভন বিষয়',   en:'Offensive or inappropriate'},
+  {k:'other', bn:'অন্য কোনো কারণ',           en:'Something else'}
+];
+var repId=null,repSel=null;
+function openReport(id){
+  repId=id;repSel=null;
+  $('#rTitle').textContent=T('ইভেন্ট রিপোর্ট করুন|Report this event');
+  $('#rSub').textContent=T('কোন সমস্যা পেয়েছেন জানান। আমরা যাচাই করে ব্যবস্থা নেব।|Tell us what is wrong. We will review it and take action.');
+  $('#rNote').placeholder=T('বিস্তারিত লিখুন (ঐচ্ছিক)|Add details (optional)');
+  $('#rCancel').textContent=T('বাতিল|Cancel');
+  $('#rSend').textContent=T('রিপোর্ট পাঠান|Send report');
+  $('#rSend').disabled=true;$('#rNote').value='';
+  $('#rOpts').innerHTML=REP_REASONS.map(function(r){
+    return '<button type="button" class="ev-ropt" role="radio" aria-checked="false" data-r="'+r.k+'"><span class="dot"></span><span>'+esc(T(r.bn+'|'+r.en))+'</span></button>'
+  }).join('');
+  var d=$('#dReport');if(!d.open)d.showModal();
 }
+$('#rOpts').addEventListener('click',function(e){
+  var b=e.target.closest('[data-r]');if(!b)return;
+  repSel=b.getAttribute('data-r');
+  $$('#rOpts .ev-ropt').forEach(function(x){x.setAttribute('aria-checked',x===b?'true':'false')});
+  $('#rSend').disabled=false;
+});
+$('#rSend').addEventListener('click',async function(){
+  if(!repId||!repSel)return;
+  var id=repId,note=$('#rNote').value.trim();
+  S.reported[id]={r:repSel,n:note,t:Date.now()};safeSet('dcuEv_rep',S.reported);
+  try{await storeBump(id,'reports',1)}catch(x){}
+  if(S.mode==='live'){try{await S.fb.addDoc(S.fb.collection(S.db,'reports'),{eventId:String(id).slice(0,200),reason:repSel,note:note.slice(0,300),createdMs:Date.now()})}catch(x){}}
+  $('#dReport').close();
+  if($('#dDetail').open)$('#dDetail').close();
+  toast(T('রিপোর্ট পাঠানো হয়েছে, ধন্যবাদ|Report sent, thank you'));
+  refresh();renderNext();
+});
+function doReport(id){openReport(id)}
 
 /* ---------------- শেয়ার কার্ড মেকার ---------------- */
 var CM={id:null,fmt:'story',theme:'auto',status:'go',name:'',cap:'',capEdited:false,img:null};
@@ -1186,11 +1264,13 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.fillStyle=ln;ctx.fillRect(PAD,H-140,maxW-R(14),2);
     ctx.fillStyle=cmMetal(ctx,PAD+maxW-R(20),H-152,PAD+maxW,H-128,P.metal);cmDiamond(ctx,PAD+maxW-R(6),H-139,R(9));ctx.fill();
     ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.font=F(700,32,SERIF);cmLS(ctx,4);
-    var domain='dcucore.vercel.app';
-    var bw=ctx.measureText(domain).width;
-    ctx.fillStyle=cmMetal(ctx,PAD,H-110,PAD+bw,H-74,P.metal);ctx.fillText(domain,PAD,H-92);
+    var domain='dcucore.vercel.app'.toLowerCase();
+    ctx.font=F(800,46,SERIF);cmLS(ctx,2);ctx.textAlign='center';
+    var bw=ctx.measureText(domain).width,fx=W/2-bw/2;
+    ctx.fillStyle=cmMetal(ctx,fx,H-112,fx+bw,H-72,P.metal);ctx.fillText(domain,W/2,H-92);
     cmLS(ctx,0);
+    ctx.fillStyle=cmMetal(ctx,fx,H-62,fx+bw,H-58,P.metal);ctx.fillRect(fx,H-62,bw,3);
+    ctx.textAlign='left';
 
     /* double gold frame */
     cmRR(ctx,26,26,W-52,H-52,34);ctx.lineWidth=3;ctx.strokeStyle=cmMetal(ctx,0,0,W,H,P.metal);ctx.stroke();
