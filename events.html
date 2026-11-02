@@ -411,6 +411,28 @@ dialog.ev-rdlg{width:min(560px,calc(100vw - 20px))}
     -webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
   .ev-chips::-webkit-scrollbar{display:none}
 }
+
+/* ---------------- ফিল্টার: ড্রপডাউন বক্স ---------------- */
+#campusChips.ev-chips,#catChips.ev-chips{display:grid;grid-template-columns:1fr 1fr;gap:14px;overflow:visible;padding:10px 2px 6px;-webkit-mask-image:none;mask-image:none}
+.ev-flt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ev-flt small{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+.ev-fsel{appearance:none;-webkit-appearance:none;width:100%;min-height:46px;box-sizing:border-box;padding:10px 42px 10px 16px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B98A2C' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 16px center;background-size:14px;font:inherit;font-size:14.5px;font-weight:600;color:var(--ink);cursor:pointer;text-overflow:ellipsis;transition:border-color .2s,box-shadow .2s}
+.ev-fsel:hover{border-color:var(--gold)}
+.ev-fsel:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.22)}
+@media (max-width:640px){
+  #campusChips.ev-chips,#catChips.ev-chips{grid-template-columns:1fr;gap:12px}
+}
+
+/* ---------------- যাচাইকৃত আয়োজক: প্রিমিয়াম সিল ---------------- */
+.ev-badge.vb{position:relative;overflow:hidden;gap:6px;padding:4px 12px 4px 6px;color:#0B1F3A;background:linear-gradient(135deg,#FFF3C4 0%,#E8C46C 48%,#D4AF37 100%);border:1px solid rgba(185,138,44,.7);box-shadow:0 6px 16px -8px rgba(185,138,44,.9),inset 0 1px 0 rgba(255,255,255,.6);font-weight:800;letter-spacing:.01em}
+.ev-badge.vb::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);animation:vshine 4.5s ease-in-out infinite}
+@keyframes vshine{0%,70%{left:-60%}100%{left:130%}}
+.ev-badge.vb .vseal{width:18px;height:18px;flex:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+html[data-theme=dark] .ev-badge.vb{color:#0B1F3A;background:linear-gradient(135deg,#FFF3C4 0%,#E8C46C 48%,#D4AF37 100%);border-color:rgba(246,223,168,.8)}
+.vtick{display:inline-flex;vertical-align:-4px;margin-left:2px}
+.vtick .vseal{width:16px;height:16px}
+.ev-cell .vtick .vseal{width:16px;height:16px}
+@media (prefers-reduced-motion:reduce){.ev-badge.vb::after{animation:none;display:none}}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -996,7 +1018,8 @@ function posterHTML(e,cat){
   var img=/^data:image\/(jpeg|png|webp);base64,/.test(e.poster||'')||/^https:\/\/firebasestorage\.googleapis\.com\//.test(e.poster||'');
   return (img?'<img src="'+esc(e.poster)+'" alt="" loading="lazy" decoding="async">':'')+(img?'':'<span class="em" aria-hidden="true">'+cat.em+'</span>');
 }
-function vBadge(){return '<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>'}
+var VSEAL='<svg class="vseal" viewBox="0 0 24 24" aria-hidden="true"><path fill="#E8C46C" stroke="#B98A2C" stroke-width=".5" d="M22.90 12.00 L22.83 12.38 L22.64 12.74 L22.36 13.09 L22.03 13.41 L21.70 13.71 L21.42 14.00 L21.23 14.30 L21.15 14.62 L21.16 14.98 L21.26 15.37 L21.39 15.79 L21.52 16.24 L21.59 16.68 L21.57 17.09 L21.44 17.45 L21.19 17.74 L20.84 17.97 L20.43 18.12 L19.98 18.23 L19.55 18.33 L19.16 18.45 L18.84 18.61 L18.61 18.84 L18.45 19.16 L18.33 19.55 L18.23 19.98 L18.12 20.43 L17.97 20.84 L17.74 21.19 L17.45 21.44 L17.09 21.57 L16.68 21.59 L16.24 21.52 L15.79 21.39 L15.37 21.26 L14.98 21.16 L14.62 21.15 L14.30 21.23 L14.00 21.42 L13.71 21.70 L13.41 22.03 L13.09 22.36 L12.74 22.64 L12.38 22.83 L12.00 22.90 L11.62 22.83 L11.26 22.64 L10.91 22.36 L10.59 22.03 L10.29 21.70 L10.00 21.42 L9.70 21.23 L9.38 21.15 L9.02 21.16 L8.63 21.26 L8.21 21.39 L7.76 21.52 L7.32 21.59 L6.91 21.57 L6.55 21.44 L6.26 21.19 L6.03 20.84 L5.88 20.43 L5.77 19.98 L5.67 19.55 L5.55 19.16 L5.39 18.84 L5.16 18.61 L4.84 18.45 L4.45 18.33 L4.02 18.23 L3.57 18.12 L3.16 17.97 L2.81 17.74 L2.56 17.45 L2.43 17.09 L2.41 16.68 L2.48 16.24 L2.61 15.79 L2.74 15.37 L2.84 14.98 L2.85 14.62 L2.77 14.30 L2.58 14.00 L2.30 13.71 L1.97 13.41 L1.64 13.09 L1.36 12.74 L1.17 12.38 L1.10 12.00 L1.17 11.62 L1.36 11.26 L1.64 10.91 L1.97 10.59 L2.30 10.29 L2.58 10.00 L2.77 9.70 L2.85 9.38 L2.84 9.02 L2.74 8.63 L2.61 8.21 L2.48 7.76 L2.41 7.32 L2.43 6.91 L2.56 6.55 L2.81 6.26 L3.16 6.03 L3.57 5.88 L4.02 5.77 L4.45 5.67 L4.84 5.55 L5.16 5.39 L5.39 5.16 L5.55 4.84 L5.67 4.45 L5.77 4.02 L5.88 3.57 L6.03 3.16 L6.26 2.81 L6.55 2.56 L6.91 2.43 L7.32 2.41 L7.76 2.48 L8.21 2.61 L8.63 2.74 L9.02 2.84 L9.38 2.85 L9.70 2.77 L10.00 2.58 L10.29 2.30 L10.59 1.97 L10.91 1.64 L11.26 1.36 L11.62 1.17 L12.00 1.10 L12.38 1.17 L12.74 1.36 L13.09 1.64 L13.41 1.97 L13.71 2.30 L14.00 2.58 L14.30 2.77 L14.62 2.85 L14.98 2.84 L15.37 2.74 L15.79 2.61 L16.24 2.48 L16.68 2.41 L17.09 2.43 L17.45 2.56 L17.74 2.81 L17.97 3.16 L18.12 3.57 L18.23 4.02 L18.33 4.45 L18.45 4.84 L18.61 5.16 L18.84 5.39 L19.16 5.55 L19.55 5.67 L19.98 5.77 L20.43 5.88 L20.84 6.03 L21.19 6.26 L21.44 6.55 L21.57 6.91 L21.59 7.32 L21.52 7.76 L21.39 8.21 L21.26 8.63 L21.16 9.02 L21.15 9.38 L21.23 9.70 L21.42 10.00 L21.70 10.29 L22.03 10.59 L22.36 10.91 L22.64 11.26 L22.83 11.62 Z"/><path d="M8 12.4l2.7 2.7L16.2 9.6" fill="none" stroke="#0B1F3A" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function vBadge(){return '<span class="ev-badge vb">'+VSEAL+'<span>'+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span></span>'}
 function durTxt(e){
   if(!e.endMs)return '';
   var h=(e.endMs-e.startMs)/36e5;
@@ -1015,14 +1038,14 @@ function cardHTML(e,i,preview){
     '<button type="button" class="ev-poster" data-act="open" aria-label="'+esc(e.title)+'">'+posterHTML(e,cat)+
       '<span class="ev-date"><b>'+fmtDay(e.startMs,{day:'numeric'})+'</b><i>'+fmtDay(e.startMs,{month:'short'})+'</i></span>'+flag+'</button>'+
     '<div class="ev-body">'+
-      '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">✓ '+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span>':'')+'</div>'+
+      '<div class="ev-badges"><span class="ev-badge">'+cat.em+' '+esc(nm(cat,'l'))+'</span><span class="ev-badge cp">'+esc(nm(cp,'s'))+'</span>'+(e.authorVerified?'<span class="ev-badge vb">'+VSEAL+'<span>'+esc(T('যাচাইকৃত আয়োজক|Verified organizer'))+'</span></span>':'')+'</div>'+
       '<h3><button type="button" data-act="open">'+esc(e.title)+'</button></h3>'+
       (function(){
         var c=[],du=durTxt(e);
         function cell(l,v,full){c.push('<div class="ev-cell'+(full?' full':'')+'"><small>'+esc(T(l))+'</small><b>'+v+'</b></div>')}
         cell('তারিখ ও সময়|Date & time',esc(fmtDay(e.startMs,{weekday:'short',day:'numeric',month:'short'})+' · '+t1),true);
         cell('স্থান|Venue',esc(e.venue),true);
-        if(e.organizer)cell('আয়োজক|Organizer',esc(e.organizer)+(e.authorVerified?' <span class="vtick">✓</span>':''));
+        if(e.organizer)cell('আয়োজক|Organizer',esc(e.organizer)+(e.authorVerified?' <span class="vtick">'+VSEAL+'</span>':''));
         if(du)cell('সময়কাল|Duration',esc(du));
         if(e.audience)cell('কাদের জন্য|Open to',esc(e.audience),true);
         if(okUrl(e.link))cell('নিবন্ধন|Registration',esc(T('প্রয়োজন|Required')));
@@ -1082,13 +1105,23 @@ function renderChips(){
   var base=visibleBase().filter(function(e){return endOf(e)>=S.now});
   var cc={},tc={};
   base.forEach(function(e){cc[e.campus]=(cc[e.campus]||0)+1;tc[e.cat]=(tc[e.cat]||0)+1});
-  var h='<button type="button" class="ev-chip" data-campus="" aria-pressed="'+(!S.f.campus)+'">'+T('সব ক্যাম্পাস|All campuses')+' <span class="n">'+nf(base.length)+'</span></button>';
-  CAMPUSES.slice(1).forEach(function(c){h+='<button type="button" class="ev-chip" data-campus="'+c.id+'" aria-pressed="'+(S.f.campus===c.id)+'">'+esc(nm(c,'l'))+(cc[c.id]?' <span class="n">'+nf(cc[c.id])+'</span>':'')+'</button>'});
+  var h='<label class="ev-flt"><small>'+T('ক্যাম্পাস|Campus')+'</small><select id="fltCampus" class="ev-fsel">'+
+    '<option value=""'+(!S.f.campus?' selected':'')+'>'+esc(T('সব ক্যাম্পাস|All campuses'))+' ('+nf(base.length)+')</option>'+
+    CAMPUSES.slice(1).map(function(c){return '<option value="'+c.id+'"'+(S.f.campus===c.id?' selected':'')+'>'+esc(nm(c,'l'))+(cc[c.id]?' ('+nf(cc[c.id])+')':'')+'</option>'}).join('')+
+    '</select></label>';
   $('#campusChips').innerHTML=h;
-  h='<button type="button" class="ev-chip" data-cat="" aria-pressed="'+(!S.f.cat)+'">'+T('সব ধরন|All types')+'</button>';
-  CATS.forEach(function(c){h+='<button type="button" class="ev-chip" data-cat="'+c.id+'" aria-pressed="'+(S.f.cat===c.id)+'"><span class="dot" style="--c:'+c.c+'"></span>'+c.em+' '+esc(nm(c,'l'))+(tc[c.id]?' <span class="n">'+nf(tc[c.id])+'</span>':'')+'</button>'});
+  h='<label class="ev-flt"><small>'+T('ধরন|Type')+'</small><select id="fltCat" class="ev-fsel">'+
+    '<option value=""'+(!S.f.cat?' selected':'')+'>'+esc(T('সব ধরন|All types'))+' ('+nf(base.length)+')</option>'+
+    CATS.map(function(c){return '<option value="'+c.id+'"'+(S.f.cat===c.id?' selected':'')+'>'+c.em+' '+esc(nm(c,'l'))+(tc[c.id]?' ('+nf(tc[c.id])+')':'')+'</option>'}).join('')+
+    '</select></label>';
   $('#catChips').innerHTML=h;
 }
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.id==='fltCampus'){S.f.campus=t.value;S.shown=CFG.pageSize;refresh()}
+  else if(t.id==='fltCat'){S.f.cat=t.value;S.shown=CFG.pageSize;refresh()}
+});
+
 function renderSelects(){
   var w=[['upcoming','সব আসন্ন|All upcoming'],['today','আজ|Today'],['week','আগামী ৭ দিন|Next 7 days'],['month','আগামী ৩০ দিন|Next 30 days'],['past','শেষ হয়েছে|Past']];
   $('#when').innerHTML=w.map(function(x){return '<option value="'+x[0]+'"'+(S.f.when===x[0]?' selected':'')+'>'+T(x[1])+'</option>'}).join('');
@@ -1255,9 +1288,11 @@ $('#rSend').addEventListener('click',async function(){
 function doReport(id){openReport(id)}
 
 /* ---------------- শেয়ার কার্ড মেকার ---------------- */
-var CM={id:null,fmt:'story',theme:'auto',status:'go',name:'',cap:'',capEdited:false,img:null};
+var CM={id:null,fmt:'story',theme:'auto',status:'go',tag:'none',cs:'invite',name:'',cap:'',capEdited:false,img:null};
 var CM_FMT={story:[1080,1920,.4,3],post:[1080,1350,.34,2],square:[1080,1080,.3,2]};
-var CM_ST=[['go','আমি যাচ্ছি|I\'m going'],['will','আমি যাব|I\'ll go'],['int','আগ্রহী|Interested']];
+var CM_ST=[['go','আমি যাচ্ছি|I\'m going'],['will','আমি যাব|I\'ll go'],['inv','আপনাকে আমন্ত্রণ|You are invited'],['int','আগ্রহী|Interested']];
+var CM_TAG=[['none','কোনোটি নয়|None'],['invite','আমন্ত্রণ|Invitation'],['miss','মিস করবেন না|Do not miss it']];
+var CM_CS=[['invite','আমন্ত্রণ|Invitation'],['full','বিস্তারিত|Detailed'],['short','সংক্ষিপ্ত|Short']];
 var CM_FM=[['story','স্টোরি 9:16|Story 9:16'],['post','পোস্ট 4:5|Post 4:5'],['square','বর্গ 1:1|Square 1:1']];
 var CM_TH=[['auto','ক্যাটাগরি|Category'],['gold','সোনালি|Gold'],['light','হালকা|Light']];
 var cmSeq=0,cmRaf=0;
@@ -1270,11 +1305,19 @@ function cmPal(th,cat){
   if(th==='gold')return {lite:false,metal:GD,bg:['#06142A','#0B1F3A'],ink:'#FFFFFF',ink2:'#C4D3E8',a1:'#E8C46C',a2:'#B98A2C',aTxt:'#0B1F3A',panel:'rgba(255,255,255,.07)',line:'rgba(212,175,55,.5)',glow:.4,glowC:'#D4AF37'};
   return {lite:false,metal:GD,bg:['#06142A','#0B1F3A'],ink:'#FFFFFF',ink2:'#C4D3E8',a1:c,a2:cmShade(c,.7),aTxt:'#FFFFFF',panel:'rgba(255,255,255,.07)',line:'rgba(212,175,55,.5)',glow:.45,glowC:c};
 }
-function cmStatusTxt(s){return s==='will'?T('আমি যাব|I\'ll go'):s==='int'?T('আগ্রহী|Interested'):T('আমি যাচ্ছি|I\'m going')}
+function cmStatusTxt(s){return s==='will'?T('আমি যাব|I\'ll go'):s==='int'?T('আগ্রহী|Interested'):s==='inv'?T('আপনাকে আমন্ত্রণ|You are invited'):T('আমি যাচ্ছি|I\'m going')}
 function cmCaption(){
   var e=byId(CM.id);if(!e)return '';
-  var time=timeStr(e.startMs)+(e.endMs?' – '+timeStr(e.endMs):''),who=CM.name.trim(),s=cmStatusTxt(CM.status);
-  return (who?who+' — '+s:s)+'! 🎉\n\n'+e.title+'\n📅 '+longDate(e.startMs)+', '+time+'\n📍 '+e.venue+'\n\n'+shareUrl(e.id);
+  var time=timeStr(e.startMs)+(e.endMs?' – '+timeStr(e.endMs):''),who=CM.name.trim(),s=cmStatusTxt(CM.status),date=longDate(e.startMs),url=shareUrl(e.id);
+  var org=e.organizer?'\n👥 '+T('আয়োজক|Organizer')+': '+e.organizer:'';
+  var aud=e.audience?'\n🎓 '+T('কাদের জন্য|Open to')+': '+e.audience:'';
+  var reg=okUrl(e.link)?'\n📝 '+T('রেজিস্ট্রেশন|Register')+': '+e.link:'';
+  if(CM.cs==='short')return (who?who+' — ':'')+s+'! 🎉 '+e.title+' · '+date+'\n'+url;
+  if(CM.cs==='invite'){
+    var hi=who?who+' '+T('আপনাকে আমন্ত্রণ জানাচ্ছে!|invites you!'):T('🌟 আপনাকে সাদরে আমন্ত্রণ জানাচ্ছি!|🌟 You are warmly invited!');
+    return hi+'\n\n'+e.title+'\n🗓️ '+date+', '+time+'\n📍 '+e.venue+org+aud+reg+'\n\n'+T('আসুন, একসাথে স্মরণীয় করে তুলি! 🤝|Join us and make it memorable! 🤝')+'\n\n'+url+'\n#DCUCore';
+  }
+  return (who?who+' — '+s:s)+'! 🎉\n\n'+e.title+'\n📅 '+date+', '+time+'\n📍 '+e.venue+org+aud+reg+(e.desc?'\n\n'+e.desc.slice(0,160)+(e.desc.length>160?'…':''):'')+'\n\n'+url+'\n#DCUCore';
 }
 async function cmFonts(){try{await Promise.all([document.fonts.load('700 40px "Hind Siliguri"'),document.fonts.load('500 40px "Hind Siliguri"'),document.fonts.load('700 40px Cinzel')])}catch(x){}}
 function cmLoadImg(src){return new Promise(function(res){if(!src)return res(null);var im=new Image();im.crossOrigin='anonymous';im.onload=function(){res(im)};im.onerror=function(){res(null)};im.src=src})}
@@ -1376,7 +1419,7 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.font=F(700,40);ctx.fillStyle=P.ink;
     ctx.fillText(cmFit(ctx,nm(cp,'l'),cw),cx,PH+R(64));
 
-    chip(PAD,58,'DCUCORE',F(700,28,SERIF),'#F6DFA8','left',4);
+    chip(PAD,58,'dcucore',F(700,30),'#F6DFA8','left',2);
     chip(W-PAD,58,cat.em+' '+nm(cat,'l'),F(600,28),'#FFFFFF','right');
   }
 
@@ -1392,6 +1435,7 @@ function cmDraw(ctx,W,H,st,dry){
   y+=tl.length*tlh+R(28);
 
   var rows=[['📅',longDate(e.startMs)+' · '+time],['📍',e.venue]];
+  if(e.startMs>Date.now())rows.push(['⏳',relText(e,Date.now())]);
   rows.forEach(function(r){
     ctx.font=F(500,40);
     var txt=cmFit(ctx,r[1],maxW-R(76));
@@ -1420,7 +1464,7 @@ function cmDraw(ctx,W,H,st,dry){
     cmRR(ctx,PAD,y,maxW,ph,R(28));ctx.fillStyle=pf;ctx.fill();
     ctx.lineWidth=Math.max(2,R(2.5));ctx.strokeStyle=cmMetal(ctx,PAD,y,PAD+maxW,y+ph,P.metal);ctx.stroke();
     ctx.font=F(600,26);ctx.fillStyle=P.a1;ctx.textAlign='left';ctx.textBaseline='top';
-    ctx.fillText(T('উপস্থিতি|Attending'),PAD+R(40),y+R(32));
+    ctx.fillText(st.tag==='invite'?T('আপনি আমন্ত্রিত|You are invited'):st.tag==='miss'?T('মিস করবেন না|Do not miss it'):T('উপস্থিতি|Attending'),PAD+R(40),y+R(32));
   }
   ctx.font=F(700,80);
   var head=cmFit(ctx,hasN?who:statusTxt,maxW-R(240));
@@ -1457,8 +1501,8 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.fillStyle=ln;ctx.fillRect(PAD,H-140,maxW-R(14),2);
     ctx.fillStyle=cmMetal(ctx,PAD+maxW-R(20),H-152,PAD+maxW,H-128,P.metal);cmDiamond(ctx,PAD+maxW-R(6),H-139,R(9));ctx.fill();
     ctx.textAlign='left';ctx.textBaseline='middle';
-    var domain='dcucore.vercel.app'.toLowerCase();
-    ctx.font=F(800,46,SERIF);cmLS(ctx,2);ctx.textAlign='center';
+    var domain='dcucore.vercel.app';
+    ctx.font=F(800,46);cmLS(ctx,1);ctx.textAlign='center';
     var bw=ctx.measureText(domain).width,fx=W/2-bw/2;
     ctx.fillStyle=cmMetal(ctx,fx,H-112,fx+bw,H-72,P.metal);ctx.fillText(domain,W/2,H-92);
     cmLS(ctx,0);
@@ -1484,7 +1528,7 @@ function cmRender(){
   var F=CM_FMT[CM.fmt],W=F[0],H=F[1];
   cv.width=W;cv.height=H;
   var cat=CAT[e.cat]||CAT.festival,ctx=cv.getContext('2d');
-  var st={e:e,cat:cat,cp:CAMP[e.campus]||CAMP.all,img:CM.img,name:CM.name.trim(),status:CM.status,pal:cmPal(CM.theme,cat),ph:F[2],k:1,maxL:F[3]};
+  var st={e:e,cat:cat,cp:CAMP[e.campus]||CAMP.all,img:CM.img,name:CM.name.trim(),status:CM.status,tag:CM.tag,pal:cmPal(CM.theme,cat),ph:F[2],k:1,maxL:F[3]};
   for(var i=0;i<16;i++){var b=cmDraw(ctx,W,H,st,true);if(b<=H-160*st.k)break;st.k*=.94}
   cmDraw(ctx,W,H,st,false);
 }
@@ -1502,6 +1546,10 @@ function cmBuild(){
     '<div class="ev-cm-row">'+opt('data-cm-fmt',CM_FM,CM.fmt)+'</div>'+
     '<span class="ev-cm-lab">'+T('থিম|Theme')+'</span>'+
     '<div class="ev-cm-row">'+opt('data-cm-th',CM_TH,CM.theme)+'</div>'+
+    '<span class="ev-cm-lab">'+T('বার্তা|Message')+'</span>'+
+    '<div class="ev-cm-row">'+opt('data-cm-tag',CM_TAG,CM.tag)+'</div>'+
+    '<span class="ev-cm-lab">'+T('ক্যাপশন ধরন|Caption style')+'</span>'+
+    '<div class="ev-cm-row">'+opt('data-cm-cs',CM_CS,CM.cs)+'</div>'+
     '<label class="ev-cm-lab" for="cmCap">'+T('ক্যাপশন (এডিট করা যাবে)|Caption (editable)')+'</label>'+
     '<textarea id="cmCap" rows="4" maxlength="500"></textarea>'+
     '<div class="ev-cm-acts">'+
@@ -1523,6 +1571,8 @@ function cmSync(){
   $$('[data-cm-st]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-cm-st')===CM.status))});
   $$('[data-cm-fmt]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-cm-fmt')===CM.fmt))});
   $$('[data-cm-th]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-cm-th')===CM.theme))});
+  $$('[data-cm-tag]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-cm-tag')===CM.tag))});
+  $$('[data-cm-cs]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-cm-cs')===CM.cs))});
   if(!CM.capEdited)$('#cmCap').value=cmCaption();
   cmLinks();
 }
@@ -1580,6 +1630,8 @@ async function openCard(id){
     if(b=t.closest('[data-cm-st]')){CM.status=b.getAttribute('data-cm-st');cmSync();cmSched();return}
     if(b=t.closest('[data-cm-fmt]')){CM.fmt=b.getAttribute('data-cm-fmt');cmSync();cmSched();return}
     if(b=t.closest('[data-cm-th]')){CM.theme=b.getAttribute('data-cm-th');cmSync();cmSched();return}
+    if(b=t.closest('[data-cm-tag]')){CM.tag=b.getAttribute('data-cm-tag');cmSync();cmSched();return}
+    if(b=t.closest('[data-cm-cs]')){CM.cs=b.getAttribute('data-cm-cs');CM.capEdited=false;cmSync();cmSched();return}
     if(b=t.closest('[data-cm-act]')){cmAct(b.getAttribute('data-cm-act'));return}
   });
   d.addEventListener('input',function(ev){
