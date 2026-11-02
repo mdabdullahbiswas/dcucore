@@ -3,37 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ক্যাম্পাস বাস লাইভ ট্র্যাকার</title>
+  <title>সরকারি বাঙলা কলেজ — কলেজ বাস ট্র্যাকার</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Leaflet -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
-
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: { extend: { fontFamily: { bn: ['"Hind Siliguri"', 'sans-serif'] } } }
-    };
+    tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { bn: ['"Hind Siliguri"', 'sans-serif'] } } } };
   </script>
 
   <style>
-    body {
-      font-family: 'Hind Siliguri', sans-serif;
-      transition: background-color .5s ease, color .5s ease;
-    }
+    body { font-family: 'Hind Siliguri', sans-serif; transition: background-color .5s ease, color .5s ease; }
 
-    /* ---------- Glassmorphism ---------- */
     .glass {
       background: rgba(255, 255, 255, .7);
       border: 1px solid rgba(255, 255, 255, .6);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 10px 30px -12px rgba(15, 23, 42, .25);
       transition: background-color .5s ease, border-color .5s ease, box-shadow .5s ease;
     }
@@ -43,15 +30,9 @@
       box-shadow: 0 20px 40px -18px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .08);
     }
 
-    /* ---------- 3D cards ---------- */
-    .card3d {
-      transform-style: preserve-3d;
-      transition: transform .25s ease, box-shadow .3s ease;
-      will-change: transform;
-    }
+    .card3d { transform-style: preserve-3d; transition: transform .25s ease, box-shadow .3s ease; will-change: transform; }
     .card3d:hover { box-shadow: 0 25px 50px -15px rgba(99, 102, 241, .35); }
 
-    /* ---------- Toggle switch ---------- */
     .switch {
       position: relative; width: 52px; height: 28px; border-radius: 999px;
       background: #94a3b8; transition: background .4s ease; flex-shrink: 0;
@@ -66,7 +47,6 @@
     .switch.on::after { transform: translateX(24px); }
     .switch.theme.on { background: #4f46e5; }
 
-    /* ---------- Buttons ---------- */
     .btn {
       padding: .5rem 1rem; border-radius: .75rem; font-weight: 600; color: #fff;
       background: linear-gradient(135deg, #6366f1, #06b6d4);
@@ -75,8 +55,9 @@
     }
     .btn:hover { filter: brightness(1.1); }
     .btn:active { transform: scale(.96); }
+    .dirBtn { padding: .6rem .8rem; border-radius: .9rem; font-weight: 600; border: 1px solid rgba(148,163,184,.4); transition: all .3s ease; }
+    .dirBtn.active { background: linear-gradient(135deg, #6366f1, #06b6d4); color: #fff; border-color: transparent; box-shadow: 0 6px 16px -6px rgba(99,102,241,.6); }
 
-    /* ---------- Map ---------- */
     .dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.9); }
     .bus-pin { font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .4)); animation: bob 1.2s ease-in-out infinite alternate; }
     @keyframes bob { from { transform: translateY(0); } to { transform: translateY(-4px); } }
@@ -86,23 +67,21 @@
 
 <body class="min-h-screen bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 overflow-x-hidden">
 
-  <!-- Background glow -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden -z-0">
     <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 dark:bg-indigo-600/20 blur-3xl"></div>
     <div class="absolute top-1/2 -right-32 w-96 h-96 rounded-full bg-cyan-400/30 dark:bg-cyan-500/15 blur-3xl"></div>
   </div>
 
-  <!-- Header -->
   <header class="sticky top-0 mx-3 mt-3 rounded-2xl px-4 py-3 glass flex items-center justify-between gap-3" style="z-index:2000">
     <div class="flex items-center gap-3">
       <span class="text-3xl">🚌</span>
       <div>
-        <h1 class="font-bold text-lg leading-tight">ক্যাম্পাস বাস ট্র্যাকার</h1>
-        <p class="text-xs opacity-70">লাইভ লোকেশন • ETA • ভিড়ের অবস্থা</p>
+        <h1 class="font-bold text-lg leading-tight">সরকারি বাঙলা কলেজ — কলেজ বাস</h1>
+        <p class="text-xs opacity-70">লাইভ লোকেশন • ETA • সময়সূচি • ভিড়ের অবস্থা</p>
       </div>
     </div>
     <div class="flex items-center gap-3">
-      <span id="liveBadge" class="hidden sm:inline-block text-xs px-3 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold">সিমুলেশন</span>
+      <span id="liveBadge" class="hidden sm:inline-block text-xs px-3 py-1 rounded-full font-semibold"></span>
       <div class="flex items-center gap-2">
         <span class="text-sm">☀️</span>
         <button id="themeToggle" aria-label="থিম পরিবর্তন" class="switch theme"></button>
@@ -113,13 +92,21 @@
 
   <main class="relative z-10 max-w-7xl mx-auto p-3 md:p-6 grid gap-5 lg:grid-cols-3">
 
-    <!-- Map -->
     <section class="lg:col-span-2 glass card3d rounded-3xl p-3">
       <div id="map" class="h-[440px] md:h-[500px] w-full rounded-2xl"></div>
     </section>
 
-    <!-- Right column cards -->
     <div class="grid gap-5 content-start">
+
+      <!-- Direction -->
+      <div class="card3d glass rounded-3xl p-5">
+        <p class="text-sm opacity-70 mb-3">যাত্রার দিক</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="dirCampus" class="dirBtn">🏫 ক্যাম্পাস → কুড়িল</button>
+          <button id="dirKuril" class="dirBtn">🛣️ কুড়িল → ক্যাম্পাস</button>
+        </div>
+        <p id="dirNote" class="text-xs mt-3 opacity-70"></p>
+      </div>
 
       <!-- Speed & ETA -->
       <div class="card3d glass rounded-3xl p-5">
@@ -155,25 +142,29 @@
         </div>
       </div>
 
-      <!-- Location sharing -->
+      <!-- Driver share + demo -->
       <div class="card3d glass rounded-3xl p-5">
         <div class="flex items-center justify-between gap-3">
           <p class="font-semibold">লোকেশন শেয়ার (ড্রাইভার)</p>
           <button id="shareToggle" class="switch" aria-label="লোকেশন শেয়ার"></button>
         </div>
-        <p id="shareState" class="text-sm mt-2 opacity-80">বন্ধ — সিমুলেশন চলছে</p>
+        <p id="shareState" class="text-sm mt-2 opacity-80"></p>
         <p id="coords" class="text-xs mt-2 font-mono opacity-70"></p>
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <p class="text-xs opacity-70">ডেমো মোড (সময় দ্রুত চলবে)</p>
+          <button id="demoToggle" class="switch" aria-label="ডেমো মোড"></button>
+        </div>
         <p class="text-xs mt-3 opacity-60">
-          টিপস: এই পেজটি দুই ট্যাবে খুলুন। একটিতে শেয়ার চালু করলে অন্যটিতে বাসের লোকেশন রিয়েল-টাইমে আপডেট হবে।
+          টিপস: বাস সাধারণত সকাল ৬:৪৫ থেকে ৮:৩০-এর মধ্যে চলে। বাইরের সময়ে বাস দেখতে ডেমো মোড চালু করুন।
         </p>
       </div>
     </div>
 
-    <!-- Stop timeline -->
+    <!-- Timetable -->
     <section class="lg:col-span-3 glass card3d rounded-3xl p-5">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="font-semibold text-lg">স্টপ সমূহ ও ETA</h2>
-        <span class="text-xs opacity-60">রুট: লুপ (চক্রাকার)</span>
+      <div class="flex items-center justify-between mb-4 gap-3">
+        <h2 class="font-semibold text-lg">স্টপ সমূহ, সময়সূচি ও ETA</h2>
+        <span id="dirLabel" class="text-xs opacity-60"></span>
       </div>
       <div id="timeline" class="flex gap-3 overflow-x-auto pb-2"></div>
     </section>
@@ -181,30 +172,52 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl glass text-sm font-medium opacity-0 translate-y-4 transition-all duration-500 pointer-events-none" style="z-index:3000"></div>
 
-  <!-- Leaflet -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
   <script>
   (() => {
     /* ===================== CONFIG ===================== */
-    const KEY = 'campusBus:live';        // shared "database" key (localStorage)
+    const KEY = 'campusBus:live';
     const THEME_KEY = 'campusBus:theme';
-    const CAP = 40;                       // bus capacity
+    const CAP = 40;
     const EARTH_R = 6371000;
+    const BN = '০১২৩৪৫৬৭৮৯';
 
-    // Demo coordinates — আপনার ক্যাম্পাসের আসল কোঅর্ডিনেট দিয়ে বদলে নিন
+    /* ---- Stops (সরকারি বাঙলা কলেজ, মিরপুর, ঢাকা — আনুমানিক কোঅর্ডিনেট, Google Maps দিয়ে যাচাই করুন) ---- */
     const STOPS = [
-      { name: 'প্রধান ফটক',        lat: 23.7335, lng: 90.3918 },
-      { name: 'প্রশাসনিক ভবন',     lat: 23.7349, lng: 90.3931 },
-      { name: 'লাইব্রেরি',          lat: 23.7362, lng: 90.3946 },
-      { name: 'বিজ্ঞান ভবন',       lat: 23.7371, lng: 90.3964 },
-      { name: 'ছাত্র হল',          lat: 23.7356, lng: 90.3985 },
-      { name: 'ক্যাফেটেরিয়া',      lat: 23.7340, lng: 90.3972 },
-      { name: 'খেলার মাঠ',         lat: 23.7322, lng: 90.3950 }
+      { name: 'ক্যাম্পাস',          lat: 23.7937, lng: 90.3541 }, // 0
+      { name: 'মিরপুর-১',           lat: 23.7968, lng: 90.3525 }, // 1
+      { name: 'মিরপুর-২',           lat: 23.8013, lng: 90.3608 }, // 2
+      { name: 'মিরপুর-৬',           lat: 23.8075, lng: 90.3665 }, // 3
+      { name: 'মিরপুর-১১',          lat: 23.8170, lng: 90.3667 }, // 4
+      { name: 'কালসী',              lat: 23.8222, lng: 90.3760 }, // 5
+      { name: 'ইসিবি চত্বর',        lat: 23.8155, lng: 90.3935 }, // 6
+      { name: 'মাটিকাটা',           lat: 23.8178, lng: 90.4040 }, // 7
+      { name: 'কুর্মিটোলা',         lat: 23.8185, lng: 90.4142 }, // 8
+      { name: 'কুড়িল বিশ্বরোড',    lat: 23.8175, lng: 90.4230 }  // 9
     ];
-    const ROUTE = [...STOPS, STOPS[0]];   // closed loop
 
-    /* ===================== GEO HELPERS ===================== */
+    /* ---- Official timetable (বিজ্ঞপ্তি ২১-০৯-২০২৫) ---- */
+    const DIRS = {
+      campus: {
+        label: 'ক্যাম্পাস → কুড়িল বিশ্বরোড',
+        color: '#22d3ee',
+        seq: [[0,'06:45'],[1,'06:50'],[2,'06:55'],[3,'07:00'],[4,'07:05'],
+              [5,'07:10'],[6,'07:15'],[7,'07:20'],[8,'07:25'],[9,'07:30']]
+      },
+      kuril: {
+        label: 'কুড়িল বিশ্বরোড → ক্যাম্পাস',
+        color: '#f59e0b',
+        seq: [[9,'07:40'],[8,'07:45'],[7,'07:50'],[6,'07:55'],[5,'08:00'],
+              [4,'08:10'],[3,'08:15'],[2,'08:20'],[1,'08:25'],[0,'08:30']]
+      }
+    };
+
+    /* ===================== HELPERS ===================== */
+    const bn = s => String(s).replace(/\d/g, d => BN[d]);
+    const pad = n => String(n).padStart(2, '0');
+    const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+    const fmtMin = m => { const h = Math.floor(m / 60) % 24, mm = Math.floor(m % 60); return bn(pad(h) + ':' + pad(mm)); };
     const toRad = d => d * Math.PI / 180;
     const hav = (a, b) => {
       const dLat = toRad(b.lat - a.lat), dLng = toRad(b.lng - a.lng);
@@ -212,57 +225,58 @@
       return 2 * EARTH_R * Math.asin(Math.sqrt(x));
     };
 
-    // cumulative distance along route
-    const cum = [0];
-    for (let i = 1; i < ROUTE.length; i++) cum[i] = cum[i - 1] + hav(ROUTE[i - 1], ROUTE[i]);
-    const TOTAL = cum[cum.length - 1];
-    const stopCum = STOPS.map((_, i) => cum[i]);
-
-    function posAt(d) {
-      let i = 0;
-      while (i < ROUTE.length - 2 && cum[i + 1] <= d) i++;
-      const seg = (cum[i + 1] - cum[i]) || 1;
-      const t = (d - cum[i]) / seg;
-      return {
-        lat: ROUTE[i].lat + (ROUTE[i + 1].lat - ROUTE[i].lat) * t,
-        lng: ROUTE[i].lng + (ROUTE[i + 1].lng - ROUTE[i].lng) * t
-      };
+    // Build per-direction sequences with minutes, segment distances and cumulative distances
+    for (const d of Object.values(DIRS)) {
+      d.seq = d.seq.map(([s, t]) => ({ s, t: toMin(t) }));
+      d.segD = d.seq.slice(0, -1).map((p, k) => hav(STOPS[p.s], STOPS[d.seq[k + 1].s]));
+      d.cumD = [0];
+      d.segD.forEach((x, k) => d.cumD[k + 1] = d.cumD[k] + x);
     }
 
-    /* ===================== SIMULATION ===================== */
-    const sim = { dist: 0, speed: 0, dwellUntil: 0, arrived: -1, occ: 14 };
-    const rand = (a, b) => a + Math.random() * (b - a);
+    /* ===================== CLOCK (demo supported) ===================== */
+    let offsetMs = 0;
+    let demo = false;
+    const nowMin = () => {
+      const d = new Date(Date.now() + offsetMs);
+      return d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
+    };
 
-    function stepSim(dt) {
-      const now = Date.now();
-      if (now < sim.dwellUntil) { sim.speed = 0; return; }
-
-      const target = rand(18, 26);
-      sim.speed += (target - sim.speed) * 0.3;
-      sim.dist = (sim.dist + (sim.speed / 3.6) * dt) % TOTAL;
-
-      // stop detection
-      for (let i = 0; i < STOPS.length; i++) {
-        const ahead = (stopCum[i] - sim.dist + TOTAL) % TOTAL;
-        if (ahead < 25 && sim.arrived !== i) {
-          sim.arrived = i;
-          sim.dwellUntil = now + 8000;          // 8 sec dwell
-          sim.speed = 0;
-          sim.occ = Math.max(0, Math.min(CAP, sim.occ + Math.round(rand(-6, 8))));
-          break;
-        }
+    /* ===================== SCHEDULE-BASED SIMULATION ===================== */
+    function simState(dir) {
+      const seq = dir.seq, m = nowMin();
+      const first = seq[0].t, last = seq[seq.length - 1].t;
+      if (m < first || m > last) {
+        return { running: false, startAt: first, pos: STOPS[seq[0].s] };
       }
-      if (sim.arrived >= 0) {
-        const away = (sim.dist - stopCum[sim.arrived] + TOTAL) % TOTAL;
-        if (away > 60) sim.arrived = -1;
-      }
+      let k = 0;
+      while (k < seq.length - 2 && m >= seq[k + 1].t) k++;
+      const a = STOPS[seq[k].s], b = STOPS[seq[k + 1].s];
+      const span = (seq[k + 1].t - seq[k].t) || 1;
+      const f = (m - seq[k].t) / span;
+      const pos = { lat: a.lat + (b.lat - a.lat) * f, lng: a.lng + (b.lng - a.lng) * f };
+      const speed = (dir.segD[k] / 1000) / (span / 60);   // km/h
+      const eta = seq.map(p => Math.max(0, p.t - m));
+      return { running: true, pos, speed, next: k + 1, eta, source: 'sim' };
+    }
+
+    /* ===================== LIVE STATE (driver GPS / shared) ===================== */
+    function liveState(dir, live) {
+      const pos = { lat: live.lat, lng: live.lng };
+      const speed = live.speed || 0;
+      let n = 0, best = Infinity;
+      dir.seq.forEach((p, j) => { const d = hav(pos, STOPS[p.s]); if (d < best) { best = d; n = j; } });
+      const next = best < 60 ? Math.min(n + 1, dir.seq.length - 1) : n;
+      const remToNext = hav(pos, STOPS[dir.seq[next].s]);
+      const mps = Math.max(speed, 12) / 3.6;
+      const eta = dir.seq.map((_, j) => j < next ? 0 : (remToNext + dir.cumD[j] - dir.cumD[next]) / mps / 60);
+      return { running: true, pos, speed, next, eta, source: 'live' };
     }
 
     /* ===================== SHARED STATE (localStorage) ===================== */
     function readLive() {
       try {
         const d = JSON.parse(localStorage.getItem(KEY));
-        if (d && Date.now() - d.ts < 15000) return d;   // fresh within 15 sec
+        if (d && Date.now() - d.ts < 15000) return d;
       } catch (e) {}
       return null;
     }
@@ -270,6 +284,13 @@
       const cur = JSON.parse(localStorage.getItem(KEY) || '{}');
       localStorage.setItem(KEY, JSON.stringify({ ...cur, ...patch, ts: Date.now() }));
     }
+
+    /* ===================== STATE ===================== */
+    let curKey = 'campus';
+    let occ = 14;
+    let mode = null;        // null | 'gps' | 'sim'
+    let watchId = null;
+    let lastFix = null;
 
     /* ===================== DOM ===================== */
     const $ = id => document.getElementById(id);
@@ -279,6 +300,8 @@
       crowdLabel: $('crowdLabel'), crowdBar: $('crowdBar'), crowdCount: $('crowdCount'),
       occMinus: $('occMinus'), occPlus: $('occPlus'),
       shareToggle: $('shareToggle'), shareState: $('shareState'), coords: $('coords'),
+      demoToggle: $('demoToggle'), dirCampus: $('dirCampus'), dirKuril: $('dirKuril'),
+      dirNote: $('dirNote'), dirLabel: $('dirLabel'),
       timeline: $('timeline'), toast: $('toast')
     };
 
@@ -294,60 +317,83 @@
     applyTheme((localStorage.getItem(THEME_KEY) || 'dark') === 'dark');
 
     /* ===================== MAP ===================== */
-    const map = L.map('map', { zoomControl: false }).setView([STOPS[0].lat, STOPS[0].lng], 16);
+    const map = L.map('map', { zoomControl: false }).setView([STOPS[0].lat, STOPS[0].lng], 14);
     window.busMap = map;
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19, attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    L.polyline(ROUTE.map(p => [p.lat, p.lng]), {
-      color: '#22d3ee', weight: 5, opacity: .85, dashArray: '10 8'
-    }).addTo(map);
-    map.fitBounds(L.latLngBounds(ROUTE.map(p => [p.lat, p.lng])), { padding: [30, 30] });
-
-    STOPS.forEach((s, i) => {
-      L.circleMarker([s.lat, s.lng], {
-        radius: 8, color: '#fff', weight: 2, fillColor: '#6366f1', fillOpacity: 1
-      }).bindTooltip(`${i + 1}. ${s.name}`, { direction: 'top' }).addTo(map);
-    });
+    const routeLayer = L.layerGroup().addTo(map);
+    const stopLayer = L.layerGroup().addTo(map);
+    map.fitBounds(L.latLngBounds(STOPS.map(s => [s.lat, s.lng])), { padding: [30, 30] });
 
     const busMarker = L.marker([STOPS[0].lat, STOPS[0].lng], {
       icon: L.divIcon({ className: '', html: '<div class="bus-pin">🚌</div>', iconSize: [40, 40], iconAnchor: [20, 20] })
     }).addTo(map);
 
+    function drawRoute() {
+      const dir = DIRS[curKey];
+      routeLayer.clearLayers();
+      stopLayer.clearLayers();
+      L.polyline(dir.seq.map(p => [STOPS[p.s].lat, STOPS[p.s].lng]), {
+        color: dir.color, weight: 5, opacity: .85, dashArray: '10 8'
+      }).addTo(routeLayer);
+      STOPS.forEach((s, i) => {
+        const p = dir.seq.find(x => x.s === i);
+        const tip = p ? `${s.name} • ${fmtMin(p.t)}` : s.name;
+        L.circleMarker([s.lat, s.lng], {
+          radius: 7, color: '#fff', weight: 2,
+          fillColor: p ? dir.color : '#64748b', fillOpacity: 1
+        }).bindTooltip(tip, { direction: 'top' }).addTo(stopLayer);
+      });
+    }
+
     /* ===================== CROWD ===================== */
-    function crowdInfo(occ) {
-      const r = occ / CAP;
+    function crowdInfo(o) {
+      const r = o / CAP;
       if (r < 0.5) return { label: 'Seat Available (সিট খালি)', text: 'text-emerald-500', bar: 'bg-emerald-500' };
       if (r < 0.8) return { label: 'Medium (মাঝারি ভিড়)', text: 'text-amber-500', bar: 'bg-amber-500' };
       return { label: 'Full (ভর্তি)', text: 'text-rose-500', bar: 'bg-rose-500' };
     }
-
     function changeOcc(delta) {
-      sim.occ = Math.max(0, Math.min(CAP, sim.occ + delta));
-      if (mode || readLive()) publish({ occupancy: sim.occ });
+      occ = Math.max(0, Math.min(CAP, occ + delta));
+      if (mode) publish({ occupancy: occ });
       render();
     }
     els.occMinus.addEventListener('click', () => changeOcc(-1));
     els.occPlus.addEventListener('click', () => changeOcc(1));
 
-    /* ===================== LOCATION SHARING ===================== */
-    let mode = null;          // null | 'gps' | 'sim'
-    let watchId = null;
-    let lastFix = null;
+    /* ===================== DIRECTION ===================== */
+    function setDir(key) {
+      curKey = key;
+      els.dirCampus.classList.toggle('active', key === 'campus');
+      els.dirKuril.classList.toggle('active', key === 'kuril');
+      els.dirLabel.textContent = DIRS[key].label;
+      drawRoute();
+      render();
+    }
+    els.dirCampus.addEventListener('click', () => setDir('campus'));
+    els.dirKuril.addEventListener('click', () => setDir('kuril'));
 
+    /* ===================== DEMO CLOCK ===================== */
+    function updateDemoUI() {
+      els.demoToggle.classList.toggle('on', demo);
+    }
+    els.demoToggle.addEventListener('click', () => {
+      demo = !demo;
+      updateDemoUI();
+      toast(demo ? 'ডেমো মোড চালু — সময় দ্রুত চলছে' : 'ডেমো মোড বন্ধ');
+    });
+
+    /* ===================== LOCATION SHARING ===================== */
     function updateShareUI() {
       els.shareToggle.classList.toggle('on', !!mode);
       if (mode === 'gps') els.shareState.textContent = '🟢 GPS দিয়ে লোকেশন শেয়ার হচ্ছে';
       else if (mode === 'sim') els.shareState.textContent = '🟡 সিমুলেটেড লোকেশন শেয়ার হচ্ছে';
-      else els.shareState.textContent = 'বন্ধ — সিমুলেশন চলছে';
+      else els.shareState.textContent = 'বন্ধ — সময়সূচি অনুযায়ী দেখানো হচ্ছে';
     }
-
-    function startSimShare() {
-      mode = 'sim';
-      updateShareUI();
-    }
+    function startSimShare() { mode = 'sim'; updateShareUI(); }
 
     function startSharing() {
       if (!navigator.geolocation) {
@@ -363,9 +409,9 @@
         if (p.coords.speed != null && !isNaN(p.coords.speed)) speedKmh = p.coords.speed * 3.6;
         else if (lastFix) speedKmh = hav(lastFix, c) / Math.max((now - lastFix.ts) / 1000, 1) * 3.6;
         lastFix = { ...c, ts: now };
-        publish({ ...c, speed: speedKmh });
-      }, err => {
-        toast('GPS পাওয়া যায়নি (অনুমতি বা সিগন্যাল সমস্যা) — সিমুলেশনে যাচ্ছি');
+        publish({ ...c, speed: speedKmh, dir: curKey });
+      }, () => {
+        toast('GPS পাওয়া যায়নি — সিমুলেশনে শেয়ার হচ্ছে');
         if (watchId != null) navigator.geolocation.clearWatch(watchId);
         watchId = null;
         startSimShare();
@@ -374,89 +420,92 @@
 
     function stopSharing() {
       if (watchId != null) navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-      mode = null;
-      lastFix = null;
-      localStorage.removeItem(KEY);        // viewers fall back to simulation
+      watchId = null; mode = null; lastFix = null;
+      localStorage.removeItem(KEY);
       updateShareUI();
     }
-
     els.shareToggle.addEventListener('click', () => {
       mode ? stopSharing() : startSharing();
       render();
     });
 
-    /* ===================== RENDER ===================== */
-    function formatEta(sec) {
-      if (sec < 45) return 'প্রায় পৌঁছে গেছে';
-      const m = Math.max(1, Math.round(sec / 60));
-      return m.toLocaleString('bn-BD') + ' মিনিট';
+    /* ===================== FORMAT ===================== */
+    function formatEta(min) {
+      if (min < 0.75) return 'এখনই / পৌঁছে গেছে';
+      return bn(Math.max(1, Math.round(min))) + ' মিনিট';
     }
 
+    /* ===================== RENDER ===================== */
     function render() {
+      const dir = DIRS[curKey];
       const live = readLive();
-      const usingLive = !!live;
-      const pos = usingLive ? { lat: live.lat, lng: live.lng } : posAt(sim.dist);
-      const speed = usingLive ? (live.speed || 0) : sim.speed;
-      const occ = usingLive && typeof live.occupancy === 'number' ? live.occupancy : sim.occ;
+      let st, otherDir = false;
 
-      // ETA calculation
-      const speedMs = Math.max(speed, 12) / 3.6;
-      const remaining = STOPS.map((s, i) =>
-        usingLive ? hav(pos, s) * 1.25 : (stopCum[i] - sim.dist + TOTAL) % TOTAL
-      );
-      let next = -1, best = Infinity;
-      remaining.forEach((d, i) => { if (d > 20 && d < best) { best = d; next = i; } });
-      if (next < 0) next = 0;
+      if (live && live.dir === curKey && typeof live.lat === 'number') {
+        st = liveState(dir, live);
+      } else {
+        if (live && live.dir && live.dir !== curKey) otherDir = true;
+        st = simState(dir);
+      }
+      const occNow = (live && typeof live.occupancy === 'number' && live.dir === curKey) ? live.occupancy : occ;
 
-      const etaSec = {};
-      for (let j = 0; j < STOPS.length; j++) {
-        const k = (next + j) % STOPS.length;
-        etaSec[k] = remaining[k] / speedMs + j * 30;   // 30 sec dwell per intermediate stop
+      // Direction note
+      if (otherDir) {
+        els.dirNote.textContent = '⚠️ ড্রাইভার এখন অন্য দিকে চালাচ্ছেন — এই দিকের বাস সময়সূচি অনুযায়ী দেখানো হচ্ছে';
+      } else {
+        els.dirNote.textContent = `প্রথম ছাড়া ${fmtMin(dir.seq[0].t)} • শেষ পৌঁছানো ${fmtMin(dir.seq[dir.seq.length - 1].t)}`;
       }
 
-      // Speed + next stop
-      els.speed.textContent = Math.round(speed).toLocaleString('bn-BD');
-      els.nextStop.textContent = STOPS[next].name;
-      els.nextEta.textContent = formatEta(etaSec[next]);
-
-      // Bus state
-      if (usingLive) els.busState.textContent = '📡 ড্রাইভার লাইভ শেয়ার করছেন';
-      else if (Date.now() < sim.dwellUntil) els.busState.textContent = '🛑 স্টপে যাত্রী উঠা-নামা চলছে';
-      else els.busState.textContent = '🚍 রুটে চলছে (সিমুলেশন)';
+      // Speed / next stop / ETA
+      if (st.running) {
+        els.speed.textContent = bn(Math.round(st.speed));
+        const nx = dir.seq[st.next];
+        els.nextStop.textContent = STOPS[nx.s].name;
+        els.nextEta.textContent = formatEta(st.eta[st.next]);
+        els.busState.textContent = st.source === 'live'
+          ? '📡 ড্রাইভার লাইভ শেয়ার করছেন'
+          : '🚍 সময়সূচি অনুযায়ী রুটে চলছে';
+      } else {
+        els.speed.textContent = bn(0);
+        els.nextStop.textContent = STOPS[dir.seq[0].s].name;
+        els.nextEta.textContent = '—';
+        els.busState.textContent = `🕒 বাস এখন চলছে না — পরবর্তী ছাড়া ${fmtMin(st.startAt)}`;
+      }
 
       // Live badge
-      els.liveBadge.textContent = usingLive ? '● লাইভ' : 'সিমুলেশন';
+      const isLive = st.source === 'live';
+      els.liveBadge.textContent = isLive ? '● লাইভ' : (demo ? 'ডেমো' : 'সময়সূচি');
       els.liveBadge.className = 'hidden sm:inline-block text-xs px-3 py-1 rounded-full font-semibold ' +
-        (usingLive ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-amber-500/20 text-amber-600 dark:text-amber-400');
+        (isLive ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+                : 'bg-amber-500/20 text-amber-600 dark:text-amber-400');
 
       // Crowd
-      const ci = crowdInfo(occ);
+      const ci = crowdInfo(occNow);
       els.crowdLabel.textContent = ci.label;
       els.crowdLabel.className = 'text-2xl font-bold mt-1 ' + ci.text;
       els.crowdBar.className = 'h-full rounded-full transition-all duration-700 ' + ci.bar;
-      els.crowdBar.style.width = (occ / CAP * 100) + '%';
-      els.crowdCount.textContent = `${occ.toLocaleString('bn-BD')} / ${CAP.toLocaleString('bn-BD')} জন যাত্রী`;
+      els.crowdBar.style.width = (occNow / CAP * 100) + '%';
+      els.crowdCount.textContent = `${bn(occNow)} / ${bn(CAP)} জন যাত্রী`;
 
-      // Coordinates
-      els.coords.textContent = `📍 ${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)}`;
-
-      // Map
-      const ll = [pos.lat, pos.lng];
+      // Coordinates + map
+      els.coords.textContent = `📍 ${st.pos.lat.toFixed(5)}, ${st.pos.lng.toFixed(5)}`;
+      const ll = [st.pos.lat, st.pos.lng];
       busMarker.setLatLng(ll);
       if (!map.getBounds().contains(ll)) map.panTo(ll, { animate: true });
 
       // Timeline
-      els.timeline.innerHTML = STOPS.map((s, k) => {
-        const isNext = k === next;
+      els.timeline.innerHTML = dir.seq.map((p, j) => {
+        const isNext = st.running && j === st.next;
+        const passed = st.running && j < st.next;
+        const etaText = st.running ? (passed ? 'পার হয়েছে' : formatEta(st.eta[j])) : '—';
         return `
-          <div class="min-w-[170px] rounded-2xl p-4 border transition-all duration-300 ${
+          <div class="min-w-[180px] rounded-2xl p-4 border transition-all duration-300 ${
             isNext ? 'border-cyan-400 bg-cyan-400/15 shadow-lg shadow-cyan-500/20'
-                   : 'border-slate-300/60 dark:border-white/10 bg-white/50 dark:bg-white/5'}">
-            <p class="text-xs opacity-60">স্টপ ${(k + 1).toLocaleString('bn-BD')}</p>
-            <p class="font-semibold mt-1">${s.name}</p>
+                   : 'border-slate-300/60 dark:border-white/10 bg-white/50 dark:bg-white/5'} ${passed ? 'opacity-50' : ''}">
+            <p class="text-xs opacity-60">স্টপ ${bn(j + 1)} • সময় ${fmtMin(p.t)}</p>
+            <p class="font-semibold mt-1">${STOPS[p.s].name}</p>
             <p class="text-sm mt-2 ${isNext ? 'text-cyan-500 font-semibold' : 'opacity-70'}">
-              ${isNext ? '⏳ পরবর্তী • ' : ''}${formatEta(etaSec[k])}
+              ${isNext ? '⏳ পরবর্তী • ' : ''}${etaText}
             </p>
           </div>`;
       }).join('');
@@ -470,7 +519,7 @@
       toast._t = setTimeout(() => els.toast.classList.add('opacity-0', 'translate-y-4'), 3000);
     }
 
-    /* ===================== 3D TILT EFFECT ===================== */
+    /* ===================== 3D TILT ===================== */
     document.querySelectorAll('.card3d').forEach(card => {
       card.addEventListener('mousemove', e => {
         const r = card.getBoundingClientRect();
@@ -483,18 +532,20 @@
 
     /* ===================== MAIN LOOP ===================== */
     setInterval(() => {
-      stepSim(1);
+      if (demo) offsetMs += 29000;           // ~30x speed
       if (mode === 'sim') {
-        const p = posAt(sim.dist);
-        publish({ lat: p.lat, lng: p.lng, speed: sim.speed, occupancy: sim.occ });
+        const st = simState(DIRS[curKey]);
+        publish({ lat: st.pos.lat, lng: st.pos.lng, speed: st.running ? st.speed : 0, occupancy: occ, dir: curKey });
       }
       render();
     }, 1000);
 
-    // Update instantly when another tab changes shared data
     window.addEventListener('storage', e => { if (e.key === KEY) render(); });
 
-    render();
+    /* ===================== INIT ===================== */
+    updateShareUI();
+    updateDemoUI();
+    setDir('campus');
   })();
   </script>
 </body>
