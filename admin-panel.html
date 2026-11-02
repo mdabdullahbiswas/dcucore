@@ -5,43 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#08172e">
 <title>এডমিন প্যানেল · DCUCore</title>
+<script>
+(function(){var t=null;try{t=localStorage.getItem('adminTheme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
 <style>
-:root{--bg:#f4f1ea;--s:#ffffff;--ink:#0b1626;--mu:#6b7686;--ln:#e8e1d2;--navy:#08172e;--gold:#c9a24a;--gold2:#f1d99a}
-@media (prefers-color-scheme: dark){:root{--bg:#050c18;--s:#0c182b;--ink:#eef2fa;--mu:#8fa0bb;--ln:#1d3050;--navy:#10203a}}
+:root{
+  --bg:#f4f1ea;--s:#ffffff;--s2:#faf7f1;--ink:#0b1626;--mu:#6b7686;--ln:#e8e1d2;
+  --navy:#08172e;--navy2:#123664;--gold:#c9a24a;--gold2:#f1d99a;--gold3:#9a741f;
+  --goldGrad:linear-gradient(135deg,#f8e8b8,#dcb663 40%,#b8913a 65%,#f3dea4);
+  --shadow:0 1px 1px rgba(11,22,38,.04),0 10px 26px -12px rgba(11,22,38,.2);
+}
+html[data-theme="dark"]{
+  --bg:#050c18;--s:#0c182b;--s2:#10203a;--ink:#eef2fa;--mu:#8fa0bb;--ln:#1d3050;
+  --navy:#0a1a33;--shadow:0 1px 1px rgba(0,0,0,.4),0 14px 34px -14px rgba(0,0,0,.7);
+}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
-.bar{position:sticky;top:0;z-index:5;height:56px;display:flex;align-items:center;gap:8px;padding:env(safe-area-inset-top,0) 14px 0;background:var(--s);border-bottom:1px solid var(--ln)}
-.brand{font-weight:700;font-size:15px;margin-right:auto;white-space:nowrap}
-.brand span{color:var(--gold);font-weight:600}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;transition:background .35s,color .35s}
+.bar{position:sticky;top:0;z-index:5;height:60px;display:flex;align-items:center;gap:10px;padding:env(safe-area-inset-top,0) 14px 0;background:color-mix(in srgb,var(--s) 80%,transparent);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid var(--ln)}
+.bar:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);opacity:.7}
+.brand{font-weight:700;font-size:15px;margin-right:auto;white-space:nowrap;background:linear-gradient(90deg,var(--ink),var(--navy2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand span{color:var(--gold3);-webkit-text-fill-color:var(--gold3);font-weight:600}
 .tabs{display:flex;gap:8px}
-.tab{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--ln);background:transparent;color:var(--mu);font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
-.tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.tab[aria-selected="true"]{background:linear-gradient(135deg,#123664,var(--navy));color:var(--gold2);border-color:transparent}
-.pane{height:calc(100% - 56px)}
+.tab{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--ln);background:linear-gradient(180deg,var(--s),var(--s2));color:var(--mu);font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:transform .2s,box-shadow .25s,color .2s}
+.tab:hover{color:var(--ink);transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(11,22,38,.35)}
+.tab:focus-visible,.theme:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,var(--navy2),var(--navy));color:var(--gold2);border-color:transparent;box-shadow:0 12px 24px -10px rgba(8,23,46,.55)}
+.tab.blood[aria-selected="true"]{background:linear-gradient(135deg,#c8263a,#6e0a1c);color:#ffe3e7;box-shadow:0 12px 24px -10px rgba(200,38,58,.6)}
+.tab.blood{color:#c8263a}
+.theme{position:relative;width:40px;height:40px;border-radius:50%;padding:2px;border:0;cursor:pointer;display:grid;place-items:center;background:var(--goldGrad);box-shadow:0 8px 20px -6px rgba(201,162,74,.55);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.theme:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 26px -8px rgba(201,162,74,.7)}
+.theme:active{transform:scale(.94)}
+.theme .knob{width:100%;height:100%;border-radius:50%;display:grid;place-items:center;background:var(--s);color:var(--gold3);transition:background .35s,color .35s}
+html[data-theme="dark"] .theme .knob{background:var(--navy);color:var(--gold2)}
+.theme svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.theme svg .d{fill:currentColor;fill-opacity:.2;stroke:none}
+.theme:hover svg{transform:rotate(-20deg) scale(1.08)}
+html[data-theme="dark"] .theme svg{transform:rotate(180deg)}
+.pane{height:calc(100% - 60px)}
 iframe{display:block;width:100%;height:100%;border:0}
 iframe[hidden]{display:none!important}
-@media (max-width:520px){.brand{font-size:13.5px}.tab{padding:0 12px;font-size:13px}}
+@media (max-width:520px){.brand{font-size:13.5px}.tab{padding:0 12px;font-size:13px}.tabs{gap:6px}}
 </style>
 </head>
 <body>
 <header class="bar">
   <div class="brand">DCUCore <span>· এডমিন</span></div>
   <nav class="tabs" role="tablist" aria-label="এডমিন বিভাগ">
-    <button class="tab" role="tab" data-k="blood" type="button">🩸 ব্লাড ডোনার</button>
+    <button class="tab blood" role="tab" data-k="blood" type="button">🩸 ব্লাড ডোনার</button>
     <button class="tab" role="tab" data-k="events" type="button">🎉 ইভেন্ট</button>
   </nav>
+  <button class="theme" id="theme" type="button" aria-label="ডার্ক / লাইট মোড">
+    <span class="knob">
+      <svg viewBox="0 0 24 24" aria-hidden="true" id="themeIcon"></svg>
+    </span>
+  </button>
 </header>
 <main class="pane" id="panes"></main>
 <script>
 (function () {
   var PAGES = { blood: "admin.html?embed=1", events: "events-admin.html?embed=1" };
   var frames = {};
+  var ICON_SUN = '<circle class="d" cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>';
+  var ICON_MOON = '<path class="d" d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/><path d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/>';
+
+  function currentTheme() { return document.documentElement.dataset.theme === "dark" ? "dark" : "light"; }
+
+  function paintThemeIcon() {
+    var dark = currentTheme() === "dark";
+    var btn = document.getElementById("theme");
+    document.getElementById("themeIcon").innerHTML = dark ? ICON_SUN : ICON_MOON;
+    btn.title = dark ? "লাইট মোড" : "ডার্ক মোড";
+    btn.setAttribute("aria-pressed", String(dark));
+  }
+
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem("adminTheme", t); } catch (e) {}
+    /* খোলা iframe-গুলোতেও একই থিম */
+    for (var k in frames) {
+      try { frames[k].contentDocument.documentElement.dataset.theme = t; } catch (e) {}
+    }
+    paintThemeIcon();
+  }
+
+  document.getElementById("theme").addEventListener("click", function () {
+    applyTheme(currentTheme() === "dark" ? "light" : "dark");
+  });
+
   function show(k) {
     if (!PAGES[k]) k = "blood";
     if (!frames[k]) {
       var f = document.createElement("iframe");
-      f.src = PAGES[k]; f.title = k === "blood" ? "ব্লাড ডোনার এডমিন" : "ইভেন্ট এডমিন";
+      f.src = PAGES[k];
+      f.title = k === "blood" ? "ব্লাড ডোনার এডমিন" : "ইভেন্ট এডমিন";
+      f.addEventListener("load", function () {
+        try { f.contentDocument.documentElement.dataset.theme = currentTheme(); } catch (e) {}
+      });
       frames[k] = f; document.getElementById("panes").appendChild(f);
     }
     for (var key in frames) frames[key].hidden = key !== k;
@@ -49,10 +112,12 @@ iframe[hidden]{display:none!important}
       t.setAttribute("aria-selected", String(t.getAttribute("data-k") === k));
     });
   }
+
   document.querySelectorAll(".tab").forEach(function (t) {
     t.addEventListener("click", function () { location.hash = t.getAttribute("data-k"); });
   });
   window.addEventListener("hashchange", function () { show(location.hash.slice(1)); });
+  paintThemeIcon();
   show(location.hash.slice(1) || "blood");
 })();
 </script>
