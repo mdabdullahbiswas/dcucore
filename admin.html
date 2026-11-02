@@ -439,11 +439,14 @@ html[data-theme=dark] .tab .ic{color:var(--gold2)}
 @media(max-width:640px){.toolbar{padding:20px 16px 16px;border-radius:24px}.hello h2{font-size:22px}.stat b{font-size:30px}.toolbar:before{width:150px;height:150px;margin-top:-75px}}
 @media(prefers-reduced-motion:reduce){.draw *:not(.d){stroke-dasharray:none!important;stroke-dashoffset:0!important}.bg:after{display:none}}
 .stat[data-go]{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}.stat[data-go]:active{transform:scale(.97)}.stat[data-go]:focus-visible{outline:2px solid var(--c);outline-offset:3px}.stat small{display:block;margin-top:9px;padding-top:9px;border-top:1px dashed color-mix(in srgb,var(--c) 28%,transparent);font-size:11.5px;font-weight:700;color:color-mix(in srgb,var(--c) 85%,#000)}
+html.embed .top{display:none}
+html.embed .wrap{padding-top:12px}
 </style>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
+<script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed");</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="gG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8e8b8"/><stop offset="1" stop-color="#c9a54e"/></linearGradient></defs></svg>
@@ -514,7 +517,7 @@ const ADMIN_EMAIL = ADMIN_ID.toLowerCase() + "@" + ID_DOMAIN;
 // আইডি-পাসওয়ার্ডে ঢোকার অনুমোদিত ইমেইল (Firebase Authentication-এ বানানো ইউজার)। আইডির ঘরে পুরো ইমেইলও লেখা যাবে।
 const ADMIN_LOGINS = [ADMIN_EMAIL, "mdabdullahbiswas48@gmail.com"];
 const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";   // Google দিয়ে সাইন ইনের জন্য অনুমোদিত ইমেইল
-const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "admin");
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-admin");
 const auth = getAuth(app), db = getFirestore(app), $ = id => document.getElementById(id);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const AV = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="66" height="66"><rect width="66" height="66" rx="33" fill="#e8edf5"/><circle cx="33" cy="25" r="10.5" fill="#b4c0d4"/><path d="M11 60c3.5-15 40.5-15 44 0z" fill="#b4c0d4"/></svg>');
