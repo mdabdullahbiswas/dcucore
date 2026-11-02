@@ -483,35 +483,36 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
         <div class="ev-3">
           <div><label for="fDate"><span class="t">তারিখ|Date</span> <em>*</em></label><input id="fDate" type="date"><div class="ev-err" data-e="date"></div></div>
           <div><label for="fStart"><span class="t">শুরু|Start</span> <em>*</em></label><input id="fStart" type="time"><div class="ev-err" data-e="start"></div></div>
-          <div><label for="fEnd"><span class="t">শেষ|End</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fEnd" type="time"><div class="ev-err" data-e="end"></div></div>
+          <div><label for="fEnd"><span class="t">শেষ|End</span> </label><input id="fEnd" type="time"><div class="ev-err" data-e="end"></div></div>
         </div>
 
         <div class="ev-2">
-          <div><label for="fEndDate"><span class="t">শেষ তারিখ|End date</span> <small class="t">(বহুদিনের ইভেন্ট হলে — ঐচ্ছিক)|(multi-day only — optional)</small></label><input id="fEndDate" type="date"><div class="ev-err" data-e="endDate"></div></div>
-          <div><label for="fAudience"><span class="t">কাদের জন্য উন্মুক্ত|Open to</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fAudience" maxlength="100" data-p="যেমন: সব শিক্ষার্থী, শুধু বিবিএ বিভাগ|e.g. All students, BBA dept only"></div>
+          <div><label for="fEndDate"><span class="t">শেষ তারিখ|End date</span> <small class="t">(বহুদিনের ইভেন্ট হলে)|(multi-day only)</small></label><input id="fEndDate" type="date"><div class="ev-err" data-e="endDate"></div></div>
+          <div><label for="fAudience"><span class="t">কাদের জন্য উন্মুক্ত|Open to</span> <em>*</em></label><input id="fAudience" maxlength="100" data-p="যেমন: সব শিক্ষার্থী, শুধু বিবিএ বিভাগ|e.g. All students, BBA dept only"><div class="ev-err" data-e="audience"></div></div>
         </div>
 
         <label for="fVenue"><span class="t">স্থান|Venue</span> <em>*</em></label>
         <input id="fVenue" maxlength="100" data-p="যেমন: কেন্দ্রীয় অডিটোরিয়াম, ঢাকা কলেজ|e.g. Central Auditorium, Dhaka College">
         <div class="ev-err" data-e="venue"></div>
 
-        <label for="fMap"><span class="t">গুগল ম্যাপ লোকেশন|Google Maps location</span> <small class="t">(লিংক পেস্ট করুন — ঐচ্ছিক)|(paste a link — optional)</small></label>
+        <label for="fMap"><span class="t">গুগল ম্যাপ লোকেশন|Google Maps location</span> <small class="t">(লিংক পেস্ট করুন)|(paste a link)</small></label>
         <input id="fMap" type="url" inputmode="url" maxlength="300" placeholder="https://maps.app.goo.gl/…">
         <div class="ev-err" data-e="map"></div>
 
-        <label for="fOrg"><span class="t">আয়োজক|Organizer</span> <small class="t">(ক্লাব/বিভাগ — ঐচ্ছিক)|(club / department — optional)</small></label>
+        <label for="fOrg"><span class="t">আয়োজক|Organizer</span> <em>*</em> <small class="t">(ক্লাব/বিভাগ)|(club / department)</small></label>
         <input id="fOrg" maxlength="70" data-p="যেমন: কম্পিউটার ক্লাব|e.g. Computer Club">
+        <div class="ev-err" data-e="organizer"></div>
 
         <label for="fDesc"><span class="t">বিস্তারিত|Description</span> <em>*</em></label>
         <textarea id="fDesc" maxlength="1500" data-p="কী হবে, কারা অংশ নিতে পারবে, কোনো ফি বা নিয়ম আছে কিনা…|What's happening, who can join, any fee or rules…"></textarea>
         <div class="ev-cnt" id="cDesc">0 / 1500</div><div class="ev-err" data-e="desc"></div>
 
         <div class="ev-2">
-          <div><label for="fLink"><span class="t">রেজিস্ট্রেশন লিংক|Registration link</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fLink" type="url" inputmode="url" maxlength="300" placeholder="https://…"><div class="ev-err" data-e="link"></div></div>
-          <div><label for="fContact"><span class="t">যোগাযোগ|Contact</span> <small class="t">(ঐচ্ছিক)|(optional)</small></label><input id="fContact" maxlength="80" data-p="ফোন বা ইমেইল|Phone or email"></div>
+          <div><label for="fLink"><span class="t">রেজিস্ট্রেশন লিংক|Registration link</span> </label><input id="fLink" type="url" inputmode="url" maxlength="300" placeholder="https://…"><div class="ev-err" data-e="link"></div></div>
+          <div><label for="fContact"><span class="t">যোগাযোগ|Contact</span> </label><input id="fContact" maxlength="80" data-p="ফোন বা ইমেইল|Phone or email"></div>
         </div>
 
-        <span class="ev-lab"><span class="t">পোস্টার|Poster</span> <small style="font-weight:500;color:var(--ink-2)" class="t">(ঐচ্ছিক, ছবি স্বয়ংক্রিয়ভাবে ছোট হবে)|(optional, auto-compressed)</small></span>
+        <span class="ev-lab"><span class="t">পোস্টার|Poster</span> <small style="font-weight:500;color:var(--ink-2)" class="t">(ছবি স্বয়ংক্রিয়ভাবে ছোট হবে)|(auto-compressed)</small></span>
         <label class="ev-up" id="upBox" style="font-weight:500"><input id="fPoster" type="file" accept="image/jpeg,image/png,image/webp"><span id="upTxt">ছবি বেছে নিতে ক্লিক করুন</span></label>
         <div class="ev-err" data-e="poster"></div>
 
@@ -1478,6 +1479,7 @@ function saveDraft(){var v=fields();safeSet(pDraftKey,v)}
 function loadDraft(){var v=safeGet(pDraftKey,null);if(!v)return;F('fTitle').value=v.title||'';F('fCat').value=v.cat||'';F('fCampus').value=v.campus||'';F('fDate').value=v.date||'';F('fStart').value=v.start||'';F('fEnd').value=v.end||'';F('fEndDate').value=v.endDate||'';F('fVenue').value=v.venue||'';F('fOrg').value=v.organizer||'';F('fAudience').value=v.audience||'';F('fMap').value=v.mapUrl||'';F('fDesc').value=v.desc||'';F('fLink').value=v.link||'';F('fContact').value=v.contact||''}
 function todayStr(){return dayKey(Date.now())}
 function buildPosterPrompt(v){
+  var isBn=/[\u0980-\u09FF]/.test([v.title,v.venue,v.organizer,v.audience,v.desc].join(' '));
   var cat=CAT[v.cat]?nm(CAT[v.cat],'l'):'—', cp=CAMP[v.campus]?nm(CAMP[v.campus],'l'):'—';
   var dt=v.date?v.date.split('-').reverse().join('/'):'—';
   var tm=v.start?v.start+(v.end?' – '+v.end:''):'—';
@@ -1485,17 +1487,17 @@ function buildPosterPrompt(v){
   return [
     'Create a premium, high-end event poster (portrait 4:5, 1080×1350 px) for a university campus event in Bangladesh.',
     '',
-    'Event title (render exactly in Bangla): '+(v.title||'[ইভেন্টের নাম]'),
+    'Event title (render exactly as written): '+(v.title||'[Event title]'),
     'Date: '+dates,
     'Time: '+tm,
-    'Venue: '+(v.venue||'[স্থান]'),
+    'Venue: '+(v.venue||'[Venue]'),
     'Organized by: '+(v.organizer||'—'),
-    'Open to: '+(v.audience||'সবাই'),
+    'Open to: '+(v.audience||'—'),
     'Campus: '+cp+'   |   Category: '+cat,
     '',
-    'Design direction: luxurious dark-navy and metallic gold palette (navy #0B1F3A, gold #D4AF37), a fine gold double frame, soft spotlight gradient behind the headline, elegant bold Bangla typography with a refined serif or modern Bangla display face, generous whitespace, one subtle visual motif that fits the category, no clutter.',
+    'Design direction: luxurious dark-navy and metallic gold palette (navy #0B1F3A, gold #D4AF37), a fine gold double frame, soft spotlight gradient behind the headline, '+(isBn?'elegant bold Bangla typography with a refined serif or modern Bangla display face':'elegant bold serif or modern display typography')+', generous whitespace, one subtle visual motif that fits the category, no clutter.',
     'Layout: date in a small gold badge at the top-left; event title large and centered; organizer and open-to line under the title; time and venue with minimal line icons near the bottom; small footer text: dcucore.vercel.app',
-    'Rules: spell all text exactly as given, add no extra words, keep Bangla text crisp and correctly shaped, high contrast, readable on a phone screen.'
+    'Rules: spell all text exactly as given, in the same language it was written in, add no extra words, '+(isBn?'keep Bangla text crisp and correctly shaped, ':'')+'high contrast, readable on a phone screen.'
   ].join('\n');
 }
 function updatePosterPrompt(){var b=$('#fPrompt');if(b)b.value=buildPosterPrompt(fields())}
@@ -1524,6 +1526,8 @@ function validate(){
   if(ms&&em&&em<=ms)bad('end','fEnd',T('শেষের সময় শুরুর পরে হতে হবে|End must be after start'));
   if(v.mapUrl&&!okUrl(v.mapUrl))bad('map','fMap',T('সঠিক গুগল ম্যাপ লিংক দিন (https://…)|Enter a valid Google Maps link (https://…)'));
   if(v.venue.length<3)bad('venue','fVenue',T('স্থান লিখুন|Enter the venue'));
+  if(v.organizer.length<2)bad('organizer','fOrg',T('আয়োজকের নাম লিখুন|Enter the organizer'));
+  if(v.audience.length<2)bad('audience','fAudience',T('কাদের জন্য উন্মুক্ত তা লিখুন|Enter who this is open to'));
   if(v.desc.length<20)bad('desc','fDesc',T('অন্তত ২০ অক্ষরে বিস্তারিত লিখুন|Write at least 20 characters'));
   if(v.link&&!okUrl(v.link))bad('link','fLink',T('সঠিক লিংক দিন (https://…)|Enter a valid link (https://…)'));
   if(!F('fOk').checked){ok=false;setErr('ok',T('নিশ্চিত করতে টিক দিন|Please tick to confirm'));if(!first)first=F('fOk')}
