@@ -107,9 +107,9 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     // insert the tools dropdown after the "কভার পেজ" link (index 1)
     var toolsActive = file === "tools.html";
-    var items = TOOLS.map(function (t) {
+    var items = TOOLS.map(function (t, i) {
       return (
-        '<a href="' + t.href + '" role="menuitem" data-dl-href="' + t.href + '"><b><span class="cvx-bn">' + esc(t.bn) +
+        '<a href="' + t.href + '" role="menuitem" style="--i:' + i + '" data-dl-href="' + t.href + '"><b><span class="cvx-bn">' + esc(t.bn) +
         '</span><span class="cvx-en">' + esc(t.en) + "</span></b></a>"
       );
     }).join("");
@@ -311,10 +311,39 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       }
     });
+    /* desktop: hover opens (short close delay), click pins, item-click / outside-click / Esc / scroll closes */
+    var hoverMQ = window.matchMedia("(hover: hover) and (min-width: 961px)");
     [dd, cvd].forEach(function (w) {
       if (!w) return;
-      w.addEventListener("pointerleave", function () { w.classList.remove("dl-closed"); });
+      var timer = null;
+      var isCv = w === cvd;
+      function setW(o) { if (isCv) setCvd(o); else setDd(o); }
+      w.addEventListener("pointerenter", function (e) {
+        if (e.pointerType === "touch" || !hoverMQ.matches) return;
+        clearTimeout(timer);
+        if (w.classList.contains("dl-closed") || w.classList.contains("open")) return;
+        setW(true);
+        w.setAttribute("data-hov", "");
+      });
+      w.addEventListener("pointerleave", function (e) {
+        w.classList.remove("dl-closed");
+        if (e.pointerType === "touch" || !hoverMQ.matches) return;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          if (w.hasAttribute("data-hov")) { w.removeAttribute("data-hov"); setW(false); }
+        }, 140);
+      });
+      w.addEventListener("click", function (e) {
+        if (e.target.closest(".dl-dd-btn") && w.hasAttribute("data-hov")) { w.removeAttribute("data-hov"); w.setAttribute("data-pin", ""); }
+      }, true);
     });
+    function closeAllDd() {
+      [dd, cvd].forEach(function (w) { if (w) { w.removeAttribute("data-hov"); w.removeAttribute("data-pin"); } });
+      setDd(false); setCvd(false);
+    }
+    window.addEventListener("scroll", function () {
+      if ((dd && dd.classList.contains("open")) || (cvd && cvd.classList.contains("open"))) closeAllDd();
+    }, { passive: true });
   }
 
   /* ---------- current location: highlight the matching menu item ---------- */
@@ -436,9 +465,12 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     ".dl-menu-cvx a:hover .cvx-ic{transform:scale(1.08) rotate(-4deg)}",
     ".dl-menu-cvx a.on{background:linear-gradient(135deg,rgba(217,178,106,.22),rgba(217,178,106,.04));box-shadow:inset 0 0 0 1px rgba(184,138,62,.6)}",
     ".dl-menu-cvx a.on .cvx-ic{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#1d1400}",
-    ".dl-cvx.open .dl-menu-cvx a,.dl-cvx:hover .dl-menu-cvx a{animation:cvxIn .42s calc(var(--i,0)*30ms + 30ms) cubic-bezier(.2,.8,.2,1) both}",
+    ".dl-dd.open .dl-menu a{animation:cvxIn .42s calc(var(--i,0)*30ms + 30ms) cubic-bezier(.2,.8,.2,1) both}",
+    "@media(min-width:961px){.dl-menu{transform-origin:50% 0;filter:blur(6px);transition:opacity .24s ease,transform .32s cubic-bezier(.2,.9,.25,1.15),visibility .24s,filter .24s ease!important}}",
+    ".dl-dd.open .dl-menu{filter:blur(0)}",
+    "@media(min-width:961px){.dl-dd:not(.open) .dl-menu{transform:translate(-50%,-10px) scale(.96)!important}.dl-dd.open .dl-menu{transform:translate(-50%,0) scale(1)!important}}",
     "@keyframes cvxIn{from{opacity:0;transform:translateY(8px) scale(.96)}}",
-    "@media(prefers-reduced-motion:reduce){.dl-cvx .dl-menu-cvx a,.cvx-ic{animation:none!important;transition:none!important}}"
+    "@media(prefers-reduced-motion:reduce){.dl-menu,.dl-menu a,.cvx-ic{animation:none!important;transition:none!important;filter:none!important}}"
   ].join("");
 
   function mount() {
