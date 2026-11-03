@@ -38,6 +38,7 @@
     { href: "/blood", label: "ডোনার", en: "Donors" },
     { href: "/events", label: "ইভেন্ট", en: "Events" },
     { href: "/feedback", label: "মতামত", en: "Feedback" },
+    { href: "/support", label: "সাহায্য", en: "Support" },
     { href: "/about", label: "আমাদের সম্পর্কে", en: "About" }
   ];
 
@@ -151,6 +152,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       ["/blood", "ডোনার ডিরেক্টরি", "Donor Directory"],
       ["/events", "ক্যাম্পাস ইভেন্ট", "Campus Events"],
       ["/feedback", "মতামত দিন", "Give Feedback"],
+      ["/support", "সাহায্য করুন", "Support Us"],
       ["/about", "আমাদের সম্পর্কে", "About"]
     ];
     function col(bn, en, list) {
