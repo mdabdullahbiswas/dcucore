@@ -207,7 +207,7 @@ export function createSupportAdmin(ctx) {
       btns.push(`<button type="button" class="btn sm dng" data-sa="remove" ${id}>${ic("trash")}মুছুন</button>`);
       return `<tr>
         <td class="nm">${fd(r.createdAt)}</td>
-        <td><b>${esc(p.anonymous ? "বেনামী" : (p.name || "—"))}</b><span class="m">${esc(r.code)}</span></td>
+        <td><b>${esc(p.name || "—")}</b>${p.anonymous ? ` ${pill("লিডারবোর্ডে বেনামী", "mu")}` : ""}<span class="m">${esc(r.code)}</span></td>
         <td><b>৳ ${BN(r.amount)}</b><span class="m">${esc(METHOD[r.method] || r.method || "")}</span></td>
         <td><span class="sa-trx">${esc(p.trxId || "—")}</span></td>
         <td>${pill(label, cls)}${r.reason ? `<span class="m">${esc(r.reason)}</span>` : ""}</td>
@@ -221,7 +221,7 @@ export function createSupportAdmin(ctx) {
     if (!BOARD.length) return empty("users", "এখনো কোনো অনুমোদিত অনুদান নেই।");
     const rows = BOARD.map((b, i) => `<tr>
         <td class="nm">${i + 1}</td>
-        <td><b>${b.anonymous ? "বেনামী" : esc(b.name || "—")}</b>${b.hidden ? ` ${pill("লুকানো", "mu")}` : ""}</td>
+        <td><b>${esc(b.anonymous ? (PRIV[String(b.key).replace(/^anon_/, "")]?.name || "—") : (b.name || "—"))}</b>${b.anonymous ? ` ${pill("পাবলিকে বেনামী", "mu")}` : ""}${b.hidden ? ` ${pill("লুকানো", "mu")}` : ""}</td>
         <td><b>৳ ${BN(b.total)}</b></td>
         <td><div class="acts"><button type="button" class="btn sm" data-sa="hide" data-id="${esc(b.key)}">${ic("eye")}${b.hidden ? "দেখান" : "লুকান"}</button></div></td>
       </tr>`).join("");
