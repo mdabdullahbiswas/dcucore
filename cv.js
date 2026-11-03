@@ -310,9 +310,7 @@
   }
 
   function fontStack() {
-    var bn = S.lang === 'bn';
-    if (S.font === 'sans') return bn ? "'Noto Sans Bengali','Inter',sans-serif" : "'Inter','Noto Sans Bengali',sans-serif";
-    return bn ? "'Noto Serif Bengali','Georgia',serif" : "'Georgia','Noto Serif Bengali','Times New Roman',serif";
+    return "'Inter','Noto Serif Bengali',system-ui,sans-serif";
   }
 
   function paint(el, tpl) {
