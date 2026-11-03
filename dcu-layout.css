@@ -759,3 +759,59 @@ body.dark .to-top:hover,
   content: " \2713";
   color: var(--dl-gold-d);
 }
+
+/* ---------- tools tab strip: same look as the tools page tabs ---------- */
+.dl-tabs {
+  max-width: 1180px;
+  margin: 14px auto 6px;
+  padding: 0 20px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.dl-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.dl-tabs a {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1.5px solid transparent;
+  border-radius: 22px;
+  background: #FFF6DC;
+  color: #8A6414;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dl-tabs a:hover {
+  box-shadow: 0 6px 14px -8px rgba(212, 175, 55, 0.9);
+}
+
+.dl-tabs a.on {
+  background: #0B1F3A;
+  color: #D4AF37;
+  border-color: #0B1F3A;
+}
+
+:root[data-theme="dark"] .dl-tabs a,
+:root[data-th="dark"] .dl-tabs a {
+  background: #1A2236;
+  color: #E8C46C;
+}
+
+:root[data-theme="dark"] .dl-tabs a.on,
+:root[data-th="dark"] .dl-tabs a.on {
+  background: #E8C46C;
+  color: #0B1F3A;
+  border-color: #E8C46C;
+}
