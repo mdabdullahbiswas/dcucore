@@ -374,6 +374,33 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     refreshCurrent();
   }
 
+  /* ---------- tools tab strip (shown on the calendar and CV pages too) ---------- */
+  var TOOL_TABS = [
+    { id: "card", href: "/tools#card", bn: "শেয়ার কার্ড", en: "Share Card" },
+    { id: "frame", href: "/tools#frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
+    { id: "cv", href: "/cv", bn: "সিভি স্টুডিও", en: "CV Studio" },
+    { id: "routine", href: "/tools#routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
+    { id: "cgpa", href: "/tools#cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
+    { id: "exam", href: "/tools#exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
+    { id: "calendar", href: "/dcu-calendar", bn: "স্টুডেন্ট ক্যালেন্ডার", en: "Student Calendar" },
+    { id: "pdf", href: "/tools#pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
+    { id: "calc", href: "/tools#calc", bn: "সায়েন্টিফিক ক্যালকুলেটর", en: "Scientific Calculator" },
+    { id: "result", href: "/tools#result", bn: "রেজাল্ট", en: "Results" }
+  ];
+
+  function mountToolTabs(hdr) {
+    var here = file === "cv.html" ? "cv" : file === "dcu-calendar.html" ? "calendar" : null;
+    if (!here || document.querySelector(".dl-tabs")) return;
+    var nav = document.createElement("nav");
+    nav.className = "dl-tabs";
+    nav.setAttribute("aria-label", "টুলস");
+    nav.innerHTML = TOOL_TABS.map(function (t) {
+      return '<a href="' + t.href + '"' + (t.id === here ? ' aria-current="page" class="on"' : "") + ">" +
+        bi(t.bn, t.en) + "</a>";
+    }).join("");
+    hdr.parentNode.insertBefore(nav, hdr.nextSibling);
+  }
+
   /* ---------- boot ---------- */
   var CVX_CSS = [
     'html:not([data-lang="en"]) .cvx-en{display:none}',
@@ -406,6 +433,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       document.body.insertBefore(hdr, document.body.firstChild);
     }
     hdr.innerHTML = headerHTML();
+    mountToolTabs(hdr);
 
     var ftr = document.getElementById("ftr");
     if (!ftr) {
