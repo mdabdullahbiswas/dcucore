@@ -91,7 +91,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     return (
       '<div class="dl-dd dl-cvx" data-dl-cvd>' +
       '<button type="button" class="dl-dd-btn"' + (active ? ' aria-current="page"' : "") +
-      ' aria-haspopup="true" aria-expanded="false"><span class="cvx-bn">কভার পেজ</span><span class="cvx-en">Cover Page</span><span class="dl-cur" data-dl-cover-cur></span> ' +
+      ' aria-haspopup="true" aria-expanded="false"><span class="cvx-bn">কভার পেজ</span><span class="cvx-en">Cover Page</span> ' +
       ICON_CHEVRON + "</button>" +
       '<div class="dl-menu dl-menu-cvx" role="menu">' + items + "</div></div>"
     );
@@ -116,7 +116,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var dd =
       '<div class="dl-dd" data-dl-dd>' +
       '<button type="button" class="dl-dd-btn"' + (toolsActive ? ' aria-current="page"' : "") +
-      ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + '<span class="dl-cur" data-dl-tools-cur></span>' + " " + ICON_CHEVRON + "</button>" +
+      ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + " " + ICON_CHEVRON + "</button>" +
       '<div class="dl-menu" role="menu">' + items + "</div></div>";
 
     links.splice(2, 0, dd);
@@ -355,12 +355,6 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       a.classList.toggle("on", on);
       if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
     });
-
-    var tc = host.querySelector("[data-dl-tools-cur]");
-    if (tc) tc.innerHTML = tool ? "<i aria-hidden='true'>›</i>" + bi(tool.bn, tool.en) : "";
-
-    var cc = host.querySelector("[data-dl-cover-cur]");
-    if (cc) cc.innerHTML = cover ? "<i aria-hidden='true'>›</i>" + bi(cover.bn, cover.en) : "";
 
     host.querySelectorAll("[data-cvx-v]").forEach(function (a) {
       var on = !!cover && a.getAttribute("data-cvx-v") === cover.v;
