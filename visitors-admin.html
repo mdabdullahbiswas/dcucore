@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#08172e">
+<title>ভিজিটর অ্যানালিটিক্স · DCUCore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+<script>
+(function(){var t=null;try{t=localStorage.getItem('adminTheme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;})();
+</script>
+<style>
+:root{
+  --bg:#f4f1ea;--surface:#ffffff;--surface2:#faf7f1;--ink:#0b1626;--mu:#6b7686;--ln:#e8e1d2;
+  --navy:#08172e;--navy2:#123664;--gold:#c9a24a;--gold2:#f1d99a;--gold3:#9a741f;
+  --red:#c8263a;--redSoft:#fde8ea;--green:#0f9d58;--greenSoft:#dff6e9;--amber:#9a6a0b;--amberSoft:#fbf0d4;--blue:#2b8cff;
+  --goldGrad:linear-gradient(135deg,#f8e8b8,#dcb663 40%,#b8913a 65%,#f3dea4);
+  --shadow:0 1px 1px rgba(11,22,38,.04),0 10px 26px -12px rgba(11,22,38,.2);
+  --shadowLg:0 30px 80px rgba(8,23,46,.28);
+  --r:22px;--ease:cubic-bezier(.2,.8,.2,1);
+  --f:'Plus Jakarta Sans','Hind Siliguri',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --fh:'Playfair Display','Noto Serif Bengali','Hind Siliguri',serif;
+}
+html[data-theme=dark]{
+  --bg:#050c18;--surface:#0c182b;--surface2:#10203a;--ink:#eef2fa;--mu:#8fa0bb;--ln:#1d3050;
+  --redSoft:#3a121a;--greenSoft:#0c2c1d;--amberSoft:#33250a;--amber:#f1c76a;
+  --shadow:0 1px 1px rgba(0,0,0,.4),0 14px 34px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14.5px;line-height:1.55;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6;
+  background:radial-gradient(900px 500px at 90% -10%,rgba(201,165,78,.18),transparent 60%),radial-gradient(800px 600px at -10% 30%,rgba(18,54,100,.16),transparent 60%)}
+html[data-theme=dark] body:before{opacity:.9}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--ease)}
+.ic .d{fill:currentColor;fill-opacity:.18;stroke:none}
+.btn:hover .ic{transform:scale(1.12) rotate(-4deg)}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--surface) 72%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border-bottom:1px solid var(--ln)}
+.top:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);opacity:.7}
+.top-in{max-width:1120px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:12px;padding-top:max(10px,env(safe-area-inset-top))}
+.logo{width:44px;height:44px;border-radius:50%;padding:3px;display:grid;place-items:center;background:var(--goldGrad);box-shadow:0 8px 20px rgba(201,162,74,.38);text-decoration:none;flex:none}
+.logo img{width:100%;height:100%;border-radius:50%;object-fit:contain;background:#fff}
+.brand b{display:block;font:700 17px/1.2 var(--fh);background:linear-gradient(90deg,var(--ink),var(--navy2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand span{display:block;font-size:10.5px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold3)}
+.sp{flex:1}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:22px 18px 90px}
+html.embed .top{display:none}
+html.embed .wrap{padding-top:12px}
+
+/* buttons */
+.btn{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 15px;border-radius:13px;font:600 13.5px/1 var(--f);color:var(--ink);white-space:nowrap;
+  background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--ln);box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 6px rgba(11,22,38,.06);transition:transform .2s var(--ease),box-shadow .25s,border-color .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(11,22,38,.3);border-color:color-mix(in srgb,var(--gold) 55%,var(--ln))}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible,.seg button:focus-visible,.inp:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.btn.sm{height:34px;padding:0 12px;font-size:12.5px;border-radius:11px}
+.btn.icon{width:40px;padding:0}
+.btn.dng{color:var(--red);background:var(--redSoft);border-color:transparent}
+.btn.dng:hover{background:linear-gradient(135deg,#e0364b,#a51a2d);color:#fff}
+.btn:after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.38),transparent);transform:skewX(-20deg);transition:left .7s var(--ease);pointer-events:none}
+.btn:hover:after{left:140%}
+
+/* card */
+.card{position:relative;background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 16%,var(--ln));border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* gate */
+.gate{max-width:440px;margin:min(8vh,60px) auto 0;overflow:hidden;text-align:center;animation:up .6s var(--ease) both;border-radius:28px;box-shadow:var(--shadowLg)}
+.gate-hero{padding:36px 24px 28px;color:#fff;background:radial-gradient(500px 220px at 80% -20%,rgba(201,165,78,.38),transparent 60%),linear-gradient(150deg,#050f20,#08172e 50%,#123664)}
+.gate-hero img{width:86px;height:86px;border-radius:50%;background:#fff;padding:4px;object-fit:contain;margin-bottom:12px;box-shadow:0 0 0 10px rgba(241,217,154,.1),0 0 40px rgba(201,162,74,.45)}
+.gate-hero h1{font:700 26px/1.3 var(--fh);margin:0}
+.gate-hero p{margin-top:4px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold2)}
+.gate-body{padding:24px 26px 28px}
+.gate-body>p{color:var(--mu);font-size:14px;margin-bottom:18px}
+.lf{display:grid;gap:14px;text-align:left}
+.lf label{display:grid;gap:6px;font-size:13px;font-weight:700}
+.inp{box-sizing:border-box;width:100%;height:50px;padding:0 15px;border-radius:14px;border:1px solid var(--ln);background:var(--surface2);color:var(--ink);font:500 14.5px var(--f);transition:border-color .25s,box-shadow .25s}
+.inp::placeholder{color:var(--mu)}
+.inp:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,162,74,.2)}
+.lbtn{width:100%;height:52px;border:0;border-radius:15px;cursor:pointer;font:700 15px var(--f);color:#2a1c02;background:var(--goldGrad);background-size:200% 100%;box-shadow:0 14px 30px -8px rgba(201,162,74,.65);transition:transform .2s,background-position .4s}
+.lbtn:hover{transform:translateY(-2px);background-position:100% 0}
+.lbtn[disabled]{opacity:.65;cursor:wait;transform:none}
+.or{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--mu);font-size:12.5px;font-weight:600}
+.or:before,.or:after{content:"";flex:1;height:1px;background:var(--ln)}
+.gbtn{width:100%;height:52px;border-radius:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;font:700 14.5px var(--f);color:#1f2937;background:#fff;border:1px solid #dadce0;box-shadow:0 2px 6px rgba(0,0,0,.06);transition:transform .2s,box-shadow .2s}
+.gbtn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
+.gbtn b{font-weight:800;color:#4285F4}
+.msg{min-height:20px;margin-top:12px;font-size:13px;color:var(--red);font-weight:600}
+
+/* hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 12px;padding:26px 24px 22px;margin-bottom:22px;border-radius:28px;color:#fff;
+  background:radial-gradient(520px 260px at 95% -40%,rgba(201,165,78,.42),transparent 62%),radial-gradient(420px 240px at 0% 130%,rgba(43,140,255,.32),transparent 62%),linear-gradient(135deg,#040a18,#0a2145 62%,#0f2c58);
+  box-shadow:0 34px 60px -30px rgba(4,10,24,.75),0 0 0 1px rgba(243,222,164,.2) inset;animation:up .5s var(--ease) both}
+.hero:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--goldGrad);background-size:200% 100%;animation:flow 5s linear infinite;opacity:.9;z-index:-1}
+@keyframes flow{to{background-position:-200% 0}}
+.hero-txt{flex:1 1 100%}
+.hero h2{font:700 27px/1.3 var(--fh);background:linear-gradient(90deg,#fff,var(--gold2) 55%,#fff);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 7s linear infinite}
+.hero p{margin-top:2px;font-size:13px;color:rgba(255,255,255,.64)}
+.who{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(243,222,164,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.who i{position:relative;flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--f);font-style:normal;color:#2a1c02;background:var(--goldGrad)}
+.who i:after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:#22c373;border:2px solid #0b1424;animation:live 2s ease-in-out infinite}
+@keyframes live{0%,100%{box-shadow:0 0 0 0 rgba(34,195,115,.55)}50%{box-shadow:0 0 0 5px rgba(34,195,115,0)}}
+.who small{display:block;font-size:10.5px;color:rgba(255,255,255,.55);line-height:1.1;font-weight:600}
+.who b{display:block;font-size:13px;font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3}
+.tb-r{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.hero .btn{color:#fff;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);box-shadow:none;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hero .btn:hover{border-color:var(--gold2);background:rgba(255,255,255,.16)}
+.hero .btn.dng{color:#ffb9c3;background:rgba(193,33,59,.24);border-color:rgba(255,120,140,.3)}
+.hero .btn.dng:hover{background:linear-gradient(135deg,#e0364b,#a51a2d);color:#fff}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{--c:#c9a54e;position:relative;overflow:hidden;padding:20px;border-radius:24px;
+  background:linear-gradient(165deg,var(--surface) 55%,color-mix(in srgb,var(--surface) 88%,var(--c)));border:1px solid color-mix(in srgb,var(--c) 22%,var(--ln));box-shadow:var(--shadow);
+  transition:transform .35s var(--ease),box-shadow .35s;animation:up .6s var(--ease) both}
+.stat:nth-child(2){animation-delay:.06s}.stat:nth-child(3){animation-delay:.12s}.stat:nth-child(4){animation-delay:.18s}
+.stat:hover{transform:translateY(-5px);box-shadow:0 26px 50px -22px color-mix(in srgb,var(--c) 55%,transparent)}
+.stat:after{content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,var(--c),transparent 70%);opacity:.22;pointer-events:none}
+.si{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 70%,#000));box-shadow:0 10px 20px -8px color-mix(in srgb,var(--c) 75%,transparent),0 0 0 5px color-mix(in srgb,var(--c) 13%,transparent)}
+.si .ic{width:22px;height:22px}
+.si .ic .d{fill:#fff;fill-opacity:.34}
+.stat b{display:block;margin-top:14px;font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:6px;font-size:13px;font-weight:600;color:var(--mu)}
+.stat small{display:block;margin-top:10px;padding-top:9px;border-top:1px dashed color-mix(in srgb,var(--c) 30%,transparent);font-size:11.5px;font-weight:700;color:color-mix(in srgb,var(--c) 80%,#000);min-height:30px}
+html[data-theme=dark] .stat small{color:var(--c)}
+.stat.live .si .ic{animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{50%{opacity:.45}}
+
+/* range segment */
+.bar2{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.seg{display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:var(--surface2);border:1px solid var(--ln)}
+.seg button{all:unset;box-sizing:border-box;cursor:pointer;height:36px;padding:0 16px;border-radius:999px;font:600 13px/36px var(--f);color:var(--mu);transition:all .25s var(--ease);-webkit-tap-highlight-color:transparent}
+.seg button:hover{color:var(--ink)}
+.seg button.on{color:var(--gold2);background:linear-gradient(135deg,var(--navy2),var(--navy));box-shadow:0 10px 20px -10px rgba(8,23,46,.6)}
+.note{font-size:12px;color:var(--mu);font-weight:500}
+
+/* panels */
+.panel{padding:20px;margin-bottom:16px;animation:up .55s var(--ease) both}
+.ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ph h3{font:700 16px/1.3 var(--fh)}
+.ph .sp{flex:1}
+.lg{display:inline-flex;gap:14px;font-size:12px;font-weight:600;color:var(--mu)}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.lg .a{background:color-mix(in srgb,var(--navy2) 38%,var(--surface2))}.lg .b{background:var(--goldGrad)}
+.chart{display:flex;align-items:flex-end;gap:3px;height:210px;padding:4px 2px 0;background:linear-gradient(var(--ln) 1px,transparent 1px) 0 0/100% 25%;border-bottom:1px solid var(--ln)}
+.col{position:relative;flex:1;min-width:2px;height:100%;cursor:default}
+.col i{position:absolute;left:8%;right:8%;bottom:0;display:block;border-radius:6px 6px 2px 2px;transition:height .7s var(--ease),filter .2s}
+.col .v{background:color-mix(in srgb,var(--navy2) 38%,var(--surface2))}
+html[data-theme=dark] .col .v{background:color-mix(in srgb,var(--navy2) 70%,var(--surface2))}
+.col .u{background:var(--goldGrad)}
+.col:hover i{filter:brightness(1.12)}
+.col:hover{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.axis{display:flex;gap:3px;padding:6px 2px 0;font-size:11px;color:var(--mu);font-weight:600}
+.axis span{flex:1;min-width:2px;position:relative;height:14px}
+.axis span em{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-style:normal}
+
+/* breakdown */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+.grid3 .panel{margin:0}
+.bi{margin-bottom:12px}.bi:last-child{margin-bottom:0}
+.bt{display:flex;align-items:baseline;gap:8px;font-size:13px}
+.bl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.bl small{display:block;font-size:11.5px;font-weight:500;color:var(--mu);overflow:hidden;text-overflow:ellipsis}
+.bt b{font-variant-numeric:tabular-nums;font-weight:800}
+.bt em{font-style:normal;font-size:11.5px;color:var(--mu);min-width:34px;text-align:right;font-weight:600}
+.bb{height:6px;margin-top:5px;border-radius:99px;background:var(--surface2);border:1px solid var(--ln);overflow:hidden}
+.bb i{display:block;height:100%;border-radius:99px;background:var(--goldGrad);transition:width .8s var(--ease)}
+.none{color:var(--mu);font-size:13px;text-align:center;padding:18px 0}
+
+/* table */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -6px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+th{text-align:left;padding:11px 12px;font-size:11.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--gold3);background:var(--surface2);border-bottom:1px solid var(--ln);white-space:nowrap}
+html[data-theme=dark] th{color:var(--gold2)}
+td{padding:11px 12px;border-bottom:1px solid var(--ln);vertical-align:top}
+tbody tr:hover{background:color-mix(in srgb,var(--gold) 7%,var(--surface))}
+tbody tr:last-child td{border-bottom:0}
+td .m{display:block;margin-top:1px;font-size:12px;color:var(--mu);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nm{white-space:nowrap}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.tag.new{color:var(--green);background:var(--greenSoft)}
+.tag.ret{color:var(--amber);background:var(--amberSoft)}
+.vid{font:600 11px ui-monospace,Menlo,Consolas,monospace;color:var(--mu);margin-left:6px}
+.tfoot{display:flex;justify-content:center;margin-top:14px}
+.search{position:relative;display:block;flex:1;min-width:220px;max-width:340px}
+.search .inp{height:40px;padding-left:40px;font-size:13.5px;border-radius:12px}
+.search .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mu);pointer-events:none}
+
+/* empty / skeleton */
+.sk{height:118px;border-radius:24px;background:linear-gradient(100deg,var(--surface2) 30%,color-mix(in srgb,var(--surface2) 55%,var(--ln)) 50%,var(--surface2) 70%) 0 0/250% 100%;animation:shim 1.4s linear infinite;border:1px solid var(--ln);margin-bottom:14px}
+@keyframes shim{to{background-position:-250% 0}}
+.empty{text-align:center;padding:50px 20px;color:var(--mu)}
+.empty .ic{width:64px;height:64px;padding:15px;border-radius:50%;color:var(--gold);background:radial-gradient(circle,color-mix(in srgb,var(--gold) 20%,transparent),transparent 70%);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent),0 0 0 12px color-mix(in srgb,var(--gold) 7%,transparent);margin-bottom:16px}
+.empty p{font-size:14.5px;font-weight:500;line-height:1.7}
+.empty code{font:600 12.5px ui-monospace,Menlo,Consolas,monospace;padding:2px 7px;border-radius:7px;background:var(--surface2);border:1px solid var(--ln)}
+
+/* dialog / toast */
+.ov{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:18px;overflow-y:auto;background:rgba(3,10,22,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:fade .25s both}
+@keyframes fade{from{opacity:0}}
+.dlg{width:100%;max-width:400px;margin:auto;padding:26px 24px 22px;text-align:center;border-radius:26px;box-shadow:var(--shadowLg);animation:pop .35s var(--ease) both}
+.dlg .di{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;color:var(--red);background:var(--redSoft);box-shadow:0 0 0 8px color-mix(in srgb,var(--red) 10%,transparent)}
+.dlg .di .ic{width:26px;height:26px}
+.dlg p{font-size:15px;font-weight:600;line-height:1.6;margin-bottom:20px;word-break:break-word}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .btn{height:46px;width:100%}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.94)}}
+.toasts{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;display:grid;gap:8px;width:min(92vw,420px);pointer-events:none}
+.toast{display:flex;align-items:center;gap:10px;padding:13px 16px;border-radius:16px;font-size:13.5px;font-weight:600;color:#fff;background:linear-gradient(135deg,#0b1a33,#08172e);border-left:3px solid var(--gold);box-shadow:var(--shadowLg);animation:tin .4s cubic-bezier(.2,.9,.3,1.2) both}
+.toast .ic{color:var(--gold2)}
+.toast.err{border-left-color:var(--red)}.toast.err .ic{color:#ffb4ab}
+.toast.out{animation:tout .3s both}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.96)}}
+@keyframes tout{to{opacity:0;transform:translateY(10px)}}
+@keyframes up{from{opacity:0;transform:translateY(18px) scale(.985);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+
+@media(max-width:980px){.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){
+  .wrap{padding:16px 14px 90px}.top-in{padding-left:14px;padding-right:14px}
+  .hero{padding:20px 16px 18px;border-radius:24px}.hero h2{font-size:22px}
+  .stat{padding:16px}.stat b{font-size:28px}
+  .tb-r{width:100%;margin-left:0}.tb-r .btn{flex:1;padding:0}.tb-r .btn span{display:none}
+  .grid3{grid-template-columns:1fr}
+  .who b{max-width:150px}
+  .chart{height:170px}
+  .seg button{padding:0 12px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<script>if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed");</script>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <a class="logo" href="visitors-admin.html" aria-label="ভিজিটর অ্যানালিটিক্স"><img src="logo.png" alt="" width="44" height="44" decoding="async"></a>
+  <div class="brand"><b>DCUCore Analytics</b><span>Admin Console</span></div>
+  <div class="sp"></div>
+  <button class="btn icon" id="theme" type="button" aria-label="থিম বদলান" title="থিম"></button>
+</div></header>
+
+<main class="wrap">
+  <!-- login gate -->
+  <section id="gate" style="display:none">
+    <div class="card gate">
+      <div class="gate-hero">
+        <img src="logo.png" alt="DCUCore" width="86" height="86" decoding="async">
+        <h1>ভিজিটর অ্যানালিটিক্স</h1>
+        <p>DCUCore · Admin</p>
+      </div>
+      <div class="gate-body">
+        <p>এই পেজটি শুধু অনুমোদিত এডমিনের জন্য। চালিয়ে যেতে আপনার আইডি ও পাসওয়ার্ড দিন।</p>
+        <form id="lf" class="lf" autocomplete="on" novalidate>
+          <label>এডমিন আইডি
+            <input class="inp" id="lid" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="আইডি বা ইমেইল" required>
+          </label>
+          <label>পাসওয়ার্ড
+            <input class="inp" id="lpw" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          </label>
+          <button id="login" class="lbtn" type="submit">লগ ইন</button>
+        </form>
+        <div class="or">অথবা</div>
+        <button id="glogin" class="gbtn" type="button"><b>G</b> Google দিয়ে সাইন ইন</button>
+        <p id="gmsg" class="msg"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- app -->
+  <section id="app" style="display:none">
+    <div class="hero">
+      <div class="hero-txt">
+        <h2>ভিজিটর অ্যানালিটিক্স</h2>
+        <p>কারা, কখন, কোথা থেকে ও কোন ডিভাইসে আপনার সাইটে আসছেন — এক নজরে</p>
+      </div>
+      <div class="who"><i id="whoA">A</i><div><small>সাইন ইন</small><b id="who"></b></div></div>
+      <div class="tb-r">
+        <button class="btn" id="ref" type="button"></button>
+        <button class="btn" id="csv" type="button"></button>
+        <button class="btn dng" id="purge" type="button"></button>
+        <button class="btn dng" id="out" type="button"></button>
+      </div>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="bar2">
+      <div class="seg" id="seg" role="tablist" aria-label="সময়কাল"></div>
+      <span class="note" id="cap"></span>
+    </div>
+
+    <div id="main"></div>
+  </section>
+</main>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, where, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* ---------- config (admin.html / events-admin.html-এর সাথে মিল) ---------- */
+const ADMIN_ID = "admin";
+const ID_DOMAIN = "dcu-blood-bank.app";
+const ADMIN_EMAIL = ADMIN_ID + "@" + ID_DOMAIN;
+const ADMIN_LOGINS = [ADMIN_EMAIL, "mdabdullahbiswas48@gmail.com"];
+const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
+const COL = "site_visits";
+const TZ = "Asia/Dhaka";
+const LIMIT = 5000;       /* এক রেঞ্জে সর্বোচ্চ কতগুলো ভিজিট লোড হবে */
+const PURGE_DAYS = 90;    /* এর চেয়ে পুরনো ডেটা মোছা যাবে */
+const LIVE_MS = 5 * 60e3; /* "এখন সক্রিয়" = গত ৫ মিনিট */
+
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-admin");
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+
+/* ---------- helpers ---------- */
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nb = n => Number(n || 0).toLocaleString("bn-BD");
+const FP = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", hourCycle:"h23" });
+const FT = new Intl.DateTimeFormat("bn-BD", { timeZone: TZ, day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+const FD = new Intl.DateTimeFormat("bn-BD", { timeZone: TZ, day:"numeric", month:"short" });
+const FL = new Intl.DateTimeFormat("bn-BD", { timeZone: TZ, day:"numeric", month:"long", hour:"numeric", minute:"2-digit" });
+const parts = ms => { const p = {}; FP.formatToParts(ms).forEach(x => p[x.type] = x.value); return p; };
+const dkey = ms => { const p = parts(ms); return p.year + "-" + p.month + "-" + p.day; };
+const day0 = ms => new Date(dkey(ms) + "T00:00:00+06:00").getTime();
+const DEV = { mobile:"মোবাইল", tablet:"ট্যাবলেট", desktop:"ডেস্কটপ" };
+const TZN = { "Asia/Dhaka":"বাংলাদেশ", "Asia/Kolkata":"ভারত", "Asia/Calcutta":"ভারত", "Asia/Riyadh":"সৌদি আরব", "Asia/Dubai":"সংযুক্ত আরব আমিরাত", "Asia/Qatar":"কাতার", "Asia/Kuwait":"কুয়েত", "Asia/Muscat":"ওমান", "Asia/Bahrain":"বাহরাইন", "Asia/Kuala_Lumpur":"মালয়েশিয়া", "Asia/Singapore":"সিঙ্গাপুর", "Europe/London":"যুক্তরাজ্য", "America/New_York":"যুক্তরাষ্ট্র (পূর্ব)", "America/Chicago":"যুক্তরাষ্ট্র (মধ্য)", "America/Los_Angeles":"যুক্তরাষ্ট্র (পশ্চিম)", "Australia/Sydney":"অস্ট্রেলিয়া", "Asia/Tokyo":"জাপান", "Asia/Karachi":"পাকিস্তান" };
+const srcName = r => {
+  if (!r) return "সরাসরি / বুকমার্ক";
+  const l = r.toLowerCase();
+  if (/facebook|(^|\.)fb\.com|(^|\.)fb\.me/.test(l)) return "Facebook";
+  if (/messenger/.test(l)) return "Messenger";
+  if (/google\./.test(l)) return "Google";
+  if (/instagram/.test(l)) return "Instagram";
+  if (/(^|\.)t\.co$|twitter|(^|\.)x\.com$/.test(l)) return "X (Twitter)";
+  if (/youtube|youtu\.be/.test(l)) return "YouTube";
+  if (/whatsapp|wa\.me/.test(l)) return "WhatsApp";
+  if (/(^|\.)t\.me$|telegram/.test(l)) return "Telegram";
+  if (/linkedin|lnkd\.in/.test(l)) return "LinkedIn";
+  return r;
+};
+
+/* ---------- icons ---------- */
+const ICON = {
+  eye:'<path class="d" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  refresh:'<path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M20.5 3.8v4.7h-4.7"/>',
+  download:'<path class="d" d="M5 16h14v3a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M5 16v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"/>',
+  logout:'<path class="d" d="M4 5a1 1 0 0 1 1-1h4v16H5a1 1 0 0 1-1-1z"/><path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M15.5 7.5 20 12l-4.5 4.5M20 12H10"/>',
+  check:'<path d="M4.8 12.7 9.6 17.5 19.2 7.2"/>',
+  trash:'<path class="d" d="M6 8h12l-1 11.2a1.5 1.5 0 0 1-1.5 1.3h-7A1.5 1.5 0 0 1 7 19.2z"/><path d="M4 7.5h16M9.5 7.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v2.5M6 8l1 11.2a1.5 1.5 0 0 0 1.5 1.3h7a1.5 1.5 0 0 0 1.5-1.3L18 8M10 11.5v5M14 11.5v5"/>',
+  alert:'<path class="d" d="M10.3 4.2a2 2 0 0 1 3.4 0l8 13.6a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3z"/><path d="M10.3 4.2a2 2 0 0 1 3.4 0l8 13.6a2 2 0 0 1-1.7 3H4a2 2 0 0 1-1.7-3z"/><path d="M12 9.5v4.6M12 17.4v.1"/>',
+  users:'<circle class="d" cx="9" cy="8" r="3.6"/><circle cx="9" cy="8" r="3.6"/><path d="M2.6 20.2a6.4 6.4 0 0 1 12.8 0M16 4.6a3.6 3.6 0 0 1 0 6.8M18.2 14.6a6.2 6.2 0 0 1 3.2 5.6"/>',
+  bolt:'<path class="d" d="M13 2.8 5 13.4h6l-1 7.8 8-10.6h-6z"/><path d="M13 2.8 5 13.4h6l-1 7.8 8-10.6h-6z"/>',
+  phone:'<rect class="d" x="6.5" y="2.8" width="11" height="18.4" rx="2.6"/><rect x="6.5" y="2.8" width="11" height="18.4" rx="2.6"/><path d="M11 18h2"/>',
+  sun:'<circle class="d" cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+  moon:'<path class="d" d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/><path d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/>',
+  inbox:'<path class="d" d="M3 13.2 6.2 5.6A1.5 1.5 0 0 1 7.6 4.7h8.8a1.5 1.5 0 0 1 1.4.9L21 13.2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 13.2 6.2 5.6A1.5 1.5 0 0 1 7.6 4.7h8.8a1.5 1.5 0 0 1 1.4.9L21 13.2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM3 13.2h4.8l1.2 2.8h6l1.2-2.8H21"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'
+};
+const ic = (n, c = "") => `<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICON[n] || ""}</svg>`;
+
+/* ---------- theme ---------- */
+function paintTheme() { const dk = document.documentElement.dataset.theme === "dark"; $("theme").innerHTML = ic(dk ? "sun" : "moon"); $("theme").title = dk ? "লাইট মোড" : "ডার্ক মোড"; }
+$("theme").onclick = () => { const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = t; try { localStorage.setItem("adminTheme", t); } catch (e) {} paintTheme(); };
+paintTheme();
+$("ref").innerHTML = ic("refresh") + "<span>রিফ্রেশ</span>";
+$("csv").innerHTML = ic("download") + "<span>CSV</span>";
+$("purge").innerHTML = ic("trash") + "<span>পুরনো ডেটা মুছুন</span>";
+$("out").innerHTML = ic("logout") + "<span>সাইন আউট</span>";
+
+/* ---------- toast / confirm ---------- */
+function toast(msg, type) {
+  const t = document.createElement("div"); t.className = "toast" + (type === "err" ? " err" : "");
+  t.innerHTML = ic(type === "err" ? "alert" : "check"); const s = document.createElement("span"); s.textContent = msg; t.appendChild(s);
+  $("toasts").appendChild(t);
+  setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 320); }, type === "err" ? 4800 : 2600);
+}
+const err = e => toast("কাজটি সম্পন্ন হয়নি: " + (e.code || e.message), "err");
+function ask(msg, okLabel) {
+  return new Promise(res => {
+    const o = document.createElement("div"); o.className = "ov";
+    o.innerHTML = `<div class="card dlg" role="dialog" aria-modal="true"><div class="di">${ic("trash")}</div><p></p><div class="row2"><button type="button" class="btn" data-r="0">বাতিল</button><button type="button" class="btn dng" data-r="1"></button></div></div>`;
+    o.querySelector("p").textContent = msg; o.querySelector("[data-r='1']").textContent = okLabel || "হ্যাঁ, মুছুন";
+    const done = v => { document.removeEventListener("keydown", kd, true); o.remove(); res(v); };
+    const kd = e => { if (e.key === "Escape") { e.preventDefault(); done(false); } };
+    o.onclick = e => { if (e.target === o) done(false); const b = e.target.closest("[data-r]"); if (b) done(b.dataset.r === "1"); };
+    document.addEventListener("keydown", kd, true); document.body.appendChild(o); o.querySelector("[data-r='0']").focus();
+  });
+}
+
+/* ---------- login / auth ---------- */
+const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+const LERR = { "auth/invalid-credential":"আইডি বা পাসওয়ার্ড ভুল।", "auth/wrong-password":"আইডি বা পাসওয়ার্ড ভুল।", "auth/user-not-found":"আইডি বা পাসওয়ার্ড ভুল।", "auth/invalid-email":"আইডি সঠিক নয়।", "auth/too-many-requests":"অনেকবার ভুল চেষ্টা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।", "auth/network-request-failed":"ইন্টারনেট সংযোগ পরীক্ষা করুন।" };
+$("glogin").onclick = () => { $("gmsg").textContent = ""; persistReady.then(() => signInWithPopup(auth, new GoogleAuthProvider())).catch(e => $("gmsg").textContent = "সাইন ইন সম্ভব হয়নি: " + e.code); };
+$("lf").onsubmit = async ev => {
+  ev.preventDefault();
+  const id = $("lid").value.trim().toLowerCase(), pw = $("lpw").value, btn = $("login");
+  if (!id || !pw) { $("gmsg").textContent = "আইডি ও পাসওয়ার্ড দুটোই দিন।"; return; }
+  $("gmsg").textContent = ""; btn.disabled = true; btn.textContent = "যাচাই হচ্ছে...";
+  try { await persistReady; await signInWithEmailAndPassword(auth, id.includes("@") ? id : id + "@" + ID_DOMAIN, pw); $("lpw").value = ""; }
+  catch (e) { $("gmsg").textContent = LERR[e.code] || ("লগ ইন সম্ভব হয়নি: " + e.code); }
+  finally { btn.disabled = false; btn.textContent = "লগ ইন"; }
+};
+$("out").onclick = () => signOut(auth);
+
+let liveTimer = null;
+onAuthStateChanged(auth, u => {
+  if (!u) { clearInterval(liveTimer); $("gate").style.display = "block"; $("app").style.display = "none"; return; }
+  const isPw = ADMIN_LOGINS.includes((u.email || "").toLowerCase());
+  const isG = u.email === GOOGLE_ADMIN_EMAIL && u.emailVerified;
+  if (!isPw && !isG) { $("gmsg").textContent = "এই অ্যাকাউন্টের প্রবেশাধিকার নেই।"; signOut(auth); return; }
+  /* এডমিনের নিজের ভিজিট যাতে ট্র্যাক না হয় */
+  try { localStorage.setItem("dcuNoTrack", "1"); } catch (e) {}
+  $("gate").style.display = "none"; $("app").style.display = "block";
+  const nm = (isG || u.email !== ADMIN_EMAIL) ? u.email : ADMIN_ID;
+  $("who").textContent = nm; $("whoA").textContent = (nm[0] || "A").toUpperCase();
+  load();
+  clearInterval(liveTimer);
+  liveTimer = setInterval(() => { if (document.visibilityState === "visible") loadLive(); }, 30000);
+});
+
+/* ---------- data ---------- */
+const RANGES = [["today", "আজ", 1], ["7", "৭ দিন", 7], ["30", "৩০ দিন", 30], ["90", "৯০ দিন", 90]];
+let range = "7", V = [], capped = false, shown = 100, LIVE = [], failed = null;
+
+const startOf = r => day0(Date.now()) - ((r === "today" ? 1 : +r) - 1) * 864e5;
+const skeleton = () => '<div class="sk"></div>'.repeat(3);
+
+async function load() {
+  $("main").innerHTML = skeleton(); shown = 100; failed = null;
+  paintSeg();
+  try {
+    const s = await getDocs(query(collection(db, COL), where("ts", ">=", startOf(range)), orderBy("ts", "desc"), limit(LIMIT)));
+    V = s.docs.map(d => ({ id: d.id, ...d.data() }));
+    capped = s.size >= LIMIT;
+  } catch (e) { V = []; capped = false; failed = e; }
+  await loadLive(true);
+  render(true);
+}
+async function loadLive(silent) {
+  try {
+    const s = await getDocs(query(collection(db, COL), where("ts", ">=", Date.now() - LIVE_MS), orderBy("ts", "desc"), limit(300)));
+    LIVE = s.docs.map(d => d.data());
+  } catch (e) { LIVE = []; }
+  if (!silent) paintStats();
+}
+
+/* ---------- aggregates ---------- */
+const uniq = arr => new Set(arr.map(v => v.vid));
+function agg() {
+  const U = uniq(V), S = new Set(V.map(v => v.sid));
+  const newSet = new Set(V.filter(v => v.isNew === true).map(v => v.vid));
+  const mob = new Set(V.filter(v => v.dev === "mobile").map(v => v.vid));
+  const lv = uniq(LIVE), lastLive = LIVE[0];
+  return { views: V.length, uv: U.size, sess: S.size, nw: newSet.size, ret: Math.max(0, U.size - newSet.size), mobPct: U.size ? Math.round(mob.size / U.size * 100) : null, live: lv.size, lastLive };
+}
+function buckets() {
+  const start = startOf(range), out = [], idx = new Map();
+  if (range === "today") {
+    for (let h = 0; h < 24; h++) { const k = String(h).padStart(2, "0"); idx.set(k, out.length); out.push({ k, label: nb(h), full: nb(h) + ":০০", views: 0, u: new Set() }); }
+  } else {
+    const days = +range;
+    for (let i = 0; i < days; i++) { const ms = start + i * 864e5, k = dkey(ms); idx.set(k, out.length); out.push({ k, label: FD.format(ms), full: FD.format(ms), views: 0, u: new Set() }); }
+  }
+  V.forEach(v => { const k = range === "today" ? parts(v.ts).hour : dkey(v.ts); const i = idx.get(k); if (i != null) { out[i].views++; out[i].u.add(v.vid); } });
+  return out;
+}
+const grp = fn => { const m = new Map(); V.forEach(v => { const k = fn(v); if (!k) return; if (!m.has(k)) m.set(k, new Set()); m.get(k).add(v.vid); }); return [...m].map(([t, s]) => ({ t, n: s.size })).sort((a, b) => b.n - a.n).slice(0, 8); };
+function list(rows, total, emptyMsg) {
+  if (!rows.length) return `<p class="none">${emptyMsg || "ডেটা নেই"}</p>`;
+  const max = rows[0].n || 1;
+  return rows.map(r => `<div class="bi"><div class="bt"><span class="bl" title="${esc(r.t)}">${r.html || esc(r.t)}</span><b>${nb(r.n)}</b><em>${nb(total ? Math.round(r.n / total * 100) : 0)}%</em></div><div class="bb"><i style="width:${Math.max(3, r.n / max * 100)}%"></i></div></div>`).join("");
+}
+
+/* ---------- render ---------- */
+function countUp(el, to, suffix) {
+  const from = +el.dataset.v || 0; el.dataset.v = to; suffix = suffix || "";
+  if (from === to || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = nb(to) + suffix; return; }
+  const t0 = performance.now(), dur = 700;
+  (function f(t) { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = nb(Math.round(from + (to - from) * e)) + suffix; if (p < 1) requestAnimationFrame(f); })(t0);
+}
+function paintSeg() {
+  $("seg").innerHTML = RANGES.map(([k, l]) => `<button type="button" role="tab" data-r="${k}" class="${k === range ? "on" : ""}" aria-selected="${k === range}">${l}</button>`).join("");
+}
+function paintStats() {
+  const a = agg(), box = $("stats");
+  if (box.children.length !== 4) {
+    box.innerHTML = [["eye", "#c9a54e", ""], ["users", "#2b8cff", ""], ["bolt", "#0f9d58", " live"], ["phone", "#e5384f", ""]]
+      .map(([i, c, x]) => `<div class="card stat${x}" style="--c:${c}"><div class="si">${ic(i)}</div><b data-v="0">০</b><span></span><small></small></div>`).join("");
+  }
+  const rows = [
+    ["মোট পেজ ভিউ", a.views, "", `${nb(a.sess)} সেশন · সেশন প্রতি গড় ${a.sess ? nb((a.views / a.sess).toFixed(1)) : "০"} পেজ`],
+    ["ইউনিক ভিজিটর", a.uv, "", `নতুন ${nb(a.nw)} · ফিরতি ${nb(a.ret)}`],
+    ["এখন সক্রিয়", a.live, "", a.lastLive ? `সর্বশেষ: ${a.lastLive.path || "/"}` : "গত ৫ মিনিটে কেউ আসেননি"],
+    ["মোবাইল থেকে", a.mobPct == null ? null : a.mobPct, "%", a.mobPct == null ? "ডেটা নেই" : `ডেস্কটপ/ট্যাবলেট ${nb(100 - a.mobPct)}%`]
+  ];
+  rows.forEach(([label, n, suf, sub], i) => {
+    const el = box.children[i];
+    if (n == null) { el.querySelector("b").textContent = "—"; el.querySelector("b").dataset.v = 0; } else countUp(el.querySelector("b"), n, suf);
+    el.querySelector("span").textContent = label; el.querySelector("small").textContent = sub;
+  });
+}
+
+function render(animate) {
+  paintStats();
+  $("cap").textContent = capped ? `⚠ সর্বোচ্চ ${nb(LIMIT)}টি সাম্প্রতিক ভিজিট দেখানো হচ্ছে — ছোট সময়কাল বেছে নিন।` : (V.length ? `সময়: ${FL.format(startOf(range))} থেকে এখন পর্যন্ত` : "");
+  const m = $("main");
+  if (failed) {
+    const denied = failed.code === "permission-denied";
+    m.innerHTML = `<div class="card empty">${ic("alert")}<p>ডেটা লোড হয়নি: ${esc(failed.code || failed.message)}<br><span style="font-size:12.5px">${denied ? `Firestore Rules-এ <code>site_visits</code> কালেকশনে এডমিনের জন্য read অনুমতি যোগ করুন।` : "ইন্টারনেট সংযোগ ও Firestore সেটিং দেখুন।"}</span></p></div>`;
+    return;
+  }
+  if (!V.length) {
+    m.innerHTML = `<div class="card empty">${ic("inbox")}<p>এই সময়ে কোনো ভিজিট রেকর্ড হয়নি।<br><span style="font-size:12.5px">পাবলিক পেজগুলোতে <code>&lt;script src="/track.js" defer&gt;&lt;/script&gt;</code> যোগ করা আছে কিনা এবং Firestore Rules-এ <code>site_visits</code> create অনুমতি আছে কিনা দেখুন।</span></p></div>`;
+    return;
+  }
+
+  const B = buckets(), maxV = Math.max(1, ...B.map(b => b.views)), step = Math.max(1, Math.ceil(B.length / 7));
+  const chart = `<div class="chart" role="img" aria-label="ভিজিট চার্ট">${B.map(b => `<div class="col" title="${esc(b.full)}: ${nb(b.views)} ভিউ · ${nb(b.u.size)} ভিজিটর"><i class="v" style="height:${b.views / maxV * 100}%"></i><i class="u" style="height:${b.u.size / maxV * 100}%"></i></div>`).join("")}</div>
+    <div class="axis">${B.map((b, i) => `<span>${i % step === 0 || i === B.length - 1 ? `<em>${esc(b.label)}</em>` : ""}</span>`).join("")}</div>`;
+
+  /* পেজ */
+  const pm = new Map(); V.forEach(v => { const k = v.path || "/"; const o = pm.get(k) || { n: 0, title: v.title || "" }; o.n++; if (!o.title && v.title) o.title = v.title; pm.set(k, o); });
+  const pages = [...pm].map(([t, o]) => ({ t, n: o.n, html: `${esc(t)}<small>${esc(o.title)}</small>` })).sort((a, b) => b.n - a.n).slice(0, 8);
+  /* উৎস: সেশনের প্রথম ভিজিট */
+  const first = new Map(); for (let i = V.length - 1; i >= 0; i--) if (!first.has(V[i].sid)) first.set(V[i].sid, V[i]);
+  const sm = new Map(); first.forEach(v => { const k = srcName(v.ref); sm.set(k, (sm.get(k) || 0) + 1); });
+  const srcs = [...sm].map(([t, n]) => ({ t, n })).sort((a, b) => b.n - a.n).slice(0, 8);
+  const uv = uniq(V).size;
+
+  const brk = `<div class="grid3">
+    <div class="card panel"><div class="ph"><h3>জনপ্রিয় পেজ</h3></div>${list(pages, V.length)}</div>
+    <div class="card panel"><div class="ph"><h3>ভিজিটর কোথা থেকে এলেন</h3></div>${list(srcs, first.size)}</div>
+    <div class="card panel"><div class="ph"><h3>অবস্থান <span class="note">(আনুমানিক)</span></h3></div>${list(grp(v => v.tz ? (TZN[v.tz] || v.tz) : ""), uv)}</div>
+    <div class="card panel"><div class="ph"><h3>ডিভাইস</h3></div>${list(grp(v => DEV[v.dev] || v.dev), uv)}</div>
+    <div class="card panel"><div class="ph"><h3>ব্রাউজার</h3></div>${list(grp(v => v.br), uv)}</div>
+    <div class="card panel"><div class="ph"><h3>অপারেটিং সিস্টেম</h3></div>${list(grp(v => v.os), uv)}</div>
+  </div>`;
+
+  m.innerHTML = `<div class="card panel"><div class="ph"><h3>${range === "today" ? "ঘণ্টা অনুযায়ী ভিজিট" : "দিন অনুযায়ী ভিজিট"}</h3><span class="sp"></span><span class="lg"><span><i class="a"></i>পেজ ভিউ</span><span><i class="b"></i>ইউনিক ভিজিটর</span></span></div>${chart}</div>
+    ${brk}
+    <div class="card panel"><div class="ph"><h3>সাম্প্রতিক ভিজিট</h3><span class="sp"></span>
+      <label class="search"><input class="inp" id="q" type="search" autocomplete="off" placeholder="পেজ, উৎস, ব্রাউজার…">${ic("search")}</label></div>
+      <div id="tblBox"></div></div>`;
+  $("q").oninput = () => { shown = 100; paintTable(); };
+  paintTable();
+}
+
+function paintTable() {
+  const q = ($("q").value || "").trim().toLowerCase();
+  const L = q ? V.filter(v => [v.path, v.title, srcName(v.ref), v.ref, v.br, v.os, DEV[v.dev], v.tz, TZN[v.tz], v.vid].join(" ").toLowerCase().includes(q)) : V;
+  const rows = L.slice(0, shown).map(v => `<tr>
+    <td class="nm">${FT.format(v.ts)}</td>
+    <td><b>${esc(v.path || "/")}</b><span class="m" title="${esc(v.title)}">${esc(v.title)}</span></td>
+    <td>${v.ref ? esc(srcName(v.ref)) : '<span style="color:var(--mu)">সরাসরি</span>'}</td>
+    <td>${esc(DEV[v.dev] || v.dev)}<span class="m">${v.sw ? nb(v.sw) + "×" + nb(v.sh) : ""}</span></td>
+    <td>${esc(v.br)}<span class="m">${esc(v.os)}</span></td>
+    <td>${esc(TZN[v.tz] || v.tz || "—")}<span class="m">${esc(v.lang)}</span></td>
+    <td class="nm"><span class="tag ${v.isNew ? "new" : "ret"}">${v.isNew ? "নতুন" : "ফিরতি"}</span><span class="vid" title="ভিজিটর আইডি">#${esc(String(v.vid || "").slice(0, 6))}</span></td>
+  </tr>`).join("");
+  $("tblBox").innerHTML = L.length
+    ? `<div class="tw"><table><thead><tr><th>সময়</th><th>পেজ</th><th>উৎস</th><th>ডিভাইস</th><th>ব্রাউজার · OS</th><th>অবস্থান</th><th>ধরন</th></tr></thead><tbody>${rows}</tbody></table></div>
+       ${L.length > shown ? `<div class="tfoot"><button type="button" class="btn" id="more">আরও দেখান (${nb(L.length - shown)}টি বাকি)</button></div>` : ""}`
+    : `<p class="none">কিছু পাওয়া যায়নি।</p>`;
+  const more = $("more"); if (more) more.onclick = () => { shown += 100; paintTable(); };
+}
+
+/* ---------- interactions ---------- */
+$("seg").onclick = e => { const b = e.target.closest("button[data-r]"); if (b && b.dataset.r !== range) { range = b.dataset.r; load(); } };
+$("ref").onclick = async () => { const b = $("ref"); b.disabled = true; await load(); b.disabled = false; toast("ডেটা হালনাগাদ হয়েছে"); };
+
+$("csv").onclick = () => {
+  if (!V.length) return toast("এক্সপোর্ট করার মতো ডেটা নেই", "err");
+  const c = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const rows = [["Time","Path","Title","Source","Device","Browser","OS","Screen","Language","Timezone","New","Visitor","Session"]]
+    .concat(V.map(v => [new Date(v.ts).toISOString(), v.path, v.title, v.ref, v.dev, v.br, v.os, (v.sw || "") + "x" + (v.sh || ""), v.lang, v.tz, v.isNew ? "yes" : "", v.vid, v.sid]));
+  const a = document.createElement("a");
+  a.download = "visitors-" + range + ".csv";
+  a.href = URL.createObjectURL(new Blob(["﻿" + rows.map(r => r.map(c).join(",")).join("\n")], { type: "text/csv" }));
+  a.click();
+  toast("CSV ডাউনলোড হচ্ছে");
+};
+
+$("purge").onclick = async () => {
+  if (!(await ask(`${nb(PURGE_DAYS)} দিনের চেয়ে পুরনো সব ভিজিট ডেটা স্থায়ীভাবে মুছে ফেলবেন? এটি ফেরানো যাবে না।`, "হ্যাঁ, মুছুন"))) return;
+  const b = $("purge"); b.disabled = true;
+  const cutoff = Date.now() - PURGE_DAYS * 864e5; let total = 0;
+  try {
+    for (let i = 0; i < 25; i++) {
+      const s = await getDocs(query(collection(db, COL), where("ts", "<", cutoff), orderBy("ts", "asc"), limit(400)));
+      if (s.empty) break;
+      const bt = writeBatch(db); s.docs.forEach(d => bt.delete(d.ref)); await bt.commit();
+      total += s.size; if (s.size < 400) break;
+    }
+    toast(total ? `${nb(total)}টি পুরনো রেকর্ড মুছে ফেলা হয়েছে` : "মোছার মতো পুরনো ডেটা নেই");
+  } catch (e) { err(e); }
+  b.disabled = false;
+};
+</script>
+</body>
+</html>
