@@ -619,4 +619,24 @@ onAuthStateChanged(auth, u => {
   load();
 });
 </script>
+<script>
+/* থিম বাটন: আইকন + টগল */
+(function(){
+  var b=document.getElementById("theme"); if(!b) return;
+  var SUN='<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>';
+  var MOON='<path d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/>';
+  function paint(){
+    var d=document.documentElement.dataset.theme==="dark";
+    b.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(d?SUN:MOON)+'</svg>';
+    b.title=d?"লাইট মোড":"ডার্ক মোড";
+  }
+  b.addEventListener("click",function(){
+    var t=document.documentElement.dataset.theme==="dark"?"light":"dark";
+    document.documentElement.dataset.theme=t;
+    try{localStorage.setItem("adminTheme",t)}catch(e){}
+    paint();
+  });
+  paint();
+})();
+</script>
 </body></html>
