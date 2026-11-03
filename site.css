@@ -15,7 +15,7 @@
   --shadow: 0 6px 18px rgba(20, 30, 45, 0.08);
   --radius: 12px;
   --max: 1080px;
-  --font: "Noto Sans Bengali", "Hind Siliguri", "Segoe UI", system-ui, sans-serif;
+  --font: "Inter", "Noto Serif Bengali", system-ui, sans-serif;
   color-scheme: light;
 }
 
