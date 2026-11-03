@@ -1,77 +1,251 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>মতামত ও পরামর্শ — DCUCore</title>
-<meta name="theme-color" content="#0a2240">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css">
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Montserrat',sans-serif;line-height:1.7}
-.w{max-width:920px;margin:0 auto;padding:22px 16px 6px}
-.ph{padding:8px 2px 4px}.ph h1{margin:0;font-size:28px;color:var(--ink)}.ph p{margin:4px 0 0;color:var(--mu);font-size:16px}
-.gd{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start}
-@media(max-width:760px){.gd{grid-template-columns:1fr}}
-.bx{background:var(--cd);border:1px solid var(--ln);border-radius:12px;padding:22px;margin:16px 0}
-.gd .bx{margin:12px 0}
-h2{margin:0 0 10px;font-size:20px;color:var(--ink)}
-.bt{display:inline-block;padding:9px 18px;border-radius:8px;background:var(--navy);color:var(--gold);text-decoration:none;font-weight:700;font-size:14px;border:0;cursor:pointer;font-family:inherit}
-.bt.o{background:transparent;color:var(--ink);border:1.5px solid var(--ln)}
-label{display:block;font-weight:600;font-size:14px;margin-top:12px}
-input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--ln);border-radius:8px;background:var(--cd);color:var(--ink);font:inherit;margin-top:4px}
-textarea{min-height:130px;resize:vertical}
-.ch{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-#fs{margin-top:10px;font-size:14px;color:var(--mu)}
-.ct{display:flex;align-items:center;gap:12px;margin:12px 0}
-.ct b{display:block;font-size:14px;color:var(--ink)}.ct span{font-size:14px;color:var(--mu);word-break:break-all}
-.ns{font-size:13.5px;color:var(--mu);border-top:1px dashed var(--ln);margin-top:14px;padding-top:10px}
-:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-html{scroll-behavior:smooth;scroll-padding-top:80px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCU Blood Donor Directory</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="site.css">
+    <style>
+        :root { --bg: #f4f7f6; --cd: #ffffff; --ink: #1c2733; --ln: #d0d7de; --primary: #0a2240; --accent: #e5a83b; --danger: #d9534f; --success: #28a745; }
+        body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Hind Siliguri', 'Noto Serif Bengali', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; padding: 0; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .card { background: var(--cd); border: 1px solid var(--ln); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        h2 { color: var(--primary); margin-top: 0; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tabs button { flex: 1; padding: 10px; border: none; background: var(--ln); color: var(--ink); font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 14px; min-width: 100px; font-family: inherit; }
+        .tabs button.active { background: var(--primary); color: var(--accent); }
+        .section { display: none; }
+        .section.active { display: block; }
+        label { display: block; font-weight: 600; margin-top: 12px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid var(--ln); border-radius: 8px; margin-top: 4px; box-sizing: border-box; font-family: inherit; }
+        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        @media(max-width: 600px) { .filter-grid { grid-template-columns: 1fr; } }
+        .btn { background: var(--primary); color: var(--accent); border: none; border-radius: 8px; padding: 12px 20px; font-weight: 700; cursor: pointer; margin-top: 16px; width: 100%; font-size: 16px; font-family: inherit; }
+        .btn-success { background: var(--success); color: #fff; }
+        .donor-card { border: 1px solid var(--ln); border-radius: 8px; padding: 15px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: #fafbfc; }
+        .donor-info { flex: 1; min-width: 230px; }
+        .donor-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .donor-details { flex-grow: 1; margin-left: 15px; }
+        .badge { background: var(--danger); color: white; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 13px; }
+        .alert-box { background: rgba(217, 83, 79, 0.1); border: 1px dashed var(--danger); padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13.5px; color: #a94442; }
+        .terms-box { background: #f8f9fa; border: 1px solid var(--ln); padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #444; }
+        .terms-box input { width: auto; margin-right: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid var(--ln); padding: 10px; text-align: center; }
+        th { background: var(--primary); color: #fff; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 9999; }
+        .modal-content { background: #fff; width: 90%; max-width: 440px; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
-/* ===== Premium layer ===== */
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-40px,24px) scale(1.15)}}
-@keyframes shine{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(260%) skewX(-20deg)}}
-@keyframes pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
-.ph{position:relative;overflow:hidden;margin:6px 0 4px;padding:30px 28px;border-radius:18px;background:linear-gradient(125deg,#06142a,var(--navy) 55%,#15396b);box-shadow:0 18px 40px rgba(10,34,64,.28);animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
-.ph::before{content:'';position:absolute;right:-60px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.55),transparent 68%);animation:drift 9s ease-in-out infinite}
-.ph>*{position:relative}.ph h1{color:#f6dfa8;font-size:30px;font-weight:700}.ph p{color:#c4d3e8;max-width:620px}
-.gd .bx{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}.gd .bx:nth-child(1){animation-delay:.12s}.gd .bx:nth-child(2){animation-delay:.24s}
-.bx{border-radius:16px;box-shadow:0 1px 2px rgba(15,27,45,.05),0 14px 34px rgba(15,27,45,.07);transition:box-shadow .3s,transform .3s}
-.gd .bx:hover{box-shadow:0 18px 42px rgba(15,27,45,.12)}
-input,select,textarea{transition:border-color .2s,box-shadow .2s}
-input:focus,textarea:focus{outline:0;border-color:var(--navy);box-shadow:0 0 0 4px rgba(212,175,55,.28)}
-.seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.seg button{font:inherit;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);cursor:pointer;transition:all .2s}
-.seg button:hover{border-color:var(--gold);transform:translateY(-1px)}
-.seg button[aria-checked=true]{background:var(--navy);color:var(--gold);border-color:var(--navy);animation:pop .35s both}
-.mt{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:12.5px;color:var(--mu)}
-.meter{flex:1;height:6px;border-radius:6px;background:var(--ln);overflow:hidden}
-.meter i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--gold),#f3c76b);transition:width .25s,background .25s}
-.meter i.hi{background:linear-gradient(90deg,#d9534f,#ef8a80)}
-.bt{position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 6px 16px rgba(10,34,64,.22)}
-.bt:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(10,34,64,.3)}
-.bt::after{content:'';position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%) skewX(-20deg)}
-.bt:not(.o):hover::after{animation:shine .8s}
-.bt.o{box-shadow:none}.bt.o:hover{border-color:var(--gold);box-shadow:none}
-.kb{margin:10px 0 0;font-size:12.5px;color:var(--mu)}
-.ct{padding:10px;margin:8px -10px;border-radius:12px;transition:background .2s}.ct:hover{background:color-mix(in srgb,var(--ln) 45%,transparent)}
-.ct>div{flex:1;min-width:0}
-.cpy{font:inherit;font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;border:1.5px solid var(--ln);background:transparent;color:var(--ink);cursor:pointer;transition:all .2s}
-.cpy:hover{border-color:var(--gold);background:var(--navy);color:var(--gold)}
-.tst{position:fixed;left:50%;bottom:26px;z-index:50;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--navy);color:#fff;padding:12px 20px;border-radius:999px;font-size:14px;font-weight:600;box-shadow:0 14px 34px rgba(0,0,0,.3);transition:all .35s cubic-bezier(.2,.8,.2,1);display:flex;gap:8px;align-items:center}
-.tst.on{opacity:1;transform:translate(-50%,0)}.tst::before{content:'\2713';display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:12px}
-@media(max-width:760px){.ph{padding:24px 20px}.ph h1{font-size:24px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-</style>
-<link rel="stylesheet" href="premium.css">
+        .signin-note { background: #eaf3ff; border: 1px solid #b9d4f5; color: #1b4a82; padding: 9px 12px; border-radius: 8px; font-size: 13px; margin-top: 14px; text-align: center; }
+        .auth-bar { display: none; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; background: #fff; border: 1px solid var(--ln); border-radius: 10px; padding: 8px 12px; margin-bottom: 14px; font-size: 13px; }
+        .auth-bar button { background: none; border: 1px solid var(--ln); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-family: inherit; font-size: 12.5px; }
+        .nbadge { display: inline-block; min-width: 20px; padding: 0 6px; margin-left: 4px; background: var(--danger); color: #fff; border-radius: 10px; font-size: 12px; line-height: 20px; }
+        .nitem { border: 1px solid var(--ln); border-radius: 10px; padding: 12px 14px; margin-top: 10px; background: #fafbfc; }
+        .nitem.new { border-color: var(--danger); background: #fff5f4; }
+        .nitem .nt { font-size: 12.5px; color: #777; margin-bottom: 4px; }
+        .nitem .nn { font-weight: 700; color: var(--primary); }
+        .nitem a { color: var(--success); font-weight: 700; text-decoration: none; }
+        .nnew { background: var(--danger); color: #fff; font-size: 11px; padding: 1px 7px; border-radius: 10px; margin-left: 6px; }
+        .ferr { font-size: 12.5px; margin-top: 4px; min-height: 0; }
+        .ferr.bad { color: var(--danger); font-weight: 600; }
+        .ferr.hint { color: #6b7785; }
+        input.invalid, select.invalid, .dsel.invalid select { border-color: var(--danger) !important; background: #fff6f6; }
+        .terms-box.invalid { border-color: var(--danger); background: #fff6f6; }
+        .rp-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: #fff; color: #b3261e; border: 1.5px solid #e6bcb8; border-radius: 9px; padding: 8px 12px; font-size: 13.5px; font-weight: 700; cursor: pointer; font-family: inherit; margin: 0; width: auto; line-height: 1.3; transition: background .15s, border-color .15s; }
+        .rp-btn:hover { background: #fff5f4; border-color: var(--danger); }
+        .rp-btn.done { color: #1b7a33; border-color: #b7dfc3; background: #f1fbf4; cursor: default; }
+        #resReport { width: 100%; margin-top: 12px; padding: 10px 12px; }
+        .dact { display: flex; flex-direction: column; gap: 6px; min-width: 128px; }
+        .dact .btn { width: 100%; margin: 0; padding: 8px 14px; font-size: 15px; }
+        @media (max-width: 560px) { .dact { flex-direction: row; width: 100%; } .dact > * { flex: 1; } }
+        .rp-ov { position: fixed; inset: 0; z-index: 10050; background: rgba(10,20,35,.6); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .rp-box { background: #fff; border-radius: 16px; max-width: 420px; width: 100%; padding: 22px; box-shadow: 0 20px 50px rgba(0,0,0,.35); animation: popIn .2s ease-out; }
+        .rp-box h3 { margin: 0 0 4px; color: #b3261e; font-size: 19px; }
+        .rp-sub { margin: 0 0 12px; font-size: 13px; color: #666; }
+        .rp-box textarea { margin-top: 8px; resize: vertical; }
+        .rp-msg { min-height: 18px; font-size: 13px; font-weight: 600; margin: 8px 0 0; }
+        .rp-act { display: flex; gap: 8px; margin-top: 12px; }
+        .rp-act button { flex: 1; margin: 0; padding: 11px; border-radius: 9px; cursor: pointer; font-weight: 700; font-family: inherit; font-size: 15px; border: 0; }
+        .rp-send { background: var(--danger); color: #fff; }
+        .rp-send:disabled { opacity: .6; cursor: not-allowed; }
+        .rp-info { text-align: center; }
+        .rp-info .ic { font-size: 34px; }
+        .rp-info p { font-size: 14px; color: #555; margin: 0 0 14px; }
+        .rp-info .btn { margin: 0; width: auto; padding: 10px 28px; }
+
+        #urgentTicker { display: none; position: sticky; top: var(--hh, 62px); z-index: 40; height: 46px; background: linear-gradient(90deg, #5a0e0c, #a71f1b 32%, #b3261e 50%, #a71f1b 68%, #5a0e0c); color: #fff; box-shadow: 0 4px 16px rgba(90,14,12,.45); border-bottom: 1px solid rgba(255,255,255,.22); cursor: pointer; overflow: hidden; align-items: stretch; }
+        #urgentTicker::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,.15) 50%, transparent 65%); transform: translateX(-100%); animation: tkSheen 5.5s ease-in-out infinite; pointer-events: none; }
+        @keyframes tkSheen { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+        body.has-ticker { margin-top: 0; }
+        /* ডার্ক মোড সাপোর্ট */
+body.dark { --bg: #0f1722; --cd: #182231; --ink: #e6edf5; --ln: #33445a; }
+body.dark .card, body.dark .modal-content, body.dark .rp-box { background: var(--cd); color: var(--ink); border-color: var(--ln); }
+body.dark h2, body.dark h3 { color: #e5a83b; }
+body.dark input, body.dark select, body.dark textarea { background: #0f1722; color: #e6edf5; border-color: #33445a; }
+body.dark .donor-card, body.dark .nitem, body.dark .lb-item, body.dark .my-card { background: #131c2a; border-color: var(--ln); color: var(--ink); }
+body.dark .donor-details p, body.dark .my-row, body.dark .rline { color: #9fb0c3; }
+body.dark .terms-box { background: #131c2a; border-color: var(--ln); color: #cfd8e6; }
+body.dark .tabs button { background: #243349; color: #cfd8e6; }
+body.dark .tabs button.active { background: #0a2240; color: #e5a83b; }
+body.dark .btn-ghost, body.dark .btn-ghost-s { background: #243349; color: #e6edf5; border-color: var(--ln) !important; }
+body.dark .result-close { background: #243349; color: #e6edf5; }
+body.dark .rp-btn { background: #182231; border-color: #5a201d; }
+body.dark .signin-note { background: #10243e; border-color: #1e4575; color: #8ec2ff; }
+        #urgentTicker .tk-label { flex: none; display: flex; align-items: center; gap: 8px; padding: 0 28px 0 14px; background: #fff; color: #b3261e; font-weight: 800; font-size: 14.5px; position: relative; z-index: 2; clip-path: polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%); }
+        #urgentTicker .tk-ico { display: inline-block; animation: tkWob 1.1s ease-in-out infinite; transform-origin: 50% 85%; }
+        @keyframes tkWob { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+        #urgentTicker .tk-n { background: #b3261e; color: #fff; border-radius: 11px; min-width: 22px; height: 22px; line-height: 22px; text-align: center; font-size: 12.5px; padding: 0 6px; }
+        #urgentTicker .tk-view { flex: 1; min-width: 0; position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+        #urgentTicker .tk-run { position: absolute; top: 0; bottom: 0; left: 0; display: flex; align-items: center; width: max-content; white-space: nowrap; will-change: transform; transform: translate3d(var(--tk-from, 100vw), 0, 0); animation: tkRun var(--tk-dur, 30s) linear infinite; }
+        @media (hover: hover) { #urgentTicker:hover .tk-run { animation-play-state: paused; } }
+        @keyframes tkRun { from { transform: translate3d(var(--tk-from, 100vw), 0, 0); } to { transform: translate3d(var(--tk-to, -100%), 0, 0); } }
+        @media (prefers-reduced-motion: reduce) { #urgentTicker .tk-run { animation: none; transform: none; position: static; } #urgentTicker .tk-view { overflow-x: auto; -webkit-mask-image: none; mask-image: none; } }
+        #urgentTicker .tk-item { display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600; }
+        #urgentTicker .tk-grp { background: #fff; color: #b3261e; font-weight: 800; border-radius: 8px; padding: 1px 9px; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+        #urgentTicker .tk-w { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.4); border-radius: 10px; padding: 0 10px; font-size: 12.5px; font-weight: 700; }
+        #urgentTicker .tk-w.now { background: #ffd54a; color: #7a1a00; border-color: #ffd54a; animation: tkNow 1.2s ease-in-out infinite; }
+        @keyframes tkNow { 50% { filter: brightness(1.18); } }
+        #urgentTicker .tk-sep { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.65); margin: 0 24px; align-self: center; }
+        #urgentTicker .tk-more { flex: none; display: flex; align-items: center; gap: 5px; margin: 8px 10px 8px 4px; padding: 0 14px; font-size: 13px; font-weight: 700; border: 1.5px solid rgba(255,255,255,.75); border-radius: 20px; background: rgba(0,0,0,.2); position: relative; z-index: 2; }
+        @media (max-width: 560px) { #urgentTicker .tk-txt1, #urgentTicker .tk-more span { display: none; } #urgentTicker .tk-label { padding-right: 24px; } #urgentTicker .tk-more { padding: 0 11px; margin-right: 6px; } }
+
+        #urgentBanner { display: none; margin: 0 0 16px; border-radius: 20px; overflow: hidden; position: relative; background: radial-gradient(circle at 92% 8%, rgba(255,255,255,.16) 0, transparent 38%), radial-gradient(circle at 4% 100%, rgba(255,255,255,.10) 0, transparent 42%), linear-gradient(135deg, #7f1613 0%, #c62d28 55%, #e2514c 100%); color: #fff; animation: ubGlow 2.2s ease-in-out infinite; }
+        @keyframes ubGlow { 0%, 100% { box-shadow: 0 8px 22px rgba(185,40,36,.30), 0 0 0 0 rgba(217,83,79,.45); } 50% { box-shadow: 0 10px 30px rgba(185,40,36,.5), 0 0 0 7px rgba(217,83,79,0); } }
+        body.tab-urgent #urgentBanner { display: none !important; }
+        #urgentBanner .ub-ribbon { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 11px 16px; background: rgba(0,0,0,.18); font-size: 14px; font-weight: 800; letter-spacing: .2px; }
+        #urgentBanner .ub-live { display: inline-flex; align-items: center; gap: 8px; }
+        #urgentBanner .ub-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; animation: ubPulse 1.3s infinite; }
+        @keyframes ubPulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,.75); } 70% { box-shadow: 0 0 0 10px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+        #urgentBanner .ub-rt { display: flex; align-items: center; gap: 8px; }
+        #urgentBanner .ub-x { width: 28px; height: 28px; padding: 0; margin: 0; min-width: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.2); color: #fff; font-size: 14px; font-weight: 800; cursor: pointer; line-height: 1; }
+        #urgentBanner .ub-x:hover { background: rgba(255,255,255,.35); }
+        #urgentBanner .ub-count { background: rgba(255,255,255,.2); padding: 2px 11px; border-radius: 12px; font-size: 12px; }
+        #urgentBanner .ub-main { display: flex; align-items: center; gap: 18px; padding: 18px 18px 10px; animation: ubIn .4s ease; }
+        @keyframes ubIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+        #urgentBanner .ub-drop { flex: none; position: relative; width: 92px; height: 112px; filter: drop-shadow(0 6px 10px rgba(0,0,0,.3)); animation: ubBeat 1.6s ease-in-out infinite; }
+        @keyframes ubBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+        #urgentBanner .ub-drop svg { width: 100%; height: 100%; display: block; }
+        #urgentBanner .ub-drop b { position: absolute; left: 0; right: 0; top: 46%; transform: translateY(-50%); text-align: center; color: #b3261e; font-size: 30px; font-weight: 800; line-height: 1; }
+        #urgentBanner .ub-info { flex: 1; min-width: 0; }
+        #urgentBanner .ub-title { font-size: 22px; font-weight: 800; line-height: 1.25; }
+        #urgentBanner .ub-when { display: inline-block; background: #fff; color: #b3261e; font-weight: 800; font-size: 13px; padding: 2px 11px; border-radius: 12px; margin-left: 8px; vertical-align: middle; }
+        #urgentBanner .ub-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+        #urgentBanner .ub-chips span { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.28); border-radius: 10px; padding: 4px 11px; font-size: 14px; font-weight: 600; }
+        #urgentBanner .ub-note { font-size: 13.5px; margin-top: 10px; background: rgba(0,0,0,.2); padding: 7px 11px; border-radius: 10px; }
+        #urgentBanner .ub-act { display: flex; gap: 8px; padding: 8px 18px 14px; flex-wrap: wrap; }
+        #urgentBanner .ub-act a, #urgentBanner .ub-act button { flex: 1; min-width: 118px; border: 0; border-radius: 11px; padding: 11px 8px; font-size: 14.5px; font-weight: 800; text-align: center; text-decoration: none; cursor: pointer; font-family: inherit; margin: 0; width: auto; }
+        #urgentBanner .ub-call { background: #fff; color: #b3261e; flex: 2 !important; }
+        #urgentBanner .ub-sec { background: rgba(255,255,255,.18); color: #fff; border: 1.5px solid rgba(255,255,255,.5) !important; }
+        #urgentBanner .ub-nav { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 16px 14px; }
+        #urgentBanner .ub-nav button { width: 32px; height: 32px; min-width: 0; padding: 0; margin: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.22); color: #fff; font-size: 17px; font-weight: 800; cursor: pointer; }
+        #urgentBanner .ub-dots { display: flex; gap: 6px; }
+        #urgentBanner .ub-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); cursor: pointer; }
+        #urgentBanner .ub-dots i.on { background: #fff; width: 22px; border-radius: 6px; }
+        .rcard.today { animation: rToday 2s ease-in-out infinite; }
+        @keyframes rToday { 0%, 100% { box-shadow: 0 0 0 0 rgba(217,83,79,.45); } 50% { box-shadow: 0 0 0 6px rgba(217,83,79,0); } }
+        @media (max-width: 560px) { #urgentBanner .ub-main { gap: 12px; padding: 14px 14px 8px; } #urgentBanner .ub-drop { width: 68px; height: 84px; } #urgentBanner .ub-drop b { font-size: 22px; } #urgentBanner .ub-title { font-size: 17.5px; } #urgentBanner .ub-chips span { font-size: 13px; } }
+        .vtick { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; margin-left: 4px; border-radius: 50%; background: #1d9bf0; color: #fff; font-size: 11px; font-weight: 700; vertical-align: middle; }
+        .rcard { border: 1.5px solid #f0b4b0; border-left: 6px solid var(--danger); border-radius: 12px; padding: 14px 16px; margin-top: 12px; background: #fffdfd; }
+        .rcard.old { opacity: .6; border-color: var(--ln); border-left-color: #999; }
+        .rhead { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+        .rgroup { background: var(--danger); color: #fff; font-weight: 700; font-size: 20px; min-width: 54px; text-align: center; padding: 8px 6px; border-radius: 10px; }
+        .rline { font-size: 14.5px; margin-top: 3px; color: #333; }
+        .rnote { background: #f6f7f9; border-radius: 8px; padding: 8px 10px; margin: 8px 0; font-size: 13.5px; color: #444; }
+        .rtag { display: inline-block; margin: 6px 6px 0 0; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; background: #eee; color: #555; }
+        .rtag.ok { background: rgba(40,167,69,.15); color: #1b7a33; }
+        .rtag.area { background: rgba(29,155,240,.15); color: #115a96; }
+        .ractions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .ractions a, .ractions button { flex: 1; min-width: 120px; padding: 9px 8px; border-radius: 9px; font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; cursor: pointer; font-family: inherit; border: 0; }
+        .ractions .btn-call { background: var(--success); color: #fff; }
+        .btn-ghost-s { background: #eef2f7; color: var(--primary); border: 1.5px solid var(--ln) !important; }
+        .btn-del-s { background: #fff; color: var(--danger); border: 1.5px solid var(--danger) !important; }
+        .req { color: var(--danger); font-weight: 700; }
+        .req-note { font-size: 13px; color: #666; margin: 0 0 4px; }
+        .dsel { display: flex; gap: 8px; margin-top: 4px; }
+        .dsel select { flex: 1; min-width: 0; margin-top: 0; }
+        .dsel select:first-child { flex: .8; }
+        .dsel select:last-child { flex: 1.1; }
+        .my-row { font-size: 14px; color: #555; margin-top: 2px; }
+        .my-actions { display: flex; gap: 10px; margin-top: 14px; }
+        .my-actions .btn { margin-top: 0; }
+        .my-hint { font-size: 12.5px; color: #777; margin: 10px 0 0; }
+        .my-card.edit { text-align: left; }
+        .btn-ghost { background: #eef2f7; color: var(--primary); border: 1.5px solid var(--ln); }
+        .avail { padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 700; }
+        .avail.ok { background: rgba(40,167,69,.15); color: #1b7a33; }
+        .avail.wait { background: rgba(229,168,59,.2); color: #7a5a10; }
+        .remind { border: 2px solid var(--accent); background: #fffaf0; }
+        .remind.ok { border-color: var(--success); background: #f1fbf4; }
+        .remind-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .remind-actions .btn { flex: 1; min-width: 160px; margin-top: 0; }
+        @media (max-width: 480px) { .my-actions { flex-direction: column; } }
+        .my-card { border: 1px solid var(--ln); border-radius: 12px; padding: 16px; background: #fafbfc; text-align: center; }
+        .my-card img { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); }
+        .my-card .st { display: inline-block; margin-top: 8px; padding: 3px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+        .st.ok { background: rgba(40,167,69,.15); color: #1b7a33; }
+        .st.wait { background: rgba(229,168,59,.2); color: #7a5a10; }
+        .btn-del { background: #fff; color: var(--danger); border: 1.5px solid var(--danger); }
+        .result-modal { text-align: center; max-width: 380px; padding: 0; overflow: hidden; animation: popIn .25s ease-out; }
+        @keyframes popIn { from { transform: scale(.9) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        .result-head { background: linear-gradient(135deg, var(--primary), #1b4a82); padding: 26px 20px 56px; color: #fff; position: relative; }
+        .result-head h3 { margin: 0; font-size: 18px; }
+        .result-head .rg { display: inline-block; margin-top: 6px; background: var(--danger); padding: 2px 12px; border-radius: 20px; font-weight: 700; font-size: 14px; }
+        .result-icon { width: 84px; height: 84px; border-radius: 50%; background: var(--accent); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 36px; margin: -42px auto 0; position: relative; border: 4px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+        .result-icon.has-photo { background: #fff; padding: 0; overflow: hidden; }
+        .result-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .result-body { padding: 14px 22px 22px; }
+        .result-label { font-size: 13px; color: #777; margin: 6px 0 2px; }
+        .result-phone { font-family: 'Montserrat', 'Hind Siliguri', 'Noto Serif Bengali', sans-serif; font-size: 30px; font-weight: 700; color: var(--primary); letter-spacing: 1px; margin: 0 0 14px; direction: ltr; }
+        .result-actions { display: flex; gap: 10px; }
+        .result-actions a, .result-actions button { flex: 1; margin: 0; padding: 12px 8px; border-radius: 10px; font-size: 15px; font-weight: 700; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-call { background: var(--success); color: #fff; }
+        .btn-copy { background: #eef2f7; color: var(--primary); border: 1.5px solid var(--ln) !important; }
+        .btn-copy.done { background: var(--primary); color: var(--accent); }
+        .result-warn { margin-top: 14px; background: rgba(229,168,59,.15); border: 1px dashed var(--accent); color: #7a5a10; padding: 9px 12px; border-radius: 8px; font-size: 12.5px; text-align: left; }
+        .result-close { margin-top: 12px; width: 100%; background: #e6e9ee; color: #333; border: 0; border-radius: 10px; padding: 11px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 15px; }
+
+        .lb-list { display: flex; flex-direction: column; gap: 10px; }
+        .lb-item { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; column-gap: 12px; padding: 12px 14px; border: 1px solid var(--ln); border-radius: 12px; background: #fafbfc; }
+        .lb-item.lb-top { background: #fff8e6; border-color: #f1d98a; }
+        .lb-rank { text-align: center; font-size: 24px; line-height: 1; font-weight: 700; color: var(--primary); }
+        .lb-rank.num { font-size: 15px; width: 30px; height: 30px; line-height: 30px; margin: 0 auto; border-radius: 50%; background: #e9eef4; }
+        .lb-info { min-width: 0; }
+        .lb-name { font-weight: 600; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
+        .lb-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; font-size: 13px; color: #666; }
+        .lb-meta .lb-area { overflow-wrap: anywhere; min-width: 0; }
+        .lb-cnt { text-align: center; white-space: nowrap; background: rgba(217,83,79,.1); color: var(--danger); border-radius: 10px; padding: 6px 10px; line-height: 1.2; }
+        .lb-cnt b { display: block; font-size: 20px; font-family: 'Montserrat', 'Hind Siliguri', sans-serif; }
+        .lb-cnt span { font-size: 12px; font-weight: 600; }
+        @media (max-width: 600px) {
+            #leaderboardSection .card { padding: 16px 12px; }
+            .lb-item { grid-template-columns: 36px minmax(0, 1fr) auto; column-gap: 10px; padding: 10px; }
+            .lb-rank { font-size: 22px; }
+            .lb-name { font-size: 15px; }
+            .lb-cnt { padding: 5px 9px; }
+            .lb-cnt b { font-size: 18px; }
+        }
+        .donor-card, .rcard { content-visibility: auto; contain-intrinsic-size: auto 110px; }
+        .donor-info img { background: #eef1f5; }
+        @media (max-width: 768px) {
+            .modal-overlay, .rp-ov { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+            #urgentBanner { animation: none !important; }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; } }
+        .sk{height:78px;border-radius:12px;margin-bottom:10px;background:linear-gradient(90deg,#e6ebf0 25%,#f4f7f9 40%,#e6ebf0 60%);background-size:400% 100%;animation:skm 1.2s ease infinite}
+        @keyframes skm{0%{background-position:100% 0}100%{background-position:0 0}}
+    </style>
 <link rel="stylesheet" href="dcu-layout.css">
 <link rel="stylesheet" href="dcu-lang.css">
 <script src="dcu-layout.js" defer></script>
 <script src="dcu-lang.js" defer></script>
-<script src="site-shared.js"></script>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -81,82 +255,1442 @@ input:focus,textarea:focus{outline:0;border-color:var(--navy);box-shadow:0 0 0 4
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Serif+Bengali:wght@300..800&display=swap">
 <link rel="stylesheet" href="dcu-fonts.css">
 </head>
-<body data-page="feedback">
+<body data-page="blood">
 <div id="hdr"></div>
-<main class="w">
-<div class="ph"><h1 class="t">💬 মতামত ও পরামর্শ|💬 Feedback & Suggestions</h1>
-<p class="t">কোনো সমস্যা, নতুন ফিচারের ধারণা বা প্রশ্ন থাকলে জানান। প্রতিটি মতামত গুরুত্বের সাথে দেখা হয়।|Share a problem, a feature idea or a question. Every message is read carefully.</p></div>
-<div class="gd" id="feedback">
-<div class="bx sec-1"><h2 class="t">বার্তা পাঠান|Send a Message</h2>
-<label class="t">ধরন|Type</label>
-<div class="seg" id="seg" role="radiogroup" aria-label="Type"></div><select id="ft" hidden><option value="0" class="t">পরামর্শ|Suggestion</option><option value="1" class="t">সমস্যা (Bug)|Problem (Bug)</option><option value="2" class="t">নতুন ফিচারের অনুরোধ|Feature request</option><option value="3" class="t">প্রশ্ন|Question</option></select>
-<label class="t">আপনার বার্তা|Your message</label><textarea id="fm" maxlength="1000" data-p="এখানে লিখুন...|Write here..."></textarea>
-<label class="t">নাম ও যোগাযোগ (ঐচ্ছিক)|Name & contact (optional)</label><input id="fc" data-p="উত্তর পেতে চাইলে ইমেইল বা নম্বর দিন|Add an email or number if you want a reply">
-<div class="mt"><div class="meter"><i id="mbar"></i></div><span id="mcnt">0 / 1000</span></div><div class="ch" id="fb2"></div><p class="kb t">দ্রুত পাঠাতে Ctrl + Enter চাপুন।|Press Ctrl + Enter to send quickly.</p><div id="fs" aria-live="polite"></div>
-</div>
-<div class="bx sec-2"><h2 class="t">সরাসরি যোগাযোগ|Contact Directly</h2>
-<div id="ct"></div>
-<p class="ns t">আপনার লেখা বার্তা এই সাইটে জমা থাকে না। পাঠানোর বোতাম চাপলে এটি আপনার নিজের ইমেইল বা WhatsApp-এ খোলে।|Your message is not stored on this site. The send buttons open it in your own email or WhatsApp.</p></div>
-</div>
-</main>
-<div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
-<script src="site.js"></script>
-<script>
-const $=s=>document.querySelector(s),D=$DEV,L=$L;
-function render(){
- const c=[];
- if(D.email)c.push(`<div class="ct">${$SOC('email','mailto:'+D.email,L('ইমেইল|Email'),false)}<div><b>${L('ইমেইল|Email')}</b><span>${D.email}</span></div><button type="button" class="cpy" data-c="${D.email}">${L('কপি|Copy')}</button></div>`);
- if(D.whatsapp)c.push(`<div class="ct"><a class="si" style="--c:#25d366" href="https://wa.me/${D.whatsapp}" target="_blank" rel="noopener" aria-label="WhatsApp" title="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-4.9A8.5 8.5 0 1 1 8 19.4L3 21z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-.8.8c-.8-.3-1.7-1.2-2-2l.8-.8-1-2L9 9.5z" fill="currentColor" stroke="none"/></svg></a><div><b>WhatsApp</b><span>+${D.whatsapp}</span></div><button type="button" class="cpy" data-c="+${D.whatsapp}">${L('কপি|Copy')}</button></div>`);
- $('#ct').outerHTML='<div id="ct">'+c.join('')+'</div>';
- buttons();
-}
-function msg(){const t=['পরামর্শ|Suggestion','সমস্যা|Problem','ফিচারের অনুরোধ|Feature request','প্রশ্ন|Question'][$('#ft').value];
- return `[${L(t)}] ${$('#fm').value.trim()}`+($('#fc').value.trim()?`\n— ${$('#fc').value.trim()}`:'')}
-function buttons(){
- const b=[];if(D.email)b.push(['gm',L('Gmail-এ পাঠান|Send via Gmail')],['em',L('ইমেইল অ্যাপে পাঠান|Send via Email App')]);if(D.whatsapp)b.push(['wa',L('WhatsApp-এ পাঠান|Send on WhatsApp')]);
- b.push(['cp',L('বার্তা কপি করুন|Copy message')]);
- $('#fb2').innerHTML=b.map(([k,t],i)=>`<button type="button" class="bt${i>0?' o':''}" data-k="${k}">${t}</button>`).join('');
-}
-function go(url,same){
- const a=document.createElement('a');a.href=url;
- if(!same){a.target='_blank';a.rel='noopener noreferrer'}
- document.body.appendChild(a);a.click();a.remove();
-}
-async function copy(t){
- try{await navigator.clipboard.writeText(t);return true}catch(x){}
- try{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();return ok}catch(x){return false}
-}
-const MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-$('#fb2').onclick=async e=>{
- const btn=e.target.closest('button[data-k]');if(!btn)return;
- const k=btn.dataset.k,m=msg(),s=$('#fs'),SUB='DCU Site Feedback';
- if(!$('#fm').value.trim()){s.textContent=L('আগে আপনার বার্তা লিখুন।|Please write your message first.');$('#fm').focus();return}
- const copied=k=='cp'?await copy(m):false;
- if(k=='cp'){s.textContent=copied?L('বার্তা কপি হয়েছে।|Message copied.'):L('কপি করা যায়নি; লেখাটি নিজে সিলেক্ট করে কপি করুন।|Could not copy; please select and copy the text manually.');return}
- copy(m);
- if(k=='gm'){
-  if(MOBILE)go(`mailto:${D.email}?subject=${encodeURIComponent(SUB)}&body=${encodeURIComponent(m)}`,true);
-  else go(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(D.email)}&su=${encodeURIComponent(SUB)}&body=${encodeURIComponent(m)}`);
- }
- else if(k=='em')go(`mailto:${D.email}?subject=${encodeURIComponent(SUB)}&body=${encodeURIComponent(m)}`,true);
- else if(k=='wa')go(`https://wa.me/${D.whatsapp}?text=${encodeURIComponent(m)}`);
- toast(L('বার্তা প্রস্তুত, কপি করা হয়েছে|Message ready and copied'));
- s.textContent=L('আপনার বার্তা কপি করা হয়েছে। নতুন ট্যাব বা অ্যাপ না খুললে সেখানে পেস্ট করে পাঠান।|Your message was copied. If no tab or app opened, paste it there and send.');
-};
+<div id="urgentTicker" role="button" aria-label="জরুরি রক্তের অনুরোধ দেখুন"></div>
 
-const TYPES=['পরামর্শ|Suggestion','সমস্যা (Bug)|Problem (Bug)','ফিচারের অনুরোধ|Feature request','প্রশ্ন|Question'],DK='dcuFeedbackDraft',MAX=1000;
-function toast(t){const e=$('#tst');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2400)}
-function chips(){$('#seg').innerHTML=TYPES.map((t,i)=>`<button type="button" role="radio" aria-checked="${$('#ft').value==i}" data-i="${i}">${L(t)}</button>`).join('')}
-function meter(){const n=$('#fm').value.length;$('#mbar').style.width=(n/MAX*100)+'%';$('#mbar').classList.toggle('hi',n>MAX*.9);$('#mcnt').textContent=n+' / '+MAX}
-function saveDraft(){try{localStorage.setItem(DK,JSON.stringify({t:$('#ft').value,m:$('#fm').value,c:$('#fc').value}))}catch(x){}}
-function loadDraft(){try{const d=JSON.parse(localStorage.getItem(DK));if(d){$('#ft').value=d.t||0;$('#fm').value=d.m||'';$('#fc').value=d.c||''}}catch(x){}}
-$('#seg').onclick=e=>{const b=e.target.closest('button[data-i]');if(!b)return;$('#ft').value=b.dataset.i;chips();saveDraft()};
-['#fm','#fc'].forEach(q=>$(q).addEventListener('input',()=>{meter();saveDraft()}));
-document.addEventListener('click',async e=>{const b=e.target.closest('.cpy');if(!b)return;toast(await copy(b.dataset.c)?L('কপি হয়েছে|Copied'):L('কপি করা যায়নি|Could not copy'))});
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){const b=$('#fb2 button');if(b)b.click()}});
-loadDraft();chips();meter();
-window.onLang=()=>{render();chips()};render();
+<div class="container">
+    <h2>🩸 <span class="t">DCU ব্লাড ডোনার ডিরেক্টরি|DCU Blood Donor Directory</span></h2>
+    <div id="authBar" class="auth-bar"><span id="authWho"></span><button type="button" id="authOut" class="t">সাইন আউট|Sign Out</button></div>
+    <div id="urgentBanner" aria-live="polite"></div>
+    <div class="tabs">
+        <button class="active t" onclick="switchTab('find')">রক্ত খুঁজুন|Find Blood</button>
+        <button onclick="switchTab('urgent')">🚨 <span class="t">জরুরি রক্ত|Urgent Blood</span> <span id="uBadge" class="nbadge" style="display:none">0</span></button>
+        <button class="t" onclick="switchTab('register')">ডোনার হোন|Become a Donor</button>
+        <button onclick="switchTab('notify')">🔔 <span class="t">নোটিফিকেশন|Notifications</span> <span id="nBadge" class="nbadge" style="display:none">0</span></button>
+        <button class="t" onclick="switchTab('leaderboard')">🏆 লিডারবোর্ড|Leaderboard</button>
+    </div>
+
+    <!-- ১. রক্ত খুঁজুন সেকশন -->
+    <div id="findSection" class="section active">
+        <div class="card">
+            <h2><span class="t">রক্তদাতা খুঁজুন|Find a Blood Donor</span></h2>
+            <div class="filter-grid">
+                <div>
+                    <label class="t">রক্তের গ্রুপ|Blood Group</label>
+                    <select id="searchGroup" onchange="loadDonors()">
+                        <option value="" class="t">সকল গ্রুপ|All Groups</option>
+                        <option value="A+">A+</option><option value="A-">A-</option>
+                        <option value="B+">B+</option><option value="B-">B-</option>
+                        <option value="O+">O+</option><option value="O-">O-</option>
+                        <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="t">এলাকা নির্বাচন বা সার্চ করুন|Select or search an area</label>
+                    <input type="text" id="searchAddress" list="areaList" autocomplete="off" data-p="যেমন: মিরপুর, গুলশান...|e.g. Mirpur, Gulshan..." oninput="loadDonorsSoon()">
+                </div>
+            </div>
+            <label style="font-weight:normal; cursor:pointer;"><input type="checkbox" id="onlyVerified" style="width:auto; margin-right:6px;" onchange="loadDonors()"> <span class="t">শুধু|Show only</span> <span class="vtick">✔</span> <span class="t">ভেরিফাইড ডোনার দেখান|verified donors</span></label>
+            <div id="donorList" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- ২. ডোনার রেজিস্ট্রেশন সেকশন -->
+    <div id="registerSection" class="section">
+        <div class="card">
+            <h2><span class="t">ডোনার হিসেবে নিবন্ধন করুন|Register as a Donor</span></h2>
+            <div id="myProfile" style="display:none"></div>
+            <form id="donorForm" novalidate>
+                <p class="req-note"><span class="req">*</span> <span class="t">চিহ্নিত ঘরগুলো পূরণ করা বাধ্যতামূলক।|marked fields are required.</span></p>
+                <label><span class="t">পূর্ণ নাম|Full Name</span> <span class="req">*</span></label>
+                <input type="text" id="dName" required data-p="আপনার নাম|Your name">
+                
+                <label><span class="t">রক্তের গ্রুপ|Blood Group</span> <span class="req">*</span></label>
+                <select id="dGroup" required>
+                    <option value="" class="t">গ্রুপ সিলেক্ট করুন|Select blood group</option>
+                    <option value="A+">A+</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B-">B-</option>
+                    <option value="O+">O+</option><option value="O-">O-</option>
+                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                </select>
+
+                <label><span class="t">বর্তমান এলাকা|Current Area</span> <span class="req">*</span></label>
+                <input type="text" id="dAreaSelect" list="areaList" maxlength="100" required data-p="এলাকার নাম লিখুন, সাজেশন থেকে বেছে নিন|Enter area name or choose from suggestions" autocomplete="off">
+
+                <label><span class="t">মোবাইল নম্বর|Mobile Number</span> <span class="req">*</span></label>
+                <input type="tel" id="dPhone" required placeholder="01XXXXXXXXX" inputmode="numeric" autocomplete="tel">
+
+                <label><span class="t">মোবাইল নম্বর আবার লিখুন|Confirm Mobile Number</span> <span class="req">*</span></label>
+                <input type="tel" id="dPhone2" required data-p="ভুল এড়াতে নম্বরটি আবার লিখুন|Retype number to confirm" inputmode="numeric" autocomplete="off">
+
+                <label><span class="t">মোট কতবার রক্ত দিয়েছেন?|Total Blood Donations</span> <span class="req">*</span></label>
+                <input type="number" id="dDonationCount" min="0" value="1" required>
+
+                <label class="t">সর্বশেষ কবে রক্ত দিয়েছেন? (ঐচ্ছিক)|Last Donation Date (Optional)</label>
+                <div id="dLastDonation"></div>
+                <div class="t" style="font-size:12.5px; color:#666; margin-top:4px;">তারিখ দিলে ৩ মাস পর থেকে প্রতি ১৫ দিন অন্তর আপনাকে রক্তদানের রিমাইন্ডার দেওয়া হবে।|If provided, donation reminders will be sent every 15 days starting 3 months later.</div>
+
+                <label class="t">প্রোফাইল ছবি (ঐচ্ছিক)|Profile Photo (Optional)</label>
+                <input type="file" id="dPhoto" accept="image/*">
+
+                <div class="terms-box">
+                    <label style="display:inline; font-weight:normal; cursor:pointer;">
+                        <input type="checkbox" id="termsCheck" required> 
+                        <span class="t">আমি সম্মত আছি যে, আমার এই তথ্য ডিরেক্টরিতে যে কেউ দেখতে পারবে। পাশাপাশি কেউ আমার মোবাইল নম্বর দেখতে চাইলে তার নাম, মোবাইল নম্বর ও ঠিকানা আমার ট্র্যাকিং নোটিফিকেশনে সংরক্ষিত হবে।|I agree that my information will be visible in the directory. Anyone viewing my phone number will have their identity recorded in my notifications.</span> <span class="req">*</span>
+                    </label>
+                </div>
+
+                <div class="signin-note t" id="regNote">🛡️ আপনার ও আমাদের রক্তদাতাদের নিরাপত্তার জন্য ১-ক্লিকে গুগল সাইন-ইন করুন।|🛡️ For security, please sign in with Google in 1 click.</div>
+
+                <button type="submit" class="btn t" id="submitBtn">নিবন্ধন সম্পন্ন করুন|Complete Registration</button>
+            </form>
+            <p id="regMsg" style="margin-top: 15px; font-weight: 600; text-align: center;"></p>
+        </div>
+    </div>
+
+    <!-- ৩. জরুরি অনুরোধ সেকশন -->
+    <div id="urgentSection" class="section">
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <h2 style="margin:0;">🚨 <span class="t">জরুরি রক্তের অনুরোধ|Urgent Blood Requests</span></h2>
+                <button type="button" class="btn" id="rqToggle" style="width:auto; margin:0; padding:9px 16px;">➕ <span class="t">নতুন অনুরোধ|New Request</span></button>
+            </div>
+            <p class="t" style="font-size:13px; color:#666; margin:8px 0 0;">রোগীর জন্য জরুরি রক্ত লাগলে এখানে অনুরোধ দিন। একই গ্রুপ ও এলাকার ডোনাররা এটি দেখতে পাবেন।|Post an urgent request if blood is needed for a patient. Matching donors will see it.</p>
+            <form id="rqForm" novalidate style="display:none; margin-top:14px;">
+                <p class="req-note"><span class="req">*</span> <span class="t">চিহ্নিত ঘরগুলো পূরণ করা বাধ্যতামূলক।|marked fields are required.</span></p>
+                <div class="filter-grid">
+                    <div>
+                        <label><span class="t">প্রয়োজনীয় রক্তের গ্রুপ|Required Blood Group</span> <span class="req">*</span></label>
+                        <select id="rqGroup"><option value="" class="t">গ্রুপ সিলেক্ট করুন|Select blood group</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+                    </div>
+                    <div>
+                        <label><span class="t">কত ব্যাগ লাগবে|How Many Bags</span> <span class="req">*</span></label>
+                        <input type="number" id="rqBags" min="1" max="10" value="1" inputmode="numeric">
+                    </div>
+                </div>
+                <label><span class="t">হাসপাতালের নাম|Hospital Name</span> <span class="req">*</span></label>
+                <input type="text" id="rqHospital" maxlength="100" data-p="যেমন: মিটফোর্ড হাসপাতাল|e.g. Mitford Hospital">
+                <label><span class="t">এলাকা|Area</span> <span class="req">*</span></label>
+                <input type="text" id="rqArea" list="areaList" maxlength="100" autocomplete="off" data-p="হাসপাতালের এলাকা|Hospital area">
+                <label><span class="t">কবে রক্ত লাগবে|Date Needed</span> <span class="req">*</span></label>
+                <div id="rqDate"></div>
+                <label><span class="t">যোগাযোগকারীর নাম|Contact Name</span> <span class="req">*</span></label>
+                <input type="text" id="rqName" maxlength="80" data-p="রোগীর আত্মীয় বা যোগাযোগকারীর নাম|Contact person / relative's name">
+                <label><span class="t">যোগাযোগের মোবাইল নম্বর|Contact Mobile Number</span> <span class="req">*</span></label>
+                <input type="tel" id="rqPhone" inputmode="numeric" placeholder="01XXXXXXXXX">
+                <label class="t">অতিরিক্ত তথ্য (ঐচ্ছিক)|Additional Info (Optional)</label>
+                <textarea id="rqNote" rows="2" maxlength="220" data-p="যেমন: আজ রাতেই লাগবে, ওয়ার্ড ৫|e.g. Needed tonight, Ward 5"></textarea>
+                <button type="submit" class="btn t" id="rqSubmit" style="background:var(--danger); color:#fff;">🚨 অনুরোধ প্রকাশ করুন|🚨 Publish Urgent Request</button>
+            </form>
+            <p id="rqMsg" style="margin-top:12px; font-weight:600; text-align:center;"></p>
+        </div>
+        <div class="card">
+            <div class="filter-grid">
+                <div>
+                    <label class="t">রক্তের গ্রুপ|Blood Group</label>
+                    <select id="rqFilterGroup"><option value="" class="t">সকল গ্রুপ|All Groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+                </div>
+                <div>
+                    <label class="t">এলাকা|Area</label>
+                    <input type="text" id="rqFilterArea" list="areaList" autocomplete="off" data-p="যেমন: মিরপুর|e.g. Mirpur">
+                </div>
+            </div>
+            <div id="rqList" style="margin-top:6px;"></div>
+        </div>
+    </div>
+
+    <!-- ৪. নোটিফিকেশন সেকশন -->
+    <div id="notifySection" class="section">
+        <div id="reminderBox"></div>
+        <div class="card">
+            <h2>🔔 <span class="t">কে আপনার নম্বর দেখেছে|Who Viewed Your Number</span></h2>
+            <p class="t" style="margin:0 0 6px; font-size:13.5px; color:#555;">যারা আপনার মোবাইল নম্বর দেখেছেন, তাদের পরিচয় এখানে দেখা যাবে। শুধু আপনি নিজে এটি দেখতে পারবেন।|People who viewed your number are listed here. Only you can see this.</p>
+            <div id="notifyList" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
+    <!-- ৫. লিডারবোর্ড সেকশন -->
+    <div id="leaderboardSection" class="section">
+        <div class="card">
+            <h2>🏆 <span class="t">শীর্ষ রক্তদাতা লিডারবোর্ড|Top Blood Donors Leaderboard</span></h2>
+            <div id="leaderboardList" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- সিকিউরিটি পপআপ -->
+<div id="securityModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--primary);">⚠️ <span class="t">জরুরি নিরাপত্তা সতর্কতা|Emergency Security Alert</span></h3>
+        <div class="alert-box t">
+            রক্তদাতার মোবাইল নম্বর দেখতে হলে আপনার পরিচয় প্রদান বাধ্যতামূলক। আপনার এই তথ্য ও ফোন নম্বর নিরাপত্তাজনিত কারণে সংশ্লিষ্ট রক্তদাতার ট্র্যাকে সংরক্ষিত হবে।|Identity verification is mandatory to view a donor's number. For security, your name and phone will be recorded in the donor's tracking log.
+        </div>
+        <form id="seekerForm" novalidate>
+            <label><span class="t">আপনার পূর্ণ নাম|Your Full Name</span> <span style="color:red">*</span></label>
+            <input type="text" id="seekerName" required data-p="আপনার নাম|Your name">
+            <label><span class="t">আপনার মোবাইল নম্বর|Your Mobile Number</span> <span style="color:red">*</span></label>
+            <input type="tel" id="seekerPhone" required placeholder="01XXXXXXXXX" inputmode="numeric">
+            <label><span class="t">আপনার বর্তমান ঠিকানা|Your Current Address</span> <span style="color:red">*</span></label>
+            <input type="text" id="seekerAddress" list="areaList" autocomplete="off" required data-p="যেমন: ধানমন্ডি, ঢাকা|e.g. Dhanmondi, Dhaka">
+            <div class="signin-note t" id="seekNote">🛡️ আপনার ও আমাদের রক্তদাতাদের নিরাপত্তার জন্য ১-ক্লিকে গুগল সাইন-ইন করুন।|🛡️ For security, please sign in with Google in 1 click.</div>
+
+            <button type="submit" class="btn" id="seekerSubmit">🔐 Google দিয়ে সাইন ইন করে নম্বর দেখুন</button>
+            <button type="button" class="btn t" style="background:#ccc; color:#333; margin-top:8px;" onclick="closeModal()">বাতিল|Cancel</button>
+        </form>
+    </div>
+</div>
+
+<!-- ফোন নম্বর দেখানোর কার্ড -->
+<div id="resultModal" class="modal-overlay" onclick="if(event.target===this)closeResult()">
+    <div class="modal-content result-modal">
+        <div class="result-head">
+            <h3 id="resName">—</h3>
+            <span class="rg" id="resGroup"></span>
+        </div>
+        <div class="result-icon" id="resIcon">📞</div>
+        <div class="result-body">
+            <div class="result-label t">মোবাইল নম্বর|Mobile Number</div>
+            <div class="result-phone" id="resPhone">—</div>
+            <div class="result-actions">
+                <a id="resCall" class="btn-call" href="#">📲 <span class="t">কল করুন|Call</span></a>
+                <button type="button" id="resCopy" class="btn-copy">📋 <span class="t">কপি|Copy</span></button>
+            </div>
+            <div class="result-warn t">⚠️ সতর্কতা: আপনার পরিচয় ডোনারের ট্র্যাকিং লগে সংরক্ষিত হলো।|⚠️ Note: Your identity has been recorded in the donor's log.</div>
+            <button type="button" class="rp-btn" id="resReport">🚩 নম্বরটি ভুল বা বন্ধ? রিপোর্ট করুন</button>
+            <button type="button" class="result-close t" onclick="closeResult()">বন্ধ করুন|Close</button>
+        </div>
+    </div>
+</div>
+
+<datalist id="areaList"></datalist>
+
+<div id="ftr"></div>
+<script src="site.js"></script>
+<script src="blood-i18n.js"></script>
+<script>
+try { if (localStorage.getItem('dcuDark')) document.body.classList.add('dark'); } catch(e){}
+(function(){var h=document.getElementById('hdr');if(!h)return;
+function s(){document.documentElement.style.setProperty('--hh',h.offsetHeight+'px');}
+s();addEventListener('resize',s);addEventListener('load',s);
+if(window.ResizeObserver)new ResizeObserver(s).observe(h);})();
 </script>
-<script src="premium.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, doc, getDoc, updateDoc, deleteDoc, writeBatch, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0",
+        authDomain: "dcu-blood-bank.firebaseapp.com",
+        projectId: "dcu-blood-bank",
+        storageBucket: "dcu-blood-bank.firebasestorage.app",
+        messagingSenderId: "835221249900",
+        appId: "1:835221249900:web:facf545941825a4efa5d49"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const okPhone = (p) => /^01[3-9][0-9]{8}$/.test(p);
+    const $ = (id) => document.getElementById(id);
+    const SK = (uid) => "dcu_seeker_" + uid;
+
+    /* আন্তর্জাতিকীকরণ (i18n) হেল্পার */
+    const curLang = () => (typeof window.$lang === 'function' ? window.$lang() : (localStorage.getItem('dcuSL') || 'bn'));
+    const L = (t) => {
+        if (!t || typeof t !== 'string') return '';
+        const p = t.split('|');
+        return curLang() === 'en' ? (p[1] || p[0]) : p[0];
+    };
+    const BN_D = ["\u09E6","\u09E7","\u09E8","\u09E9","\u09EA","\u09EB","\u09EC","\u09ED","\u09EE","\u09EF"];
+    const fmtNum = (n) => {
+        if (n === null || n === undefined || isNaN(n)) return '';
+        const s = String(n);
+        if (curLang() === 'en') return s;
+        return s.replace(/\d/g, d => BN_D[+d]);
+    };
+
+    const EN_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const BN_MONTHS = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+    const fmtDate = (s) => {
+        if (!validISO(s)) return "";
+        const d = parseISO(s);
+        if (curLang() === 'en') {
+            return `${d.getDate()} ${EN_MONTHS[d.getMonth()]}, ${d.getFullYear()}`;
+        }
+        return `${fmtNum(d.getDate())} ${BN_MONTHS[d.getMonth()]}, ${fmtNum(d.getFullYear())}`;
+    };
+    const fmtDateTime = (ms) => {
+        const d = new Date(ms);
+        if (curLang() === 'en') {
+            return d.toLocaleDateString('en-GB') + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+        const h = d.getHours() % 12 || 12, m = String(d.getMinutes()).padStart(2, "0");
+        return fmtNum(`${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()} ${h}:${m}`) + (d.getHours() < 12 ? " পূর্বাহ্ণ" : " অপরাহ্ণ");
+    };
+
+    const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+    const authReady = new Promise((resolve) => {
+        const unsub = onAuthStateChanged(auth, () => { unsub(); resolve(); });
+    });
+
+    function loadSeeker(uid) {
+        try { return JSON.parse(localStorage.getItem(SK(uid)) || "null"); } catch (e) { return null; }
+    }
+    function saveSeeker(uid, v) {
+        try { localStorage.setItem(SK(uid), JSON.stringify(v)); } catch (e) {}
+    }
+
+    onAuthStateChanged(auth, (u) => {
+        $("authBar").style.display = u ? "flex" : "none";
+        if (u) $("authWho").textContent = `✅ ${L("সাইন ইন|Signed in")}: ` + (u.email || "");
+        $("regNote").style.display = u ? "none" : "block";
+        $("seekNote").style.display = u ? "none" : "block";
+        $("seekerSubmit").textContent = u ? L("নম্বর দেখুন|View Number") : L("🔐 Google দিয়ে সাইন ইন করে নম্বর দেখুন|🔐 Sign in with Google to view number");
+        if (!u) phoneCache = {};
+        refreshMyProfile().catch(() => {}).then(() => fetchRequests()).catch(() => {});
+        if (u) { fetchNotify().catch(() => {}); } else { notifyLogs = []; updateBadge(); }
+        if (u) {
+            const sv = loadSeeker(u.uid);
+            if (sv) {
+                currentSeeker = sv;
+                $("seekerName").value = sv.name; $("seekerPhone").value = sv.phone; $("seekerAddress").value = sv.address;
+            }
+        } else { currentSeeker = null; }
+    });
+    $("authOut").onclick = () => signOut(auth);
+
+    async function ensureUser() {
+        await Promise.all([authReady, persistReady]);
+        if (auth.currentUser) return auth.currentUser;
+        return (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+    }
+    let currentSeeker = null;
+    let myDonor = null;
+    let selectedDonor = null;
+    const donorMap = {};
+    const rawPhoto = (p) => (typeof p === "string" && (p.startsWith("data:image/") || p.startsWith("https://firebasestorage.googleapis.com/"))) ? p : null;
+    const esc = (t) => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+    const AV = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" rx="30" fill="#eee"/><circle cx="30" cy="23" r="10" fill="#bbb"/><path d="M10 54c3-14 37-14 40 0z" fill="#bbb"/></svg>');
+    const photoSrc = (p) => (typeof p === "string" && (p.startsWith("data:image/") || p.startsWith("https://firebasestorage.googleapis.com/"))) ? esc(p) : AV;
+
+    window.switchTab = function(tab) {
+        document.body.classList.toggle('tab-urgent', tab === 'urgent');
+        document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        const btn = document.querySelector('.tabs button[onclick*="\'' + tab + '\'"]');
+        if (btn) btn.classList.add('active');
+        if(tab === 'find') {
+            document.getElementById('findSection').classList.add('active');
+            loadDonors();
+        } else if(tab === 'urgent') {
+            document.getElementById('urgentSection').classList.add('active');
+            loadUrgent();
+        } else if(tab === 'register') {
+            document.getElementById('registerSection').classList.add('active');
+            refreshMyProfile().catch(() => {});
+        } else if(tab === 'notify') {
+            document.getElementById('notifySection').classList.add('active');
+            loadNotify();
+        } else if(tab === 'leaderboard') {
+            document.getElementById('leaderboardSection').classList.add('active');
+            loadLeaderboard();
+        }
+    };
+
+    function compressImage(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onerror = () => resolve("");
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onerror = () => resolve("");
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 300, MAX_HEIGHT = 300;
+                    let width = img.width, height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    canvas.width = width; canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.7));
+                };
+            };
+        });
+    }
+
+    document.getElementById('donorForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('regMsg');
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        msg.style.color = "var(--primary)";
+        msg.textContent = L("তথ্য আপলোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...|Uploading information, please wait...");
+
+        if (!validateAll([$("dName"), $("dGroup"), $("dAreaSelect"), $("dPhone"), $("dPhone2"), $("dDonationCount"), $("dLastDonation"), $("termsCheck")])) {
+            msg.style.color = "var(--danger)";
+            msg.textContent = L("❌ কিছু ঘরে ভুল আছে। লাল চিহ্নিত ঘরগুলো ঠিক করে আবার চেষ্টা করুন।|❌ Some fields have errors. Please fix red highlighted fields.");
+            submitBtn.disabled = false;
+            return;
+        }
+        const phoneVal = normPhone($("dPhone").value);
+        const lastVal = readDateSel('dLastDonation');
+        let user;
+        try { user = await ensureUser(); }
+        catch (err) {
+            msg.style.color = "var(--danger)";
+            msg.textContent = L("❌ Google সাইন ইন সম্পন্ন হয়নি। আবার চেষ্টা করুন।|❌ Google Sign-In failed. Please try again.");
+            submitBtn.disabled = false;
+            return;
+        }
+
+        const finalAddress = document.getElementById('dAreaSelect').value.trim();
+
+        try {
+            let photoUrl = "";
+            const fileInput = document.getElementById('dPhoto').files[0];
+            if (fileInput) { try { photoUrl = await compressImage(fileInput); } catch (e) { photoUrl = ""; } }
+
+            if (photoUrl.length > 150000) {
+                msg.style.color = "var(--danger)";
+                msg.textContent = L("❌ ছবির সাইজ অনেক বড়। ছোট সাইজের বা অন্য একটি ছবি দিন।|❌ Photo size is too large. Please select a smaller photo.");
+                submitBtn.disabled = false;
+                return;
+            }
+            let existing = null;
+            try { const snap = await getDoc(doc(db, "donors", user.uid)); if (snap.exists()) existing = snap.data(); } catch (_) {}
+            if (existing) {
+                msg.style.color = "var(--danger)";
+                msg.textContent = L(`❌ এই Google অ্যাকাউন্ট (${user.email}) দিয়ে আপনি আগেই নিবন্ধন করেছেন।|❌ You have already registered with this Google account (${user.email}).`);
+                submitBtn.disabled = false;
+                return;
+            }
+            let claimed = false;
+            try { const c = await getDoc(doc(db, "phone_claims", phoneVal)); claimed = c.exists() && c.data().uid !== user.uid; } catch (_) {}
+            if (claimed) {
+                msg.style.color = "var(--danger)";
+                msg.textContent = L(`❌ এই মোবাইল নম্বর (${phoneVal}) দিয়ে ইতিমধ্যে একজন নিবন্ধন করেছেন।|❌ This phone number (${phoneVal}) is already registered.`);
+                submitBtn.disabled = false;
+                return;
+            }
+            const batch = writeBatch(db);
+            batch.set(doc(db, "donors", user.uid), {
+                name: document.getElementById('dName').value.trim(),
+                group: document.getElementById('dGroup').value,
+                address: finalAddress,
+                phone: phoneVal,
+                donationCount: parseInt(document.getElementById('dDonationCount').value, 10),
+                lastDonation: lastVal || "",
+                photo: photoUrl,
+                status: "pending",
+                createdAt: new Date(),
+                uid: user.uid,
+                email: user.email
+            });
+            batch.set(doc(db, "phone_claims", phoneVal), { uid: user.uid });
+            await batch.commit(); dropDonorsCache();
+
+            msg.style.color = "var(--success)";
+            msg.textContent = L("✅ আপনার নিবন্ধন সফল হয়েছে! এডমিন যাচাই করার পর এটি ডিরেক্টরিতে যুক্ত হবে।|✅ Registration successful! It will appear after admin review.");
+            document.getElementById('donorForm').reset();
+            clearFieldErrors(document.getElementById('donorForm'));
+            refreshMyProfile().catch(() => {});
+        } catch (error) {
+            msg.style.color = "var(--danger)";
+            msg.textContent = error.code === "permission-denied" ? L("❌ অনুমতি নেই বা নম্বরটি ইতিমধ্যে নিবন্ধিত।|❌ Permission denied or number already registered.") : "❌ " + (error.code || error.message);
+        } finally {
+            submitBtn.disabled = false;
+        }
+    });
+
+    let donorsCache = null, donorsAt = 0, donorsInflight = null, ldToken = 0, ldTimer = 0;
+    const DONORS_TTL = 90000;
+    const idbOpen = () => new Promise((ok, no) => { const r = indexedDB.open("dcu_cache", 1); r.onupgradeneeded = () => r.result.createObjectStore("kv"); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
+    const idbGet = async () => { try { const db = await idbOpen(); return await new Promise((ok) => { const q = db.transaction("kv").objectStore("kv").get("donors_v1"); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch (e) { return null; } };
+    const idbSet = async (rows) => { try { const db = await idbOpen(); db.transaction("kv", "readwrite").objectStore("kv").put(rows.map((r) => ({ id: r.id, d: JSON.parse(JSON.stringify(r.d)) })), "donors_v1"); } catch (e) {} };
+    function fetchDonors(force) {
+        if (!force && donorsCache && Date.now() - donorsAt < DONORS_TTL) return Promise.resolve(donorsCache);
+        if (donorsInflight) return donorsInflight;
+        donorsInflight = getDocs(query(collection(db, "donors"), where("status", "==", "approved")))
+            .then((snap) => { donorsCache = snap.docs.map((x) => ({ id: x.id, d: x.data(), h: {} })); donorsAt = Date.now(); idbSet(donorsCache); return donorsCache; })
+            .finally(() => { donorsInflight = null; });
+        return donorsInflight;
+    }
+    const dropDonorsCache = () => { donorsCache = null; donorsAt = 0; };
+
+    function donorCardHTML(row, isMe) {
+        const d = row.d, id = row.id;
+        return `
+            <div class="donor-card">
+                <div class="donor-info" style="display:flex; align-items:center;">
+                    <img src="${photoSrc(d.photo)}" alt="User" loading="lazy" decoding="async" width="60" height="60">
+                    <div class="donor-details" style="margin-left:15px;">
+                        <h3 style="margin:0;">${esc(d.name)}${vtick(d)} <span class="badge">${esc(d.group)}</span></h3>
+                        <p style="margin:2px 0; font-size:14px; color:#555;">📍 ${esc(d.address)} | 🩸 ${fmtNum(d.donationCount || 1)} ${L("বার দান|donations")}</p>
+                        ${availabilityHTML(d)}
+                    </div>
+                </div>
+                <div class="dact">
+                    <button type="button" class="btn contact-btn" data-phone="${esc(d.phone)}" data-name="${esc(d.name)}" data-group="${esc(d.group)}" data-id="${esc(id)}">${L("নম্বর দেখুন|View Number")}</button>
+                    ${isMe ? "" : `<button type="button" class="rp-btn" data-rp="donor" data-id="${esc(id)}">🚩 ${L("রিপোর্ট|Report")}</button>`}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderDonors(rows) {
+        const listDiv = document.getElementById('donorList');
+        const selectedGroup = document.getElementById('searchGroup').value;
+        const selectedAddress = document.getElementById('searchAddress').value.toLowerCase().trim();
+        const onlyVer = document.getElementById('onlyVerified').checked;
+        const myUid = auth.currentUser ? auth.currentUser.uid : null;
+        const out = [];
+        const langKey = curLang();
+        for (const row of rows) {
+            const d = row.d;
+            if (d.status !== "approved") continue;
+            if (selectedGroup && d.group !== selectedGroup) continue;
+            if (onlyVer && d.verified !== true) continue;
+            if (selectedAddress && !String(d.address || "").toLowerCase().includes(selectedAddress)) continue;
+            donorMap[row.id] = d;
+            const isMe = myUid === row.id;
+            const cacheKey = isMe + '_' + langKey;
+            out.push(row.h[cacheKey] || (row.h[cacheKey] = donorCardHTML(row, isMe)));
+        }
+        listDiv.innerHTML = out.length > 0 ? out.join("") : `<p style='text-align:center; color:#777;'>${L("এই ফিল্টারে কোনো অনুমোদিত রক্তদাতা পাওয়া যায়নি।|No approved blood donors found with these filters.")}</p>`;
+    }
+
+    async function loadDonors() {
+        const my = ++ldToken;
+        const listDiv = document.getElementById('donorList');
+        try {
+            if (!donorsCache) {
+                const c = await idbGet();
+                if (my !== ldToken) return;
+                if (c && c.length) { donorsCache = c.map((r) => ({ id: r.id, d: r.d, h: {} })); donorsAt = 0; renderDonors(donorsCache); }
+                else {
+                    listDiv.innerHTML = '<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
+                    const $f = (i) => document.getElementById(i);
+                    if (!$f("searchGroup").value && !$f("searchAddress").value.trim() && !$f("onlyVerified").checked)
+                        getDocs(query(collection(db, "donors"), where("status", "==", "approved"), limit(12)))
+                            .then((s) => { if (!donorsCache && my === ldToken) renderDonors(s.docs.map((x) => ({ id: x.id, d: x.data(), h: {} }))); }).catch(() => {});
+                }
+            }
+            const rows = await fetchDonors();
+            if (my !== ldToken) return;
+            renderDonors(rows);
+        } catch (error) {
+            if (my === ldToken) listDiv.innerHTML = L("ডেটা লোড করতে সমস্যা হয়েছে।|Failed to load data.");
+        }
+    }
+    window.loadDonorsSoon = function () { clearTimeout(ldTimer); ldTimer = setTimeout(loadDonors, 120); };
+    window.loadDonors = loadDonors;
+
+    window.handleContactClick = function(phone, name, group, id) {
+        selectedDonor = { id, phone, name, group, photo: rawPhoto((donorMap[id] || {}).photo), verified: (donorMap[id] || {}).verified === true };
+        if (!auth.currentUser || !currentSeeker) {
+            document.getElementById('securityModal').style.display = 'flex';
+        } else {
+            revealNumber();
+        }
+    };
+
+    window.closeModal = function() {
+        document.getElementById('securityModal').style.display = 'none';
+    };
+
+    document.getElementById('seekerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('seekerName').value.trim();
+        const phone = normPhone(document.getElementById('seekerPhone').value);
+        const address = document.getElementById('seekerAddress').value.trim();
+
+        if (!validateAll([$("seekerName"), $("seekerPhone"), $("seekerAddress")])) return;
+        if (name && phone && address) {
+            let u;
+            try { u = await ensureUser(); } catch (err) { alert(L('Google সাইন ইন সম্পন্ন হয়নি। আবার চেষ্টা করুন।|Google sign in failed. Please try again.')); return; }
+            currentSeeker = { name, phone, address };
+            saveSeeker(u.uid, currentSeeker);
+            document.getElementById('securityModal').style.display = 'none';
+            revealNumber();
+        }
+    });
+
+    async function revealNumber() {
+        if (!selectedDonor || !currentSeeker) return;
+        try {
+            const u = auth.currentUser;
+            await addDoc(collection(db, "activity_logs"), {
+                donorUid: selectedDonor.id,
+                donorName: selectedDonor.name,
+                seekerName: currentSeeker.name,
+                seekerPhone: currentSeeker.phone,
+                seekerAddress: currentSeeker.address,
+                seekerEmail: u.email,
+                seekerUid: u.uid,
+                timestamp: new Date()
+            });
+            showResult(true);
+        } catch (error) {
+            showResult(false);
+        }
+    }
+
+    function showResult(logged) {
+        document.getElementById('resName').innerHTML = esc(selectedDonor.name) + (selectedDonor.verified ? '<span class="vtick" title="ভেরিফাইড ডোনার">✔</span>' : '');
+        document.getElementById('resGroup').textContent = selectedDonor.group ? selectedDonor.group : '';
+        document.getElementById('resGroup').style.display = selectedDonor.group ? 'inline-block' : 'none';
+        document.getElementById('resPhone').textContent = selectedDonor.phone;
+        const ic = document.getElementById('resIcon');
+        if (selectedDonor.photo) {
+            ic.classList.add('has-photo');
+            ic.innerHTML = '<img alt="">';
+            const im = ic.querySelector('img');
+            im.onerror = () => { ic.classList.remove('has-photo'); ic.textContent = '📞'; };
+            im.src = selectedDonor.photo;
+        } else {
+            ic.classList.remove('has-photo');
+            ic.textContent = '📞';
+        }
+        document.getElementById('resCall').href = 'tel:' + selectedDonor.phone.replace(/[^\d+]/g, '');
+        document.querySelector('.result-warn').style.display = logged ? 'block' : 'none';
+        const cb = document.getElementById('resCopy');
+        cb.innerHTML = `📋 <span class="t">${L("কপি|Copy")}</span>`;
+        cb.classList.remove('done');
+        syncResReport();
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    window.closeResult = function() {
+        document.getElementById('resultModal').style.display = 'none';
+    };
+
+    document.getElementById('resCopy').addEventListener('click', async () => {
+        const cb = document.getElementById('resCopy');
+        try { await navigator.clipboard.writeText(selectedDonor.phone); }
+        catch (e) {
+            const t = document.createElement('textarea'); t.value = selectedDonor.phone;
+            document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+        }
+        cb.textContent = `✅ ${L("কপি হয়েছে|Copied")}`; cb.classList.add('done');
+    });
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const iso = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    const todayISO = () => iso(new Date());
+    const parseISO = (s) => new Date(s + "T00:00:00");
+    const addMonthsISO = (s, n) => { const d = parseISO(s); d.setMonth(d.getMonth() + n); return iso(d); };
+    const addDaysISO = (s, n) => { const d = parseISO(s); d.setDate(d.getDate() + n); return iso(d); };
+    const diffDays = (a, b) => Math.round((parseISO(b) - parseISO(a)) / 864e5);
+    const validISO = (s) => /^20\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(s || "");
+
+    const REMIND_MONTHS = 3, REMIND_EVERY = 15;
+
+    function dsel(id, value, future) {
+        const v = validISO(value) ? value.split("-").map(Number) : [0, 0, 0], y0 = new Date().getFullYear();
+        const isBn = curLang() !== 'en';
+        const mNames = isBn ? BN_MONTHS : EN_MONTHS;
+        let dd = `<option value="">${L("দিন|Day")}</option>`, mm = `<option value="">${L("মাস|Month")}</option>`, yy = `<option value="">${L("বছর|Year")}</option>`;
+        for (let i = 1; i <= 31; i++) dd += `<option value="${i}" ${v[2] === i ? "selected" : ""}>${fmtNum(i)}</option>`;
+        mNames.forEach((m, i) => { mm += `<option value="${i + 1}" ${v[1] === i + 1 ? "selected" : ""}>${m}</option>`; });
+        if (future) { for (let y = y0; y <= y0 + 1; y++) yy += `<option value="${y}" ${v[0] === y ? "selected" : ""}>${fmtNum(y)}</option>`; } 
+        else { for (let y = y0; y >= Math.max(2000, y0 - 60); y--) yy += `<option value="${y}" ${v[0] === y ? "selected" : ""}>${fmtNum(y)}</option>`; }
+        return `<div class="dsel" id="${id}"><select data-p="d" aria-label="${L("দিন|Day")}">${dd}</select><select data-p="m" aria-label="${L("মাস|Month")}">${mm}</select><select data-p="y" aria-label="${L("বছর|Year")}">${yy}</select></div>`;
+    }
+
+    function readDateSel(id) {
+        const r = $(id);
+        if (!r) return "";
+        const d = +r.querySelector('[data-p="d"]').value, m = +r.querySelector('[data-p="m"]').value, y = +r.querySelector('[data-p="y"]').value;
+        if (!d && !m && !y) return "";
+        if (!d || !m || !y) return null;
+        const t = new Date(y, m - 1, d);
+        if (t.getFullYear() !== y || t.getMonth() !== m - 1 || t.getDate() !== d) return null;
+        return iso(t);
+    }
+    $("dLastDonation").outerHTML = dsel("dLastDonation", "");
+
+    const BN2EN = { "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4", "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9" };
+    function normPhone(raw) {
+        let v = String(raw ?? "").replace(/[০-৯]/g, c => BN2EN[c]).replace(/[\s\-().]/g, "");
+        if (v.startsWith("+880")) v = "0" + v.slice(4); else if (v.startsWith("880")) v = "0" + v.slice(3);
+        return v;
+    }
+    function phoneCheck(p, final) {
+        if (!p) return { err: final ? L("মোবাইল নম্বর দিন|Enter phone number") : "" };
+        if (!/^\d+$/.test(p)) return { err: L("শুধু সংখ্যা (০–৯) ব্যবহার করুন|Digits only (0-9)") };
+        if (p[0] !== "0" || (p.length > 1 && p[1] !== "1")) return { err: L("নম্বর ০১ দিয়ে শুরু হতে হবে (যেমন: 01712345678)|Must start with 01 (e.g. 01712345678)") };
+        if (p.length > 2 && !/[3-9]/.test(p[2])) return { err: L("অপারেটর কোড ঠিক নয়: ০১৩ থেকে ০১৯ এর মধ্যে হতে হবে|Operator code must be between 013 and 019") };
+        if (p.length > 11) return { err: L(`নম্বর ১১ ডিজিটের বেশি হয়ে গেছে (এখন ${fmtNum(p.length)} ডিজিট)|Exceeds 11 digits (now ${fmtNum(p.length)})`) };
+        if (p.length < 11) return final ? { err: L(`নম্বর ১১ ডিজিটের হতে হবে; আপনি দিয়েছেন ${fmtNum(p.length)} ডিজিট|Must be 11 digits; given ${fmtNum(p.length)}`) } : { hint: L(`আরও ${fmtNum(11 - p.length)} ডিজিট বাকি|${fmtNum(11 - p.length)} digits left`) };
+        if (/(\d)\1{6,}/.test(p) || /12345678|87654321/.test(p)) return { err: L("সঠিক ও কার্যকর মোবাইল নম্বর দিন|Please enter a valid mobile number") };
+        return { ok: true };
+    }
+    const vName = (v) => {
+        v = (v || "").trim();
+        if (!v) return L("আপনার পূর্ণ নাম লিখুন|Enter your full name");
+        if (/\d/.test(v)) return L("নামে সংখ্যা থাকতে পারবে না|Name cannot contain numbers");
+        if (!/^[\p{L}\p{M}\s.'-]+$/u.test(v)) return L("নামে শুধু অক্ষর ও স্পেস ব্যবহার করা যাবে|Only letters and spaces are allowed");
+        if (v.length < 3) return L("পূর্ণ নাম লিখুন (কমপক্ষে ৩ অক্ষর)|Full name must be at least 3 characters");
+        if (v.length > 80) return L("নাম সর্বোচ্চ ৮০ অক্ষরের হতে পারবে|Maximum 80 characters");
+        return "";
+    };
+    const vGroup = (v) => v ? "" : L("রক্তের গ্রুপ বাছাই করুন|Select blood group");
+    const vArea = (v) => {
+        v = (v || "").trim();
+        if (!v) return L("এলাকার নাম লিখুন (সাজেশন থেকে বাছতে পারেন)|Enter area name");
+        if (v.length < 2) return L("এলাকার নামটি খুব ছোট|Area name is too short");
+        if (v.length > 100) return L("এলাকার নাম সর্বোচ্চ ১০০ অক্ষর|Max 100 characters");
+        if (/^[\d\s]+$/.test(v)) return L("সঠিক এলাকার নাম লিখুন|Enter a valid area name");
+        return "";
+    };
+    const vCount = (v) => {
+        v = String(v ?? "").trim();
+        if (v === "") return L("রক্তদানের সংখ্যা লিখুন|Enter donation count");
+        if (!/^\d+$/.test(v)) return L("শুধু অঙ্ক লিখুন|Digits only");
+        if (Number(v) > 500) return L("সর্বোচ্চ ৫০০ হতে পারবে|Maximum 500");
+        return "";
+    };
+    const vDate = (id, countVal) => {
+        const r = readDateSel(id);
+        if (r === null) return L("দিন, মাস ও বছর তিনটিই বাছাই করুন|Select day, month, and year");
+        if (r && r > todayISO()) return L("ভবিষ্যতের তারিখ গ্রহণযোগ্য নয়|Future dates not allowed");
+        if (r && countVal !== undefined && !(Number(countVal) >= 1)) return L("রক্তদানের সংখ্যা ০ হলে সর্বশেষ তারিখ দেওয়া যায় না|Cannot give date if donation count is 0");
+        return "";
+    };
+
+    function showField(el, res, anchor) {
+        const o = typeof res === "string" ? { err: res } : (res || {});
+        const a = anchor || el;
+        let b = a.nextElementSibling;
+        if (!b || !b.classList.contains("ferr")) { b = document.createElement("div"); a.insertAdjacentElement("afterend", b); }
+        b.className = "ferr" + (o.err ? " bad" : o.hint ? " hint" : "");
+        b.textContent = o.err || o.hint || "";
+        el.classList.toggle("invalid", !!o.err);
+        return !o.err;
+    }
+    function live(el, getRes, opts = {}) {
+        const run = (final) => showField(el, getRes(final), opts.anchor);
+        (opts.events || ["input", "blur"]).forEach(ev => el.addEventListener(ev, () => run(ev !== "input")));
+        (opts.also || []).forEach(x => x.addEventListener("input", () => { if (el.value || el.__touched) run(false); }));
+        el.addEventListener("blur", () => { el.__touched = true; });
+        el.__validate = () => run(true);
+        return el;
+    }
+    function validateAll(list) {
+        let first = null;
+        list.forEach(el => { if (!el.__validate() && !first) first = el; });
+        if (first) {
+            (first.closest(".terms-box") || first).scrollIntoView({ behavior: "smooth", block: "center" });
+            const f = first.classList.contains("dsel") ? first.querySelector("select") : first;
+            if (f && f.focus) f.focus({ preventScroll: true });
+        }
+        return !first;
+    }
+    function clearFieldErrors(root) {
+        root.querySelectorAll(".ferr").forEach(b => { b.textContent = ""; b.className = "ferr"; });
+        root.querySelectorAll(".invalid").forEach(x => x.classList.remove("invalid"));
+    }
+    function phoneField(el) {
+        el.addEventListener("blur", () => { el.value = normPhone(el.value); });
+        return live(el, (f) => { const r = phoneCheck(normPhone(el.value), f); return r.ok ? { hint: L("✓ নম্বরের ফরম্যাট সঠিক|✓ Valid number format") } : r; });
+    }
+
+    live($("dName"), () => vName($("dName").value));
+    live($("dGroup"), () => vGroup($("dGroup").value), { events: ["change", "blur"] });
+    live($("dAreaSelect"), () => vArea($("dAreaSelect").value));
+    phoneField($("dPhone"));
+    live($("dPhone2"), (f) => {
+        const a = normPhone($("dPhone").value), b = normPhone($("dPhone2").value);
+        if (!b) return { err: f ? L("নম্বরটি আবার লিখে নিশ্চিত করুন|Please retype number to confirm") : "" };
+        if (a === b) return phoneCheck(a, true).ok ? { hint: L("✓ দুটি নম্বর মিলেছে|✓ Numbers matched") } : "";
+        if (!f && a.startsWith(b)) return { hint: L(`আরও ${fmtNum(a.length - b.length)} ডিজিট বাকি|${fmtNum(a.length - b.length)} digits left`) };
+        return { err: L("দুটি নম্বর মিলছে না|Numbers do not match") };
+    }, { also: [$("dPhone")] });
+    $("dPhone2").addEventListener("blur", () => { $("dPhone2").value = normPhone($("dPhone2").value); });
+    $("dPhone2").addEventListener("paste", (e) => e.preventDefault());
+    live($("dDonationCount"), () => vCount($("dDonationCount").value), { also: [] });
+    live($("dLastDonation"), () => vDate("dLastDonation", $("dDonationCount").value), { events: ["change"] });
+    $("dDonationCount").addEventListener("input", () => { if (readDateSel("dLastDonation")) $("dLastDonation").__validate(); });
+    live($("termsCheck"), () => $("termsCheck").checked ? "" : L("চালিয়ে যেতে সম্মতি দিতে হবে|You must agree to continue"), { events: ["change"], anchor: $("termsCheck").closest(".terms-box") });
+
+    live($("seekerName"), () => vName($("seekerName").value));
+    phoneField($("seekerPhone"));
+    live($("seekerAddress"), () => vArea($("seekerAddress").value));
+
+    function reminderState(d) {
+        if (!d || !validISO(d.lastDonation)) return null;
+        const due = addMonthsISO(d.lastDonation, REMIND_MONTHS), today = todayISO();
+        const start = validISO(d.snoozeUntil) && d.snoozeUntil > due ? d.snoozeUntil : due;
+        return { due, start, active: today >= start, daysSince: diffDays(d.lastDonation, today) };
+    }
+    function availabilityHTML(d) {
+        if (!validISO(d.lastDonation)) return "";
+        const left = diffDays(todayISO(), addMonthsISO(d.lastDonation, REMIND_MONTHS));
+        return `<p style="margin:2px 0; font-size:13px; color:#555;">🗓️ ${L("সর্বশেষ রক্তদান|Last donation")}: ${fmtDate(d.lastDonation)} · ` +
+            (left <= 0 ? `<span class="avail ok">✅ ${L("রক্তদানে প্রস্তুত|Eligible to donate")}</span>` : `<span class="avail wait">⏳ ${L(`আরও ${fmtNum(left)} দিন পর প্রস্তুত|Eligible in ${fmtNum(left)} days`)}</span>`) + "</p>";
+    }
+
+    const AREAS = [
+        "Agargaon (আগারগাঁও)", "Azimpur (আজিমপুর)", "Adabor (আদাবর)", "Arambagh (আরামবাগ)", "Ashulia (আশুলিয়া)", 
+        "Badda (বাড্ডা)", "Bakshibazar (বকশীবাজার)", "Banani (বনানী)", "Banasree (বনশ্রী)", "Bangla Motor (বাংলামোটর)", 
+        "Bangshal (বংশাল)", "Baridhara (বারিধারা)", "Basabo (বাসাবো)", "Bashundhara (বসুন্ধরা)", "Bijoynagar (বিজয়নগর)", 
+        "Cantonment (ঢাকা ক্যান্টনমেন্ট)", "Chawkbazar (চকবাজার)", "Dhanmondi (ধানমন্ডি)", "Demra (ডেমরা)", "Elephant Road (এলিফ্যান্ট রোড)", 
+        "Farmgate (ফার্মগেট)", "Gabtoli (গাবতলী)", "Gazipur (গাজীপুর)", "Gendaria (গেন্ডারিয়া)", "Gulshan (গুলশান)", 
+        "Hatirjheel (হাতিরঝিল)", "Hazaribagh (হাজারীবাগ)", "Jatrabari (যাত্রাবাড়ী)", "Joydebpur (জয়দেবপুর)", "Jurain (জুরাইন)", 
+        "Kakrail (কাকরাইল)", "Kalabagan (কলাবাগান)", "Kalyanpur (কল্যাণপুর)", "Kawran Bazar (কাওরান বাজার)", "Keraniganj (কেরানীগঞ্জ)", 
+        "Khilgaon (খিলগাঁও)", "Khilkhet (খিলক্ষেত)", "Lalbagh (লালবাগ)", "Lalmatia (লালমাটিয়া)", "Malibagh (মালিবাগ)", 
+        "Mirpur (মিরপুর)", "Mitford (মিটফোর্ড)", "Mogbazar (মগবাজার)", "Mohakhali (মহাখালী)", "Mohammadpur (মোহাম্মদপুর)", 
+        "Motijheel (মতিঝিল)", "Mugda (মুগদা)", "Narayanganj (নারায়ণগঞ্জ)", "New Market (নিউ মার্কেট)", "Nikunja (নিকুঞ্জ)", 
+        "Old Dhaka (পুরান ঢাকা)", "Paltan (পল্টন)", "Panthapath (পান্থপথ)", "Postagola (পোস্তগোলা)", "Rampura (রামপুরা)", 
+        "Rayerbazar (রায়েরবাজার)", "Sadarghat (সদরঘাট)", "Savar (সাভার)", "Sayedabad (সায়েদাবাদ)", "Segunbagicha (সেগুনবাগিচা)", 
+        "Shahbagh (শাহবাগ)", "Shantinagar (শান্তিনগর)", "Shyamoli (শ্যামলী)", "Sutrapur (সূত্রাপুর)", "Tejgaon (তেজগাঁও)", 
+        "Tongi (টঙ্গী)", "Uttara (উত্তরা)", "Wari (ওয়ারী)"
+    ].sort((a, b) => a.localeCompare(b));
+    $("areaList").innerHTML = AREAS.map(a => `<option value="${a}">`).join("");
+    const GROUPS = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+
+    async function refreshMyProfile() {
+        const box = $("myProfile"), form = $("donorForm"), u = auth.currentUser;
+        myDonor = null;
+        if (u) { try { const snap = await getDoc(doc(db, "donors", u.uid)); if (snap.exists()) myDonor = snap.data(); } catch (_) {} }
+        updateBadge(); renderReminder();
+        if (!myDonor) { box.style.display = "none"; box.innerHTML = ""; form.style.display = "block"; return; }
+        form.style.display = "none"; box.style.display = "block";
+        renderProfileView();
+    }
+
+    function renderProfileView() {
+        const box = $("myProfile"), d = myDonor, u = auth.currentUser, ok = d.status === "approved";
+        const r = reminderState(d);
+        box.innerHTML = `<div class="my-card">
+            <img src="${photoSrc(d.photo)}" alt="">
+            <h3 style="margin:8px 0 2px;">${esc(d.name)}${vtick(d)} <span class="badge">${esc(d.group)}</span></h3>
+            <div class="my-row">📍 ${esc(d.address)} &nbsp;|&nbsp; 📞 ${esc(d.phone)}</div>
+            <div class="my-row">🩸 ${fmtNum(d.donationCount)} ${L("বার রক্তদান|times donated")} &nbsp;|&nbsp; 🗓️ ${L("সর্বশেষ|Last")}: ${validISO(d.lastDonation) ? fmtDate(d.lastDonation) : L("দেওয়া হয়নি|Not provided")}</div>
+            <span class="st ${ok ? "ok" : "wait"}">${ok ? L("✅ অনুমোদিত, ডিরেক্টরিতে দেখা যাচ্ছে|✅ Approved & visible in directory") : L("⏳ এডমিনের অনুমোদনের অপেক্ষায়|⏳ Pending admin approval")}</span>
+            ${r && !r.active ? `<div class="my-row" style="margin-top:8px;">${L("পরবর্তী রক্তদানের রিমাইন্ডার|Next donation reminder")}: ${fmtDate(r.start)}</div>` : ""}
+            <div class="my-actions">
+                <button type="button" class="btn" id="editMe">✏️ ${L("তথ্য সম্পাদনা করুন|Edit Information")}</button>
+                <button type="button" class="btn btn-del" id="delMe">🗑️ ${L("তথ্য মুছে ফেলুন|Delete Information")}</button>
+            </div>
+            <p class="my-hint">${L("যেকোনো সময় তথ্য মুছে ফেললে পরে আবার ডোনার হিসেবে নিবন্ধন করতে পারবেন।|If you delete your data, you can register again anytime.")}</p>
+        </div>`;
+        $("editMe").onclick = renderProfileEdit;
+        $("delMe").onclick = async () => {
+            if (!confirm(L("আপনি কি নিশ্চিত যে আপনার ডোনার তথ্য মুছে ফেলতে চান?|Are you sure you want to delete your donor profile?"))) return;
+            const msg = $("regMsg"), btn = $("delMe");
+            btn.disabled = true;
+            try {
+                const b = writeBatch(db);
+                b.delete(doc(db, "donors", u.uid));
+                b.delete(doc(db, "phone_claims", d.phone));
+                await b.commit(); dropDonorsCache();
+                msg.style.color = "var(--success)";
+                msg.textContent = L("✅ আপনার তথ্য মুছে ফেলা হয়েছে।|✅ Your profile has been deleted.");
+                await refreshMyProfile();
+            } catch (e) {
+                btn.disabled = false;
+                msg.style.color = "var(--danger)";
+                msg.textContent = "❌ " + (e.code || e.message);
+            }
+        };
+    }
+
+    function renderProfileEdit() {
+        const box = $("myProfile"), d = myDonor;
+        box.innerHTML = `<div class="my-card edit">
+            <h3 style="margin:0 0 4px;">✏️ ${L("তথ্য সম্পাদনা|Edit Profile")}</h3>
+            <label>${L("পূর্ণ নাম|Full Name")} <span class="req">*</span></label><input id="eName" maxlength="80" value="${esc(d.name)}">
+            <label>${L("রক্তের গ্রুপ|Blood Group")} <span class="req">*</span></label><select id="eGroup">${GROUPS.map(g => `<option value="${g}" ${g === d.group ? "selected" : ""}>${g}</option>`).join("")}</select>
+            <label>${L("বর্তমান এলাকা|Current Area")} <span class="req">*</span></label><input id="eAddr" maxlength="100" list="areaList" value="${esc(d.address)}">
+            <label>${L("মোবাইল নম্বর|Mobile Number")}</label><input value="${esc(d.phone)}" disabled>
+            <div class="my-hint" style="text-align:left; margin:2px 0 0;">${L("নিরাপত্তার কারণে নম্বর পরিবর্তন করা যায় না।|Phone number cannot be changed for security.")}</div>
+            <label>${L("মোট কতবার রক্ত দিয়েছেন|Total Blood Donations")} <span class="req">*</span></label><input type="number" id="eCount" min="0" max="500" value="${esc(d.donationCount)}">
+            <label>${L("সর্বশেষ কবে রক্ত দিয়েছেন|Last Donation Date")}</label>${dsel("eLast", validISO(d.lastDonation) ? d.lastDonation : "")}
+            <label>${L("প্রোফাইল ছবি পরিবর্তন (ঐচ্ছিক)|Change Photo (Optional)")}</label><input type="file" id="ePhoto" accept="image/*">
+            <div class="my-actions">
+                <button type="button" class="btn" id="eSave">💾 ${L("সংরক্ষণ করুন|Save Changes")}</button>
+                <button type="button" class="btn btn-ghost" id="eCancel">${L("বাতিল|Cancel")}</button>
+            </div>
+            <p id="editMsg" style="margin:10px 0 0; font-weight:600; text-align:center;"></p>
+        </div>`;
+        $("eCancel").onclick = renderProfileView;
+        live($("eName"), () => vName($("eName").value));
+        live($("eGroup"), () => vGroup($("eGroup").value), { events: ["change", "blur"] });
+        live($("eAddr"), () => vArea($("eAddr").value));
+        live($("eCount"), () => vCount($("eCount").value));
+        live($("eLast"), () => vDate("eLast", $("eCount").value), { events: ["change"] });
+        $("eCount").addEventListener("input", () => { if (readDateSel("eLast")) $("eLast").__validate(); });
+        $("eSave").onclick = async () => {
+            const msg = $("editMsg"), btn = $("eSave"), u = auth.currentUser;
+            const err = (t) => { msg.style.color = "var(--danger)"; msg.textContent = "❌ " + t; btn.disabled = false; };
+            if (!validateAll([$("eName"), $("eGroup"), $("eAddr"), $("eCount"), $("eLast")])) return err(L("কিছু ঘরে ভুল আছে।|Some fields have errors."));
+            const name = $("eName").value.trim(), addr = $("eAddr").value.trim(), grp = $("eGroup").value;
+            const cnt = parseInt($("eCount").value, 10), last = readDateSel("eLast");
+            if (!name || name.length > 80) return err(L("নাম সঠিকভাবে লিখুন।|Enter valid name."));
+            if (!addr || addr.length > 100) return err(L("এলাকা সঠিকভাবে লিখুন।|Enter valid area."));
+            btn.disabled = true; msg.style.color = "var(--primary)"; msg.textContent = L("সংরক্ষণ হচ্ছে...|Saving...");
+            const upd = { name, group: grp, address: addr, donationCount: cnt, lastDonation: last || "" };
+            if ((last || "") !== (d.lastDonation || "")) upd.snoozeUntil = "";
+            const f = $("ePhoto").files[0];
+            if (f) {
+                let ph = ""; try { ph = await compressImage(f); } catch (_) {}
+                if (ph && ph.length <= 150000) upd.photo = ph;
+            }
+            try {
+                await updateDoc(doc(db, "donors", u.uid), upd); dropDonorsCache();
+                myDonor = { ...myDonor, ...upd };
+                updateBadge(); renderReminder(); renderProfileView();
+                const m = $("regMsg"); m.style.color = "var(--success)"; m.textContent = L("✅ আপনার তথ্য সফলভাবে হালনাগাদ হয়েছে।|✅ Profile updated successfully.");
+            } catch (e) { err("❌ " + (e.code || e.message)); }
+        };
+    }
+
+    let notifyLogs = [];
+    const tsMs = (t) => t && t.toMillis ? t.toMillis() : (t instanceof Date ? t.getTime() : 0);
+    const SEEN = (uid) => "dcu_seen_" + uid;
+    function getSeen(uid) { try { return Number(localStorage.getItem(SEEN(uid))) || 0; } catch (e) { return 0; } }
+    function setSeen(uid, v) { try { localStorage.setItem(SEEN(uid), String(v)); } catch (e) {} }
+
+    function updateBadge() {
+        const u = auth.currentUser, b = $("nBadge");
+        const views = u ? notifyLogs.filter(l => tsMs(l.timestamp) > getSeen(u.uid)).length : 0;
+        const rem = (u && reminderState(myDonor) && reminderState(myDonor).active) ? 1 : 0;
+        const n = views + rem;
+        b.textContent = n > 99 ? "99+" : fmtNum(n);
+        b.style.display = n > 0 ? "inline-block" : "none";
+    }
+
+    async function fetchNotify() {
+        const u = auth.currentUser;
+        if (!u) return [];
+        const snap = await getDocs(query(collection(db, "activity_logs"), where("donorUid", "==", u.uid)));
+        notifyLogs = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => tsMs(b.timestamp) - tsMs(a.timestamp));
+        updateBadge();
+        return notifyLogs;
+    }
+
+    function renderReminder() {
+        const box = $("reminderBox");
+        if (!box) return;
+        const r = reminderState(myDonor);
+        if (!r || !r.active) { box.innerHTML = ""; return; }
+        const u = auth.currentUser, d = myDonor;
+        box.innerHTML = `<div class="card remind">
+            <h2 style="margin-bottom:6px;">🩸 ${L("রক্তদান রিমাইন্ডার|Donation Reminder")}</h2>
+            <p style="margin:0 0 10px; font-size:14.5px;">${L(`আপনার সর্বশেষ রক্তদানের তারিখ <b>${fmtDate(d.lastDonation)}</b>। এরপর <b>${fmtNum(r.daysSince)} দিন</b> পার হয়েছে। আপনি কি আবার রক্ত দিয়েছেন?|Your last donation was on <b>${fmtDate(d.lastDonation)}</b> (${fmtNum(r.daysSince)} days ago). Have you donated again?`)}</p>
+            <div class="remind-actions">
+                <button type="button" class="btn" id="rYes">✅ ${L("হ্যাঁ, আবার রক্ত দিয়েছি|Yes, I have donated")}</button>
+                <button type="button" class="btn btn-ghost" id="rNo">${L("না, এখনো দিইনি|Not yet")}</button>
+            </div>
+            <div id="rForm" style="display:none; margin-top:12px;">
+                <label>${L("কবে রক্ত দিয়েছেন?|Donation Date")} <span class="req">*</span></label>
+                ${dsel("rDate", todayISO())}
+                <button type="button" class="btn btn-success" id="rSave">💾 ${L("তারিখ সংরক্ষণ করুন|Save Date")}</button>
+            </div>
+            <p id="rMsg" style="margin:10px 0 0; font-weight:600; text-align:center;"></p>
+        </div>`;
+        $("rYes").onclick = () => { $("rForm").style.display = "block"; };
+        $("rNo").onclick = async () => {
+            const msg = $("rMsg");
+            try {
+                const until = addDaysISO(todayISO(), REMIND_EVERY);
+                await updateDoc(doc(db, "donors", u.uid), { snoozeUntil: until }); dropDonorsCache();
+                myDonor = { ...myDonor, snoozeUntil: until };
+                updateBadge();
+                box.innerHTML = `<div class="card remind ok"><p style="margin:0; font-weight:600;">👍 ${L(`ঠিক আছে। ${fmtDate(until)} তারিখে আপনাকে আবার মনে করিয়ে দেওয়া হবে।|Okay, we will remind you again on ${fmtDate(until)}.`)}</p></div>`;
+            } catch (e) { msg.style.color = "var(--danger)"; msg.textContent = "❌ " + (e.code || e.message); }
+        };
+        $("rSave").onclick = async () => {
+            const msg = $("rMsg"), dt = readDateSel("rDate");
+            if (!validISO(dt) || dt > todayISO() || dt <= d.lastDonation) { msg.style.color = "var(--danger)"; msg.textContent = L("❌ তারিখ আগের রক্তদানের পরে এবং আজকের মধ্যে হতে হবে।|❌ Date must be after last donation and not in future."); return; }
+            $("rSave").disabled = true;
+            try {
+                const upd = { lastDonation: dt, donationCount: Math.min(500, (parseInt(d.donationCount, 10) || 0) + 1), snoozeUntil: "" };
+                await updateDoc(doc(db, "donors", u.uid), upd); dropDonorsCache();
+                myDonor = { ...myDonor, ...upd };
+                updateBadge();
+                box.innerHTML = `<div class="card remind ok"><p style="margin:0; font-weight:600;">🎉 ${L(`ধন্যবাদ! আপনার মোট রক্তদান এখন ${fmtNum(upd.donationCount)} বার।|Thank you! Your total donations are now ${fmtNum(upd.donationCount)}.`)}</p></div>`;
+            } catch (e) { $("rSave").disabled = false; msg.style.color = "var(--danger)"; msg.textContent = "❌ " + (e.code || e.message); }
+        };
+    }
+
+    async function loadNotify() {
+        const box = $("notifyList");
+        await Promise.all([authReady, persistReady]);
+        if (!auth.currentUser) {
+            $("reminderBox").innerHTML = "";
+            box.innerHTML = `<div class="signin-note" style="margin-top:0">${L("🛡️ আপনার নম্বর কে দেখেছে জানতে আপনার Google অ্যাকাউন্টে সাইন ইন করুন।|🛡️ Sign in with your Google account to see who viewed your number.")}</div><button class="btn" id="nSignIn">🔐 ${L("Google দিয়ে সাইন ইন করুন|Sign in with Google")}</button>`;
+            $("nSignIn").onclick = async () => { try { await ensureUser(); loadNotify(); } catch (e) {} };
+            return;
+        }
+        box.textContent = L("লোড হচ্ছে...|Loading...");
+        try {
+            await refreshMyProfile();
+            const logs = await fetchNotify();
+            const u = auth.currentUser, seen = getSeen(u.uid);
+            if (!logs.length) { box.innerHTML = `<p style='text-align:center; color:#777;'>${L("এখনো কেউ আপনার নম্বর দেখেনি।|Nobody has viewed your number yet.")}</p>`; return; }
+            box.innerHTML = `<div style="font-size:14px; margin-bottom:4px;">${L(`মোট <b>${fmtNum(logs.length)}</b> বার আপনার নম্বর দেখা হয়েছে।|Your number has been viewed <b>${fmtNum(logs.length)}</b> times in total.`)}</div>` + logs.map(l => {
+                const isNew = tsMs(l.timestamp) > seen, ph = String(l.seekerPhone || "");
+                return `<div class="nitem ${isNew ? "new" : ""}">
+                    <div class="nt">🕒 ${tsMs(l.timestamp) ? fmtDateTime(tsMs(l.timestamp)) : "-"}${isNew ? `<span class="nnew">${L("নতুন|New")}</span>` : ""}</div>
+                    <div><span class="nn">${esc(l.seekerName)}</span> ${L("আপনার নম্বর দেখেছেন|viewed your number")}</div>
+                    <div style="font-size:14px; color:#444;">📍 ${esc(l.seekerAddress)} &nbsp;|&nbsp; 📞 <a href="tel:${esc(ph.replace(/[^\d+]/g, ""))}">${esc(ph)}</a></div>
+                </div>`;
+            }).join("");
+            setSeen(u.uid, Math.max(seen, ...logs.map(l => tsMs(l.timestamp))));
+            updateBadge();
+        } catch (e) {
+            box.innerHTML = `<p style='text-align:center; color:var(--danger);'>${L("নোটিফিকেশন লোড হয়নি|Failed to load notifications")} (${esc(e.code || e.message)})</p>`;
+        }
+    }
+
+    function vtick(d) { return d && d.verified === true ? `<span class="vtick" title="${L("ভেরিফাইড ডোনার|Verified Donor")}">✔</span>` : ""; }
+
+    const CAN_GIVE = { "O-": ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"], "O+": ["O+", "A+", "B+", "AB+"], "A-": ["A-", "A+", "AB-", "AB+"], "A+": ["A+", "AB+"], "B-": ["B-", "B+", "AB-", "AB+"], "B+": ["B+", "AB+"], "AB-": ["AB-", "AB+"], "AB+": ["AB+"] };
+    let requests = [];
+    const canHelp = (r) => !!(myDonor && (CAN_GIVE[myDonor.group] || []).includes(r.group));
+    const sameArea = (r) => !!(myDonor && myDonor.address && r.area && myDonor.address.trim() === r.area.trim());
+    const reqSeenKey = (uid) => "dcu_req_seen_" + uid;
+    function updateUrgentBadge() {
+        const u = auth.currentUser, b = $("uBadge");
+        let seen = 0; try { seen = Number(localStorage.getItem(reqSeenKey(u ? u.uid : ""))) || 0; } catch (e) {}
+        const n = u ? requests.filter(r => r.requesterUid !== u.uid && r.neededDate >= todayISO() && canHelp(r) && sameArea(r) && tsMs(r.createdAt) > seen).length : 0;
+        b.textContent = n > 99 ? "99+" : fmtNum(n);
+        b.style.display = n > 0 ? "inline-block" : "none";
+        renderBanner();
+    }
+
+    var phoneCache = {};
+    let reqInflight = null;
+    function fetchRequests(force) {
+        if (reqInflight && !force) return reqInflight;
+        return (reqInflight = fetchRequestsNow().finally(() => { reqInflight = null; }));
+    }
+    async function fetchRequestsNow() {
+        const u = auth.currentUser;
+        const snap = await getDocs(query(collection(db, "blood_requests"), where("status", "==", "open")));
+        const t = todayISO();
+        const Lst = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(r => r.neededDate >= t || (u && r.requesterUid === u.uid)).sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+        if (u) await Promise.all(Lst.filter(r => !r.contactPhone && !phoneCache[r.id]).map(async r => {
+            try { const p = await getDoc(doc(db, "blood_requests", r.id, "private", "contact")); if (p.exists()) phoneCache[r.id] = p.data().contactPhone; } catch (e) {}
+        }));
+        Lst.forEach(r => { if (!r.contactPhone && phoneCache[r.id]) r.contactPhone = phoneCache[r.id]; });
+        requests = Lst;
+        updateUrgentBadge();
+        return requests;
+    }
+
+    function reqCard(r) {
+        const u = auth.currentUser, mine = u && r.requesterUid === u.uid, expired = r.neededDate < todayISO();
+        const days = diffDays(todayISO(), r.neededDate);
+        const when = expired ? fmtDate(r.neededDate) : days === 0 ? L("আজই|Today") : days === 1 ? L("আগামীকাল|Tomorrow") : fmtDate(r.neededDate);
+        const tel = esc(String(r.contactPhone || "").replace(/[^\d+]/g, ""));
+        return `<div class="rcard ${expired ? "old" : ""} ${days === 0 ? "today" : ""}">
+            <div class="rhead"><span class="rgroup">${esc(r.group)}</span>
+                <div><b>${fmtNum(r.bags)} ${L("ব্যাগ রক্ত লাগবে|Bags of blood needed")}</b>${mine ? `<div style="font-size:12.5px; color:#777;">👤 ${L("আপনার অনুরোধ|Your request")}</div>` : ""}</div></div>
+            <div class="rline">🏥 <b>${esc(r.hospital)}</b> &nbsp;·&nbsp; 📍 ${esc(r.area)}</div>
+            <div class="rline">📅 ${L("প্রয়োজন|Needed")}: <b>${when}</b>${expired ? ` <span class="rtag">${L("মেয়াদ শেষ|Expired")}</span>` : ""}</div>
+            ${r.note ? `<div class="rnote">${esc(r.note)}</div>` : ""}
+            <div class="rline">👤 ${esc(r.contactName)}${r.contactPhone ? " &nbsp;·&nbsp; 📞 " + esc(r.contactPhone) : ""}</div>
+            <div>${canHelp(r) ? `<span class="rtag ok">🩸 ${L("আপনি এই গ্রুপে রক্ত দিতে পারেন|You can donate to this group")}</span>` : ""}${sameArea(r) ? `<span class="rtag area">📍 ${L("আপনার এলাকায়|In your area")}</span>` : ""}</div>
+            <div class="ractions">
+                ${r.contactPhone ? `<a class="btn-call" href="tel:${tel}">📲 ${L("কল করুন|Call")}</a>` : `<button type="button" class="btn-call" data-q="signin">🔐 ${L("সাইন ইন করে নম্বর দেখুন|Sign in to view number")}</button>`}
+                <button type="button" class="btn-ghost-s" data-q="share" data-id="${esc(r.id)}">📤 ${L("শেয়ার|Share")}</button><button type="button" class="btn-ghost-s" data-q="photo" data-id="${esc(r.id)}">🖼️ ${L("ছবি শেয়ার|Share Image")}</button>${mine ? "" : `<button type="button" class="btn-del-s" data-q="report" data-id="${esc(r.id)}">🚩 ${L("রিপোর্ট করুন|Report")}</button>`}
+                ${mine ? `<button type="button" class="btn-ghost-s" data-q="done" data-id="${esc(r.id)}">✅ ${L("রক্ত পাওয়া গেছে|Blood Found")}</button><button type="button" class="btn-del-s" data-q="del" data-id="${esc(r.id)}">🗑️ ${L("মুছুন|Delete")}</button>` : ""}
+            </div></div>`;
+    }
+
+    function renderRequests() {
+        const box = $("rqList"), g = $("rqFilterGroup").value, a = $("rqFilterArea").value.trim().toLowerCase();
+        const Lst = requests.filter(r => (!g || r.group === g) && (!a || String(r.area).toLowerCase().includes(a)))
+            .sort((x, y) => ((canHelp(y) && sameArea(y)) - (canHelp(x) && sameArea(x))) || (tsMs(y.createdAt) - tsMs(x.createdAt)));
+        box.innerHTML = Lst.length ? Lst.map(reqCard).join("") : `<p style='text-align:center; color:#777;'>${L("এই মুহূর্তে কোনো জরুরি অনুরোধ নেই।|No urgent blood requests right now.")}</p>`;
+        const dsm = ubDismissed().filter(id => requests.some(r => r.id === id));
+        if (dsm.length) box.insertAdjacentHTML("afterbegin", `<div class="signin-note" style="margin-top:0">🙈 ${L(`${fmtNum(dsm.length)}টি ব্যানার কার্ড আপনি বন্ধ করেছেন।|You dismissed ${fmtNum(dsm.length)} banner card(s).`)} <button type="button" class="btn-ghost-s" data-q="undismiss" style="padding:3px 12px;border-radius:8px;margin-left:6px;cursor:pointer;">${L("আবার দেখান|Show again")}</button></div>`);
+        if (!auth.currentUser) box.insertAdjacentHTML("afterbegin", `<div class="signin-note" style="margin-top:0">${L("🔐 জরুরি অনুরোধ সবাই দেখতে পারেন। যোগাযোগের নম্বর দেখতে ও নতুন অনুরোধ দিতে Google দিয়ে সাইন ইন করুন।|🔐 Sign in with Google to view contact numbers or publish a request.")}</div>`);
+    }
+
+    async function loadUrgent() {
+        const box = $("rqList");
+        await Promise.all([authReady, persistReady]);
+        box.textContent = L("লোড হচ্ছে...|Loading...");
+        try {
+            await fetchRequests();
+            renderRequests();
+            const newest = Math.max(0, ...requests.map(r => tsMs(r.createdAt)));
+            if (auth.currentUser) {
+                try { localStorage.setItem(reqSeenKey(auth.currentUser.uid), String(newest)); } catch (e) {}
+            }
+            updateUrgentBadge();
+        } catch (e) { box.innerHTML = `<p style='text-align:center; color:var(--danger);'>${L("অনুরোধ লোড হয়নি|Failed to load requests")} (${esc(e.code || e.message)})</p>`; }
+    }
+
+    var ubIdx = 0, ubTimer = null, ubList = [];
+    function ubStart() { clearInterval(ubTimer); if (ubList.length > 1) ubTimer = setInterval(() => { ubIdx = (ubIdx + 1) % ubList.length; renderBanner(); }, 7000); }
+    function dedupeReq(list) {
+        const seen = new Set();
+        return list.filter(r => {
+            const k = [r.requesterUid, r.group, r.bags, r.hospital, r.area, r.neededDate, r.contactName].map(v => String(v ?? "").trim().toLowerCase()).join("|");
+            if (seen.has(k)) return false;
+            seen.add(k); return true;
+        });
+    }
+    function bannerList() {
+        const t = todayISO();
+        return dedupeReq(requests.filter(r => r.status === "open" && r.neededDate >= t)
+            .sort((a, b) => (a.neededDate < b.neededDate ? -1 : a.neededDate > b.neededDate ? 1 : 0) || (tsMs(b.createdAt) - tsMs(a.createdAt))));
+    }
+    var tkSig = "";
+    const reqWhen = (r) => { const d = diffDays(todayISO(), r.neededDate); return d === 0 ? L("আজই|Today") : d === 1 ? L("আগামীকাল|Tomorrow") : fmtDate(r.neededDate); };
+    function ubDismissed() { try { return JSON.parse(localStorage.getItem("dcu_ub_dismissed") || "[]"); } catch (e) { return []; } }
+    function setUbDismissed(a) { try { localStorage.setItem("dcu_ub_dismissed", JSON.stringify(a.slice(-100))); } catch (e) {} }
+
+    function tkMeasure() {
+        const run = document.querySelector("#urgentTicker .tk-run"), view = document.querySelector("#urgentTicker .tk-view");
+        if (!run || !view) return;
+        const vw = view.clientWidth, cw = run.offsetWidth;
+        if (!vw || !cw) return;
+        const speed = vw < 520 ? 55 : 80;
+        run.style.setProperty("--tk-from", vw + "px");
+        run.style.setProperty("--tk-to", (-cw) + "px");
+        run.style.setProperty("--tk-dur", Math.max(10, Math.round((vw + cw) / speed)) + "s");
+    }
+
+    function renderTicker(list) {
+        const el = $("urgentTicker"); if (!el) return;
+        const sig = todayISO() + "|" + curLang() + "|" + list.map(r => r.id + r.neededDate).join(",");
+        if (sig === tkSig) return; tkSig = sig;
+        if (!list.length) { el.style.display = "none"; el.innerHTML = ""; document.body.classList.remove("has-ticker"); return; }
+        const items = list.map(r => `<span class="tk-item"><span class="tk-grp">${esc(r.group)}</span><span><b>${fmtNum(r.bags)} ${L("ব্যাগ রক্ত লাগবে|bags needed")}</b> · ${esc(r.hospital)}, ${esc(r.area)}</span><span class="tk-w ${diffDays(todayISO(), r.neededDate) === 0 ? "now" : ""}">${esc(reqWhen(r))}</span></span>`).join('<span class="tk-sep" aria-hidden="true"></span>');
+        el.innerHTML = `<div class="tk-label"><span class="tk-ico">🚨</span><span class="tk-txt1">${L("জরুরি রক্ত|Urgent Blood")}</span><span class="tk-n">${fmtNum(list.length)}</span></div><div class="tk-view"><div class="tk-run">${items}</div></div><div class="tk-more"><span>${L("বিস্তারিত|Details")}</span>›</div>`;
+        el.style.display = "flex"; document.body.classList.add("has-ticker");
+        tkMeasure();
+    }
+    if (window.ResizeObserver) new ResizeObserver(() => tkMeasure()).observe($("urgentTicker"));
+    else window.addEventListener("resize", tkMeasure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(tkMeasure).catch(() => {});
+    $("urgentTicker").addEventListener("click", () => { window.switchTab("urgent"); window.scrollTo({ top: 0, behavior: "smooth" }); });
+
+    function renderBanner() {
+        const box = $("urgentBanner"); if (!box) return;
+        const all = bannerList(), dis = ubDismissed();
+        ubList = all.filter(r => !dis.includes(r.id));
+        renderTicker(all);
+        clearInterval(ubTimer);
+        if (!ubList.length) { box.style.display = "none"; box.innerHTML = ""; return; }
+        if (ubIdx >= ubList.length) ubIdx = 0;
+        const r = ubList[ubIdx], n = ubList.length;
+        const tel = esc(String(r.contactPhone || "").replace(/[^\d+]/g, ""));
+        const me = auth.currentUser, mine = !!(me && r.requesterUid === me.uid);
+        box.style.display = "block";
+        box.innerHTML = `<div class="ub-ribbon"><span class="ub-live"><span class="ub-dot"></span>🚨 ${L("জরুরি রক্ত প্রয়োজন|Urgent blood needed")}</span><span class="ub-rt"><span class="ub-count">${fmtNum(ubIdx + 1)} / ${fmtNum(n)}</span><button type="button" class="ub-x" data-ub="close" title="${L("কার্ডটি বন্ধ করুন|Dismiss")}" aria-label="Dismiss">✕</button></span></div>
+            <div class="ub-main"><div class="ub-drop"><svg viewBox="0 0 64 80" aria-hidden="true"><path d="M32 2C32 2 6 32 6 52a26 26 0 0 0 52 0C58 32 32 2 32 2z" fill="#fff"/></svg><b>${esc(r.group)}</b></div>
+                <div class="ub-info"><div class="ub-title">${fmtNum(r.bags)} ${L("ব্যাগ রক্ত লাগবে|Bags of blood needed")}<span class="ub-when">${esc(reqWhen(r))}</span></div>
+                <div class="ub-chips"><span>🏥 ${esc(r.hospital)}</span><span>📍 ${esc(r.area)}</span><span>📅 ${esc(fmtDate(r.neededDate))}</span><span>👤 ${esc(r.contactName)}</span></div>
+                ${r.note ? `<div class="ub-note">📝 ${esc(r.note)}</div>` : ""}</div></div>
+            <div class="ub-act">${r.contactPhone ? `<a class="ub-call" href="tel:${tel}">📲 ${L("কল করুন|Call")} · ${esc(r.contactPhone)}</a>` : `<button type="button" class="ub-call" data-ub="signin">🔐 ${L("সাইন ইন করে নম্বর দেখুন|Sign in to view number")}</button>`}<button type="button" class="ub-sec" data-ub="share">📤 ${L("শেয়ার|Share")}</button><button type="button" class="ub-sec" data-ub="photo">🖼️ ${L("ছবি শেয়ার|Share Image")}</button><button type="button" class="ub-sec" data-ub="all">${L("সব দেখুন|See all")}</button>${mine ? "" : `<button type="button" class="ub-sec" data-ub="report" style="flex:0 0 auto;min-width:0;padding:11px 14px;">🚩 ${L("রিপোর্ট|Report")}</button>`}</div>
+            ${n > 1 ? `<div class="ub-nav"><button type="button" data-ub="prev" aria-label="Previous">‹</button><div class="ub-dots">${ubList.map((_, i) => `<i data-ub-i="${i}" class="${i === ubIdx ? "on" : ""}"></i>`).join("")}</div><button type="button" data-ub="next" aria-label="Next">›</button></div>` : ""}`;
+        ubStart();
+    }
+
+    function dlgKey(e) { if (e.key === "Escape") closeDlg(); }
+    function closeDlg() { const d = document.getElementById("rpDlg"); if (d) d.remove(); document.removeEventListener("keydown", dlgKey); }
+    function openDlg(inner) {
+        closeDlg();
+        const o = document.createElement("div"); o.id = "rpDlg"; o.className = "rp-ov"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true");
+        o.innerHTML = `<div class="rp-box">${inner}</div>`;
+        o.addEventListener("click", (e) => { if (e.target === o) closeDlg(); });
+        document.body.appendChild(o); document.addEventListener("keydown", dlgKey);
+        return o;
+    }
+    function infoDialog(icon, title, text) {
+        const o = openDlg(`<div class="rp-info"><div class="ic">${icon}</div><h3 style="color:var(--primary)">${esc(title)}</h3><p>${esc(text)}</p><button type="button" class="btn rp-ok">${L("ঠিক আছে|OK")}</button></div>`);
+        o.querySelector(".rp-ok").onclick = closeDlg; o.querySelector(".rp-ok").focus();
+    }
+    function reportDialog({ title, subtitle, reasons, send }) {
+        const o = openDlg(`<h3>🚩 ${esc(title)}</h3><p class="rp-sub">${esc(subtitle)}</p>
+            <label for="rpWhy" style="margin-top:0">${L("কারণ|Reason")} <span class="req">*</span></label>
+            <select id="rpWhy"><option value="">${L("কারণ বাছাই করুন|Select a reason")}</option>${reasons.map(x => `<option>${esc(x)}</option>`).join("")}</select>
+            <textarea id="rpTxt" rows="2" maxlength="120" placeholder="${L("আরও কিছু জানাতে চাইলে লিখুন (ঐচ্ছিক)|Add details (optional)")}"></textarea>
+            <p id="rpMsg" class="rp-msg" role="status"></p>
+            <div class="rp-act"><button type="button" id="rpCancel" class="btn-ghost-s">${L("বাতিল|Cancel")}</button><button type="button" id="rpSend" class="rp-send">${L("রিপোর্ট পাঠান|Submit Report")}</button></div>`);
+        const msg = o.querySelector("#rpMsg"), btn = o.querySelector("#rpSend");
+        o.querySelector("#rpCancel").onclick = closeDlg;
+        btn.onclick = async () => {
+            const why = o.querySelector("#rpWhy").value, extra = o.querySelector("#rpTxt").value.trim();
+            if (!why) { msg.style.color = "var(--danger)"; msg.textContent = L("কারণ বাছাই করুন|Select a reason"); return; }
+            btn.disabled = true; msg.style.color = "var(--primary)"; msg.textContent = L("পাঠানো হচ্ছে...|Submitting...");
+            try {
+                await send((why + (extra ? " — " + extra : "")).slice(0, 200));
+                msg.style.color = "var(--success)"; msg.textContent = L("✅ ধন্যবাদ! রিপোর্টটি এডমিনের কাছে পৌঁছেছে।|✅ Report submitted to admin.");
+                setTimeout(() => { if (o.isConnected) closeDlg(); }, 1500);
+            } catch (err) {
+                msg.style.color = "var(--danger)";
+                msg.textContent = err && err.code === "permission-denied" ? L("❌ আপনি এটি আগেই রিপোর্ট করেছেন।|❌ You have already reported this.") : "❌ " + ((err && (err.code || err.message)) || "Error");
+                btn.disabled = false;
+            }
+        };
+        o.querySelector("#rpWhy").focus();
+    }
+
+    const DONOR_REASONS = ["নম্বরটি ভুল, অন্য কারো নম্বর|Wrong number", "নম্বরটি বন্ধ বা সংযোগ পাওয়া যায়নি|Unreachable or switched off", "ভুয়া বা সন্দেহজনক তথ্য|Fake or suspicious", "ডোনার রক্ত দিতে অনিচ্ছুক|Unwilling to donate", "অন্য কারণ|Other reason"];
+    const repKey = (uid, id) => "dcu_rep_" + uid + "_" + id;
+    const isReported = (uid, id) => { try { return !!localStorage.getItem(repKey(uid, id)); } catch (e) { return false; } };
+    function syncResReport() {
+        const b = $("resReport"); if (!b || !selectedDonor) return;
+        const u = auth.currentUser, done = !!(u && isReported(u.uid, selectedDonor.id));
+        b.classList.toggle("done", done);
+        b.textContent = done ? `✅ ${L("আপনি এই নম্বরটি রিপোর্ট করেছেন|You reported this number")}` : `🚩 ${L("নম্বরটি ভুল বা বন্ধ? রিপোর্ট করুন|Wrong or unreachable? Report")}`;
+    }
+    async function reportDonor(id) {
+        const d = donorMap[id]; if (!d || document.getElementById("rpDlg")) return;
+        let u; try { u = await ensureUser(); } catch (e) { return; }
+        if (u.uid === id) return infoDialog("ℹ️", L("এটি আপনার নিজের প্রোফাইল|Your own profile"), L("নিজের প্রোফাইল রিপোর্ট করা যায় না।|You cannot report your own profile."));
+        if (isReported(u.uid, id)) return infoDialog("✅", L("আগেই রিপোর্ট করেছেন|Already reported"), L("এই ডোনারকে আপনি আগেই রিপোর্ট করেছেন।|You have already reported this donor."));
+        reportDialog({
+            title: L("ডোনারকে রিপোর্ট করুন|Report Donor"), subtitle: d.name + " · " + d.group, reasons: DONOR_REASONS.map(r => L(r)),
+            send: async (reason) => {
+                const bt = writeBatch(db);
+                bt.set(doc(db, "reports", id + "_" + u.uid), { donorUid: id, donorName: d.name, reporterUid: u.uid, reporterEmail: u.email, reason, timestamp: new Date() });
+                await bt.commit();
+                try { localStorage.setItem(repKey(u.uid, id), "1"); } catch (e) {}
+                syncResReport();
+            }
+        });
+    }
+    $("resReport").onclick = () => { if (selectedDonor) reportDonor(selectedDonor.id); };
+
+    async function openReport(r) {
+        if (!r || document.getElementById("rpDlg")) return;
+        let u; try { u = await ensureUser(); } catch (e) { return; }
+        if (r.requesterUid === u.uid) return infoDialog("ℹ️", L("এটি আপনার নিজের অনুরোধ|Your own request"), L("নিজের অনুরোধ রিপোর্ট করা যায় না।|You cannot report your own request."));
+        reportDialog({
+            title: L("অনুরোধটি রিপোর্ট করুন|Report Request"), subtitle: r.group + " · " + r.hospital + ", " + r.area,
+            reasons: ["ভুয়া বা মিথ্যা অনুরোধ|Fake request", "নম্বর বা তথ্য ভুল|Incorrect info or phone", "রক্ত ইতিমধ্যে পাওয়া গেছে|Blood already found", "স্প্যাম বা অপ্রাসঙ্গিক|Spam", "অন্য কারণ|Other"].map(x => L(x)),
+            send: async (reason) => {
+                const bt = writeBatch(db);
+                bt.set(doc(db, "request_reports", r.id + "_" + u.uid), { requestId: r.id, requestInfo: (r.group + " · " + r.hospital + ", " + r.area).slice(0, 200), reporterUid: u.uid, reporterEmail: u.email, reason, timestamp: new Date() });
+                await bt.commit();
+            }
+        });
+    }
+
+    function shareReq(r) {
+        const u = auth.currentUser, mine = u && r.requesterUid === u.uid;
+        const link = location.origin + location.pathname;
+        const text = `🚨 ${L("জরুরি রক্ত প্রয়োজন!|Urgent blood needed!")}\n🩸 ${r.group} · ${fmtNum(r.bags)} ${L("ব্যাগ|bags")}\n🏥 ${r.hospital}\n📍 ${r.area}\n📅 ${reqWhen(r)}` + (mine && r.contactPhone ? `\n📞 ${r.contactName}: ${r.contactPhone}` : "") + `\n\n${L("যোগাযোগ:|Details:")} ${link}`;
+        if (navigator.share) { navigator.share({ text }).catch(() => {}); } else { window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener"); }
+    }
+    async function makePoster(r) {
+        try { await document.fonts.ready; } catch (e) {}
+        const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+        const x = c.getContext("2d"), ff = "'Hind Siliguri', 'Noto Serif Bengali', sans-serif";
+        const u = auth.currentUser, mine = u && r.requesterUid === u.uid;
+        const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, "#7f1613"); g.addColorStop(0.6, "#c62d28"); g.addColorStop(1, "#e2514c");
+        x.fillStyle = g; x.fillRect(0, 0, W, H);
+        x.fillStyle = "rgba(255,255,255,.07)"; x.beginPath(); x.arc(W - 40, 110, 280, 0, 7); x.fill(); x.beginPath(); x.arc(20, H - 60, 340, 0, 7); x.fill();
+        x.textAlign = "center"; x.fillStyle = "#fff"; x.font = `800 66px ${ff}`; x.fillText(L("🚨 জরুরি রক্ত প্রয়োজন|🚨 Urgent Blood Needed"), W / 2, 130);
+        x.font = `600 30px ${ff}`; x.fillStyle = "rgba(255,255,255,.9)"; x.fillText("DCU Blood Donor Directory", W / 2, 184);
+        x.save(); x.translate(W / 2 - 160, 225); x.scale(5, 5); x.shadowColor = "rgba(0,0,0,.3)"; x.shadowBlur = 8; x.fillStyle = "#fff"; x.fill(new Path2D("M32 2C32 2 6 32 6 52a26 26 0 0 0 52 0C58 32 32 2 32 2z")); x.restore();
+        x.fillStyle = "#b3261e"; x.font = `800 118px ${ff}`; x.fillText(r.group, W / 2, 225 + 250);
+        x.fillStyle = "#fff"; x.font = `800 66px ${ff}`; x.fillText(`${fmtNum(r.bags)} ${L("ব্যাগ রক্ত লাগবে|Bags of blood needed")}`, W / 2, 705);
+        const lines = [], wrap = (txt, font, color) => {
+            x.font = font; let line = "";
+            for (const w of String(txt).split(" ")) { const t = line ? line + " " + w : w; if (x.measureText(t).width > 840 && line) { lines.push({ t: line, font, color }); line = w; } else line = t; }
+            if (line) lines.push({ t: line, font, color });
+        };
+        wrap("🏥 " + r.hospital, `700 40px ${ff}`, "#1c2733"); wrap("📍 " + r.area, `600 38px ${ff}`, "#1c2733");
+        wrap(`📅 ${L("প্রয়োজন|Needed")}: ` + reqWhen(r) + " (" + fmtDate(r.neededDate) + ")", `700 38px ${ff}`, "#b3261e");
+        if (r.note) wrap("📝 " + r.note, `500 32px ${ff}`, "#555");
+        wrap("👤 " + r.contactName + (mine && r.contactPhone ? " · 📞 " + r.contactPhone : ""), `600 36px ${ff}`, "#1c2733");
+        const Lst = lines.slice(0, 8), ch = Lst.length * 56 + 56, top = 745;
+        x.fillStyle = "#fff"; x.beginPath(); x.roundRect ? x.roundRect(70, top, 940, ch, 34) : x.rect(70, top, 940, ch); x.fill();
+        x.textAlign = "left"; Lst.forEach((l, i) => { x.font = l.font; x.fillStyle = l.color; x.fillText(l.t, 110, top + 62 + i * 56); });
+        x.textAlign = "center"; x.fillStyle = "rgba(255,255,255,.95)"; x.font = `700 32px ${ff}`;
+        x.fillText(L("রক্ত দিতে পারলে এখনই যোগাযোগ করুন|Please contact if you can donate"), W / 2, Math.max(top + ch + 70, 1230));
+        x.font = `600 28px ${ff}`; x.fillStyle = "rgba(255,255,255,.85)"; x.fillText(location.origin.replace(/^https?:\/\//, "") + location.pathname, W / 2, Math.max(top + ch + 118, 1280));
+        c.toBlob(async (blob) => {
+            if (!blob) return;
+            const file = new File([blob], "blood-request-" + r.group + ".png", { type: "image/png" });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === "AbortError") return; } }
+            const a = document.createElement("a"); a.download = "blood-request-" + r.group.replace("+", "pos").replace("-", "neg") + ".png"; a.href = URL.createObjectURL(blob); a.click();
+        }, "image/png");
+    }
+
+    $("urgentBanner").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-ub],[data-ub-i]"); if (!b) return;
+        if (b.dataset.ub === "close") { const r = ubList[ubIdx]; if (r) { setUbDismissed(ubDismissed().concat(r.id)); renderBanner(); } return; }
+        if (b.dataset.ub === "report") { openReport(ubList[ubIdx]); return; }
+        if (b.dataset.ub === "share") { shareReq(ubList[ubIdx]); return; }
+        if (b.dataset.ub === "photo") { makePoster(ubList[ubIdx]); return; }
+        if (b.dataset.ub === "all") { window.switchTab("urgent"); return; }
+        if (b.dataset.ub === "signin") { ensureUser().then(() => refreshMyProfile().catch(() => {})).then(() => fetchRequests()).then(() => renderRequests()).catch(() => {}); return; }
+        if (b.dataset.ub === "next") ubIdx = (ubIdx + 1) % ubList.length;
+        else if (b.dataset.ub === "prev") ubIdx = (ubIdx - 1 + ubList.length) % ubList.length;
+        else ubIdx = Number(b.dataset.ubI);
+        renderBanner();
+    });
+    $("urgentBanner").addEventListener("mouseenter", () => clearInterval(ubTimer));
+    $("urgentBanner").addEventListener("mouseleave", ubStart);
+
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) fetchRequests().catch(() => {}); });
+    setInterval(() => { if (!document.hidden) fetchRequests().catch(() => {}); }, 180000);
+
+    $("rqDate").outerHTML = dsel("rqDate", "", true);
+    const vBags = (v) => { v = String(v ?? "").trim(); if (!/^\d+$/.test(v)) return L("কত ব্যাগ রক্ত লাগবে তা সংখ্যায় লিখুন|Enter bag count in digits"); const n = Number(v); return (n < 1 || n > 10) ? L("১ থেকে ১০ ব্যাগের মধ্যে হতে হবে|Must be between 1 and 10") : ""; };
+    const vHospital = (v) => { v = (v || "").trim(); if (!v) return L("হাসপাতালের নাম লিখুন|Enter hospital name"); if (v.length < 3) return L("হাসপাতালের নাম খুব ছোট|Hospital name is too short"); if (v.length > 100) return L("সর্বোচ্চ ১০০ অক্ষর|Max 100 characters"); return ""; };
+    const vNeedDate = () => {
+        const r = readDateSel("rqDate");
+        if (r === null) return L("দিন, মাস ও বছর বাছাই করুন|Select day, month, and year");
+        if (!r) return L("কবে রক্ত লাগবে তা বাছাই করুন|Select needed date");
+        if (r < todayISO()) return L("অতীতের তারিখ গ্রহণযোগ্য নয়|Cannot be in the past");
+        if (r > addDaysISO(todayISO(), 30)) return L("আগামী ৩০ দিনের মধ্যের তারিখ দিন|Must be within the next 30 days");
+        return "";
+    };
+    const vNote = (v) => (v || "").length > 200 ? L(`সর্বোচ্চ ২০০ অক্ষর (এখন ${fmtNum(v.length)})|Max 200 characters (now ${fmtNum(v.length)})`) : "";
+    live($("rqGroup"), () => vGroup($("rqGroup").value), { events: ["change", "blur"] });
+    live($("rqBags"), () => vBags($("rqBags").value));
+    live($("rqHospital"), () => vHospital($("rqHospital").value));
+    live($("rqArea"), () => vArea($("rqArea").value));
+    live($("rqDate"), vNeedDate, { events: ["change"] });
+    live($("rqName"), () => vName($("rqName").value));
+    phoneField($("rqPhone"));
+    live($("rqNote"), () => vNote($("rqNote").value));
+
+    $("rqToggle").onclick = async () => {
+        const f = $("rqForm");
+        if (f.style.display === "block") { f.style.display = "none"; return; }
+        let u; try { u = await ensureUser(); } catch (e) { return; }
+        await refreshMyProfile().catch(() => {});
+        const sv = loadSeeker(u.uid);
+        if (!$("rqName").value) $("rqName").value = (sv && sv.name) || (myDonor && myDonor.name) || "";
+        if (!$("rqPhone").value) $("rqPhone").value = (sv && sv.phone) || (myDonor && myDonor.phone) || "";
+        f.style.display = "block";
+        f.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    $("rqForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = $("rqMsg"), btn = $("rqSubmit");
+        const fields = [$("rqGroup"), $("rqBags"), $("rqHospital"), $("rqArea"), $("rqDate"), $("rqName"), $("rqPhone"), $("rqNote")];
+        if (!validateAll(fields)) { msg.style.color = "var(--danger)"; msg.textContent = L("❌ কিছু ঘরে ভুল আছে। লাল চিহ্নিত ঘরগুলো ঠিক করুন।|❌ Please fix errors in marked fields."); return; }
+        btn.disabled = true; msg.style.color = "var(--primary)"; msg.textContent = L("অনুরোধ পাঠানো হচ্ছে...|Submitting request...");
+        try {
+            const u = await ensureUser();
+            const mine = await getDocs(query(collection(db, "blood_requests"), where("requesterUid", "==", u.uid), where("status", "==", "open")));
+            const g0 = $("rqGroup").value, h0 = $("rqHospital").value.trim(), a0 = $("rqArea").value.trim(), n0 = readDateSel("rqDate");
+            if (mine.docs.some(x => { const o = x.data(); return o.group === g0 && o.hospital === h0 && o.area === a0 && o.neededDate === n0; })) { msg.style.color = "var(--danger)"; msg.textContent = L("❌ এই একই তথ্যের অনুরোধ আপনি আগেই দিয়েছেন।|❌ You already posted this exact request."); btn.disabled = false; return; }
+            if (mine.size >= 3) { msg.style.color = "var(--danger)"; msg.textContent = L("❌ একসাথে সর্বোচ্চ ৩টি চালু অনুরোধ রাখা যায়।|❌ Maximum 3 open requests allowed."); btn.disabled = false; return; }
+            const rref = doc(collection(db, "blood_requests")), bt = writeBatch(db);
+            bt.set(rref, {
+                requesterUid: u.uid,
+                group: $("rqGroup").value, bags: parseInt($("rqBags").value, 10),
+                hospital: $("rqHospital").value.trim(), area: $("rqArea").value.trim(),
+                neededDate: readDateSel("rqDate"), contactName: $("rqName").value.trim(),
+                note: $("rqNote").value.trim(),
+                status: "open", createdAt: new Date()
+            });
+            bt.set(doc(db, "blood_requests", rref.id, "private", "contact"), { requesterUid: u.uid, requesterEmail: u.email, contactPhone: normPhone($("rqPhone").value) });
+            await bt.commit();
+            msg.style.color = "var(--success)"; msg.textContent = L("✅ আপনার জরুরি অনুরোধ প্রকাশ করা হয়েছে।|✅ Urgent blood request published successfully.");
+            $("rqForm").reset(); clearFieldErrors($("rqForm")); $("rqForm").style.display = "none";
+            try { await fetchRequests(true); renderRequests(); } catch (_) {}
+        } catch (err) { msg.style.color = "var(--danger)"; msg.textContent = "❌ " + (err.code || err.message); }
+        btn.disabled = false;
+    });
+
+    $("rqFilterGroup").onchange = renderRequests;
+    $("rqFilterArea").oninput = renderRequests;
+    $("rqList").addEventListener("click", async (e) => {
+        const b = e.target.closest("button[data-q]"); if (!b) return;
+        if (b.dataset.q === "undismiss") { setUbDismissed([]); ubIdx = 0; renderBanner(); renderRequests(); return; }
+        if (b.dataset.q === "signin") { try { await ensureUser(); await refreshMyProfile().catch(() => {}); await fetchRequests(true); renderRequests(); } catch (err) {} return; }
+        const r = requests.find(x => x.id === b.dataset.id); if (!r) return;
+        if (b.dataset.q === "share") { shareReq(r); return; }
+        if (b.dataset.q === "photo") { makePoster(r); return; }
+        if (b.dataset.q === "report") { openReport(r); return; }
+        try {
+            if (b.dataset.q === "done") {
+                if (!confirm(L("রক্তের ব্যবস্থা হয়ে গেছে? অনুরোধটি তালিকা থেকে সরিয়ে ফেলা হবে।|Blood found? This will close the request."))) return;
+                await updateDoc(doc(db, "blood_requests", r.id), { status: "fulfilled" });
+                await fetchRequests(true); renderRequests();
+            } else if (b.dataset.q === "del") {
+                if (!confirm(L("অনুরোধটি স্থায়ীভাবে মুছে ফেলবেন?|Delete this request permanently?"))) return;
+                const bd = writeBatch(db); bd.delete(doc(db, "blood_requests", r.id, "private", "contact")); bd.delete(doc(db, "blood_requests", r.id)); await bd.commit();
+                await fetchRequests(true); renderRequests();
+            }
+        } catch (err) { alert("❌ " + (err.code || err.message)); }
+    });
+
+    async function loadLeaderboard() {
+        const lbDiv = document.getElementById('leaderboardList');
+        lbDiv.innerHTML = L("লিডারবোর্ড তৈরি হচ্ছে...|Generating leaderboard...");
+
+        try {
+            const rows = await fetchDonors();
+            let donors = [];
+            rows.forEach((row) => {
+                if(row.d.status === "approved") donors.push(row.d);
+            });
+
+            donors.sort((a, b) => (b.donationCount || 1) - (a.donationCount || 1));
+
+            if(donors.length === 0) {
+                lbDiv.innerHTML = `<p style='text-align:center;'>${L("এখনো কোনো ডোনারের তথ্য নেই।|No donor data available yet.")}</p>`;
+                return;
+            }
+
+            let html = `<div class="lb-list">`;
+            donors.forEach((d, index) => {
+                const top = index < 3;
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : fmtNum(index + 1);
+                html += `<div class="lb-item ${top ? "lb-top" : ""}">
+                    <div class="lb-rank ${top ? "" : "num"}">${medal}</div>
+                    <div class="lb-info">
+                        <div class="lb-name">${esc(d.name)}${vtick(d)}</div>
+                        <div class="lb-meta"><span class="badge">${esc(d.group)}</span><span class="lb-area">${esc(d.address)}</span></div>
+                    </div>
+                    <div class="lb-cnt"><b>${fmtNum(d.donationCount || 1)}</b><span>${L("বার রক্তদান|donations")}</span></div>
+                </div>`;
+            });
+
+            html += `</div>`;
+            lbDiv.innerHTML = html;
+        } catch (error) {
+            lbDiv.innerHTML = L("লিডারবোর্ড লোড করতে সমস্যা হয়েছে।|Failed to load leaderboard.");
+        }
+    }
+
+    document.getElementById("donorList").addEventListener("click", (e) => {
+        const rp = e.target.closest("[data-rp='donor']");
+        if (rp) { reportDonor(rp.dataset.id); return; }
+        const b = e.target.closest(".contact-btn");
+        if (b) handleContactClick(b.dataset.phone, b.dataset.name, b.dataset.group, b.dataset.id);
+    });
+
+    // ভাষা পরিবর্তন হলে রেন্ডারিং রিফ্রেশ
+    window.onLang = function() {
+        tkSig = "";
+        dropDonorsCache();
+        renderBanner();
+        loadDonors();
+        if (document.getElementById('urgentSection').classList.contains('active')) renderRequests();
+        if (document.getElementById('leaderboardSection').classList.contains('active')) loadLeaderboard();
+        if (document.getElementById('notifySection').classList.contains('active')) loadNotify();
+        if (myDonor) renderProfileView();
+    };
+
+    loadDonors();
+    fetchRequests().catch(() => {});
+</script>
 </body>
 </html>
