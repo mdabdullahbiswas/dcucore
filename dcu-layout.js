@@ -30,6 +30,7 @@
     { href: "/", label: "হোম" },
     { href: "/cover", label: "কভার পেজ" },
     { href: "/blood", label: "ডোনার" },
+    { href: "/events", label: "ইভেন্ট" },
     { href: "/feedback", label: "মতামত" },
     { href: "/about", label: "আমাদের সম্পর্কে" }
   ];
@@ -39,6 +40,7 @@
     { href: "/tools#routine", bn: "ক্লাস রুটিন", en: "Class Routine" },
     { href: "/tools#cgpa", bn: "CGPA ক্যালকুলেটর", en: "CGPA Calculator" },
     { href: "/tools#exam", bn: "পরীক্ষা প্ল্যানার", en: "Exam Planner" },
+    { href: "/dcu-calendar", bn: "স্টুডেন্ট ক্যালেন্ডার", en: "Student Calendar" },
     { href: "/cv", bn: "সিভি স্টুডিও", en: "CV Studio" },
     { href: "/tools#frame", bn: "প্রোফাইল ফ্রেম", en: "Profile Frame" },
     { href: "/tools#pdf", bn: "PDF টুলকিট", en: "PDF Toolkit" },
@@ -129,12 +131,14 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       ["/cover", "কভার পেজ"],
       ["/cv", "সিভি স্টুডিও"],
       ["/tools#routine", "ক্লাস রুটিন"],
+      ["/dcu-calendar", "স্টুডেন্ট ক্যালেন্ডার"],
       ["/tools#cgpa", "CGPA ক্যালকুলেটর"],
       ["/tools#pdf", "PDF টুলকিট"]
     ];
     var siteLinks = [
       ["/", "হোম"],
       ["/blood", "ডোনার ডিরেক্টরি"],
+      ["/events", "ক্যাম্পাস ইভেন্ট"],
       ["/feedback", "মতামত দিন"],
       ["/about", "আমাদের সম্পর্কে"]
     ];
