@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="bn" data-lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>সাহায্য · DCUCore | Support</title>
+<meta name="description" content="DCUCore-কে সহায়তা করুন। Support DCUCore, a free student toolkit.">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="icon" href="favicon-32.png">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="dcu-fonts.css">
+<style>
+:root{--bg:#F6F8FC;--cd:#FFFFFF;--ink:#0F172A;--mu:#475569;--ln:#E2E8F0;--navy:#0B1F3A;--navy2:#17386A;--gold:#D4AF37;--gold2:#E8C46C;--goldd:#B98A2C;--soft:#FBF3DC;--ok:#047857;--err:#B91C1C;--warn:#92400E;--okbg:#D1FAE5;--errbg:#FEE2E2;--warnbg:#FEF3C7}
+:root[data-theme="dark"]{--bg:#0A0F1E;--cd:#111827;--ink:#F1F5F9;--mu:#A8B3C7;--ln:#243049;--soft:rgba(212,175,55,.15);--ok:#34D399;--err:#F87171;--warn:#FBBF24;--okbg:rgba(52,211,153,.14);--errbg:rgba(248,113,113,.14);--warnbg:rgba(251,191,36,.14)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Inter',system-ui,sans-serif;line-height:1.7}
+.wrap{max-width:980px;margin:0 auto;padding:22px 16px 10px}
+.hero{position:relative;overflow:hidden;border-radius:18px;padding:34px 28px;background:linear-gradient(125deg,#06142a,var(--navy) 55%,#15396b);box-shadow:0 18px 40px rgba(10,34,64,.28);color:#c4d3e8}
+.hero::before{content:'';position:absolute;right:-70px;top:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.5),transparent 68%)}
+.hero>*{position:relative}
+.hero h1{margin:0 0 6px;color:#f6dfa8;font-size:30px;font-weight:700;font-family:'Hind Siliguri',sans-serif}
+.hero p{margin:0;max-width:640px;font-size:16px}
+.thanks{margin-top:16px;padding:14px 16px;border-left:3px solid var(--gold);background:rgba(255,255,255,.07);border-radius:10px;color:#e8eef8;font-size:15px}
+.thanks b{display:block;color:#f6dfa8;margin-bottom:2px}
+h2{margin:0 0 6px;font-size:21px;color:var(--ink)}
+.sub{margin:0 0 14px;color:var(--mu);font-size:14.5px}
+.card{background:var(--cd);border:1px solid var(--ln);border-radius:14px;padding:20px;margin-top:18px}
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+@media(max-width:800px){.grid2{grid-template-columns:1fr}}
+.pays{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:640px){.pays{grid-template-columns:1fr}}
+.pay{border:1px solid var(--ln);border-radius:12px;padding:14px;background:var(--bg)}
+.pay .tag{display:inline-block;font-size:12px;font-weight:700;color:#fff;padding:3px 10px;border-radius:999px}
+.pay .num{font-size:19px;font-weight:700;letter-spacing:.5px;margin:10px 0 8px;font-variant-numeric:tabular-nums;color:var(--ink);word-break:break-all}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:9px;border:0;cursor:pointer;font:inherit;font-weight:700;font-size:14px;background:linear-gradient(135deg,#E8C46C,#D4AF37 45%,#B98A2C);color:#0B1F3A;text-decoration:none;min-height:44px}
+.btn.o{background:transparent;color:var(--ink);border:1.5px solid var(--ln)}
+.btn.s{min-height:36px;padding:6px 12px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 4px}
+.hint{font-size:12.5px;color:var(--mu);margin-top:3px}
+input,select{width:100%;padding:11px 12px;border:1.5px solid var(--ln);border-radius:9px;background:var(--cd);color:var(--ink);font:inherit;font-size:15px;min-height:44px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{padding:6px 14px;border-radius:999px;border:1.5px solid var(--ln);background:var(--cd);color:var(--ink);font:inherit;font-size:14px;cursor:pointer;min-height:36px}
+.chip.on{border-color:var(--gold);background:var(--soft);color:var(--ink);font-weight:700}
+.chk{display:flex;gap:10px;align-items:center;margin-top:14px;font-weight:600;font-size:14.5px}
+.chk input{width:20px;height:20px;min-height:0}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+fieldset:disabled{opacity:.55}
+.panel{margin-top:14px;padding:14px 16px;border-radius:12px;font-size:15px}
+.panel[hidden]{display:none}
+.p-ok{background:var(--okbg);color:var(--ok)}
+.p-err{background:var(--errbg);color:var(--err)}
+.p-warn{background:var(--warnbg);color:var(--warn)}
+.code{font-size:24px;font-weight:800;letter-spacing:2px;color:var(--ink);margin:6px 0 10px;font-variant-numeric:tabular-nums;word-break:break-all}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>input{flex:1;min-width:200px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-top:10px;font-size:14.5px;color:var(--ink)}
+.kv span:nth-child(odd){color:var(--mu)}
+.lb{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.lb li{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--ln);border-radius:11px;background:var(--bg)}
+.rk{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;background:var(--ln);color:var(--ink)}
+.rk.g{background:linear-gradient(135deg,#F3D27A,#D4AF37);color:#3d2d05}
+.rk.s{background:linear-gradient(135deg,#E5E7EB,#9CA3AF);color:#1f2937}
+.rk.b{background:linear-gradient(135deg,#E9B98A,#B0703C);color:#fff}
+.lb .nm{flex:1;font-weight:600;word-break:break-word}
+.lb .amt{font-weight:800;color:var(--goldd);font-variant-numeric:tabular-nums}
+:root[data-theme="dark"] .lb .amt{color:var(--gold2)}
+.st{display:inline-block;padding:4px 12px;border-radius:999px;font-size:13px;font-weight:700}
+.st-pending{background:var(--warnbg);color:var(--warn)}
+.st-approved{background:var(--okbg);color:var(--ok)}
+.st-cancelled{background:var(--errbg);color:var(--err)}
+.empty{color:var(--mu);font-size:14.5px;margin-top:10px}
+.closed{display:none;margin-top:14px}
+.closed.show{display:block}
+@media(max-width:560px){.hero{padding:26px 20px}.hero h1{font-size:25px}.code{font-size:20px}}
+</style>
+</head>
+<body data-page="support">
+<a class="sa-skip t" href="#main" style="position:absolute;left:-999px">মূল অংশে যান|Skip to content</a>
+<div id="hdr"></div>
+
+<main id="main" class="wrap">
+
+  <section class="hero" aria-labelledby="heroTitle">
+    <h1 id="heroTitle" data-i18n="heroTitle">DCUCore-কে সহায়তা করুন</h1>
+    <p data-i18n="heroSub">শিক্ষার্থীদের জন্য বিনামূল্যের টুলকিট চালু ও উন্নত রাখতে আপনার ছোট একটি অনুদানও অনেক দূর এগিয়ে দেয়।</p>
+    <div class="thanks">
+      <b data-i18n="thanksTitle">ধন্যবাদ</b>
+      <span data-i18n="thanksBody">আপনার সহায়তার জন্য ধন্যবাদ। DCUCore বিনামূল্যে থাকবে, আর আপনাদের মতো মানুষের সমর্থনে আরও ভালো হবে। এই যাত্রায় আপনি আমাদের সঙ্গে আছেন, তাই আমরা কৃতজ্ঞ।</span>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="payTitle">
+    <h2 id="payTitle" data-i18n="payTitle">অনুদান পাঠানোর নম্বর</h2>
+    <p class="sub" data-i18n="payNote">bKash, Nagad বা Rocket-এ 'Send Money' করুন, তারপর নিচের ফর্মে তথ্য দিন। অনুদান যাচাইয়ের পর অনুমোদন করা হয়।</p>
+    <div class="pays">
+      <div class="pay">
+        <span class="tag" style="background:#D12053">bKash</span>
+        <div class="num" data-num>01784402660</div>
+        <button type="button" class="btn o s" data-copy><span data-i18n="copy">কপি</span></button>
+      </div>
+      <div class="pay">
+        <span class="tag" style="background:#F6921E">Nagad</span>
+        <div class="num" data-num>01784402660</div>
+        <button type="button" class="btn o s" data-copy><span data-i18n="copy">কপি</span></button>
+      </div>
+      <div class="pay">
+        <span class="tag" style="background:#8C3494">Rocket</span>
+        <div class="num" data-num>01784402660</div>
+        <button type="button" class="btn o s" data-copy><span data-i18n="copy">কপি</span></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid2">
+
+    <section class="card" aria-labelledby="formTitle">
+      <h2 id="formTitle" data-i18n="formTitle">দান জমা দিন</h2>
+      <p class="closed" id="closedMsg" role="status"><span class="panel p-warn" style="display:block" data-i18n="closed">এই মুহূর্তে অনুদান গ্রহণ বন্ধ আছে।</span></p>
+
+      <form id="donForm" novalidate>
+        <fieldset id="donFs">
+          <label for="fName" data-i18n="fName">নাম</label>
+          <input id="fName" name="name" maxlength="80" autocomplete="name" required>
+          <div class="hint" data-i18n="fNameHint">লিডারবোর্ডে এই নাম দেখানো হতে পারে; 'নাম গোপন রাখুন' টিক দিলে অজ্ঞাত দেখাবে।</div>
+
+          <label for="fAmount" data-i18n="fAmount">অঙ্ক (টাকা)</label>
+          <input id="fAmount" name="amount" type="number" inputmode="numeric" min="10" step="1" required>
+          <div class="chips" id="chips">
+            <button type="button" class="chip" data-amt="50">৫০</button>
+            <button type="button" class="chip" data-amt="100">১০০</button>
+            <button type="button" class="chip" data-amt="200">২০০</button>
+            <button type="button" class="chip" data-amt="500">৫০০</button>
+          </div>
+          <div class="hint" data-i18n="fAmountHint">সর্বনিম্ন {min} টাকা</div>
+
+          <label for="fMethod" data-i18n="fMethod">মাধ্যম</label>
+          <select id="fMethod" name="method" required>
+            <option value="" data-i18n="chooseOpt">বাছাই করুন</option>
+            <option value="bkash">bKash</option>
+            <option value="nagad">Nagad</option>
+            <option value="rocket">Rocket</option>
+          </select>
+
+          <label for="fTrx" data-i18n="fTrx">TrxID</label>
+          <input id="fTrx" name="trx" maxlength="30" autocomplete="off" autocapitalize="characters" required>
+          <div class="hint" data-i18n="fTrxHint">পেমেন্টের পর পাওয়া TrxID লিখুন।</div>
+
+          <label class="chk" for="fAnon"><input id="fAnon" type="checkbox"> <span data-i18n="fAnon">নাম গোপন রাখুন</span></label>
+
+          <div style="margin-top:18px">
+            <button type="submit" class="btn" id="donBtn"><span data-i18n="fSubmit">জমা দিন</span></button>
+          </div>
+        </fieldset>
+      </form>
+
+      <div class="panel p-err" id="formErr" role="alert" hidden></div>
+
+      <div class="panel p-ok" id="okBox" role="status" hidden>
+        <b data-i18n="successTitle">অনুরোধ জমা হয়েছে</b>
+        <div style="font-size:14.5px;margin-top:4px" data-i18n="successBody">অনুমোদনের অপেক্ষায় আছে। নিচের ট্র্যাকিং কোডটি সংরক্ষণ করুন, এটি দিয়ে অবস্থা দেখতে পারবেন।</div>
+        <div class="hint" style="color:inherit;opacity:.8" data-i18n="codeLabel">ট্র্যাকিং কোড</div>
+        <div class="code" id="newCode"></div>
+        <button type="button" class="btn o s" id="copyCode"><span data-i18n="copy">কপি</span></button>
+      </div>
+    </section>
+
+    <div>
+      <section class="card" aria-labelledby="trackTitle">
+        <h2 id="trackTitle" data-i18n="trackTitle">অনুরোধের অবস্থা দেখুন</h2>
+        <p class="sub" data-i18n="trackDesc">ট্র্যাকিং কোড দিন।</p>
+        <form id="trackForm" novalidate>
+          <label for="trackIn" class="visually-hidden" style="position:absolute;left:-999px" data-i18n="codeLabel">ট্র্যাকিং কোড</label>
+          <div class="row">
+            <input id="trackIn" data-i18n-ph="trackPh" placeholder="যেমন DCU-XXXX-XXXX" maxlength="20" autocomplete="off" autocapitalize="characters">
+            <button type="submit" class="btn o" id="trackBtn"><span data-i18n="trackBtn">দেখুন</span></button>
+          </div>
+        </form>
+        <div class="panel p-err" id="trackErr" role="alert" hidden></div>
+        <div id="trackOut" hidden></div>
+      </section>
+
+      <section class="card" aria-labelledby="lbTitle">
+        <h2 id="lbTitle" data-i18n="lbTitle">সেরা দাতারা</h2>
+        <p class="sub" data-i18n="lbDesc">অনুমোদিত দান অনুযায়ী সাজানো।</p>
+        <ol class="lb" id="lbList" aria-live="polite"></ol>
+        <div class="empty" id="lbEmpty" hidden data-i18n="lbEmpty">এখনো কোনো তালিকা নেই।</div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div id="ftr"></div>
+
+<script src="dcu-layout.js" defer></script>
+<script src="dcu-lang.js" defer></script>
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, doc, getDoc, collection, query, where, orderBy, limit, getDocs, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* ---------- i18n ---------- */
+const D = {
+  heroTitle: ["DCUCore-কে সহায়তা করুন", "Support DCUCore"],
+  heroSub: ["শিক্ষার্থীদের জন্য বিনামূল্যের টুলকিট চালু ও উন্নত রাখতে আপনার ছোট একটি অনুদানও অনেক দূর এগিয়ে দেয়।", "Help keep DCUCore free for students. Even a small contribution goes a long way."],
+  thanksTitle: ["ধন্যবাদ", "Thank you"],
+  thanksBody: ["আপনার সহায়তার জন্য ধন্যবাদ। DCUCore বিনামূল্যে থাকবে, আর আপনাদের মতো মানুষের সমর্থনে আরও ভালো হবে। এই যাত্রায় আপনি আমাদের সঙ্গে আছেন, তাই আমরা কৃতজ্ঞ।", "Thank you for your support. DCUCore will stay free, and with people like you it keeps getting better. We are grateful to have you on this journey."],
+  payTitle: ["অনুদান পাঠানোর নম্বর", "Where to send"],
+  payNote: ["bKash, Nagad বা Rocket-এ 'Send Money' করুন, তারপর নিচের ফর্মে তথ্য দিন। অনুদান যাচাইয়ের পর অনুমোদন করা হয়।", "Send money via bKash, Nagad or Rocket, then fill in the form below. Donations are approved after verification."],
+  copy: ["কপি", "Copy"],
+  copied: ["কপি হয়েছে", "Copied"],
+  formTitle: ["দান জমা দিন", "Submit your donation"],
+  fName: ["নাম", "Name"],
+  fNameHint: ["লিডারবোর্ডে এই নাম দেখানো হতে পারে; 'নাম গোপন রাখুন' টিক দিলে অজ্ঞাত দেখাবে।", "May appear on the leaderboard; if you tick 'Keep my name private' it shows as anonymous."],
+  fAmount: ["অঙ্ক (টাকা)", "Amount (BDT)"],
+  fAmountHint: ["সর্বনিম্ন {min} টাকা", "Minimum {min} BDT"],
+  fMethod: ["মাধ্যম", "Method"],
+  chooseOpt: ["বাছাই করুন", "Choose"],
+  fTrx: ["TrxID", "TrxID"],
+  fTrxHint: ["পেমেন্টের পর পাওয়া TrxID লিখুন।", "Enter the TrxID you received after payment."],
+  fAnon: ["নাম গোপন রাখুন", "Keep my name private"],
+  fSubmit: ["জমা দিন", "Submit"],
+  fSubmitting: ["জমা হচ্ছে…", "Submitting…"],
+  successTitle: ["অনুরোধ জমা হয়েছে", "Request received"],
+  successBody: ["অনুমোদনের অপেক্ষায় আছে। নিচের ট্র্যাকিং কোডটি সংরক্ষণ করুন, এটি দিয়ে অবস্থা দেখতে পারবেন।", "Waiting for approval. Save the tracking code below to check your status."],
+  codeLabel: ["ট্র্যাকিং কোড", "Tracking code"],
+  trackTitle: ["অনুরোধের অবস্থা দেখুন", "Check your request"],
+  trackDesc: ["ট্র্যাকিং কোড দিন।", "Enter your tracking code."],
+  trackPh: ["যেমন DCU-XXXX-XXXX", "e.g. DCU-XXXX-XXXX"],
+  trackBtn: ["দেখুন", "Check"],
+  st_pending: ["অপেক্ষমাণ — অনুমোদনের অপেক্ষায়", "Pending — awaiting approval"],
+  st_approved: ["অনুমোদিত — ধন্যবাদ!", "Approved — thank you!"],
+  st_cancelled: ["বাতিল", "Cancelled"],
+  notFound: ["এই কোডের কোনো অনুরোধ পাওয়া যায়নি। কোডটি আবার দেখুন।", "No request found for this code. Please check it again."],
+  badCode: ["কোডের ফরম্যাট সঠিক নয়।", "The code format is not valid."],
+  lbTitle: ["সেরা দাতারা", "Top donors"],
+  lbDesc: ["অনুমোদিত দান অনুযায়ী সাজানো।", "Ranked by approved donations."],
+  lbEmpty: ["এখনো কোনো তালিকা নেই।", "No ranking yet."],
+  anon: ["অজ্ঞাত দাতা", "Anonymous donor"],
+  closed: ["এই মুহূর্তে অনুদান গ্রহণ বন্ধ আছে।", "Donations are paused right now."],
+  errName: ["নাম লিখুন (কমপক্ষে ২ অক্ষর)।", "Please enter your name (at least 2 characters)."],
+  errAmount: ["সঠিক অঙ্ক লিখুন (সর্বনিম্ন {min} টাকা, পূর্ণ সংখ্যা)।", "Enter a valid whole amount (minimum {min} BDT)."],
+  errMethod: ["মাধ্যম বাছাই করুন।", "Choose a method."],
+  errTrx: ["TrxID ৬–৩০ অক্ষরের হতে হবে (ইংরেজি অক্ষর ও সংখ্যা)।", "TrxID must be 6–30 letters or digits."],
+  errDup: ["এই TrxID আগেই জমা হয়েছে। ভুল হলে আমাদের জানান।", "This TrxID was already submitted. If this is a mistake, please contact us."],
+  errCool: ["একটু অপেক্ষা করে আবার চেষ্টা করুন।", "Please wait a moment before trying again."],
+  errGeneric: ["জমা দেওয়া যায়নি। ইন্টারনেট চেক করে আবার চেষ্টা করুন।", "Could not submit. Check your connection and try again."],
+  errTrack: ["অবস্থা আনা যায়নি। আবার চেষ্টা করুন।", "Could not load status. Please try again."],
+  dateLbl: ["তারিখ", "Date"],
+  amtLbl: ["অঙ্ক", "Amount"],
+  methodLbl: ["মাধ্যম", "Method"],
+  reasonLbl: ["কারণ", "Reason"],
+  statusLbl: ["অবস্থা", "Status"]
+};
+
+const isEn = () => document.documentElement.getAttribute("data-lang") === "en";
+const tr = (k, vars) => {
+  const v = D[k];
+  let s = v ? (isEn() ? v[1] : v[0]) : k;
+  if (vars) for (const n in vars) s = s.replace("{" + n + "}", vars[n]);
+  return s;
+};
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+/* ---------- state ---------- */
+let S = { enabled: true, number: "01784402660", minAmount: 10, lbCount: 10 };
+let lastTrack = null;      // re-render status on language switch
+let lastFormMsg = null;    // { key, cls, target }
+let busy = false;
+const COOLDOWN_MS = 60 * 1000;
+
+/* ---------- firebase ---------- */
+const CFG = {
+  apiKey: "AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0",
+  authDomain: "dcu-blood-bank.firebaseapp.com",
+  projectId: "dcu-blood-bank",
+  storageBucket: "dcu-blood-bank.firebasestorage.app",
+  messagingSenderId: "835221249900",
+  appId: "1:835221249900:web:facf545941825a4efa5d49"
+};
+const app = getApps().find(a => a.name === "dcu-support") || initializeApp(CFG, "dcu-support");
+const db = getFirestore(app);
+
+/* ---------- helpers ---------- */
+// Tracking-code alphabet has no 0/O/1/I so it is easy to read and type.
+const CODE_ALPHA = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // 32 chars
+const CODE_RE = /^DCU-[A-HJ-NP-Z2-9]{4}-[A-HJ-NP-Z2-9]{4}$/;
+
+function makeCode() {
+  const b = new Uint32Array(8);
+  crypto.getRandomValues(b);            // 2^32 is divisible by 32, so mod is unbiased
+  let s = "";
+  for (const n of b) s += CODE_ALPHA[n % 32];
+  return "DCU-" + s.slice(0, 4) + "-" + s.slice(4);
+}
+
+function normCode(raw) {
+  let s = String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (s.length === 11 && s.startsWith("DCU")) s = s.slice(3);
+  if (s.length !== 8) return null;
+  const code = "DCU-" + s.slice(0, 4) + "-" + s.slice(4);
+  return CODE_RE.test(code) ? code : null;
+}
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function fmtDate(ts) {
+  if (!ts || !ts.toDate) return "—";
+  return ts.toDate().toLocaleDateString(isEn() ? "en-GB" : "bn-BD", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function fmtAmt(n) {
+  return "৳ " + Number(n || 0).toLocaleString(isEn() ? "en-US" : "bn-BD");
+}
+
+const METHOD_LABEL = { bkash: "bKash", nagad: "Nagad", rocket: "Rocket" };
+
+/* ---------- messages ---------- */
+function showFormMsg(key, cls, vars) {
+  const box = $("formErr");
+  lastFormMsg = { key, cls, vars };
+  box.className = "panel " + cls;
+  box.textContent = tr(key, vars);
+  box.hidden = false;
+}
+function hideFormMsg() { $("formErr").hidden = true; lastFormMsg = null; }
+
+/* ---------- settings ---------- */
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, "site_settings", "support"));
+    if (snap.exists()) S = Object.assign({}, S, snap.data());
+  } catch (e) {
+    console.warn("[support] settings unavailable, using defaults:", e && e.message);
+  }
+  document.querySelectorAll("[data-num]").forEach(n => { n.textContent = S.number; });
+  $("fAmount").min = String(S.minAmount);
+  applyI18n();
+  if (!S.enabled) {
+    $("closedMsg").classList.add("show");
+    $("donFs").disabled = true;
+  }
+}
+
+/* ---------- copy buttons ---------- */
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (x) {}
+    ta.remove();
+  }
+  if (btn) {
+    const span = btn.querySelector("span") || btn;
+    const old = span.getAttribute("data-i18n");
+    span.setAttribute("data-i18n", "copied");
+    span.textContent = tr("copied");
+    setTimeout(() => { span.setAttribute("data-i18n", old || "copy"); span.textContent = tr(old || "copy"); }, 1500);
+  }
+}
+
+document.querySelectorAll("[data-copy]").forEach(b => {
+  b.addEventListener("click", () => {
+    const num = b.parentElement.querySelector("[data-num]").textContent.trim();
+    copyText(num, b);
+  });
+});
+$("copyCode").addEventListener("click", () => copyText($("newCode").textContent, $("copyCode")));
+
+/* ---------- amount chips ---------- */
+document.querySelectorAll(".chip[data-amt]").forEach(c => {
+  c.addEventListener("click", () => {
+    $("fAmount").value = c.dataset.amt;
+    document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x === c));
+  });
+});
+$("fAmount").addEventListener("input", () => {
+  document.querySelectorAll(".chip").forEach(x => x.classList.toggle("on", x.dataset.amt === $("fAmount").value));
+});
+
+/* ---------- donation submit ---------- */
+$("donForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (busy || !S.enabled) return;
+  hideFormMsg();
+  $("okBox").hidden = true;
+
+  const name = $("fName").value.trim();
+  const amountRaw = $("fAmount").value.trim();
+  const amount = Number(amountRaw);
+  const method = $("fMethod").value;
+  const trxId = $("fTrx").value.trim().toUpperCase().replace(/\s+/g, "");
+  const anonymous = $("fAnon").checked;
+
+  if (name.length < 2 || name.length > 80) return showFormMsg("errName", "p-err");
+  if (!/^\d+$/.test(amountRaw) || amount < S.minAmount || amount > 100000) return showFormMsg("errAmount", "p-err", { min: S.minAmount });
+  if (!["bkash", "nagad", "rocket"].includes(method)) return showFormMsg("errMethod", "p-err");
+  if (!/^[A-Z0-9]{6,30}$/.test(trxId)) return showFormMsg("errTrx", "p-err");
+
+  const last = Number(localStorage.getItem("dcu-support-last") || 0);
+  if (Date.now() - last < COOLDOWN_MS) return showFormMsg("errCool", "p-warn");
+
+  busy = true;
+  $("donBtn").disabled = true;
+  $("donBtn").querySelector("span").textContent = tr("fSubmitting");
+  try {
+    const code = makeCode();
+    const trxHash = await sha256Hex(trxId);
+    const batch = writeBatch(db);
+    // 1. public status record (no name, no TrxID)
+    batch.set(doc(db, "support_requests", code), {
+      code, status: "pending", amount, method, createdAt: serverTimestamp()
+    });
+    // 2. private record, admin-only (name + TrxID)
+    batch.set(doc(db, "support_private", code), {
+      code, name, anonymous, trxId, trxHash, createdAt: serverTimestamp()
+    });
+    // 3. TrxID index: a second submission with the same TrxID is refused by the rules
+    batch.set(doc(db, "trx_index", trxHash), { code, createdAt: serverTimestamp() });
+    await batch.commit();
+
+    try { localStorage.setItem("dcu-support-last", String(Date.now())); } catch (x) {}
+    $("newCode").textContent = code;
+    $("okBox").hidden = false;
+    $("okBox").scrollIntoView({ behavior: "smooth", block: "center" });
+    $("fName").value = ""; $("fAmount").value = ""; $("fTrx").value = ""; $("fAnon").checked = false;
+    document.querySelectorAll(".chip").forEach(x => x.classList.remove("on"));
+    $("fTrx").blur();
+  } catch (err) {
+    console.warn("[support] submit failed:", err && err.code);
+    const dup = err && err.code === "permission-denied";
+    showFormMsg(dup ? "errDup" : "errGeneric", "p-err");
+  } finally {
+    busy = false;
+    $("donBtn").disabled = false;
+    $("donBtn").querySelector("span").textContent = tr("fSubmit");
+  }
+});
+
+/* ---------- tracking ---------- */
+function renderTrack(code, data) {
+  const out = $("trackOut");
+  out.textContent = "";
+  const wrap = el("div", "panel", null);
+  wrap.style.background = "var(--bg)";
+  wrap.style.border = "1px solid var(--ln)";
+  const codeEl = el("div", "code", code);
+  codeEl.style.fontSize = "17px";
+  wrap.appendChild(codeEl);
+
+  const st = ["pending", "approved", "cancelled"].includes(data.status) ? data.status : "pending";
+  const badge = el("span", "st st-" + st, tr("st_" + st));
+  wrap.appendChild(badge);
+
+  const kv = el("div", "kv");
+  kv.append(el("span", null, tr("amtLbl")), el("span", null, fmtAmt(data.amount)));
+  kv.append(el("span", null, tr("methodLbl")), el("span", null, METHOD_LABEL[data.method] || "—"));
+  kv.append(el("span", null, tr("dateLbl")), el("span", null, fmtDate(data.createdAt)));
+  if (st === "cancelled" && data.reason) {
+    kv.append(el("span", null, tr("reasonLbl")), el("span", null, String(data.reason)));
+  }
+  wrap.appendChild(kv);
+  out.appendChild(wrap);
+  out.hidden = false;
+}
+
+function showTrackErr(key) {
+  const box = $("trackErr");
+  box.dataset.key = key;
+  box.textContent = tr(key);
+  box.hidden = false;
+  $("trackOut").hidden = true;
+}
+
+$("trackForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("trackErr").hidden = true;
+  const code = normCode($("trackIn").value);
+  if (!code) { lastTrack = null; return showTrackErr("badCode"); }
+  $("trackBtn").disabled = true;
+  try {
+    const snap = await getDoc(doc(db, "support_requests", code));
+    if (!snap.exists()) { lastTrack = null; return showTrackErr("notFound"); }
+    lastTrack = { code, data: snap.data() };
+    renderTrack(code, snap.data());
+  } catch (err) {
+    console.warn("[support] track failed:", err && err.code);
+    lastTrack = null;
+    showTrackErr("errTrack");
+  } finally {
+    $("trackBtn").disabled = false;
+  }
+});
+
+/* ---------- leaderboard (public: only donors the admin has not hidden) ---------- */
+async function loadLeaderboard() {
+  const list = $("lbList");
+  const empty = $("lbEmpty");
+  try {
+    const q = query(
+      collection(db, "support_leaderboard"),
+      where("hidden", "==", false),
+      orderBy("total", "desc"),
+      limit(Number(S.lbCount) || 10)
+    );
+    const snap = await getDocs(q);
+    list.textContent = "";
+    if (snap.empty) { empty.hidden = false; return; }
+    empty.hidden = true;
+    snap.docs.forEach((d, i) => {
+      const x = d.data();
+      const rank = i + 1;
+      const cls = rank === 1 ? "g" : rank === 2 ? "s" : rank === 3 ? "b" : "";
+      const li = el("li");
+      li.append(el("span", "rk " + cls, String(rank)));
+      const name = x.anonymous ? tr("anon") : (x.name || tr("anon"));
+      li.append(el("span", "nm", name));
+      li.append(el("span", "amt", fmtAmt(x.total)));
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.warn("[support] leaderboard unavailable:", err && err.message);
+    list.textContent = "";
+    empty.hidden = false;
+  }
+}
+
+/* ---------- language switch (dcu-lang.js calls window.onLang) ---------- */
+function applyI18n() {
+  document.querySelectorAll("[data-i18n]").forEach(n => {
+    const k = n.getAttribute("data-i18n");
+    if (!D[k]) return;
+    n.textContent = tr(k, { min: S.minAmount });
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(n => {
+    n.setAttribute("placeholder", tr(n.getAttribute("data-i18n-ph")));
+  });
+  document.querySelectorAll("[data-num]").forEach(n => { n.textContent = S.number; });
+  document.querySelectorAll("[data-i18n='copy']").forEach(n => { n.textContent = tr("copy"); });
+  if (lastTrack) renderTrack(lastTrack.code, lastTrack.data);
+  if (lastFormMsg) showFormMsg(lastFormMsg.key, lastFormMsg.cls, lastFormMsg.vars);
+  if (!$("trackErr").hidden && $("trackErr").dataset.key) $("trackErr").textContent = tr($("trackErr").dataset.key);
+  $("donBtn").querySelector("span").textContent = tr("fSubmit");
+}
+window.onLang = applyI18n;
+
+/* ---------- boot ---------- */
+applyI18n();
+loadSettings().then(loadLeaderboard);
+</script>
+</body>
+</html>
