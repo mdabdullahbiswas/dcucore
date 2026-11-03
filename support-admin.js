@@ -8,7 +8,7 @@ import {
 
 const STATUS = { pending: ["অপেক্ষায়", "warn"], approved: ["অনুমোদিত", "ok"], cancelled: ["বাতিল", "mu"] };
 const METHOD = { bkash: "bKash", nagad: "Nagad", rocket: "Rocket" };
-const DEFAULTS = { enabled: true, number: "", minAmount: 10, lbCount: 10 };
+const DEFAULTS = { enabled: true, number: "01784402660", minAmount: 10, lbCount: 10 };
 const FILTERS = [["pending", "অপেক্ষায়"], ["approved", "অনুমোদিত"], ["cancelled", "বাতিল"], ["all", "সব"]];
 
 const BN = n => Number(n || 0).toLocaleString("bn-BD");
@@ -16,7 +16,7 @@ const BN = n => Number(n || 0).toLocaleString("bn-BD");
 // দাতার স্থির আইডি। একই নামের সব অনুদান একটি সারিতে যোগ হবে; বেনামী হলে প্রতিটি অনুদান আলাদা সারি।
 function boardKey(name, anonymous, code) {
   if (anonymous || !name) return "anon_" + code;
-  return "n_" + name.trim().toLowerCase().replace(/[\/\s]+/g, "_");
+  return "n_" + name.trim().toLowerCase().replace(/[\/\s]+/g, "_").slice(0, 100);
 }
 
 function injectStyle() {
@@ -48,7 +48,7 @@ function injectStyle() {
 
 export function createSupportAdmin(ctx) {
   const { db, $, esc, ic, fd, ms, toast, ask, err, pill, tbl, empty, onChange } = ctx;
-  let REQ = [], PRIV = {}, BOARD = [], SET = { ...DEFAULTS }, filter = "pending", busy = false;
+  let REQ = [], PRIV = {}, PRIV_OK = true, BOARD = [], SET = { ...DEFAULTS }, filter = "pending", busy = false;
   const list = $("list");
 
   injectStyle();
@@ -63,7 +63,7 @@ export function createSupportAdmin(ctx) {
       getDoc(doc(db, "site_settings", "support")).catch(() => null),
     ]);
     REQ = rq.docs.map(x => ({ code: x.id, ...x.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
-    PRIV = {};
+    PRIV = {}; PRIV_OK = !!pv;
     if (pv) pv.docs.forEach(x => { PRIV[x.id] = x.data(); });
     BOARD = bd ? bd.docs.map(x => ({ key: x.id, ...x.data() })).sort((a, b) => (b.total || 0) - (a.total || 0)) : [];
     SET = { ...DEFAULTS, ...(st && st.exists() ? st.data() : {}) };
@@ -78,6 +78,7 @@ export function createSupportAdmin(ctx) {
 
   // অনুমোদিত অনুদান থেকে লিডারবোর্ড নতুন করে বানায়। আগের "লুকানো" অবস্থা ধরে রাখে।
   async function recomputeBoard() {
+    if (!PRIV_OK) throw new Error("দাতার নাম লোড হয়নি; লিডারবোর্ড বদলানো হয়নি। রিফ্রেশ করে আবার চেষ্টা করুন।");
     const totals = new Map();
     for (const r of REQ) {
       if (r.status !== "approved") continue;
