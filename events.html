@@ -466,7 +466,7 @@ html[data-theme=dark] .ev-badge.vb{color:#0B1F3A;background:linear-gradient(135d
 /* ---------------- বিস্তারিত ডায়ালগ: ছোট বাটন, বিস্তারিত শিরোনাম, প্রিমিয়াম মালিক-প্যানেল ---------------- */
 .ev-dh{display:flex;align-items:center;gap:10px;margin:20px 0 8px;font-size:15px;font-weight:800;color:var(--ink)}
 .ev-dh::before{content:'';width:4px;height:16px;border-radius:4px;background:linear-gradient(180deg,#F6DFA8,#B98A2C);flex:none}
-.ev-desc{font-family:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;font-weight:500;font-size:14.5px;line-height:1.85;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
+.ev-desc{font-family:"Hind Siliguri","Noto Serif Bengali",system-ui,sans-serif;font-weight:500;font-size:14.5px;line-height:1.85;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
 .ev-own{margin:16px 0 4px;padding:14px;border-radius:18px;background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(212,175,55,.03));border:1px solid rgba(212,175,55,.38)}
 .ev-own-t{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#8a6512;margin-bottom:12px}
 .ev-own-dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#F6DFA8,#B98A2C);box-shadow:0 0 0 3px rgba(212,175,55,.22)}
@@ -722,9 +722,13 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <link rel="stylesheet" href="dcu-lang.css">
 <style>
 /* হেডার/ফুটার: সাইটের বাকি পেজের (site.css) লাইন-হাইট মান — যাতে সব পেজে একই উচ্চতা ও ঘনত্ব থাকে */
-#hdr,#ftr{line-height:1.7;font-family:Inter,'Noto Sans Bengali',system-ui,sans-serif}
+#hdr,#ftr{line-height:1.7;font-family:Inter,'Noto Serif Bengali',system-ui,sans-serif}
 #ftr .dl-foot h4{line-height:1.25}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Serif+Bengali:wght@300..800&display=swap">
+<link rel="stylesheet" href="dcu-fonts.css">
 </head>
 <body data-page="events">
 <!-- STANDALONE:START header -->
@@ -1699,7 +1703,7 @@ function cmIconImg(name,color){
 function cmDraw(ctx,W,H,st,dry){
   var e=st.e,cat=st.cat,cp=st.cp,P=st.pal,k=st.k,PAD=72,PH=Math.round(H*st.ph),maxW=W-PAD*2;
   var R=function(v){return Math.round(v*k)};
-  var F=function(wt,sz,fam){return wt+' '+R(sz)+'px '+(fam||'"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif')};
+  var F=function(wt,sz,fam){return wt+' '+R(sz)+'px '+(fam||'"Hind Siliguri","Noto Serif Bengali",system-ui,sans-serif')};
   var EMO='"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif';
   var SERIF='Cinzel,Georgia,"Times New Roman",serif';
   var GOLD=['#F6DFA8','#D4AF37','#B98A2C'];
