@@ -604,13 +604,46 @@ body #ftr {
   margin-top: 12px;
 }
 
-.dl-badges span {
-  padding: 4px 10px;
+.dl-badges .dl-bdg {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px 5px 6px;
   border-radius: 99px;
-  font-size: 0.74rem;
-  color: var(--dl-gold-l);
-  background: rgba(212, 175, 55, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.25);
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  color: #EAD9A6;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.14), rgba(212, 175, 55, 0.04));
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dl-badges .dl-bdg:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(232, 196, 108, 0.6);
+}
+
+.dl-badges .dl-bdg::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%231d1400' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.2 8.4l2.6 2.6 5-5.4'/%3E%3C/svg%3E") center / 11px no-repeat,
+    linear-gradient(135deg, #F3E6C4, #D9B26A 55%, #B88A3E);
+}
+
+/* the language wrappers inside a badge must not look like badges themselves */
+.dl-badges .dl-bdg span {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
 }
 
 /* bottom bar */
@@ -829,3 +862,27 @@ body.dark .to-top:hover,
 html body {
   font-family: var(--dcu-font) !important;
 }
+
+
+/* invisible hover bridge: the pointer can cross the gap between button and menu without it closing */
+.dl-dd::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  right: -8px;
+  top: 100%;
+  height: 16px;
+  pointer-events: none;
+}
+.dl-dd.open::after { pointer-events: auto; }
+@media (max-width: 960px) { .dl-dd::after { display: none; } }
+.dl-dd.open .dl-menu::after,
+.dl-dd .dl-menu::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -18px;
+  height: 18px;
+}
+@media (max-width: 960px) { .dl-menu::after { display: none !important; } }
