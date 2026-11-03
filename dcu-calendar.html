@@ -16,7 +16,9 @@ header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:s
 .logo{font-weight:700;font-size:1.25rem;display:flex;align-items:center;gap:8px}
 .logo b{background:linear-gradient(135deg,var(--pri),var(--acc));-webkit-background-clip:text;color:transparent}
 .logo span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--pri),#065f46);color:#fff;animation:fl 4s ease-in-out infinite}
-.bar{display:flex;gap:8px;flex-wrap:wrap}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.yrseg{display:flex;align-items:center;gap:2px;padding:3px;border-radius:14px}
+.yrseg button,.yrseg select{min-width:36px}
 button,select{font:inherit;border:1px solid var(--ln);background:var(--card);color:var(--ink);padding:8px 13px;border-radius:12px;cursor:pointer;transition:.25s}
 button:hover{transform:translateY(-2px);box-shadow:0 6px 16px #0002}
 button.on,.pri{background:linear-gradient(135deg,var(--pri),#047857);color:#fff;border-color:transparent}
@@ -245,9 +247,13 @@ body,body.isl{background:var(--bg)!important;color:var(--ink)}
 .wrap{position:relative;z-index:1}
 .orb{position:fixed;z-index:0;pointer-events:none;border-radius:50%;width:42vmax;height:42vmax;filter:blur(80px);opacity:.12;animation:orbf 26s ease-in-out infinite alternate}
 .o1{left:-12vmax;top:-10vmax;background:var(--s1)}.o2{right:-14vmax;top:30vh;background:var(--s3);animation-duration:30s}.o3{left:20vw;bottom:-16vmax;background:var(--s2);animation-duration:34s}
-header{position:sticky;top:64px;z-index:6;margin:0 -14px;padding:10px 14px 12px;background:color-mix(in srgb,var(--surface) 78%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:drop .8s var(--ease) both}
-@media(max-width:640px){header{top:60px}}
-header:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--brand-grad)}
+header{position:sticky;top:78px;z-index:6;margin:14px 0 20px;padding:14px 18px;border-radius:20px;background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--border);box-shadow:var(--shadow-hi);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);overflow:hidden;animation:drop .8s var(--ease) both}
+@media(max-width:640px){header{top:74px;margin:10px 0 16px;padding:12px 14px;border-radius:16px}}
+header:after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--brand-grad)}
+.yrseg{background:var(--surface-2);border:1px solid var(--border)}
+.yrseg button,.yrseg select{border:0!important;background:transparent!important;box-shadow:none!important}
+.yrseg button:hover{background:var(--accent-soft)!important;transform:none!important}
+.yrseg select{font-weight:700;color:var(--accent-deep)}
 .logo span{background:var(--brand-grad);color:var(--navy);position:relative;overflow:hidden;box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 45%,transparent)}
 .logo span:after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,var(--shine) 50%,transparent 65%);transform:translateX(-130%);animation:glint 5s var(--ease) infinite}
 .logo b{background:linear-gradient(135deg,var(--navy-2),var(--gold-deep));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -471,9 +477,9 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 <div id="hdr"></div><!-- dcu-layout.js এখানে শেয়ার্ড হেডার বসায় -->
 <div class="wrap">
 <header>
- <a class="logo" href="/" title="DCU Core হোম" aria-label="DCU Core — হোমে যান" style="text-decoration:none;color:inherit"><span>☪</span><div><b>DCU Core</b><div style="font-size:.72rem;color:var(--mut);font-weight:400" id="sub"></div></div></a>
+ <a class="logo" href="/" title="হোমে যান" aria-label="হোমে যান" style="text-decoration:none;color:inherit"><span>📅</span><div style="font-size:.86rem;color:var(--ink);font-weight:600" id="sub"></div></a>
  <div class="bar">
-  <button id="pv">◀</button><select id="ys"></select><button id="nx">▶</button>
+  <div class="yrseg"><button id="pv">◀</button><select id="ys"></select><button id="nx">▶</button></div>
   <button id="vw"></button><button id="hb"></button><button id="lg">EN</button><button id="dk"></button><button id="pr"></button>
  </div>
 </header>
