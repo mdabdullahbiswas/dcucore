@@ -442,6 +442,13 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   ].join("");
 
   function mount() {
+    if (!document.querySelector('link[data-dcu-font]')) {
+      var pc = document.createElement("link"); pc.rel = "preconnect"; pc.href = "https://fonts.gstatic.com"; pc.crossOrigin = "";
+      var fl = document.createElement("link"); fl.rel = "stylesheet"; fl.setAttribute("data-dcu-font", "");
+      fl.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap";
+      (document.head || document.documentElement).appendChild(pc);
+      (document.head || document.documentElement).appendChild(fl);
+    }
     if (!document.getElementById("dlCvxCss")) {
       var cst = document.createElement("style");
       cst.id = "dlCvxCss";
