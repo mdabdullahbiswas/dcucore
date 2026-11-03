@@ -815,3 +815,17 @@ body.dark .to-top:hover,
   color: #0B1F3A;
   border-color: #E8C46C;
 }
+
+/* privacy line above the tools tab strip (matches the tools page) */
+.dl-pv {
+  max-width: 1180px;
+  margin: 14px auto 0;
+  padding: 0 20px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--dl-ink-2);
+}
+
+.dl-pv b {
+  color: var(--dl-ink);
+}
