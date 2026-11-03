@@ -1,0 +1,61 @@
+/* =====================================================================
+   DCU Core — Typography (single source of truth)
+   English  → Inter (sans-serif)
+   Bengali  → Noto Serif Bengali
+   Inter has no Bengali glyphs, so the browser automatically falls back
+   to Noto Serif Bengali for Bengali text and keeps Inter for Latin text
+   and digits. Load this file LAST on every page.
+   ===================================================================== */
+:root{
+  --dcu-font: "Inter", "Noto Serif Bengali", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --dcu-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f: var(--dcu-font);
+  --fh: var(--dcu-font);
+  --font: var(--dcu-font);
+  --hf: var(--dcu-font);
+  --ff: var(--dcu-font);
+}
+
+html{
+  font-family: var(--dcu-font);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-optical-sizing: auto;
+}
+
+body{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "cv11" 1;
+  font-variant-ligatures: common-ligatures contextual;
+}
+
+/* Every text element uses the one stack */
+body, body *, body *::before, body *::after,
+input, select, textarea, button, option, optgroup, label, legend,
+.wmk-t, .cvs, .cvs *, .sheet, .sheet *{
+  font-family: var(--dcu-font) !important;
+}
+
+/* Bengali needs a little more air than Latin so conjuncts never clip */
+html[data-ui-lang="bn"] body{ line-height: 1.7; }
+html[data-ui-lang="bn"] h1, html[data-ui-lang="bn"] h2, html[data-ui-lang="bn"] h3{ line-height: 1.4; }
+
+/* Numbers align nicely in tables, stats and the calculator */
+table, .wlcd, .wlcd *, [class*="stat"], [class*="count"], [class*="cgpa"], [class*="num"]{
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Code / raw prompt boxes stay monospace (they are not "text content") */
+code, pre, kbd, samp, .ev-pp-txt, .vid{
+  font-family: var(--dcu-font-mono) !important;
+}
+
+/* Icons, SVG and canvas are untouched */
+svg, svg *, canvas, i[class*="icon"], .material-icons, .material-symbols-outlined{
+  font-family: inherit !important;
+}
+
+::selection{ background: rgba(212,175,55,.28); }
