@@ -786,7 +786,7 @@ $('#nm').oninput=draw;$('#cl').onclick=()=>$('#md').classList.remove('o');
 $('#go').onclick=()=>$('#cv').toBlob(async b=>{const f=new File([b],'dcu-wishes.png',{type:'image/png'}),tx=WS[SK].w[L=='bn'?0:1]+' 🌙 https://'+URL_;
  try{if(navigator.canShare&&navigator.canShare({files:[f]}))return await navigator.share({files:[f],text:tx})}catch(e){return}
  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='dcu-wishes.png';a.click();try{navigator.clipboard.writeText(tx).catch(()=>{})}catch(e){}});
-document.documentElement.dataset.th=localStorage.th||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+document.documentElement.dataset.th=(localStorage.getItem('site-theme')||localStorage.th)||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 $('#dk').onclick=()=>{const d=document.documentElement;d.dataset.th=d.dataset.th=='dark'?'light':'dark';localStorage.th=d.dataset.th;$('#dk').textContent=d.dataset.th=='dark'?'☀️':'🌙'};
 const IMG={"boishakh": "boishakh.jpg", "joishtho": "joishtho.jpg", "asharh": "asharh.jpg", "srabon": "srabon.jpg", "bhadro": "bhadro.jpg", "ashwin": "ashwin.jpg", "kartik": "kartik.jpg", "agrahayan": "agrahayan.jpg", "poush": "poush.jpg", "magh": "magh.jpg", "falgun": "falgun.jpg", "choitro": "choitro.jpg"};
 /* ===== ডে-পপআপ ===== */
