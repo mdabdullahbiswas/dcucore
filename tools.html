@@ -270,6 +270,9 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine input[type=time]::-webkit-calendar-picker-indicator{filter:invert(32%) sepia(68%) saturate(638%) hue-rotate(358deg) brightness(92%) contrast(94%);cursor:pointer;padding:4px;border-radius:6px;transition:background .2s}
 #routine input[type=time]::-webkit-calendar-picker-indicator:hover{background:rgba(212,175,55,.2)}
 #routine input[type=time]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+/* ট্যাব বার ও গোপনীয়তার লাইন: CV/ক্যালেন্ডারের ছোট মাপের সাথে এক (dcu-layout.css-এর .dl-tabs / .dl-pv) */
+.tabs button,.tabs a.cvst{font-family:Inter,"Noto Sans Bengali",sans-serif;font-size:14px;min-height:40px}
+.pv{font-family:Inter,"Noto Sans Bengali",sans-serif;font-size:13.5px;line-height:1.7}
 </style>
 </head>
 <body data-page="tools">
@@ -277,7 +280,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <main class="tw">
 <div class="pv np">🔒 <b class="t">আপনার তথ্য শুধু আপনার ডিভাইসে থাকে।|Your data stays only on your device.</b> <span class="t">এখানে দেওয়া সব তথ্য, ছবি ও ফাইল আপনার ব্রাউজারেই প্রসেস ও সংরক্ষিত হয়; কোনো সার্ভারে পাঠানো হয় না, তাই কেউ চাইলেও তা দেখতে পারে না।|Everything you enter, including photos and files, is processed and saved in your browser only. Nothing is sent to a server, so nobody else can see it.</span></div>
 <div class="tabs" role="tablist">
-<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><a class="cvst t" href="/cv">সিভি স্টুডিও|CV Studio</a><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
+<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><a class="cvst t" href="/cv">সিভি স্টুডিও|CV Studio</a><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><a class="cvst t" href="/dcu-calendar">স্টুডেন্ট ক্যালেন্ডার|Student Calendar</a><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
 </div>
 
 <!-- ============ শেয়ার কার্ড ============ -->
@@ -545,9 +548,10 @@ function dragPan(el,cv,xs,ys,get){let st=null;
 const TB=['card','frame','routine','cgpa','exam','pdf','calc','result'];
 /* tab from the clean path /tools/<tab>; old #tab links are turned into that path */
 function curTab(){return location.hash.slice(1)}
+function keepTabVisible(){const bar=document.querySelector('.tabs'),a=bar&&bar.querySelector('.on');if(!a)return;const sr=bar.getBoundingClientRect(),ar=a.getBoundingClientRect();bar.scrollLeft+=(ar.left-sr.left)-(sr.width-ar.width)/2}
 function goTab(h){if(curTab()!==h)location.hash=h;go()}
-function go(){let h=curTab();if(!TB.includes(h))h='card';$$('main section').forEach(s=>s.classList.toggle('on',s.id==h));$$('.tabs button').forEach(b=>{const o=b.dataset.t==h;b.classList.toggle('on',o);b.setAttribute('aria-selected',o)});scrollTo(0,0);requestAnimationFrame(()=>scrollTo(0,0))}
-$$('.tabs button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));addEventListener('popstate',go);go();
+function go(){let h=curTab();if(!TB.includes(h))h='card';keepTabVisible();$$('main section').forEach(s=>s.classList.toggle('on',s.id==h));$$('.tabs button').forEach(b=>{const o=b.dataset.t==h;b.classList.toggle('on',o);b.setAttribute('aria-selected',o)});scrollTo(0,0);requestAnimationFrame(()=>scrollTo(0,0))}
+$$('.tabs button').forEach(b=>b.onclick=()=>goTab(b.dataset.t));addEventListener('popstate',go);go();addEventListener('load',keepTabVisible);if(document.fonts)document.fonts.ready.then(keepTabVisible);
 /* পোর্টাল ফ্রেম শুধু রেজাল্ট ট্যাব খোলা থাকলে লোড হবে */
 function syncRF(){var f=document.getElementById('rf');if(!f)return;if(curTab()==='result'){if(!f.getAttribute('src'))f.setAttribute('src',f.dataset.src)}else if(f.getAttribute('src')){f.setAttribute('src','about:blank');f.removeAttribute('src')}}
 addEventListener('popstate',syncRF);syncRF();
