@@ -25,6 +25,12 @@
     return pageOfPath(href) === file;
   }
 
+  /* hash part of an href: "/tools#cgpa" -> "cgpa" */
+  function hashOf(href) {
+    var i = String(href).indexOf("#");
+    return i < 0 ? "" : String(href).slice(i + 1);
+  }
+
   /* ---------- data ---------- */
   var NAV = [
     { href: "/", label: "হোম", en: "Home" },
@@ -85,7 +91,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     return (
       '<div class="dl-dd dl-cvx" data-dl-cvd>' +
       '<button type="button" class="dl-dd-btn"' + (active ? ' aria-current="page"' : "") +
-      ' aria-haspopup="true" aria-expanded="false"><span class="cvx-bn">কভার পেজ</span><span class="cvx-en">Cover Page</span> ' +
+      ' aria-haspopup="true" aria-expanded="false"><span class="cvx-bn">কভার পেজ</span><span class="cvx-en">Cover Page</span><span class="dl-cur" data-dl-cover-cur></span> ' +
       ICON_CHEVRON + "</button>" +
       '<div class="dl-menu dl-menu-cvx" role="menu">' + items + "</div></div>"
     );
@@ -103,14 +109,14 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var toolsActive = file === "tools.html";
     var items = TOOLS.map(function (t) {
       return (
-        '<a href="' + t.href + '" role="menuitem"><b><span class="cvx-bn">' + esc(t.bn) +
+        '<a href="' + t.href + '" role="menuitem" data-dl-href="' + t.href + '"><b><span class="cvx-bn">' + esc(t.bn) +
         '</span><span class="cvx-en">' + esc(t.en) + "</span></b></a>"
       );
     }).join("");
     var dd =
       '<div class="dl-dd" data-dl-dd>' +
       '<button type="button" class="dl-dd-btn"' + (toolsActive ? ' aria-current="page"' : "") +
-      ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + " " + ICON_CHEVRON + "</button>" +
+      ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + '<span class="dl-cur" data-dl-tools-cur></span>' + " " + ICON_CHEVRON + "</button>" +
       '<div class="dl-menu" role="menu">' + items + "</div></div>";
 
     links.splice(2, 0, dd);
@@ -237,15 +243,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       ddBtn.setAttribute("aria-expanded", String(open));
     }
 
-    function markActive() {
-      var act = document.querySelector('#ctList .ct-tab[aria-checked="true"]');
-      var v = act ? act.getAttribute("data-v") : "";
-      host.querySelectorAll("[data-cvx-v]").forEach(function (a) {
-        var on = a.getAttribute("data-cvx-v") === v;
-        a.classList.toggle("on", on);
-        a.setAttribute("aria-checked", String(on));
-      });
-    }
+    function markActive() { refreshCurrent(); }
 
     function setCvd(open) {
       if (!cvd) return;
@@ -319,6 +317,69 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     });
   }
 
+  /* ---------- current location: highlight the matching menu item ---------- */
+  /* tools: the page shows the tab named by #hash (unknown/empty -> card), same as tools.html */
+  var TOOL_IDS = ["card", "frame", "routine", "cgpa", "exam", "pdf", "calc", "result"];
+
+  function activeTab() {
+    var h = (location.hash || "").slice(1);
+    return TOOL_IDS.indexOf(h) >= 0 ? h : "card";
+  }
+
+  function activeTool() {
+    var hit = null;
+    TOOLS.forEach(function (t) {
+      var h = hashOf(t.href);
+      var ok = h ? (file === "tools.html" && h === activeTab()) : pageOfPath(t.href) === file;
+      if (ok && !hit) hit = t;
+    });
+    return hit;
+  }
+
+  function activeCover() {
+    if (file !== "cover.html") return null;
+    var el = document.querySelector('#ctList .ct-tab[aria-checked="true"]');
+    var v = el ? el.getAttribute("data-v") : (location.hash || "").slice(1);
+    for (var i = 0; i < COVER_TYPES.length; i++) if (COVER_TYPES[i].v === v) return COVER_TYPES[i];
+    return null;
+  }
+
+  function refreshCurrent() {
+    var host = document.getElementById("hdr");
+    if (!host) return;
+    var tool = activeTool();
+    var cover = activeCover();
+
+    host.querySelectorAll("[data-dl-href]").forEach(function (a) {
+      var on = tool !== null && a.getAttribute("data-dl-href") === tool.href;
+      a.classList.toggle("on", on);
+      if (on) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+    });
+
+    var tc = host.querySelector("[data-dl-tools-cur]");
+    if (tc) tc.innerHTML = tool ? "<i aria-hidden='true'>›</i>" + bi(tool.bn, tool.en) : "";
+
+    var cc = host.querySelector("[data-dl-cover-cur]");
+    if (cc) cc.innerHTML = cover ? "<i aria-hidden='true'>›</i>" + bi(cover.bn, cover.en) : "";
+
+    host.querySelectorAll("[data-cvx-v]").forEach(function (a) {
+      var on = !!cover && a.getAttribute("data-cvx-v") === cover.v;
+      a.classList.toggle("on", on);
+      a.setAttribute("aria-checked", String(on));
+    });
+  }
+
+  function initCurrent() {
+    window.addEventListener("hashchange", refreshCurrent);
+    window.addEventListener("popstate", refreshCurrent);
+    /* tabs may change the page without a hash event: re-check after any click */
+    document.addEventListener("click", function () {
+      setTimeout(refreshCurrent, 0);
+      setTimeout(refreshCurrent, 300);
+    }, true);
+    refreshCurrent();
+  }
+
   /* ---------- boot ---------- */
   var CVX_CSS = [
     'html:not([data-lang="en"]) .cvx-en{display:none}',
@@ -365,6 +426,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     initTheme();
     initNav();
+    initCurrent();
     try { document.dispatchEvent(new CustomEvent("dcu:layout-ready")); } catch (e) { /* old browser */ }
   }
 
