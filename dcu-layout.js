@@ -27,12 +27,12 @@
 
   /* ---------- data ---------- */
   var NAV = [
-    { href: "/", label: "হোম" },
-    { href: "/cover", label: "কভার পেজ" },
-    { href: "/blood", label: "ডোনার" },
-    { href: "/events", label: "ইভেন্ট" },
-    { href: "/feedback", label: "মতামত" },
-    { href: "/about", label: "আমাদের সম্পর্কে" }
+    { href: "/", label: "হোম", en: "Home" },
+    { href: "/cover", label: "কভার পেজ", en: "Cover Page" },
+    { href: "/blood", label: "ডোনার", en: "Donors" },
+    { href: "/events", label: "ইভেন্ট", en: "Events" },
+    { href: "/feedback", label: "মতামত", en: "Feedback" },
+    { href: "/about", label: "আমাদের সম্পর্কে", en: "About" }
   ];
 
   var TOOLS = [
@@ -63,6 +63,11 @@
     });
   }
 
+  /* bilingual text: CSS shows .cvx-bn or .cvx-en depending on <html data-lang> */
+  function bi(bn, en) {
+    return '<span class="cvx-bn">' + esc(bn) + '</span><span class="cvx-en">' + esc(en) + "</span>";
+  }
+
   /* ---------- cover types (menu under "কভার পেজ" on every page) ---------- */
 var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যাসাইনমেন্ট", "ic": "<path d=\"M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z\"/><path d=\"M14 3v5h5M9 13h6M9 17h4\"/>"}, {"v": "lab", "en": "Lab Report", "bn": "ল্যাব রিপোর্ট", "ic": "<path d=\"M9 3h6M10 3v6L5 19a2 2 0 001.8 3h10.4A2 2 0 0019 19l-5-10V3\"/><path d=\"M7.5 15h9\"/>"}, {"v": "presentation", "en": "Presentation", "bn": "প্রেজেন্টেশন", "ic": "<rect x=\"3\" y=\"4\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M12 16v4M8 20h8M7 12l3-3 3 2 4-4\"/>"}, {"v": "project", "en": "Project", "bn": "প্রজেক্ট", "ic": "<path d=\"M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z\"/><path d=\"M3 11h18\"/>"}, {"v": "thesis", "en": "Thesis", "bn": "থিসিস", "ic": "<path d=\"M2 9l10-5 10 5-10 5z\"/><path d=\"M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5M22 9v6\"/>"}, {"v": "quiz", "en": "Quiz", "bn": "কুইজ", "ic": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M9.5 9.6a2.6 2.6 0 015.1.6c0 1.8-2.6 2.2-2.6 3.8M12 17.2h.01\"/>"}, {"v": "exam", "en": "Exam", "bn": "পরীক্ষা", "ic": "<path d=\"M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z\"/><path d=\"M14 3v5h5\"/><path d=\"M9 13l1.8 1.8L15 11\"/>"}, {"v": "declaration", "en": "Declaration", "bn": "ঘোষণাপত্র", "ic": "<path d=\"M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z\"/><path d=\"M8.8 12l2.4 2.4 4.2-4.6\"/>"}, {"v": "approval", "en": "Approval", "bn": "অনুমোদনপত্র", "ic": "<circle cx=\"12\" cy=\"9\" r=\"5.5\"/><path d=\"M8.7 13.6L7.5 21l4.5-2.6 4.5 2.6-1.2-7.4\"/><path d=\"M9.6 9l1.7 1.7L14.5 7.4\"/>"}, {"v": "acknowledgment", "en": "Acknowledgment", "bn": "কৃতজ্ঞতা স্বীকার", "ic": "<path d=\"M12 20.5s-7.5-4.6-7.5-10.3A4.2 4.2 0 0112 7.6a4.2 4.2 0 017.5 2.6c0 5.7-7.5 10.3-7.5 10.3z\"/>"}, {"v": "contents", "en": "Contents", "bn": "সূচিপত্র", "ic": "<path d=\"M9 6h11M9 12h11M9 18h11\"/><path d=\"M4.5 6h.01M4.5 12h.01M4.5 18h.01\"/>"}];
 
@@ -91,7 +96,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var links = NAV.map(function (n) {
       if (n.href === "/cover") return coverDD();
       var cur = isCurrent(n.href) ? ' aria-current="page"' : "";
-      return '<a href="' + n.href + '"' + cur + ">" + esc(n.label) + "</a>";
+      return '<a href="' + n.href + '"' + cur + ">" + bi(n.label, n.en) + "</a>";
     });
 
     // insert the tools dropdown after the "কভার পেজ" link (index 1)
@@ -105,7 +110,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var dd =
       '<div class="dl-dd" data-dl-dd>' +
       '<button type="button" class="dl-dd-btn"' + (toolsActive ? ' aria-current="page"' : "") +
-      ' aria-haspopup="true" aria-expanded="false">টুলস ' + ICON_CHEVRON + "</button>" +
+      ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + " " + ICON_CHEVRON + "</button>" +
       '<div class="dl-menu" role="menu">' + items + "</div></div>";
 
     links.splice(2, 0, dd);
@@ -128,24 +133,24 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   /* ---------- footer markup ---------- */
   function footerHTML() {
     var toolLinks = [
-      ["/cover", "কভার পেজ"],
-      ["/cv", "সিভি স্টুডিও"],
-      ["/tools#routine", "ক্লাস রুটিন"],
-      ["/dcu-calendar", "স্টুডেন্ট ক্যালেন্ডার"],
-      ["/tools#cgpa", "CGPA ক্যালকুলেটর"],
-      ["/tools#pdf", "PDF টুলকিট"]
+      ["/cover", "কভার পেজ", "Cover Page"],
+      ["/cv", "সিভি স্টুডিও", "CV Studio"],
+      ["/tools#routine", "ক্লাস রুটিন", "Class Routine"],
+      ["/dcu-calendar", "স্টুডেন্ট ক্যালেন্ডার", "Student Calendar"],
+      ["/tools#cgpa", "CGPA ক্যালকুলেটর", "CGPA Calculator"],
+      ["/tools#pdf", "PDF টুলকিট", "PDF Toolkit"]
     ];
     var siteLinks = [
-      ["/", "হোম"],
-      ["/blood", "ডোনার ডিরেক্টরি"],
-      ["/events", "ক্যাম্পাস ইভেন্ট"],
-      ["/feedback", "মতামত দিন"],
-      ["/about", "আমাদের সম্পর্কে"]
+      ["/", "হোম", "Home"],
+      ["/blood", "ডোনার ডিরেক্টরি", "Donor Directory"],
+      ["/events", "ক্যাম্পাস ইভেন্ট", "Campus Events"],
+      ["/feedback", "মতামত দিন", "Give Feedback"],
+      ["/about", "আমাদের সম্পর্কে", "About"]
     ];
-    function col(title, list) {
+    function col(bn, en, list) {
       return (
-        "<div><h4>" + esc(title) + "</h4>" +
-        list.map(function (l) { return '<a href="' + l[0] + '">' + esc(l[1]) + "</a>"; }).join("") +
+        "<div><h4>" + bi(bn, en) + "</h4>" +
+        list.map(function (l) { return '<a href="' + l[0] + '">' + bi(l[1], l[2]) + "</a>"; }).join("") +
         "</div>"
       );
     }
@@ -154,14 +159,21 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       '<div class="dl-foot-in">' +
       '<div class="dl-foot-brand"><img src="logo.png" alt="" width="52" height="52">' +
       "<div><b>DCUCore</b>" +
-      "<p>শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।</p>" +
-      '<div class="dl-badges"><span>✓ ব্রাউজারে চলে</span><span>✓ সার্ভারে আপলোড নেই</span><span>✓ বিনামূল্যে</span></div>' +
+      "<p>" + bi(
+        "শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।",
+        "A premium digital toolkit for students — cover pages, CVs, class routines, CGPA and more, completely free."
+      ) + "</p>" +
+      '<div class="dl-badges"><span>✓ ' + bi("ব্রাউজারে চলে", "Runs in your browser") + "</span><span>✓ " +
+      bi("সার্ভারে আপলোড নেই", "No server uploads") + "</span><span>✓ " + bi("বিনামূল্যে", "Free") + "</span></div>" +
       "</div></div>" +
-      col("টুলস", toolLinks) +
-      col("সাইট", siteLinks) +
+      col("টুলস", "Tools", toolLinks) +
+      col("সাইট", "Site", siteLinks) +
       "</div>" +
       '<div class="dl-foot-bar"><span class="dl-copy">© <span data-dl-year></span> DCU Core · Developer by <a class="dl-dev-link" href="/about">Md Abdullah Biswas</a></span>' +
-      '<span class="dl-disc">এটি একটি শিক্ষার্থী-উদ্যোগ, কোনো সরকারি বা প্রাতিষ্ঠানিক ওয়েবসাইট নয়।</span></div>' +
+      '<span class="dl-disc">' + bi(
+        "এটি একটি শিক্ষার্থী-উদ্যোগ, কোনো সরকারি বা প্রাতিষ্ঠানিক ওয়েবসাইট নয়।",
+        "A student initiative — not an official or institutional website."
+      ) + "</span></div>" +
       "</footer>"
     );
   }
@@ -220,7 +232,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     function setDd(open) {
       if (!dd) return;
       if (open) { setCvd(false); dd.classList.remove("dl-closed"); }
-      else { dd.classList.add("dl-closed"); }
+      else if (dd.classList.contains("open")) { dd.classList.add("dl-closed"); }
       dd.classList.toggle("open", open);
       ddBtn.setAttribute("aria-expanded", String(open));
     }
@@ -238,7 +250,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     function setCvd(open) {
       if (!cvd) return;
       if (open) { if (dd) setDd(false); cvd.classList.remove("dl-closed"); markActive(); }
-      else { cvd.classList.add("dl-closed"); }
+      else if (cvd.classList.contains("open")) { cvd.classList.add("dl-closed"); }
       cvd.classList.toggle("open", open);
       cvdBtn.setAttribute("aria-expanded", String(open));
     }
@@ -353,6 +365,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     initTheme();
     initNav();
+    try { document.dispatchEvent(new CustomEvent("dcu:layout-ready")); } catch (e) { /* old browser */ }
   }
 
   if (document.readyState === "loading") {
