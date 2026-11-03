@@ -111,7 +111,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;max-width:100%}
 body{
-  font-family:'Inter','Noto Sans Bengali',sans-serif;
+  font-family:'Inter','Noto Serif Bengali',sans-serif;
   background:var(--bg);color:var(--ink);line-height:1.5;
   overflow-x:hidden;min-height:100vh;
 }
@@ -408,7 +408,7 @@ body.gal-open{overflow:hidden}
    ===================================================== */
 .cvs{
   display:block;width:794px;min-height:1123px;background:#fff;color:#1f2933;position:relative;
-  font-family:var(--ff,'Inter',sans-serif);font-size:13.5px;line-height:1.55;text-align:left;
+  font-family:var(--ff,'Inter','Noto Serif Bengali',sans-serif);font-size:13.5px;line-height:1.55;text-align:left;
   transform-origin:0 0;
 }
 .cvs h1{margin:0;font-size:34px;line-height:1.15;color:var(--p);font-weight:700}
@@ -453,7 +453,7 @@ body.gal-open{overflow:hidden}
 .cvs.t-elegant .pad{padding:52px 60px}
 .cvs.t-elegant .hd{flex-direction:column;justify-content:center;text-align:center}
 .cvs.t-elegant .hl{width:100%}
-.cvs.t-elegant h1{font-family:Georgia,'Noto Serif Bengali',serif;letter-spacing:.04em;font-size:36px}
+.cvs.t-elegant h1{font-family:'Inter','Noto Serif Bengali',sans-serif;letter-spacing:.04em;font-size:36px}
 .cvs.t-elegant .ct{text-align:center}
 .cvs.t-elegant h3{text-align:center;border-bottom:none;padding-bottom:0}
 .cvs.t-elegant h3::after{content:"";display:block;width:56px;height:2px;background:var(--a);margin:6px auto 0}
