@@ -512,6 +512,66 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
  .tl-it{padding:11px 8px!important}
 }
 @media print{.ph{display:none!important}}
+
+
+/* ===== শেয়ার্ড হেডার: সাইটের আসল সাদা লুক (সব পেজে একই) — পুরনো গাঢ় কপি ওভাররাইড ===== */
+.dl-bar{background:#ffffff;height:70px;max-width:1240px;margin:0 auto;padding:0 20px;box-shadow:0 8px 24px -18px rgba(11,31,58,.35)}
+#hdr{background:#ffffff;border-bottom:2px solid #d4af37;position:sticky;top:0;z-index:50}
+.dl-brand-txt b{color:#0B1F3A;font:800 20px/1 'Cinzel',Georgia,serif;letter-spacing:.06em}
+.dl-brand-txt small{color:#5b6b82;font-size:12px}
+.dl-brand:hover .dl-brand-txt b{color:#0B1F3A;opacity:.8}
+.dl-nav>a,.dl-dd-btn{color:#14213d;font:600 15px 'Hind Siliguri',system-ui,sans-serif;padding:8px 14px;background:transparent}
+.dl-nav>a:hover,.dl-dd-btn:hover,.dl-dd.open .dl-dd-btn{background:rgba(11,31,58,.06);color:#0B1F3A}
+.dl-nav [aria-current=page],.dl-nav [aria-current=page]:hover{background:linear-gradient(135deg,rgba(212,175,55,.22),rgba(212,175,55,.06));color:#0B1F3A;box-shadow:inset 0 0 0 1px rgba(184,138,62,.55)}
+.dl-nav [aria-current=page]::before{content:"";width:6px;height:6px;border-radius:50%;background:#d4af37;flex:none}
+.dl-menu{background:#ffffff;border:1px solid #e5e7eb;box-shadow:0 24px 50px -20px rgba(11,31,58,.35)}
+.dl-menu a{color:#14213d}
+.dl-menu a:hover{background:#f4f6fa;color:#0B1F3A}
+.dl-icon-btn{background:#ffffff;border:1px solid #e5e7eb;color:#0B1F3A;width:42px;height:42px;border-radius:50%}
+.dl-icon-btn:hover{background:#f4f6fa}
+.dl-lang{background:#f4f6fa;border:1px solid #e5e7eb}
+.dl-lang button{color:#6b7280;font:700 14px 'Hind Siliguri',system-ui,sans-serif}
+.dl-lang button:hover{color:#0B1F3A}
+.dl-lang button[aria-pressed=true]{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#0B1F3A;box-shadow:0 2px 8px -2px rgba(184,138,62,.6)}
+.dl-burger{color:#0B1F3A}
+@media(max-width:900px){
+ .dl-nav{background:#ffffff;border-bottom:2px solid #d4af37;box-shadow:0 18px 30px -18px rgba(11,31,58,.4)}
+ .dl-nav>a,.dl-dd-btn{color:#14213d}
+ .dl-menu{background:#f8fafc;border:0;box-shadow:none}
+}
+
+/* ===== পেজ শিরোনাম: অন্য পেজের মতো সাদা জায়গায় বড়, গাঢ় লেখা ===== */
+.ph{background:transparent!important;box-shadow:none!important;border:0!important;margin:22px 0 16px!important;padding:0!important;color:#0B1F3A}
+.ph::after{display:none!important}
+.ph-t{gap:12px}
+.ph-i{width:auto!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;font-size:2rem!important;padding:0;color:inherit!important}
+.ph h1{font:700 2rem/1.2 'Hind Siliguri',system-ui,sans-serif!important;color:#0B1F3A!important;letter-spacing:0!important;margin:0}
+.ph p{font-size:.95rem!important;color:#5b6b82!important;margin-top:4px}
+.ph .yrseg,.ph .seg{background:#ffffff!important;border:1px solid #e5e7eb!important;border-radius:999px!important}
+.ph .yrseg button,.ph .yrseg select{color:#0B1F3A!important;background:transparent!important;border:0!important;font:700 14px 'Hind Siliguri',system-ui,sans-serif}
+.ph .yrseg select{background:#ffffff!important}
+.ph .yrseg button:hover{background:#f4f6fa!important;transform:none!important}
+.ph .seg button{background:transparent!important;color:#5b6b82!important;border:0!important;border-radius:999px!important;font:700 14px 'Hind Siliguri',system-ui,sans-serif;box-shadow:none!important}
+.ph .seg button:hover{color:#0B1F3A!important;transform:none!important}
+.ph .seg button.on{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E)!important;color:#0B1F3A!important;box-shadow:0 2px 8px -2px rgba(184,138,62,.6)!important}
+.ph .tl-b{background:#ffffff!important;color:#0B1F3A!important;border:1px solid #e5e7eb!important;font:600 14px 'Hind Siliguri',system-ui,sans-serif;box-shadow:none!important}
+.ph .tl-b:hover{background:#f4f6fa!important;transform:none!important}
+.ph .tl-b svg{color:#0B1F3A}
+.ph .tl.open .tl-b{border-color:#d4af37!important}
+.ph .tl-m{background:#ffffff;border:1px solid #e5e7eb;box-shadow:0 24px 50px -20px rgba(11,31,58,.35)}
+.ph .tl-tx b{color:#0B1F3A}
+.ph .tl-tx small{color:#5b6b82}
+.ph .tl-it{color:#14213d}
+.ph .tl-it:hover{background:#f4f6fa!important}
+.ph .tl-ic{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#0B1F3A}
+.ph .tl-h b{color:#0B1F3A}
+@media(max-width:640px){
+ .ph{margin:14px 0 12px!important}
+ .ph h1{font-size:1.45rem!important}
+ .ph p{display:none}
+ .ph .tl-m{background:#ffffff}
+ .ph .tl-x{background:#f4f6fa!important;color:#0B1F3A!important}
+}
 </style>
 </head>
 <body>
