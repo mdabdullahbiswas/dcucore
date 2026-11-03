@@ -406,6 +406,21 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
         bi(t.bn, t.en) + "</a>";
     }).join("");
     hdr.parentNode.insertBefore(nav, note.nextSibling);
+    keepActiveVisible(nav);
+  }
+
+  /* on a narrow screen the strip scrolls sideways: bring the current tab into view */
+  function keepActiveVisible(strip) {
+    var go = function () {
+      var a = strip.querySelector(".on");
+      if (!a) return;
+      var sr = strip.getBoundingClientRect(), ar = a.getBoundingClientRect();
+      strip.scrollLeft += (ar.left - sr.left) - (sr.width - ar.width) / 2;
+    };
+    requestAnimationFrame(go);
+    setTimeout(go, 150);
+    window.addEventListener("load", go);
+    if (document.fonts) document.fonts.ready.then(go);
   }
 
   /* ---------- boot ---------- */
