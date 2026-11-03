@@ -311,6 +311,15 @@ body{transition:background-color .25s,color .25s}
 .sa-ftr{margin-top:20px;background:linear-gradient(120deg,#06142a,#0B1F3A);color:#9fb3d1;font-size:13.5px}
 .sa-ftr-in{max-width:1180px;margin:0 auto;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:10px 24px;flex-wrap:wrap}
 .sa-ftr b{color:#f6dfa8;font-family:'Cinzel',Georgia,serif;letter-spacing:.04em}
+/* সাইটের বাকি অংশে যাওয়ার নেভিগেশন (হেডার + ফুটার) */
+.sa-nav{display:flex;gap:2px;margin-left:auto;margin-right:6px}
+.sa-nav a{color:#cfdcf0;text-decoration:none;font:600 13.5px 'Hind Siliguri',system-ui,sans-serif;padding:7px 13px;border-radius:999px;transition:background .2s,color .2s;white-space:nowrap}
+.sa-nav a:hover{background:rgba(255,255,255,.1);color:#f6dfa8}
+.sa-nav a:focus-visible,.sa-ftr-nav a:focus-visible{outline:2px solid #f6dfa8;outline-offset:2px}
+@media(max-width:860px){.sa-nav{display:none}}
+.sa-ftr-nav{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:8px 20px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sa-ftr-nav a{color:#cfdcf0;text-decoration:none;font-weight:600;transition:color .2s}
+.sa-ftr-nav a:hover{color:#f6dfa8}
 .sa-top{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:60;width:44px;height:44px;border-radius:50%;border:1px solid rgba(212,175,55,.5);background:var(--navy);color:var(--gold-light);display:grid;place-items:center;padding:0;box-shadow:0 12px 28px rgba(0,0,0,.35);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .25s}
 .sa-top.on{opacity:1;transform:none;pointer-events:auto}
 .sa-top svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
@@ -674,6 +683,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="evIgGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".55" stop-color="#D62976"/><stop offset=".8" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs></svg>
 <header class="sa-hdr" role="banner"><div class="sa-hdr-in">
   <a class="sa-brand" href="index.html" aria-label="DCUCore"><span class="sa-logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span>DCUCore</span><span class="sa-page t">ইভেন্ট|Events</span></a>
+  <nav class="sa-nav" aria-label="Site"><a href="/"><span class="t">হোম|Home</span></a><a href="/blood"><span class="t">ডোনার|Donors</span></a><a href="/dcu-calendar"><span class="t">স্টুডেন্ট ক্যালেন্ডার|Student Calendar</span></a><a href="/tools"><span class="t">টুলস|Tools</span></a></nav>
   <div class="sa-tools">
     <div class="sa-seg" role="group" aria-label="Language"><button type="button" id="saBn" lang="bn" aria-pressed="true">বাং</button><button type="button" id="saEn" lang="en" aria-pressed="false">EN</button></div>
     <button type="button" class="sa-ico" id="saTheme" aria-label="Theme">
@@ -928,6 +938,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <div class="ev-toast" id="toast" role="status" aria-live="polite"></div>
 <!-- STANDALONE:START footer -->
 <footer class="sa-ftr"><div class="sa-ftr-in">
+  <nav class="sa-ftr-nav" aria-label="Site links"><a href="/"><span class="t">হোম|Home</span></a><a href="/cover"><span class="t">কভার পেজ|Cover Page</span></a><a href="/tools"><span class="t">টুলস|Tools</span></a><a href="/dcu-calendar"><span class="t">স্টুডেন্ট ক্যালেন্ডার|Student Calendar</span></a><a href="/blood"><span class="t">ডোনার ডিরেক্টরি|Donor Directory</span></a><a href="/feedback"><span class="t">মতামত|Feedback</span></a><a href="/about"><span class="t">আমাদের সম্পর্কে|About</span></a></nav>
   <span>© <span id="saYear"></span> <b>DCUCore</b> · <span class="t">ঢাকা সেন্ট্রাল ইউনিভার্সিটি ক্যাম্পাস ইভেন্ট হাব|Dhaka Central University Campus Events Hub</span></span>
   <span class="t">সব ক্যাম্পাসের ইভেন্ট, এক জায়গায়।|Every campus event, in one place.</span>
 </div></footer>
@@ -2503,5 +2514,6 @@ window.onLang=function(){renderAll();previewRender();if(curId&&$('#dDetail').ope
   setTimeout(sync,600);
 })();
 </script>
+<script src="/track.js" defer></script>
 </body>
 </html>
