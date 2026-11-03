@@ -37,6 +37,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .tab[aria-selected="true"]{background:linear-gradient(135deg,var(--navy2),var(--navy));color:var(--gold2);border-color:transparent;box-shadow:0 12px 24px -10px rgba(8,23,46,.55)}
 .tab.blood[aria-selected="true"]{background:linear-gradient(135deg,#c8263a,#6e0a1c);color:#ffe3e7;box-shadow:0 12px 24px -10px rgba(200,38,58,.6)}
 .tab.blood{color:#c8263a}
+.tab.support[aria-selected="true"]{background:linear-gradient(135deg,#0f766e,#04302c);color:#ccfbf1;box-shadow:0 12px 24px -10px rgba(15,118,110,.6)}
+.tab.support{color:#0f766e}
 .theme{position:relative;width:40px;height:40px;border-radius:50%;padding:2px;border:0;cursor:pointer;display:grid;place-items:center;background:var(--goldGrad);box-shadow:0 8px 20px -6px rgba(201,162,74,.55);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .theme:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 26px -8px rgba(201,162,74,.7)}
 .theme:active{transform:scale(.94)}
@@ -63,7 +65,7 @@ iframe[hidden]{display:none!important}
     <button class="tab blood" role="tab" data-k="blood" type="button">🩸 ব্লাড ডোনার</button>
     <button class="tab" role="tab" data-k="events" type="button">🎉 ইভেন্ট</button>
     <button class="tab" role="tab" data-k="visitors" type="button">👁️ ভিজিটর</button>
-    <button class="tab" role="tab" data-k="support" type="button">🤝 সহায়তা</button>
+    <button class="tab support" role="tab" data-k="support" type="button">🤝 সহায়তা</button>
   </nav>
   <button class="theme" id="theme" type="button" aria-label="ডার্ক / লাইট মোড">
     <span class="knob">
