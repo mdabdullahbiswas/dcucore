@@ -391,6 +391,13 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
   function mountToolTabs(hdr) {
     var here = file === "cv.html" ? "cv" : file === "dcu-calendar.html" ? "calendar" : null;
     if (!here || document.querySelector(".dl-tabs")) return;
+    /* same privacy line as the tools page, above the tabs */
+    var note = document.createElement("div");
+    note.className = "dl-pv";
+    note.innerHTML = "🔒 <b>" + bi("আপনার তথ্য শুধু আপনার ডিভাইসে থাকে।", "Your data stays only on your device.") + "</b> " +
+      bi("এখানে দেওয়া সব তথ্য, ছবি ও ফাইল আপনার ব্রাউজারেই প্রসেস ও সংরক্ষিত হয়; কোনো সার্ভারে পাঠানো হয় না, তাই কেউ চাইলেও তা দেখতে পারে না।",
+         "Everything you enter, including photos and files, is processed and saved in your browser only. Nothing is sent to a server, so nobody else can see it.");
+    hdr.parentNode.insertBefore(note, hdr.nextSibling);
     var nav = document.createElement("nav");
     nav.className = "dl-tabs";
     nav.setAttribute("aria-label", "টুলস");
@@ -398,7 +405,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       return '<a href="' + t.href + '"' + (t.id === here ? ' aria-current="page" class="on"' : "") + ">" +
         bi(t.bn, t.en) + "</a>";
     }).join("");
-    hdr.parentNode.insertBefore(nav, hdr.nextSibling);
+    hdr.parentNode.insertBefore(nav, note.nextSibling);
   }
 
   /* ---------- boot ---------- */
