@@ -587,6 +587,23 @@ html[data-theme=dark] .ev-cm-one .t-cap{background:rgba(217,119,6,.18);color:#FC
 }
 @media (min-width:641px){.ev-jump{display:none}}
 @media (prefers-reduced-motion:reduce){.sa-hdr,.ev-jump{transition:none}}
+
+/* ---------------- আসল সোশ্যাল আইকন: আউটলাইন ছাড়া, অফিসিয়াল রঙে ---------------- */
+svg.i.brand,.goog-ico svg.i{stroke:none!important}
+svg.i.brand path,.goog-ico svg.i path{stroke:none!important}
+.ev-soc svg.i{width:18px;height:18px}
+.ev-soc{color:var(--ink)}
+.ev-soc:hover{transform:translateY(-2px);box-shadow:0 10px 18px -12px rgba(11,31,58,.6)}
+.ev-cm-one .t-ig{background:linear-gradient(45deg,#F9CE34 0%,#EE2A7B 50%,#6228D7 100%);border-color:#C13584;box-shadow:0 12px 22px -12px rgba(238,42,123,.9)}
+.ev-cm-one .t-ig:hover{box-shadow:0 18px 28px -12px rgba(238,42,123,1)}
+.ev-cm-one .t-ig path{fill:#FFFFFF!important}
+.ev-cm-one .t-ig svg{width:22px!important;height:22px!important}
+
+/* ---------------- পোস্টার ডায়ালগ: অ্যাকশন আইকন ছোট ---------------- */
+.ev-cm-one .ev-btn.ico{width:38px!important;min-width:38px!important;height:38px!important;border-radius:12px!important}
+.ev-cm-one .ev-btn.ico svg.i{width:17px!important;height:17px!important}
+.ev-cm-one .t-wa svg,.ev-cm-one .t-fb svg,.ev-cm-one .t-ig svg{width:18px!important;height:18px!important}
+.ev-cm-acts.ev-cm-one{gap:8px}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -604,6 +621,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <body data-page="events">
 <!-- STANDALONE:START header -->
 <a class="sa-skip t" href="#main">মূল অংশে যান|Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="evIgGrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".3" stop-color="#FA7E1E"/><stop offset=".55" stop-color="#D62976"/><stop offset=".8" stop-color="#962FBF"/><stop offset="1" stop-color="#4F5BD5"/></linearGradient></defs></svg>
 <header class="sa-hdr" role="banner"><div class="sa-hdr-in">
   <a class="sa-brand" href="index.html" aria-label="DCUCore"><span class="sa-logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span>DCUCore</span><span class="sa-page t">ইভেন্ট|Events</span></a>
   <div class="sa-tools">
@@ -1017,6 +1035,11 @@ var ICON={
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>',
   map:'<path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><path d="M8 2v16M16 6v16"/>',
   wa:'<path fill="#25D366" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.69.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35zM12.05 21.79h-.0a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26C2.17 6.55 6.6 2.12 12.05 2.12c2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 012.89 6.99c0 5.45-4.44 9.88-9.88 9.88zM20.46 3.49A11.82 11.82 0 0012.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 005.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.89a11.82 11.82 0 00-3.48-8.42z"/>',
+  tg:'<path fill="#26A5E4" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>',
+  xx:'<path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>',
+  li:'<path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>',
+  ig:'<path fill="url(#evIgGrad)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/>',
+  msgr:'<path fill="#00B2FF" d="M.001 11.639C.001 4.949 5.241 0 12.001 0S24 4.95 24 11.639c0 6.689-5.24 11.638-12 11.638-1.21 0-2.38-.16-3.47-.46a.96.96 0 00-.64.05l-2.39 1.05a.96.96 0 01-1.35-.85l-.07-2.14a.97.97 0 00-.32-.68A11.39 11.389 0 01.002 11.64zm8.32-2.19l-3.52 5.6c-.35.53.32 1.139.82.75l3.79-2.87c.26-.2.6-.2.87 0l2.8 2.1c.84.63 2.04.4 2.6-.48l3.52-5.6c.35-.53-.32-1.13-.82-.75l-3.79 2.87c-.25.2-.6.2-.86 0l-2.8-2.1a1.8 1.8 0 00-2.61.48z"/>',
   card:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
   fb:'<path fill="#1877F2" d="M9.1 23.69v-7.98H6.63v-3.67h2.47v-1.58c0-4.09 1.85-5.98 5.86-5.98.4 0 .96.04 1.47.1.45.06.86.14 1.14.2v3.33a8.6 8.6 0 00-.65-.04c-.7 0-1.26.1-1.68.31a1.7 1.7 0 00-.68.62c-.26.42-.37 1-.37 1.75v1.3h3.92l-.39 2.1-.29 1.56h-3.24v8.25C19.4 23.24 24 18.18 24 12.04 24 5.41 18.63.04 12 .04S0 5.41 0 12.04c0 5.63 3.87 10.35 9.1 11.65z"/>',
   goog:'<path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>',
@@ -1041,7 +1064,7 @@ var ICON={
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/>'
 };
 function catIco(c,n){return '<span class="cico" style="color:'+((c&&c.c)||'#D4AF37')+';display:inline-flex">'+ic((c&&c.ic)||'sparkle',n)+'</span>'}
-var ic=function(n,s){return '<svg class="i" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px"':'')+' aria-hidden="true">'+ICON[n]+'</svg>'};
+var ic=function(n,s){return '<svg class="i'+(/fill="(#|url|currentColor)/.test(ICON[n])?' brand':'')+'" viewBox="0 0 24 24"'+(s?' style="width:'+s+'px;height:'+s+'px"':'')+' aria-hidden="true">'+ICON[n]+'</svg>'};
 
 /* তারিখ (ঢাকা সময়) */
 var fmtDay=function(ms,o){return new Intl.DateTimeFormat(loc(),Object.assign({timeZone:CFG.tz},o)).format(new Date(ms))};
@@ -1396,6 +1419,9 @@ function openDetail(id,quiet){
     (ended?'':'<div class="ev-actions"><a class="ev-btn ghost sm" href="'+gcalUrl(e)+'" target="_blank" rel="noopener noreferrer">'+ic('cal',15)+'Google Calendar</a><button type="button" class="ev-btn ghost sm" data-d="ics">'+ic('download',15)+T('.ics ফাইল (রিমাইন্ডারসহ)|.ics file (with reminder)')+'</button></div>')+
     '<div class="ev-actions">'+
       '<a class="ev-btn ghost sm" href="https://wa.me/?text='+encodeURIComponent(e.title+' — '+longDate(e.startMs)+', '+time+'\n'+e.venue+'\n'+shareUrl(id))+'" target="_blank" rel="noopener noreferrer">'+ic('wa',15)+'WhatsApp</a>'+
+      (function(){var u=encodeURIComponent(shareUrl(id)),t=encodeURIComponent(e.title);
+        function b(n,l,h){return '<a class="ev-btn ghost sm ico ev-soc" href="'+h+'" target="_blank" rel="noopener noreferrer" aria-label="'+l+'" title="'+l+'">'+ic(n,18)+'</a>'}
+        return b('fb','Facebook','https://www.facebook.com/sharer/sharer.php?u='+u)+b('tg','Telegram','https://t.me/share/url?url='+u+'&text='+t)+b('xx','X','https://twitter.com/intent/tweet?text='+t+'&url='+u)+b('li','LinkedIn','https://www.linkedin.com/sharing/share-offsite/?url='+u)})()+
       '<button type="button" class="ev-btn ghost sm" data-d="share">'+ic('share',15)+T('শেয়ার|Share')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-d="copy">'+ic('copy',15)+T('লিংক কপি|Copy link')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-d="card">'+ic('card',15)+T('শেয়ার কার্ড বানান|Make a share card')+'</button>'+
@@ -1523,6 +1549,7 @@ function cmFit(ctx,t,maxW){t=String(t);if(ctx.measureText(t).width<=maxW)return 
 function cmMetal(ctx,x0,y0,x1,y1,M){var g=ctx.createLinearGradient(x0,y0,x1,y1);g.addColorStop(0,M[0]);g.addColorStop(.4,M[1]);g.addColorStop(.7,M[2]);g.addColorStop(1,M[0]);return g}
 function cmLS(ctx,px){try{ctx.letterSpacing=px+'px'}catch(x){}}
 function cmDiamond(ctx,x,y,r){ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath()}
+function cmSpark(ctx,x,y,r){ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.quadraticCurveTo(x,y,x,y+r);ctx.quadraticCurveTo(x,y,x-r,y);ctx.quadraticCurveTo(x,y,x,y-r);ctx.closePath()}
 function cmStar(ctx,x,y,r1,r2){ctx.beginPath();for(var i=0;i<10;i++){var r=i%2?r2:r1,a=-Math.PI/2+i*Math.PI/5;ctx[i?'lineTo':'moveTo'](x+Math.cos(a)*r,y+Math.sin(a)*r)}ctx.closePath()}
 var cmNoiseTile=null;
 function cmNoise(ctx){if(!cmNoiseTile){var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d'),d=x.createImageData(128,128);for(var i=0;i<d.data.length;i+=4){var v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}x.putImageData(d,0,0);cmNoiseTile=c}return ctx.createPattern(cmNoiseTile,'repeat')}
@@ -1551,7 +1578,8 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.font=fnt;cmLS(ctx,ls||0);
     var w=ctx.measureText(txt).width+R(44)+(ls||0),h=R(54),xx=align==='right'?x-w:x;
     if(!dry){
-      cmRR(ctx,xx,yy,w,h,h/2);ctx.fillStyle='rgba(6,20,42,.66)';ctx.fill();
+      ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=R(18);ctx.shadowOffsetY=R(6);cmRR(ctx,xx,yy,w,h,h/2);ctx.fillStyle='rgba(6,20,42,.7)';ctx.fill();ctx.restore();
+      cmRR(ctx,xx+2,yy+2,w-4,h/2,h/4);ctx.fillStyle='rgba(255,255,255,.07)';ctx.fill();
       ctx.lineWidth=2;ctx.strokeStyle=cmMetal(ctx,xx,yy,xx+w,yy+h,GOLD);ctx.stroke();
       ctx.fillStyle=col;ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(txt,xx+R(22),yy+h/2+1);
     }
@@ -1596,6 +1624,25 @@ function cmDraw(ctx,W,H,st,dry){
       sh.addColorStop(0,'rgba(255,255,255,.035)');sh.addColorStop(.45,'rgba(255,255,255,0)');
       ctx.fillStyle=sh;ctx.fillRect(0,0,W,H);
     }
+
+    /* --- decor: dotted lattice, rings, sheen, sparkles --- */
+    ctx.save();ctx.beginPath();ctx.rect(0,PH+20,W,H-PH-20);ctx.clip();
+    for(var gx=48;gx<W;gx+=44){for(var gy=PH+44;gy<H;gy+=44){
+      var gk=Math.max(0,(gx/W)*.9+((gy-PH)/(H-PH))*.25-.12);
+      if(gk<=0)continue;
+      ctx.fillStyle=hexA(P.lite?'#8A6420':'#E8C46C',Math.min(.2,gk*.2));ctx.fillRect(gx,gy,3,3);
+    }}
+    ctx.restore();
+    ctx.save();ctx.lineWidth=2;
+    [250,350,450].forEach(function(rr,ri){ctx.beginPath();ctx.arc(W+40,PH*.28,rr,0,Math.PI*2);ctx.strokeStyle=hexA(P.metal[0],.2-ri*.05);ctx.stroke()});
+    ctx.restore();
+    ctx.save();ctx.beginPath();ctx.rect(0,0,W,PH);ctx.clip();
+    var sw=ctx.createLinearGradient(0,0,W,PH);
+    sw.addColorStop(0,'rgba(255,255,255,0)');sw.addColorStop(.38,'rgba(255,255,255,0)');sw.addColorStop(.5,'rgba(255,255,255,.08)');sw.addColorStop(.62,'rgba(255,255,255,0)');sw.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=sw;ctx.fillRect(0,0,W,PH);ctx.restore();
+    ctx.save();ctx.shadowColor=hexA(P.metal[0],.9);ctx.shadowBlur=18;
+    [[.8,.36,24,.85],[.92,.56,14,.65],[.66,.2,12,.55],[.86,.2,9,.5]].forEach(function(q){ctx.globalAlpha=q[3];ctx.fillStyle=P.lite?'#FFF3CC':'#FFFFFF';cmSpark(ctx,W*q[0],PH*q[1],q[2]);ctx.fill()});
+    ctx.restore();
 
     /* date badge: gold glass tile */
     var dbW=R(160),dbH=R(176),dbX=PAD,dbY=PH-R(70);
@@ -1665,6 +1712,8 @@ function cmDraw(ctx,W,H,st,dry){
     cmRR(ctx,PAD,y,maxW,ph,R(28));ctx.fillStyle=pf;ctx.fill();
     ctx.lineWidth=Math.max(2,R(2.5));ctx.strokeStyle=cmMetal(ctx,PAD,y,PAD+maxW,y+ph,P.metal);ctx.stroke();
     cmRR(ctx,PAD+R(12),y+R(12),maxW-R(24),ph-R(24),R(22));ctx.lineWidth=Math.max(1,R(1.5));ctx.strokeStyle=hexA(GOLD[1],.38);ctx.stroke();
+    ctx.save();cmRR(ctx,PAD,y,maxW,ph,R(28));ctx.clip();var ps=ctx.createLinearGradient(0,y,0,y+ph*.5);ps.addColorStop(0,P.lite?'rgba(255,255,255,.55)':'rgba(255,255,255,.14)');ps.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=ps;ctx.fillRect(PAD,y,maxW,ph*.5);
+    var pa=ctx.createLinearGradient(PAD,0,PAD+R(260),0);pa.addColorStop(0,hexA(P.a1,.28));pa.addColorStop(1,hexA(P.a1,0));ctx.fillStyle=pa;ctx.fillRect(PAD,y,R(260),ph);ctx.restore();
     var lbl=st.tag==='invite'?T('আপনি আমন্ত্রিত|You are invited'):st.tag==='miss'?T('মিস করবেন না|Do not miss it'):T('উপস্থিতি|Attending');
     ctx.font=F(700,27);cmLS(ctx,R(2));ctx.fillStyle=cmMetal(ctx,PAD+R(40),y,PAD+R(420),y,GOLD);ctx.textAlign='left';ctx.textBaseline='top';
     ctx.fillText(lbl,PAD+R(64),y+R(32));cmLS(ctx,0);
@@ -1706,9 +1755,14 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.fillStyle=cmMetal(ctx,PAD+maxW-R(20),H-152,PAD+maxW,H-128,P.metal);cmDiamond(ctx,PAD+maxW-R(6),H-139,R(9));ctx.fill();
     ctx.textAlign='left';ctx.textBaseline='middle';
     var domain='dcucore.vercel.app';
-    ctx.font=F(800,46);cmLS(ctx,1);ctx.textAlign='center';
-    var bw=ctx.measureText(domain).width,fx=W/2-bw/2;
-    ctx.fillStyle=cmMetal(ctx,fx,H-112,fx+bw,H-72,P.metal);ctx.fillText(domain,W/2,H-92);
+    ctx.font=F(800,46);cmLS(ctx,1);ctx.textAlign='left';
+    var bw=ctx.measureText(domain).width,LT=58,tot=bw+LT+20,fx0=W/2-tot/2,fx=fx0+LT+20,ty=H-122;
+    ctx.save();ctx.shadowColor=hexA(P.metal[1],.55);ctx.shadowBlur=16;
+    cmRR(ctx,fx0,ty,LT,LT,16);ctx.fillStyle=cmMetal(ctx,fx0,ty,fx0+LT,ty+LT,P.metal);ctx.fill();ctx.restore();
+    cmRR(ctx,fx0+4,ty+4,LT-8,LT-8,12);ctx.lineWidth=1.5;ctx.strokeStyle='rgba(255,255,255,.4)';ctx.stroke();
+    var lgi=cmIconImg('cal','#0B1F3A');if(lgi)ctx.drawImage(lgi,fx0+13,ty+13,32,32);
+    ctx.textBaseline='middle';
+    ctx.fillStyle=cmMetal(ctx,fx,H-112,fx+bw,H-72,P.metal);ctx.fillText(domain,fx,H-92);
     cmLS(ctx,0);
     ctx.fillStyle=cmMetal(ctx,fx,H-62,fx+bw,H-58,P.metal);ctx.fillRect(fx,H-62,bw,3);
     ctx.textAlign='left';
@@ -1716,6 +1770,9 @@ function cmDraw(ctx,W,H,st,dry){
     /* double gold frame */
     cmRR(ctx,26,26,W-52,H-52,34);ctx.lineWidth=3;ctx.strokeStyle=cmMetal(ctx,0,0,W,H,P.metal);ctx.stroke();
     cmRR(ctx,40,40,W-80,H-80,24);ctx.lineWidth=1.5;ctx.strokeStyle=hexA(P.metal[1],.4);ctx.stroke();
+    ctx.save();ctx.lineWidth=7;ctx.lineCap='round';ctx.strokeStyle=cmMetal(ctx,0,0,W,H,P.metal);
+    [[60,60,Math.PI,1.5*Math.PI],[W-60,60,1.5*Math.PI,2*Math.PI],[W-60,H-60,0,.5*Math.PI],[60,H-60,.5*Math.PI,Math.PI]].forEach(function(c){ctx.beginPath();ctx.arc(c[0],c[1],34,c[2],c[3]);ctx.stroke()});
+    ctx.restore();
     ctx.fillStyle=cmMetal(ctx,W/2-10,16,W/2+10,36,P.metal);cmDiamond(ctx,W/2,26,10);ctx.fill();
     ctx.fillStyle=cmMetal(ctx,W/2-10,H-36,W/2+10,H-16,P.metal);cmDiamond(ctx,W/2,H-26,10);ctx.fill();
 
@@ -1762,6 +1819,7 @@ function cmBuild(){
       '<button type="button" class="ev-btn ghost sm ico t-share" data-cm-act="share" aria-label="'+T('শেয়ার|Share')+'" title="'+T('শেয়ার|Share')+'">'+ic('share',16)+'</button>'+
       '<button type="button" class="ev-btn ghost sm ico t-img" data-cm-act="copy" aria-label="'+T('ছবি কপি|Copy image')+'" title="'+T('ছবি কপি|Copy image')+'">'+ic('card',16)+'</button>'+
       '<a class="ev-btn sm ico t-wa" id="cmWa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">'+ic('wa',18)+'</a>'+
+      '<button type="button" class="ev-btn sm ico t-ig" data-cm-act="share" aria-label="Instagram" title="Instagram">'+ic('ig',18)+'</button>'+
       '<a class="ev-btn sm ico t-fb" id="cmFb" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">'+ic('fb',18)+'</a>'+
       '<button type="button" class="ev-btn ghost sm ico t-cap" data-cm-act="capcopy" aria-label="'+T('ক্যাপশন কপি|Copy caption')+'" title="'+T('ক্যাপশন কপি|Copy caption')+'">'+ic('clipboard',16)+'</button>'+
     '</div>'+
