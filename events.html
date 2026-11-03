@@ -264,7 +264,7 @@ dialog.ev-dlg::backdrop{background:rgba(6,16,32,.62);backdrop-filter:blur(4px)}
 #dCard{width:min(940px,calc(100vw - 20px))}
 .ev-cm{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;padding:58px 24px 24px;align-items:start}
 .ev-cm-prev{display:flex;justify-content:center;background:var(--surface-2);border-radius:20px;padding:14px;border:1px solid var(--border)}
-.ev-cm-prev canvas{display:block;width:auto;height:auto;max-width:100%;max-height:70vh;border-radius:14px;box-shadow:0 0 0 1px rgba(212,175,55,.45),0 28px 60px -22px rgba(11,31,58,.75)}
+.ev-cm-prev canvas{display:block;max-width:100%;border-radius:14px;box-shadow:0 0 0 1px rgba(212,175,55,.45),0 28px 60px -22px rgba(11,31,58,.75)}
 .ev-cm-ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
 .ev-cm-lab{font-weight:700;font-size:13.5px;margin-top:10px;display:block}
 .ev-cm-ctl input,.ev-cm-ctl textarea{width:100%;padding:10px 12px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font:inherit}
@@ -604,6 +604,56 @@ svg.i.brand path,.goog-ico svg.i path{stroke:none!important}
 .ev-cm-one .ev-btn.ico svg.i{width:17px!important;height:17px!important}
 .ev-cm-one .t-wa svg,.ev-cm-one .t-fb svg,.ev-cm-one .t-ig svg{width:18px!important;height:18px!important}
 .ev-cm-acts.ev-cm-one{gap:8px}
+
+/* ---------------- ডিটেইল ডায়ালগ: নিচে আটকানো মূল বাটন + গুছানো শেয়ার ---------------- */
+.ev-prim{position:sticky;bottom:0;z-index:4;margin:0 -24px;padding:12px 24px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--border);box-shadow:0 -12px 24px -18px rgba(11,31,58,.45)}
+.ev-prim .ev-btn{flex:1 1 auto;justify-content:center}
+@media(max-width:640px){.ev-prim{margin:0 -16px;padding-left:16px;padding-right:16px}.ev-prim .ev-btn{min-width:0}}
+.ev-share{border:1.5px solid var(--border);border-radius:14px;background:var(--surface-2);overflow:hidden}
+.ev-share>summary{list-style:none;cursor:pointer;user-select:none;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;border:0;border-radius:0;background:transparent;min-height:44px}
+.ev-share>summary::-webkit-details-marker{display:none}
+.ev-share .ev-chev{width:16px;height:16px;transition:transform .25s}
+.ev-share[open] .ev-chev{transform:rotate(180deg)}
+.ev-share[open]>summary{border-bottom:1px solid var(--border)}
+.ev-share-in{padding:12px}
+
+/* ---------------- মোবাইল: ফিল্টার বটম শিট ---------------- */
+.ev-filt-btn,.ev-active,.ev-fs,.ev-fs-bd{display:none}
+@media (max-width:640px){
+  .ev-search{flex:1 1 100%}
+  .ev-filt-btn{display:inline-flex;align-items:center;gap:7px;position:relative}
+  .ev-filt-n{display:none;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--navy);color:var(--gold-light,#f6dfa8);font-size:12px;line-height:20px;text-align:center;box-sizing:border-box}
+  .ev-filt-btn.has .ev-filt-n{display:inline-block}
+  .ev-filt-btn.has{border-color:var(--gold)}
+  .ev-active{display:flex;gap:8px;flex-wrap:wrap;margin:10px 2px 0}
+  .ev-active:empty{display:none}
+  .ev-ach{display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink);background:color-mix(in srgb,var(--gold) 16%,transparent);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);max-width:100%}
+  .ev-ach span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ev-ach button{flex:none;width:22px;height:22px;border-radius:50%;border:0;background:rgba(11,31,58,.12);color:inherit;display:grid;place-items:center;padding:0}
+  .ev-ach button svg{width:12px;height:12px}
+  .ev-fs-bd{display:block;position:fixed;inset:0;z-index:89;background:rgba(6,16,32,.55);opacity:0;pointer-events:none;transition:opacity .28s}
+  .ev-fs-bd.open{opacity:1;pointer-events:auto}
+  .ev-fs{display:flex;flex-direction:column;position:fixed;left:0;right:0;bottom:0;z-index:90;max-height:86dvh;background:var(--surface);color:var(--ink);border-radius:24px 24px 0 0;border:1px solid var(--border);border-bottom:0;box-shadow:0 -24px 60px -20px rgba(3,10,24,.55);transform:translateY(104%);visibility:hidden;transition:transform .34s cubic-bezier(.22,.8,.24,1),visibility 0s .34s}
+  .ev-fs.open{transform:none;visibility:visible;transition:transform .34s cubic-bezier(.22,.8,.24,1)}
+  .ev-fs.drag{transition:none}
+  .ev-fs-grab{display:flex;justify-content:center;padding:10px 0 2px;touch-action:none}
+  .ev-fs-grab i{width:44px;height:5px;border-radius:99px;background:var(--border)}
+  .ev-fs-hd{display:flex;align-items:center;justify-content:space-between;padding:6px 18px 10px;touch-action:none}
+  .ev-fs-hd h3{margin:0;font-size:19px}
+  .ev-fs-x{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);display:grid;place-items:center;padding:0}
+  .ev-fs-body{overflow-y:auto;overscroll-behavior:contain;padding:4px 18px 16px;display:flex;flex-direction:column;gap:16px}
+  .ev-fs-g{display:flex;flex-direction:column;gap:6px}
+  .ev-fs-g small{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+  .ev-fs .ev-sel{width:100%;min-height:46px;box-sizing:border-box}
+  .ev-fs .ev-flt-row{flex-direction:column;gap:16px;padding:0}
+  .ev-fs #campusChips.ev-chips,.ev-fs #catChips.ev-chips{width:100%;flex:none}
+  .ev-fs-ft{display:flex;gap:10px;padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);background:var(--surface)}
+  .ev-fs-ft .ev-btn{min-height:48px;justify-content:center}
+  .ev-fs-ft #evFsGo{flex:1;gap:8px}
+  .ev-fs-ft #evFsGo b{font-weight:800}
+  html.ev-fs-lock,html.ev-fs-lock body{overflow:hidden}
+}
+@media (prefers-reduced-motion:reduce){.ev-fs,.ev-fs-bd{transition:none!important}}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -662,6 +712,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
         <svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input id="q" type="search" maxlength="60" autocomplete="off" data-p="ইভেন্ট, স্থান বা আয়োজক খুঁজুন…|Search events, venue or organizer…">
       </label>
+      <button type="button" class="ev-btn ghost ev-filt-btn" id="evFilt" aria-haspopup="dialog" aria-controls="evFs"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="t">ফিল্টার|Filters</span><b class="ev-filt-n" id="evFiltN"></b></button>
       <select class="ev-sel" id="when" aria-label="Time" data-al="সময়|Time"></select>
       <select class="ev-sel" id="sort" aria-label="Sort" data-al="সাজান|Sort"></select>
       <div class="ev-seg" role="group" aria-label="View" data-al="দেখার ধরন|View">
@@ -675,8 +726,21 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
       <div class="ev-chips" id="campusChips" role="group" aria-label="Campus" data-al="ক্যাম্পাস|Campus"></div>
       <div class="ev-chips" id="catChips" role="group" aria-label="Category" data-al="ধরন|Category"></div>
     </div>
+    <div class="ev-active" id="evActive" aria-live="polite"></div>
     <div class="ev-note" id="note"></div>
   </div>
+
+  <div class="ev-fs-bd" id="evFsBd"></div>
+  <section class="ev-fs" id="evFs" role="dialog" aria-modal="true" aria-labelledby="evFsT" aria-hidden="true">
+    <div class="ev-fs-grab" id="evFsGrab" aria-hidden="true"><i></i></div>
+    <header class="ev-fs-hd"><h3 id="evFsT" class="t">ফিল্টার|Filters</h3><button type="button" class="ev-fs-x" id="evFsX" aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+    <div class="ev-fs-body">
+      <div class="ev-fs-g"><small class="t">সময়|When</small><div id="evSlotWhen"></div></div>
+      <div class="ev-fs-g"><small class="t">সাজান|Sort</small><div id="evSlotSort"></div></div>
+      <div id="evSlotFlt"></div>
+    </div>
+    <footer class="ev-fs-ft"><button type="button" class="ev-btn ghost" id="evFsReset"><span class="t">রিসেট|Reset</span></button><button type="button" class="ev-btn" id="evFsGo"><span class="t">ফলাফল দেখুন|Show results</span><b id="evFsN"></b></button></footer>
+  </section>
 
   <button type="button" class="ev-jump" id="evJump" aria-label="Filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span class="t">ফিল্টার ও সার্চ|Filter &amp; search</span><i class="dot"></i></button>
 
@@ -746,7 +810,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
   <button type="button" class="ev-x" data-cm-close aria-label="Close" title="Close"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <div class="ev-dlg-in">
     <div class="ev-cm">
-      <div class="ev-cm-prev"><canvas id="cmCanvas" role="img" aria-label="Share card preview"></canvas></div>
+      <div class="ev-cm-prev"><canvas id="cmCanvas" aria-hidden="true" style="display:none"></canvas><canvas id="cmPrev" role="img" aria-label="Share card preview"></canvas></div>
       <div class="ev-cm-ctl" id="cmCtl"></div>
     </div>
   </div>
@@ -1411,21 +1475,22 @@ function openDetail(id,quiet){
       (e.contact?row('phone',T('যোগাযোগ|Contact'),esc(e.contact)):'')+
     '</div>'+
     '<h4 class="ev-dh">'+esc(T('বিস্তারিত|Details'))+'</h4><div class="ev-desc">'+esc(e.desc)+'</div>'+
-    '<div class="ev-actions">'+
+    '<div class="ev-actions ev-prim">'+
       '<button type="button" class="ev-btn'+(goes?' on':'')+'" data-d="go" aria-pressed="'+goes+'">'+ic(goes?'check':'users',16)+(goes?T('যাচ্ছি|Going'):T('আমি যাব|I\'m going'))+'</button>'+
       (okUrl(e.link)?'<a class="ev-btn" href="'+esc(e.link)+'" target="_blank" rel="noopener noreferrer nofollow ugc">'+ic('link',16)+T('রেজিস্ট্রেশন|Register')+'</a>':'')+
       '<button type="button" class="ev-btn ghost'+(sv?' on':'')+'" data-d="save" aria-pressed="'+sv+'">'+ic('bookmark',16)+(sv?T('সেভ করা হয়েছে|Saved'):T('সেভ করুন|Save'))+'</button>'+
     '</div>'+
     (ended?'':'<div class="ev-actions"><a class="ev-btn ghost sm" href="'+gcalUrl(e)+'" target="_blank" rel="noopener noreferrer">'+ic('cal',15)+'Google Calendar</a><button type="button" class="ev-btn ghost sm" data-d="ics">'+ic('download',15)+T('.ics ফাইল (রিমাইন্ডারসহ)|.ics file (with reminder)')+'</button></div>')+
-    '<div class="ev-actions">'+
+    '<details class="ev-share"><summary class="ev-btn ghost sm">'+ic('share',15)+T('শেয়ার করুন|Share')+'<svg class="i ev-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>'+
+    '<div class="ev-actions ev-share-in">'+
       '<a class="ev-btn ghost sm" href="https://wa.me/?text='+encodeURIComponent(e.title+' — '+longDate(e.startMs)+', '+time+'\n'+e.venue+'\n'+shareUrl(id))+'" target="_blank" rel="noopener noreferrer">'+ic('wa',15)+'WhatsApp</a>'+
       (function(){var u=encodeURIComponent(shareUrl(id)),t=encodeURIComponent(e.title);
         function b(n,l,h){return '<a class="ev-btn ghost sm ico ev-soc" href="'+h+'" target="_blank" rel="noopener noreferrer" aria-label="'+l+'" title="'+l+'">'+ic(n,18)+'</a>'}
         return b('fb','Facebook','https://www.facebook.com/sharer/sharer.php?u='+u)+b('tg','Telegram','https://t.me/share/url?url='+u+'&text='+t)+b('xx','X','https://twitter.com/intent/tweet?text='+t+'&url='+u)+b('li','LinkedIn','https://www.linkedin.com/sharing/share-offsite/?url='+u)})()+
-      '<button type="button" class="ev-btn ghost sm" data-d="share">'+ic('share',15)+T('শেয়ার|Share')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-d="copy">'+ic('copy',15)+T('লিংক কপি|Copy link')+'</button>'+
+      '<button type="button" class="ev-btn ghost sm" data-d="share">'+ic('share',15)+T('অন্য অ্যাপে|More apps')+'</button>'+
       '<button type="button" class="ev-btn ghost sm" data-d="card">'+ic('card',15)+T('শেয়ার কার্ড বানান|Make a share card')+'</button>'+
-    '</div>'+
+    '</div></details>'+
     '<button type="button" class="ev-rep" data-d="report">'+ic('flag',14)+' '+T('ভুল বা বিভ্রান্তিকর? রিপোর্ট করুন|Wrong or misleading? Report')+'</button>'+
    '</div>';
   $('#dBody').innerHTML=h;
@@ -1610,15 +1675,15 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.restore();
 
     var gl=ctx.createRadialGradient(W*.9,PH*.15,0,W*.9,PH*.15,W*.85);
-    gl.addColorStop(0,hexA(P.glowC,P.glow));gl.addColorStop(1,hexA(P.glowC,0));
+    gl.addColorStop(0,hexA(P.glowC,P.glow*.5));gl.addColorStop(1,hexA(P.glowC,0));
     ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
     var g2=ctx.createRadialGradient(W*.05,H*.94,0,W*.05,H*.94,W*.75);
-    g2.addColorStop(0,hexA(P.metal[1],P.lite?.12:.18));g2.addColorStop(1,hexA(P.metal[1],0));
+    g2.addColorStop(0,hexA(P.metal[1],P.lite?.08:.1));g2.addColorStop(1,hexA(P.metal[1],0));
     ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
 
     if(!P.lite){
       var vg=ctx.createRadialGradient(W/2,H*.5,H*.28,W/2,H*.5,H*.82);
-      vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.4)');
+      vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.26)');
       ctx.fillStyle=vg;ctx.fillRect(0,0,W,H);
       var sh=ctx.createLinearGradient(0,0,W,H*.5);
       sh.addColorStop(0,'rgba(255,255,255,.035)');sh.addColorStop(.45,'rgba(255,255,255,0)');
@@ -1626,21 +1691,10 @@ function cmDraw(ctx,W,H,st,dry){
     }
 
     /* --- decor: dotted lattice, rings, sheen, sparkles --- */
-    ctx.save();ctx.beginPath();ctx.rect(0,PH+20,W,H-PH-20);ctx.clip();
-    for(var gx=48;gx<W;gx+=44){for(var gy=PH+44;gy<H;gy+=44){
-      var gk=Math.max(0,(gx/W)*.9+((gy-PH)/(H-PH))*.25-.12);
-      if(gk<=0)continue;
-      ctx.fillStyle=hexA(P.lite?'#8A6420':'#E8C46C',Math.min(.2,gk*.2));ctx.fillRect(gx,gy,3,3);
-    }}
-    ctx.restore();
     ctx.save();ctx.lineWidth=2;
-    [250,350,450].forEach(function(rr,ri){ctx.beginPath();ctx.arc(W+40,PH*.28,rr,0,Math.PI*2);ctx.strokeStyle=hexA(P.metal[0],.2-ri*.05);ctx.stroke()});
+    [250,350,450].forEach(function(rr,ri){ctx.beginPath();ctx.arc(W+40,PH*.28,rr,0,Math.PI*2);ctx.strokeStyle=hexA(P.metal[0],.11-ri*.03);ctx.stroke()});
     ctx.restore();
-    ctx.save();ctx.beginPath();ctx.rect(0,0,W,PH);ctx.clip();
-    var sw=ctx.createLinearGradient(0,0,W,PH);
-    sw.addColorStop(0,'rgba(255,255,255,0)');sw.addColorStop(.38,'rgba(255,255,255,0)');sw.addColorStop(.5,'rgba(255,255,255,.08)');sw.addColorStop(.62,'rgba(255,255,255,0)');sw.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle=sw;ctx.fillRect(0,0,W,PH);ctx.restore();
-    ctx.save();ctx.shadowColor=hexA(P.metal[0],.9);ctx.shadowBlur=18;
+    ctx.save();ctx.shadowColor=hexA(P.metal[0],.6);ctx.shadowBlur=6;
     [[.8,.36,24,.85],[.92,.56,14,.65],[.66,.2,12,.55],[.86,.2,9,.5]].forEach(function(q){ctx.globalAlpha=q[3];ctx.fillStyle=P.lite?'#FFF3CC':'#FFFFFF';cmSpark(ctx,W*q[0],PH*q[1],q[2]);ctx.fill()});
     ctx.restore();
 
@@ -1661,7 +1715,7 @@ function cmDraw(ctx,W,H,st,dry){
 
     var cx=dbX+dbW+R(36),cw=W-PAD-cx;
     ctx.fillStyle=cmMetal(ctx,cx,PH,cx+R(20),PH+R(60),P.metal);cmDiamond(ctx,cx+R(8),PH+R(38),R(7));ctx.fill();
-    ctx.font=F(600,28);ctx.fillStyle=P.a1;ctx.textBaseline='top';
+    ctx.font=F(600,28);ctx.fillStyle=P.lite?P.a2:'#F6DFA8';ctx.textBaseline='top';
     ctx.fillText(T('ক্যাম্পাস ইভেন্ট|Campus event'),cx+R(26),PH+R(20));
     ctx.font=F(700,40);ctx.fillStyle=P.ink;
     ctx.fillText(cmFit(ctx,nm(cp,'l'),cw),cx,PH+R(64));
@@ -1675,7 +1729,7 @@ function cmDraw(ctx,W,H,st,dry){
   var tl=cmWrap(ctx,e.title,maxW,st.maxL),tlh=R(98);
   if(!dry){
     ctx.save();
-    if(!P.lite){ctx.shadowColor='rgba(0,0,0,.5)';ctx.shadowBlur=R(20);ctx.shadowOffsetY=R(5)}
+    if(!P.lite){ctx.shadowColor='rgba(0,0,0,.55)';ctx.shadowBlur=R(6);ctx.shadowOffsetY=R(3)}
     ctx.fillStyle=P.ink;ctx.textAlign='left';ctx.textBaseline='top';tl.forEach(function(t,j){ctx.fillText(t,PAD,y+j*tlh)});
     ctx.restore();
   }
@@ -1777,8 +1831,7 @@ function cmDraw(ctx,W,H,st,dry){
     ctx.fillStyle=cmMetal(ctx,W/2-10,H-36,W/2+10,H-16,P.metal);cmDiamond(ctx,W/2,H-26,10);ctx.fill();
 
     /* fine grain */
-    ctx.save();ctx.globalCompositeOperation='overlay';ctx.globalAlpha=P.lite?.035:.045;
-    ctx.fillStyle=cmNoise(ctx);ctx.fillRect(0,0,W,H);ctx.restore();
+    
   }
   return y;
 }
@@ -1793,7 +1846,24 @@ function cmRender(){
   var st={e:e,cat:cat,cp:CAMP[e.campus]||CAMP.all,img:CM.img,name:CM.name.trim(),status:CM.status,tag:CM.tag,pal:cmPal(CM.theme,cat),ph:F[2],k:1,maxL:F[3]};
   for(var i=0;i<16;i++){var b=cmDraw(ctx,W,H,st,true);if(b<=H-160*st.k)break;st.k*=.94}
   cmDraw(ctx,W,H,st,false);
+  cmPreview(cv,W,H);
 }
+/* ধাপে ধাপে ছোট করে ঝকঝকে প্রিভিউ (সরাসরি ১১ গুণ ছোট করলে ঘোলা দেখায়) */
+function cmPreview(src,W,H){
+  var pv=$('#cmPrev');if(!pv)return;
+  var mob=window.innerWidth<=760,availW=Math.min(window.innerWidth-(mob?56:80),520),availH=window.innerHeight*(mob?.52:.7);
+  var sc=Math.min(availW/W,availH/H),dw=Math.max(60,Math.floor(W*sc)),dh=Math.max(60,Math.floor(H*sc));
+  var dpr=Math.min(window.devicePixelRatio||1,3),tw=Math.round(dw*dpr),th=Math.round(dh*dpr);
+  var cur=src,cw=src.width,ch=src.height;
+  while(cw/2>=tw){
+    var nw=Math.round(cw/2),nh=Math.round(ch/2),t=document.createElement('canvas');t.width=nw;t.height=nh;
+    var tc=t.getContext('2d');tc.imageSmoothingEnabled=true;tc.imageSmoothingQuality='high';tc.drawImage(cur,0,0,nw,nh);
+    cur=t;cw=nw;ch=nh;
+  }
+  pv.width=tw;pv.height=th;pv.style.width=dw+'px';pv.style.height=dh+'px';
+  var px=pv.getContext('2d');px.imageSmoothingEnabled=true;px.imageSmoothingQuality='high';px.drawImage(cur,0,0,tw,th);
+}
+window.addEventListener('resize',function(){if(typeof cmSched==='function'&&document.getElementById('cmPrev'))cmSched()});
 function cmSched(){cancelAnimationFrame(cmRaf);cmRaf=requestAnimationFrame(cmRender)}
 
 function cmBuild(){
@@ -2357,6 +2427,80 @@ window.onLang=function(){renderAll();previewRender();if(curId&&$('#dDetail').ope
   });
   /* সার্চ বক্সে ট্যাপ করলে হেডার লুকিয়ে থাকবে না */
   document.addEventListener('focusin',function(e){if(hdr.contains(e.target))hdr.classList.remove('sa-hide')});
+})();
+</script>
+<script>
+/* মোবাইল ফিল্টার বটম শিট */
+(function(){
+  var $i=function(x){return document.getElementById(x)};
+  var bar=$i('bar'),fs=$i('evFs'),bd=$i('evFsBd'),btn=$i('evFilt'),when=$i('when'),sort=$i('sort'),row=bar&&bar.querySelector('.ev-flt-row');
+  if(!bar||!fs||!btn||!when||!sort||!row)return;
+  var mq=window.matchMedia('(max-width:640px)'),opened=false;
+  function anchor(n){var c=document.createComment('');n.parentNode.insertBefore(c,n);return c}
+  var aW=anchor(when),aS=anchor(sort),aR=anchor(row);
+  function place(){
+    if(mq.matches){$i('evSlotWhen').appendChild(when);$i('evSlotSort').appendChild(sort);$i('evSlotFlt').appendChild(row)}
+    else{aW.parentNode.insertBefore(when,aW.nextSibling);aS.parentNode.insertBefore(sort,aS.nextSibling);aR.parentNode.insertBefore(row,aR.nextSibling);close(true)}
+    sync();
+  }
+  function txt(sel){var o=sel&&sel.options[sel.selectedIndex];return o?o.text.replace(/\s*\([^)]*\)\s*$/,''):''}
+  function items(){
+    var a=[],c=$i('fltCampus'),t=$i('fltCat');
+    if(when.value!=='upcoming')a.push(['when',txt(when)]);
+    if(sort.value!=='date')a.push(['sort',txt(sort)]);
+    if(c&&c.value)a.push(['campus',txt(c)]);
+    if(t&&t.value)a.push(['cat',txt(t)]);
+    return a;
+  }
+  var X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  function esc(x){return String(x).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
+  function sync(){
+    var a=items(),n=$i('evFiltN');
+    n.textContent=a.length?a.length.toLocaleString(document.documentElement.lang==='en'?'en':'bn'):'';
+    btn.classList.toggle('has',a.length>0);
+    $i('evActive').innerHTML=a.map(function(x){return '<span class="ev-ach"><span>'+esc(x[1])+'</span><button type="button" data-k="'+x[0]+'" aria-label="Remove">'+X+'</button></span>'}).join('');
+    var nt=$i('note'),f=nt&&nt.firstElementChild,m=f&&f.textContent.trim().match(/^\S+/);
+    $i('evFsN').textContent=m?'('+m[0]+')':'';
+  }
+  function setv(el,v){if(el&&el.value!==v){el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}))}}
+  function reset(k){
+    if(!k||k==='when')setv(when,'upcoming');
+    if(!k||k==='sort')setv(sort,'date');
+    if(!k||k==='campus')setv($i('fltCampus'),'');
+    if(!k||k==='cat')setv($i('fltCat'),'');
+    sync();
+  }
+  var last=null;
+  function open(){
+    if(opened||!mq.matches)return;opened=true;last=document.activeElement;sync();
+    fs.style.transform='';fs.setAttribute('aria-hidden','false');fs.classList.add('open');bd.classList.add('open');
+    document.documentElement.classList.add('ev-fs-lock');
+    setTimeout(function(){$i('evFsX').focus()},120);
+  }
+  function close(quick){
+    if(!opened)return;opened=false;
+    fs.classList.remove('open','drag');bd.classList.remove('open');fs.style.transform='';fs.setAttribute('aria-hidden','true');
+    document.documentElement.classList.remove('ev-fs-lock');
+    if(!quick&&last&&last.focus)try{last.focus()}catch(e){}
+  }
+  btn.addEventListener('click',open);
+  bd.addEventListener('click',function(){close()});
+  $i('evFsX').addEventListener('click',function(){close()});
+  $i('evFsGo').addEventListener('click',function(){close();var y=bar.getBoundingClientRect().bottom+window.scrollY-60;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})});
+  $i('evFsReset').addEventListener('click',function(){reset()});
+  $i('evActive').addEventListener('click',function(e){var b=e.target.closest('button[data-k]');if(b)reset(b.getAttribute('data-k'))});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&opened){close()}});
+  document.addEventListener('change',function(){setTimeout(sync,0)});
+  var nt=$i('note');if(nt&&window.MutationObserver)new MutationObserver(sync).observe(nt,{childList:true});
+  /* নিচে টেনে বন্ধ করা */
+  var sy=0,dy=0,dragging=false;
+  function ds(e){dragging=true;sy=e.touches[0].clientY;dy=0;fs.classList.add('drag')}
+  function dm(e){if(!dragging)return;dy=Math.max(0,e.touches[0].clientY-sy);fs.style.transform='translateY('+dy+'px)'}
+  function de(){if(!dragging)return;dragging=false;fs.classList.remove('drag');if(dy>90)close();else fs.style.transform=''}
+  [$i('evFsGrab'),fs.querySelector('.ev-fs-hd')].forEach(function(el){el.addEventListener('touchstart',ds,{passive:true});el.addEventListener('touchmove',dm,{passive:true});el.addEventListener('touchend',de);el.addEventListener('touchcancel',de)});
+  if(mq.addEventListener)mq.addEventListener('change',place);else if(mq.addListener)mq.addListener(place);
+  place();
+  setTimeout(sync,600);
 })();
 </script>
 </body>
