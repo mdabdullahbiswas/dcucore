@@ -29,8 +29,9 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .bar:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);opacity:.7}
 .brand{font-weight:700;font-size:15px;margin-right:auto;white-space:nowrap;background:linear-gradient(90deg,var(--ink),var(--navy2) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .brand span{color:var(--gold3);-webkit-text-fill-color:var(--gold3);font-weight:600}
-.tabs{display:flex;gap:8px}
-.tab{height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--ln);background:linear-gradient(180deg,var(--s),var(--s2));color:var(--mu);font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:transform .2s,box-shadow .25s,color .2s}
+.tabs{display:flex;gap:8px;min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--ln);background:linear-gradient(180deg,var(--s),var(--s2));color:var(--mu);font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap;transition:transform .2s,box-shadow .25s,color .2s}
 .tab:hover{color:var(--ink);transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(11,22,38,.35)}
 .tab:focus-visible,.theme:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .tab[aria-selected="true"]{background:linear-gradient(135deg,var(--navy2),var(--navy));color:var(--gold2);border-color:transparent;box-shadow:0 12px 24px -10px rgba(8,23,46,.55)}
@@ -57,6 +58,7 @@ iframe[hidden]{display:none!important}
   <nav class="tabs" role="tablist" aria-label="এডমিন বিভাগ">
     <button class="tab blood" role="tab" data-k="blood" type="button">🩸 ব্লাড ডোনার</button>
     <button class="tab" role="tab" data-k="events" type="button">🎉 ইভেন্ট</button>
+    <button class="tab" role="tab" data-k="visitors" type="button">👁️ ভিজিটর</button>
   </nav>
   <button class="theme" id="theme" type="button" aria-label="ডার্ক / লাইট মোড">
     <span class="knob">
@@ -67,8 +69,11 @@ iframe[hidden]{display:none!important}
 <main class="pane" id="panes"></main>
 <script>
 (function () {
-  var PAGES = { blood: "admin.html?embed=1", events: "events-admin.html?embed=1" };
+  var PAGES = { blood: "admin.html?embed=1", events: "events-admin.html?embed=1", visitors: "visitors-admin.html?embed=1" };
+  var TITLES = { blood: "ব্লাড ডোনার এডমিন", events: "ইভেন্ট এডমিন", visitors: "ভিজিটর অ্যানালিটিক্স" };
   var frames = {};
+  /* এডমিনের নিজের ভিজিট যাতে সাইটের ভিজিটর গণনায় না আসে */
+  try { localStorage.setItem("dcuNoTrack", "1"); } catch (e) {}
   var ICON_SUN = '<circle class="d" cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>';
   var ICON_MOON = '<path class="d" d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/><path d="M20.2 14.6A8.2 8.2 0 1 1 9.4 3.8a6.6 6.6 0 0 0 10.8 10.8z"/>';
 
@@ -101,7 +106,7 @@ iframe[hidden]{display:none!important}
     if (!frames[k]) {
       var f = document.createElement("iframe");
       f.src = PAGES[k];
-      f.title = k === "blood" ? "ব্লাড ডোনার এডমিন" : "ইভেন্ট এডমিন";
+      f.title = TITLES[k] || k;
       f.addEventListener("load", function () {
         try { f.contentDocument.documentElement.dataset.theme = currentTheme(); } catch (e) {}
       });
