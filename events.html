@@ -1048,34 +1048,39 @@ topBtn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smoo
  *   • FIREBASE চালু থাকলে → Firestore-এর `events` কালেকশনে (সবাই দেখে)।
  *   • Firestore না পেলে / Rules না থাকলে → ডেমো মোডে (শুধু ওই ব্রাউজারে)।
  *
- *  Firestore Rules (Firebase Console → Firestore → Rules-এ যোগ করুন):
+ *  Firestore Rules: আসল/বর্তমান Rules প্রজেক্টের firestore.rules ফাইলে আছে
+ *  (match /events/{id} ও match /event_reports/{id} ব্লক দুটো দেখুন) — সেটাই
+ *  ডিপ্লয় করা আছে এবং এই পেজের কোডের সাথে মেলে (authorUid/authorName/
+ *  authorVerified, audience, mapUrl, ইমেইল-ভেরিফিকেশন, trustedAuto ইত্যাদিসহ)।
+ *  নিচেরটা শুধু সংক্ষিপ্ত সারাংশ, কপি করে বসানোর জন্য না — আসল Rules ফাইল থেকেই
+ *  ডিপ্লয় করুন।
  *
  *    match /events/{id} {
- *      allow read: if resource.data.status == 'approved';
- *      allow create: if request.resource.data.keys().hasOnly(
- *            ['title','cat','campus','startMs','endMs','venue','organizer','desc',
- *             'link','contact','poster','going','reports','status','createdMs'])
- *          && request.resource.data.title is string
- *          && request.resource.data.title.size() <= 90
- *          && request.resource.data.desc.size() <= 1500
- *          && request.resource.data.going == 0
- *          && request.resource.data.reports == 0
- *          && request.resource.data.status == 'approved';   // অনুমোদন লাগলে 'pending'
- *      // শুধু going / reports ১ করে বাড়ানো বা কমানো যাবে
- *      allow update: if request.resource.data.diff(resource.data).affectedKeys()
- *            .hasOnly(['going','reports'])
- *          && math.abs(request.resource.data.going - resource.data.going) <= 1
- *          && math.abs(request.resource.data.reports - resource.data.reports) <= 1;
- *      allow delete: if false;   // মোছা শুধু অ্যাডমিন (Console) থেকে
+ *      allow read: if resource.data.status == 'approved' || isAdmin()
+ *                  || (signedIn() && resource.data.authorUid == request.auth.uid);
+ *      allow create: if isAdmin() || (signedIn() && request.auth.token.email_verified == true
+ *          && request.resource.data.keys().hasOnly(
+ *               ['title','cat','campus','startMs','endMs','venue','organizer','desc','link',
+ *                'contact','poster','going','reports','status','createdMs','authorUid',
+ *                'authorName','authorVerified','audience','mapUrl'])
+ *          && request.resource.data.authorUid == request.auth.uid
+ *          && request.resource.data.authorVerified == verifiedNow()   // নিজে বসাতে পারবে না
+ *          && request.resource.data.going == 0 && request.resource.data.reports == 0
+ *          && (request.resource.data.status == 'pending'
+ *              || (request.resource.data.status == 'approved' && trustedAuto())));
+ *      // সবাই শুধু going/reports ১ করে বাড়াতে পারবে; মালিক নিজের ইভেন্টের তথ্য বদলাতে পারবে
+ *      allow update: if isAdmin() || (…diff হয় শুধু going/reports ১ পর্যন্ত…)
+ *          || (signedIn() && resource.data.authorUid == request.auth.uid && …);
+ *      allow delete: if isAdmin() || (signedIn() && resource.data.authorUid == request.auth.uid);
  *    }
  *
- *    match /reports/{reportId} {
+ *    match /event_reports/{id} {   // কালেকশনের নাম 'reports' না, 'event_reports'
  *      allow create: if request.resource.data.keys().hasOnly(['eventId','reason','note','createdMs'])
  *          && request.resource.data.eventId is string && request.resource.data.eventId.size() <= 200
  *          && request.resource.data.reason in ['date','venue','fake','abuse','other']
  *          && request.resource.data.note is string && request.resource.data.note.size() <= 300
  *          && math.abs(request.resource.data.createdMs - request.time.toMillis()) < 60000;
- *      allow read, update, delete: if false;   // পড়া শুধু অ্যাডমিন (Console) থেকে
+ *      allow read, update, delete: if isAdmin();
  *    }
  * ===================================================================== */
 (function(){
