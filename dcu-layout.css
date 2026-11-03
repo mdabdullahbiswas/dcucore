@@ -759,35 +759,3 @@ body.dark .to-top:hover,
   content: " \2713";
   color: var(--dl-gold-d);
 }
-
-/* name of the open tool / cover type, shown next to the dropdown label */
-.dl-cur {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 2px;
-  padding-left: 8px;
-  border-left: 1px solid var(--dl-line);
-  color: var(--dl-brand-ink);
-  font-weight: 700;
-  font-size: 0.82rem;
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dl-cur:empty {
-  display: none;
-}
-
-.dl-cur i {
-  font-style: normal;
-  opacity: 0.6;
-}
-
-@media (max-width: 1100px) {
-  .dl-cur {
-    display: none;
-  }
-}
