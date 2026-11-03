@@ -527,7 +527,7 @@ const ADMIN_EMAIL = ADMIN_ID.toLowerCase() + "@" + ID_DOMAIN;
 const ADMIN_LOGINS = [ADMIN_EMAIL, "mdabdullahbiswas48@gmail.com"];
 const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
 
-const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-support-admin");
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-admin");
 const auth = getAuth(app), db = getFirestore(app), $ = id => document.getElementById(id);
 const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ms = d => d && d.toMillis ? d.toMillis() : 0, fd = d => ms(d) ? new Date(ms(d)).toLocaleString("bn-BD") : "-";
