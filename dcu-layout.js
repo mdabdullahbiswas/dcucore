@@ -169,8 +169,8 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
         "শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।",
         "A premium digital toolkit for students — cover pages, CVs, class routines, CGPA and more, completely free."
       ) + "</p>" +
-      '<div class="dl-badges"><span>✓ ' + bi("ব্রাউজারে চলে", "Runs in your browser") + "</span><span>✓ " +
-      bi("সার্ভারে আপলোড নেই", "No server uploads") + "</span><span>✓ " + bi("বিনামূল্যে", "Free") + "</span></div>" +
+      '<div class="dl-badges"><span class="dl-bdg">' + bi("ব্রাউজারে চলে", "Runs in your browser") + '</span><span class="dl-bdg">' +
+      bi("সার্ভারে আপলোড নেই", "No server uploads") + '</span><span class="dl-bdg">' + bi("বিনামূল্যে", "Free") + "</span></div>" +
       "</div></div>" +
       col("টুলস", "Tools", toolLinks) +
       col("সাইট", "Site", siteLinks) +
@@ -240,6 +240,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       if (open) { setCvd(false); dd.classList.remove("dl-closed"); }
       else if (dd.classList.contains("open")) { dd.classList.add("dl-closed"); }
       dd.classList.toggle("open", open);
+      if (!open) { dd.removeAttribute("data-hov"); dd.removeAttribute("data-pin"); }
       ddBtn.setAttribute("aria-expanded", String(open));
     }
 
@@ -250,6 +251,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       if (open) { if (dd) setDd(false); cvd.classList.remove("dl-closed"); markActive(); }
       else if (cvd.classList.contains("open")) { cvd.classList.add("dl-closed"); }
       cvd.classList.toggle("open", open);
+      if (!open) { cvd.removeAttribute("data-hov"); cvd.removeAttribute("data-pin"); }
       cvdBtn.setAttribute("aria-expanded", String(open));
     }
 
@@ -269,6 +271,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
           if (t) t.click();
           try { history.replaceState(null, "", "/cover#" + v); } catch (x) {}
           setCvd(false);
+          cvd._closedAt = Date.now();
         }
       });
     }
@@ -308,6 +311,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       var menuWrap = e.target.closest && e.target.closest("[data-dl-dd], [data-dl-cvd]");
       if (a && menuWrap && menuWrap.contains(a)) {
         menuWrap.classList.add("dl-closed");
+        menuWrap._closedAt = Date.now();
         if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       }
     });
@@ -321,7 +325,9 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       w.addEventListener("pointerenter", function (e) {
         if (e.pointerType === "touch" || !hoverMQ.matches) return;
         clearTimeout(timer);
-        if (w.classList.contains("dl-closed") || w.classList.contains("open")) return;
+        if (Date.now() - (w._closedAt || 0) < 450) return;
+        w.classList.remove("dl-closed");
+        if (w.classList.contains("open")) return;
         setW(true);
         w.setAttribute("data-hov", "");
       });
@@ -331,7 +337,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
         clearTimeout(timer);
         timer = setTimeout(function () {
           if (w.hasAttribute("data-hov")) { w.removeAttribute("data-hov"); setW(false); }
-        }, 140);
+        }, 220);
       });
       w.addEventListener("click", function (e) {
         if (e.target.closest(".dl-dd-btn") && w.hasAttribute("data-hov")) { w.removeAttribute("data-hov"); w.setAttribute("data-pin", ""); }
