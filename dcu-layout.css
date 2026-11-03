@@ -6,6 +6,7 @@
 
 /* ---------- tokens ---------- */
 :root {
+  --dcu-font: Inter, "Noto Sans Bengali", system-ui, sans-serif;
   --dl-navy: #0B1F3A;
   --dl-navy-2: #17386A;
   --dl-gold: #D4AF37;
@@ -828,4 +829,9 @@ body.dark .to-top:hover,
 
 .dl-pv b {
   color: var(--dl-ink);
+}
+
+/* ---------- one font for the whole site (same as the tool tab strip) ---------- */
+html body {
+  font-family: var(--dcu-font) !important;
 }
