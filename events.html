@@ -296,74 +296,57 @@ body{transition:background-color .25s,color .25s}
 /* ============ dcu-layout.js: শেয়ার্ড হেডার + ফুটারের স্টাইল ============
    dcu-layout.js শুধু মার্কআপ বসায়; স্টাইল সাধারণত premium.css দেয়।
    এই পেজ স্বয়ংসম্পূর্ণ রাখতে সেগুলো এখানে দেওয়া হলো (dl-* নামে, ইভেন্টের স্টাইলের সাথে সংঘর্ষ নেই)। */
-#hdr{position:sticky;top:0;z-index:50;min-height:64px;background:linear-gradient(120deg,#06142a,#0B1F3A 60%,#12305c);border-bottom:1px solid rgba(212,175,55,.28);box-shadow:0 8px 24px rgba(3,10,24,.35);transition:transform .32s cubic-bezier(.22,.8,.24,1),box-shadow .3s}
-.dl-bar{max-width:1180px;margin:0 auto;height:64px;padding:0 16px;display:flex;align-items:center;gap:12px;font-family:'Hind Siliguri',system-ui,sans-serif}
-.dl-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;flex:none}
-.dl-brand img{width:38px;height:38px;border-radius:11px;object-fit:contain}
-.dl-brand-txt{display:flex;flex-direction:column;line-height:1.1}
-.dl-brand-txt b{font:800 20px/1 'Cinzel',Georgia,serif;letter-spacing:.04em;color:#f6dfa8;transition:color .2s}
-.dl-brand-txt small{font-size:11px;color:#9fb3d1;margin-top:4px;white-space:nowrap}
-.dl-brand:hover .dl-brand-txt b{color:#fff}
-.dl-nav{display:flex;align-items:center;gap:2px;margin-left:auto}
-.dl-nav>a,.dl-dd-btn{display:inline-flex;align-items:center;gap:6px;color:#cfdcf0;text-decoration:none;font:600 13.5px 'Hind Siliguri',system-ui,sans-serif;padding:7px 13px;border-radius:999px;white-space:nowrap;background:transparent;border:0;cursor:pointer;transition:background .2s,color .2s}
-.dl-nav>a:hover,.dl-dd-btn:hover,.dl-dd.open .dl-dd-btn{background:rgba(255,255,255,.1);color:#f6dfa8}
-.dl-nav [aria-current=page],.dl-nav [aria-current=page]:hover{background:var(--brand-grad);color:#0B1F3A}
-.dl-dd-btn svg{transition:transform .25s}
-.dl-dd.open .dl-dd-btn svg{transform:rotate(180deg)}
-.dl-nav a:focus-visible,.dl-dd-btn:focus-visible,.dl-icon-btn:focus-visible,.dl-menu a:focus-visible,.dl-lang button:focus-visible,.dl-brand:focus-visible,.dl-foot a:focus-visible{outline:2px solid #f6dfa8;outline-offset:2px}
-.dl-dd{position:relative}
-.dl-dd::after{content:'';position:absolute;left:0;right:0;top:100%;height:12px}
-.dl-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:5;width:min(92vw,420px);max-height:calc(100vh - 90px);overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:8px;border-radius:16px;background:#0d2142;border:1px solid rgba(212,175,55,.3);box-shadow:0 24px 50px rgba(3,10,24,.55);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px);transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1),visibility .2s}
-.dl-dd:hover:not(.dl-closed) .dl-menu,.dl-dd.open .dl-menu{opacity:1;visibility:visible;pointer-events:auto;transform:none}
-.dl-menu a{display:flex;flex-direction:column;justify-content:center;min-width:0;color:#e6eefb;text-decoration:none;padding:9px 12px;border-radius:12px;font:600 13.5px/1.35 'Hind Siliguri',system-ui,sans-serif;transition:background .2s,color .2s}
-.dl-menu a:hover{background:rgba(255,255,255,.08);color:#f6dfa8}
-.dl-menu a b{font-weight:600}
-.dl-actions{display:flex;align-items:center;gap:8px;flex:none}
-.dl-icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#f6dfa8;display:grid;place-items:center;padding:0;cursor:pointer;transition:background .2s,transform .15s}
-.dl-icon-btn:hover{background:rgba(255,255,255,.16)}
-.dl-icon-btn:active{transform:scale(.94)}
-.dl-burger{display:none}
-.dl-lang{display:inline-flex;gap:2px;padding:3px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
-.dl-lang button{border:0;background:transparent;color:#c4d3e8;padding:5px 11px;border-radius:9px;font:700 13px 'Hind Siliguri',system-ui,sans-serif;min-width:40px;cursor:pointer;transition:background .2s,color .2s}
-.dl-lang button:hover{color:#fff}
-.dl-lang button[aria-pressed=true]{background:var(--brand-grad);color:#0B1F3A}
-@media(max-width:860px){
-  .dl-burger{display:grid}
-  .dl-actions{margin-left:auto}
-  .dl-nav{display:none;position:absolute;left:0;right:0;top:100%;margin:0;flex-direction:column;align-items:stretch;gap:2px;padding:10px 14px 16px;background:#0B1F3A;border-bottom:1px solid rgba(212,175,55,.28);box-shadow:0 18px 30px rgba(3,10,24,.45);max-height:calc(100vh - 64px);max-height:calc(100dvh - 64px);overflow-y:auto}
-  .dl-nav.is-open{display:flex}
-  .dl-nav>a,.dl-dd-btn{padding:11px 14px;border-radius:12px;font-size:15px}
-  .dl-dd{width:100%}
-  .dl-dd::after{display:none}
-  .dl-dd-btn{width:100%;justify-content:space-between}
-  .dl-menu{position:static;display:none;width:100%!important;max-height:none;margin:2px 0 6px;opacity:1;visibility:visible;pointer-events:auto;transform:none;box-shadow:none;background:rgba(255,255,255,.05)}
-  .dl-dd.open .dl-menu{display:grid}
-}
-@media(max-width:640px){
-  #hdr{min-height:60px}
-  .dl-bar{height:60px}
-  .dl-brand-txt small{display:none}
-  .dl-lang button{padding:5px 9px;min-width:34px}
-  .dl-nav{max-height:calc(100vh - 60px);max-height:calc(100dvh - 60px)}
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ফুটার */
-.dl-foot{margin-top:28px;background:linear-gradient(120deg,#06142a,#0B1F3A);border-top:1px solid rgba(212,175,55,.28);color:#9fb3d1;font:400 13.5px/1.7 'Hind Siliguri',system-ui,sans-serif}
-.dl-foot-in{max-width:1180px;margin:0 auto;padding:34px 16px 24px;display:grid;grid-template-columns:1.7fr 1fr 1fr;gap:28px}
-.dl-foot-brand{display:flex;gap:14px;align-items:flex-start}
-.dl-foot-brand img{width:52px;height:52px;border-radius:14px;object-fit:contain;flex:none}
-.dl-foot-brand b{display:block;font:800 20px/1.2 'Cinzel',Georgia,serif;letter-spacing:.04em;color:#f6dfa8}
-.dl-foot-brand p{margin:6px 0 12px;max-width:430px;color:#b7c6de}
-.dl-badges{display:flex;flex-wrap:wrap;gap:8px}
-.dl-badges>span{font-size:12px;font-weight:600;color:#f6dfa8;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);padding:3px 10px;border-radius:999px}
-.dl-foot h4{margin:2px 0 10px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f6dfa8}
-.dl-foot-in>div>a{display:block;color:#cfdcf0;text-decoration:none;font-weight:600;padding:4px 0;transition:color .2s,transform .2s}
-.dl-foot-in>div>a:hover{color:#f6dfa8;transform:translateX(3px)}
-.dl-foot-bar{max-width:1180px;margin:0 auto;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));border-top:1px solid rgba(255,255,255,.1);display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;font-size:12.5px}
-.dl-dev-link{color:#f6dfa8;font-weight:700;text-decoration:none}
-.dl-dev-link:hover{text-decoration:underline}
-.dl-disc{color:#8fa3c2}
-@media(max-width:820px){.dl-foot-in{grid-template-columns:1fr 1fr}.dl-foot-brand{grid-column:1/-1}}
-@media(max-width:420px){.dl-foot-in{grid-template-columns:1fr}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* হেডারের উচ্চতা অনুযায়ী টুলবার */
 .ev-bar{top:64px}
@@ -617,8 +600,8 @@ html[data-theme=dark] .ev-cm-one .t-cap{background:rgba(217,119,6,.18);color:#FC
   /* টুলবার আর স্ক্রিনে আটকে থাকবে না — কনটেন্টের সাথে স্ক্রল হবে */
   .ev-bar{position:static;top:auto;margin:14px 0 0;padding:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;scroll-margin-top:72px}
   /* হেডার নিচে স্ক্রলে সরে যাবে, উপরে স্ক্রলে ফিরে আসবে */
-  #hdr{will-change:transform}
-  #hdr.dl-hide{transform:translateY(-102%);box-shadow:none}
+  
+  
   /* ফিল্টারে ফেরার ভাসমান বাটন */
   .ev-jump{position:fixed;left:14px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:58;display:inline-flex;align-items:center;gap:8px;
     height:44px;padding:0 16px 0 14px;border-radius:999px;border:1px solid rgba(212,175,55,.55);
@@ -702,31 +685,26 @@ svg.i.brand path,.goog-ico svg.i path{stroke:none!important}
 @media (prefers-reduced-motion:reduce){.ev-fs,.ev-fs-bd{transition:none!important}}
 
 /* ===== শেয়ার্ড হেডার: সাইটের আসল সাদা লুক (সব পেজে এক রকম) — পুরনো গাঢ় কপি ওভাররাইড ===== */
-#hdr{background:#ffffff;border-bottom:2px solid #d4af37;position:sticky;top:0;z-index:50}
-.dl-bar{background:#ffffff;height:70px;max-width:1240px;margin:0 auto;padding:0 20px;box-shadow:0 8px 24px -18px rgba(11,31,58,.35)}
-.dl-brand-txt b{color:#0B1F3A;font:800 20px/1 'Cinzel',Georgia,serif;letter-spacing:.06em}
-.dl-brand-txt small{color:#5b6b82;font-size:12px}
-.dl-brand:hover .dl-brand-txt b{color:#0B1F3A;opacity:.8}
-.dl-nav>a,.dl-dd-btn{color:#14213d;font:600 15px 'Hind Siliguri',system-ui,sans-serif;padding:8px 14px;background:transparent}
-.dl-nav>a:hover,.dl-dd-btn:hover,.dl-dd.open .dl-dd-btn{background:rgba(11,31,58,.06);color:#0B1F3A}
-.dl-nav [aria-current=page],.dl-nav [aria-current=page]:hover{background:linear-gradient(135deg,rgba(212,175,55,.22),rgba(212,175,55,.06));color:#0B1F3A;box-shadow:inset 0 0 0 1px rgba(184,138,62,.55)}
-.dl-nav [aria-current=page]::before{content:"";width:6px;height:6px;border-radius:50%;background:#d4af37;flex:none}
-.dl-menu{background:#ffffff;border:1px solid #e5e7eb;box-shadow:0 24px 50px -20px rgba(11,31,58,.35)}
-.dl-menu a{color:#14213d}
-.dl-menu a:hover{background:#f4f6fa;color:#0B1F3A}
-.dl-icon-btn{background:#ffffff;border:1px solid #e5e7eb;color:#0B1F3A;width:42px;height:42px;border-radius:50%}
-.dl-icon-btn:hover{background:#f4f6fa}
-.dl-burger{color:#0B1F3A}
-.dl-lang{background:#f4f6fa;border:1px solid #e5e7eb}
-.dl-lang button{color:#6b7280;font:700 14px 'Hind Siliguri',system-ui,sans-serif;min-width:0;padding:7px 14px;white-space:nowrap}
-.dl-lang button:hover{color:#0B1F3A}
-.dl-lang button[aria-pressed=true]{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#0B1F3A;box-shadow:0 2px 8px -2px rgba(184,138,62,.6)}
-@media(max-width:900px){
- .dl-nav{background:#ffffff;border-bottom:2px solid #d4af37;box-shadow:0 18px 30px -18px rgba(11,31,58,.4)}
- .dl-nav>a,.dl-dd-btn{color:#14213d}
- .dl-menu{background:#f8fafc;border:0;box-shadow:none}
- .dl-lang button{padding:6px 11px;font-size:13px}
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -734,12 +712,19 @@ svg.i.brand path,.goog-ico svg.i path{stroke:none!important}
 <script>
 /* ভাষা ও থিম পেইন্টের আগেই বসানো হয় (ফ্ল্যাশ এড়াতে) */
 (function(){var d=document.documentElement,L='bn',T=null;
-try{L=localStorage.getItem('dcu_lang')||'bn';T=localStorage.getItem('site-theme')||localStorage.getItem('dcu_theme')}catch(e){}
+try{L=localStorage.getItem('dcu-lang')||'bn';T=localStorage.getItem('site-theme')||localStorage.getItem('dcu_theme')}catch(e){}
 if(L!=='en')L='bn';
 if(T!=='dark'&&T!=='light')T=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
 d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 </script>
 <!-- STANDALONE:END head -->
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<style>
+/* হেডার/ফুটার: সাইটের বাকি পেজের (site.css) লাইন-হাইট মান — যাতে সব পেজে একই উচ্চতা ও ঘনত্ব থাকে */
+#hdr,#ftr{line-height:1.7;font-family:'Hind Siliguri',system-ui,sans-serif}
+#ftr .dl-foot h4{line-height:1.25}
+</style>
 </head>
 <body data-page="events">
 <!-- STANDALONE:START header -->
@@ -1005,10 +990,8 @@ var TITLE='ক্যাম্পাস ইভেন্ট — DCUCore|Campus Eve
 function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 
 function syncLangUi(){
-  var bn=$('#saBn'),en=$('#saEn'),g=$('.dl-lang');
-  if(bn)bn.setAttribute('aria-pressed',String(!isEn()));
-  if(en)en.setAttribute('aria-pressed',String(isEn()));
-  if(g)g.setAttribute('aria-label',window.$L('ভাষা|Language'));
+  var cur=isEn()?'en':'bn';
+  Array.prototype.forEach.call(document.querySelectorAll('.dl-lang-opt'),function(o){o.classList.toggle('on',o.getAttribute('data-l')===cur)});
 }
 function applyStatic(){
   Array.prototype.forEach.call(document.querySelectorAll('.t'),function(el){
@@ -1021,7 +1004,7 @@ function applyStatic(){
   syncLangUi();
 }
 function setLang(l,silent){
-  root.setAttribute('data-lang',l);root.lang=l;store('dcu_lang',l);
+  root.setAttribute('data-lang',l);root.lang=l;store('dcu-lang',l);
   applyStatic();
   if(!silent&&typeof window.onLang==='function')window.onLang();
 }
@@ -1030,11 +1013,11 @@ function setLang(l,silent){
 function mountHeaderExtras(){
   var act=$('#hdr .dl-actions');if(!act)return;
   if(!act.querySelector('.dl-lang')){
-    var g=document.createElement('div');g.className='dl-lang';g.setAttribute('role','group');
-    g.innerHTML='<button type="button" id="saBn" lang="bn">বাংলা</button><button type="button" id="saEn" lang="en">English</button>';
-    act.insertBefore(g,act.firstChild);
-    $('#saBn').addEventListener('click',function(){if(isEn())setLang('bn')});
-    $('#saEn').addEventListener('click',function(){if(!isEn())setLang('en')});
+    var btn=document.createElement('button');btn.type='button';btn.className='dl-lang';
+    btn.setAttribute('aria-label','ভাষা পরিবর্তন / Change language');
+    btn.innerHTML='<span class="dl-lang-thumb" aria-hidden="true"></span><span class="dl-lang-opt" data-l="bn">বাংলা</span><span class="dl-lang-opt" data-l="en">English</span>';
+    btn.addEventListener('click',function(){setLang(isEn()?'bn':'en')});
+    act.insertBefore(btn,act.firstChild);
   }
   /* লোগো না মিললে ভাঙা আইকন না দেখিয়ে লুকিয়ে ফেলা (ফাইল আলাদা খুললে এমন হয়) */
   Array.prototype.forEach.call(document.querySelectorAll('#hdr .dl-brand img,#ftr .dl-foot-brand img'),function(im){
