@@ -271,6 +271,7 @@ let S = { enabled: true, number: "01784402660", minAmount: 10, lbCount: 10 };
 let lastTrack = null;      // re-render status on language switch
 let lastFormMsg = null;    // { key, cls, target }
 let busy = false;
+let lbRows = null;         // cached leaderboard rows, re-rendered on language switch
 const COOLDOWN_MS = 60 * 1000;
 
 /* ---------- firebase ---------- */
@@ -336,7 +337,13 @@ function hideFormMsg() { $("formErr").hidden = true; lastFormMsg = null; }
 async function loadSettings() {
   try {
     const snap = await getDoc(doc(db, "site_settings", "support"));
-    if (snap.exists()) S = Object.assign({}, S, snap.data());
+    if (snap.exists()) {
+      const d = snap.data() || {};
+      if (typeof d.enabled === "boolean") S.enabled = d.enabled;
+      if (typeof d.number === "string" && d.number.trim()) S.number = d.number.trim();
+      const mn = Number(d.minAmount); if (Number.isFinite(mn) && mn >= 1) S.minAmount = Math.floor(mn);
+      const lc = Number(d.lbCount);   if (Number.isFinite(lc) && lc >= 1) S.lbCount = Math.min(50, Math.floor(lc));
+    }
   } catch (e) {
     console.warn("[support] settings unavailable, using defaults:", e && e.message);
   }
@@ -406,7 +413,8 @@ $("donForm").addEventListener("submit", async (e) => {
   if (!["bkash", "nagad", "rocket"].includes(method)) return showFormMsg("errMethod", "p-err");
   if (!/^[A-Z0-9]{6,30}$/.test(trxId)) return showFormMsg("errTrx", "p-err");
 
-  const last = Number(localStorage.getItem("dcu-support-last") || 0);
+  let last = 0;
+  try { last = Number(localStorage.getItem("dcu-support-last") || 0); } catch (x) {}
   if (Date.now() - last < COOLDOWN_MS) return showFormMsg("errCool", "p-warn");
 
   busy = true;
@@ -436,7 +444,7 @@ $("donForm").addEventListener("submit", async (e) => {
     document.querySelectorAll(".chip").forEach(x => x.classList.remove("on"));
     $("fTrx").blur();
   } catch (err) {
-    console.warn("[support] submit failed:", err && err.code);
+    console.warn("[support] submit failed:", err && err.code, err && err.message);
     const dup = err && err.code === "permission-denied";
     showFormMsg(dup ? "errDup" : "errGeneric", "p-err");
   } finally {
@@ -502,36 +510,49 @@ $("trackForm").addEventListener("submit", async (e) => {
 });
 
 /* ---------- leaderboard (public: only donors the admin has not hidden) ---------- */
+function renderLeaderboard() {
+  const list = $("lbList"), empty = $("lbEmpty");
+  list.textContent = "";
+  if (!lbRows || !lbRows.length) { empty.hidden = false; return; }
+  empty.hidden = true;
+  lbRows.forEach((x, i) => {
+    const rank = i + 1;
+    const cls = rank === 1 ? "g" : rank === 2 ? "s" : rank === 3 ? "b" : "";
+    const li = el("li");
+    li.append(el("span", "rk " + cls, rank.toLocaleString(isEn() ? "en-US" : "bn-BD")));
+    li.append(el("span", "nm", x.anonymous ? tr("anon") : (x.name || tr("anon"))));
+    li.append(el("span", "amt", fmtAmt(x.total)));
+    list.appendChild(li);
+  });
+}
+
 async function loadLeaderboard() {
-  const list = $("lbList");
-  const empty = $("lbEmpty");
-  try {
-    const q = query(
-      collection(db, "support_leaderboard"),
-      where("hidden", "==", false),
-      orderBy("total", "desc"),
-      limit(Number(S.lbCount) || 10)
-    );
-    const snap = await getDocs(q);
-    list.textContent = "";
-    if (snap.empty) { empty.hidden = false; return; }
-    empty.hidden = true;
-    snap.docs.forEach((d, i) => {
-      const x = d.data();
-      const rank = i + 1;
-      const cls = rank === 1 ? "g" : rank === 2 ? "s" : rank === 3 ? "b" : "";
-      const li = el("li");
-      li.append(el("span", "rk " + cls, String(rank)));
-      const name = x.anonymous ? tr("anon") : (x.name || tr("anon"));
-      li.append(el("span", "nm", name));
-      li.append(el("span", "amt", fmtAmt(x.total)));
-      list.appendChild(li);
-    });
-  } catch (err) {
-    console.warn("[support] leaderboard unavailable:", err && err.message);
-    list.textContent = "";
-    empty.hidden = false;
+  const col = collection(db, "support_leaderboard");
+  const n = Math.min(50, Number(S.lbCount) || 10);
+  const visible = d => d.data().hidden !== true && Number(d.data().total) > 0;
+  const attempts = [
+    // 1) ideal query (needs a composite index: hidden + total)
+    async () => (await getDocs(query(col, where("hidden", "==", false), orderBy("total", "desc"), limit(n)))).docs,
+    // 2) no index needed: filter on server, sort here
+    async () => (await getDocs(query(col, where("hidden", "==", false), limit(200)))).docs,
+    // 3) docs without a "hidden" field: sort on server, filter here
+    async () => (await getDocs(query(col, orderBy("total", "desc"), limit(200)))).docs
+  ];
+  let docs = null;
+  for (let i = 0; i < attempts.length && docs === null; i++) {
+    try { docs = await attempts[i](); }
+    catch (err) { console.warn("[support] leaderboard attempt " + (i + 1) + " failed:", err && err.code, err && err.message); }
   }
+  lbRows = (docs || []).filter(visible).map(d => d.data())
+    .sort((a, b) => Number(b.total) - Number(a.total)).slice(0, n);
+  renderLeaderboard();
+}
+
+/* ---------- amount chips: localized digits ---------- */
+function paintChips() {
+  document.querySelectorAll(".chip[data-amt]").forEach(c => {
+    c.textContent = Number(c.dataset.amt).toLocaleString(isEn() ? "en-US" : "bn-BD");
+  });
 }
 
 /* ---------- language switch (dcu-lang.js calls window.onLang) ---------- */
@@ -546,6 +567,8 @@ function applyI18n() {
   });
   document.querySelectorAll("[data-num]").forEach(n => { n.textContent = S.number; });
   document.querySelectorAll("[data-i18n='copy']").forEach(n => { n.textContent = tr("copy"); });
+  paintChips();
+  if (lbRows) renderLeaderboard();
   if (lastTrack) renderTrack(lastTrack.code, lastTrack.data);
   if (lastFormMsg) showFormMsg(lastFormMsg.key, lastFormMsg.cls, lastFormMsg.vars);
   if (!$("trackErr").hidden && $("trackErr").dataset.key) $("trackErr").textContent = tr($("trackErr").dataset.key);
