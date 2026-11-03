@@ -397,7 +397,7 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 <body>
 <div class="wrap">
 <header>
- <div class="logo"><span>☪</span><div><b>DCU Core</b><div style="font-size:.72rem;color:var(--mut);font-weight:400" id="sub"></div></div></div>
+ <a class="logo" href="/" title="DCU Core হোম" aria-label="DCU Core — হোমে যান" style="text-decoration:none;color:inherit"><span>☪</span><div><b>DCU Core</b><div style="font-size:.72rem;color:var(--mut);font-weight:400" id="sub"></div></div></a>
  <div class="bar">
   <button id="pv">◀</button><select id="ys"></select><button id="nx">▶</button>
   <button id="vw"></button><button id="hb"></button><button id="lg">EN</button><button id="dk"></button><button id="pr"></button>
@@ -882,5 +882,6 @@ render();
  h.addEventListener('focusin',()=>h.classList.remove('hide'));
  (mq.addEventListener?mq.addEventListener('change',upd):mq.addListener(upd));upd()})();
 </script>
+<script src="/track.js" defer></script>
 </body>
 </html>
