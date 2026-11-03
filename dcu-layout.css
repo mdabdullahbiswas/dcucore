@@ -6,7 +6,7 @@
 
 /* ---------- tokens ---------- */
 :root {
-  --dcu-font: Inter, "Noto Sans Bengali", system-ui, sans-serif;
+  --dcu-font: "Inter", "Noto Serif Bengali", system-ui, sans-serif;
   --dl-navy: #0B1F3A;
   --dl-navy-2: #17386A;
   --dl-gold: #D4AF37;
