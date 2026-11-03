@@ -309,13 +309,7 @@ body #hdr::after {
   text-decoration: none;
 }
 
-@media (hover: hover) and (min-width: 961px) {
-  .dl-dd:hover .dl-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, 0);
-  }
-}
+/* desktop hover is handled in dcu-layout.js (reliable close) */
 
 /* ---------- action buttons ---------- */
 .dl-actions {
