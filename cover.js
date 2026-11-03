@@ -1960,7 +1960,7 @@ function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 /* ---------- পেজ নম্বর ছাপা ---------- */
 function stamp(cv,label,sh){var W=CPS.W,H=CPS.H,r=cv.width/W,g=cv.getContext('2d'),c=sh.className,st=sh.style,p=(st.getPropertyValue('--p')||'#0b1f3a').trim(),a=(st.getPropertyValue('--a')||'#d4af37').trim(),
  dk=/tpl-prestige/.test(c),bar=/tpl-corporate/.test(c),ex=/tpl-executive/.test(c),cx=(ex?(W+71)/2:W/2)*r,y=(bar?H-23:H-57)*r,lt=dk||bar;
- g.save();g.textAlign='center';g.textBaseline='middle';g.fillStyle=lt?'#fff':p;g.font='600 '+(14*r)+'px Inter,"Noto Sans Bengali",sans-serif';
+ g.save();g.textAlign='center';g.textBaseline='middle';g.fillStyle=lt?'#fff':p;g.font='600 '+(14*r)+'px Inter,"Noto Serif Bengali",sans-serif';
  var tw=g.measureText(label).width,gp=14*r,ln=30*r;g.fillText(label,cx,y);g.strokeStyle=lt?'rgba(255,255,255,.55)':a;g.lineWidth=1.2*r;g.beginPath();
  g.moveTo(cx-tw/2-gp-ln,y);g.lineTo(cx-tw/2-gp,y);g.moveTo(cx+tw/2+gp,y);g.lineTo(cx+tw/2+gp+ln,y);g.stroke();g.restore()}
 
