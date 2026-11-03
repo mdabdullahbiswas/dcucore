@@ -74,7 +74,10 @@ iframe[hidden]{display:none!important}
 <main class="pane" id="panes"></main>
 <script>
 (function () {
-  var PAGES = { blood: "admin.html?embed=1", events: "events-admin.html?embed=1", visitors: "visitors-admin.html?embed=1", support: "support-admin.html?embed=1" };
+  /* ক্লিন URL (.html ছাড়া) — Vercel-এর .html → ক্লিন রিডাইরেক্ট/ক্যাশ এড়াতে */
+  var PAGES = { blood: "/admin?embed=1", events: "/events-admin?embed=1", visitors: "/visitors-admin?embed=1", support: "/support-admin?embed=1" };
+  /* কোন ট্যাবে কোন পেজ লোড হওয়ার কথা — ভুল পেজ এলে ধরা পড়বে */
+  var EXPECT = { blood: /^\/admin(\.html)?\/?$/, events: /^\/events-admin(\.html)?\/?$/, visitors: /^\/visitors-admin(\.html)?\/?$/, support: /^\/support-admin(\.html)?\/?$/ };
   var TITLES = { blood: "ব্লাড ডোনার এডমিন", events: "ইভেন্ট এডমিন", visitors: "ভিজিটর অ্যানালিটিক্স", support: "সহায়তা অ্যাডমিন" };
   var frames = {};
   /* এডমিনের নিজের ভিজিট যাতে সাইটের ভিজিটর গণনায় না আসে */
@@ -113,6 +116,15 @@ iframe[hidden]{display:none!important}
       f.src = PAGES[k];
       f.title = TITLES[k] || k;
       f.addEventListener("load", function () {
+        /* ভুল পেজ লোড হলে একবার ক্যাশ-বাস্টিং দিয়ে আবার চেষ্টা */
+        try {
+          var path = f.contentWindow.location.pathname;
+          if (path !== "about:blank" && !EXPECT[k].test(path) && !f._retried) {
+            f._retried = true;
+            f.src = PAGES[k] + "&r=" + Date.now();
+            return;
+          }
+        } catch (e) {}
         try { f.contentDocument.documentElement.dataset.theme = currentTheme(); } catch (e) {}
       });
       frames[k] = f; document.getElementById("panes").appendChild(f);
