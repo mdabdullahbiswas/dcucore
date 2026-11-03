@@ -767,7 +767,7 @@ body.dark .to-top:hover,
   margin: 14px auto 6px;
   padding: 0 20px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -780,13 +780,13 @@ body.dark .to-top:hover,
   flex: none;
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 36px;
+  padding: 7px 11px;
   border: 1.5px solid transparent;
   border-radius: 22px;
   background: #FFF6DC;
   color: #8A6414;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
