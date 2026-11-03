@@ -572,6 +572,10 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
  .ph .tl-m{background:#ffffff}
  .ph .tl-x{background:#f4f6fa!important;color:#0B1F3A!important}
 }
+
+/* ===== ভাষা বাটন: অন্য পেজের মতো পূর্ণ লেখা (বাংলা / English) ===== */
+.dl-lang button{min-width:0;padding:7px 14px;font:700 14px 'Hind Siliguri',system-ui,sans-serif;white-space:nowrap}
+@media(max-width:900px){.dl-lang button{padding:6px 11px;font-size:13px}}
 </style>
 </head>
 <body>
@@ -1129,7 +1133,7 @@ function mountExtras(){
   var act=document.querySelector('#hdr .dl-actions');
   if(act&&!act.querySelector('.dl-lang')){
     var g=document.createElement('div');g.className='dl-lang';g.setAttribute('role','group');g.setAttribute('aria-label','Language');
-    g.innerHTML='<button type="button" id="hlBn" lang="bn">বাং</button><button type="button" id="hlEn" lang="en">EN</button>';
+    g.innerHTML='<button type="button" id="hlBn" lang="bn">বাংলা</button><button type="button" id="hlEn" lang="en">English</button>';
     act.insertBefore(g,act.firstChild);
     document.getElementById('hlBn').addEventListener('click',function(){if(L!='bn'){L='bn';localStorage.cl=L;document.documentElement.lang=L;render()}});
     document.getElementById('hlEn').addEventListener('click',function(){if(L!='en'){L='en';localStorage.cl=L;document.documentElement.lang=L;render()}})
