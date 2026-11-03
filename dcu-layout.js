@@ -357,3 +357,16 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     mount();
   }
 })();
+
+/* ---------- visitor tracker ----------
+ * dcu-layout.js প্রতিটি পাবলিক পেজে লোড হয়, তাই ভিজিট ট্র্যাকার এখান থেকেই চালু হয়।
+ * (এডমিন পেজ, বট ও এডমিনের নিজের ভিজিট track.js নিজেই বাদ দেয়।) */
+(function () {
+  "use strict";
+  if (window.__dcuTrack || document.getElementById("dcuTrackJs")) return;
+  var s = document.createElement("script");
+  s.id = "dcuTrackJs";
+  s.src = "/track.js";
+  s.async = true;
+  (document.head || document.documentElement).appendChild(s);
+})();
