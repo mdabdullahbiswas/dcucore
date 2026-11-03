@@ -565,6 +565,28 @@ html[data-theme=dark] .ev-flt small{color:#F3D78A}
 html[data-theme=dark] .ev-cm-one .t-share{background:rgba(37,99,235,.18);color:#93C5FD;border-color:rgba(147,197,253,.3)}
 html[data-theme=dark] .ev-cm-one .t-img{background:rgba(124,58,237,.2);color:#C4B5FD;border-color:rgba(196,181,253,.3)}
 html[data-theme=dark] .ev-cm-one .t-cap{background:rgba(217,119,6,.18);color:#FCD34D;border-color:rgba(252,211,77,.3)}
+
+/* ---------------- মোবাইল: টুলবার জায়গা খাবে না (প্রিমিয়াম স্মার্ট লেআউট) ---------------- */
+@media (max-width:640px){
+  /* টুলবার আর স্ক্রিনে আটকে থাকবে না — কনটেন্টের সাথে স্ক্রল হবে */
+  .ev-bar{position:static;top:auto;margin:14px 0 0;padding:0;background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;scroll-margin-top:72px}
+  /* হেডার নিচে স্ক্রলে সরে যাবে, উপরে স্ক্রলে ফিরে আসবে */
+  .sa-hdr{transition:transform .32s cubic-bezier(.22,.8,.24,1),box-shadow .3s;will-change:transform}
+  .sa-hdr.sa-hide{transform:translateY(-102%);box-shadow:none}
+  /* ফিল্টারে ফেরার ভাসমান বাটন */
+  .ev-jump{position:fixed;left:14px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:58;display:inline-flex;align-items:center;gap:8px;
+    height:44px;padding:0 16px 0 14px;border-radius:999px;border:1px solid rgba(212,175,55,.55);
+    background:linear-gradient(135deg,#0B1F3A,#12305c);color:var(--gold-light,#f6dfa8);font:inherit;font-size:14px;font-weight:700;
+    box-shadow:0 12px 28px rgba(3,10,24,.38),inset 0 1px 0 rgba(255,255,255,.08);
+    opacity:0;transform:translateY(16px) scale(.96);pointer-events:none;transition:opacity .25s,transform .3s cubic-bezier(.22,.8,.24,1);-webkit-tap-highlight-color:transparent}
+  .ev-jump.on{opacity:1;transform:none;pointer-events:auto}
+  .ev-jump:active{transform:scale(.96)}
+  .ev-jump svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ev-jump .dot{width:8px;height:8px;border-radius:50%;background:#d4af37;box-shadow:0 0 0 3px rgba(212,175,55,.25);display:none}
+  .ev-jump.has .dot{display:block}
+}
+@media (min-width:641px){.ev-jump{display:none}}
+@media (prefers-reduced-motion:reduce){.sa-hdr,.ev-jump{transition:none}}
 </style>
 <!-- STANDALONE:END css -->
 <!-- STANDALONE:START head -->
@@ -637,6 +659,8 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
     </div>
     <div class="ev-note" id="note"></div>
   </div>
+
+  <button type="button" class="ev-jump" id="evJump" aria-label="Filters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span class="t">ফিল্টার ও সার্চ|Filter &amp; search</span><i class="dot"></i></button>
 
   <div id="demoBox"></div>
   <div id="view"></div>
@@ -2245,6 +2269,36 @@ window.onLang=function(){renderAll();previewRender();if(curId&&$('#dDetail').ope
   setInterval(tick,1000);
   setInterval(function(){S.now=Date.now();renderStats();renderView()},60000);
 })();
+})();
+</script>
+<script>
+/* মোবাইল স্মার্ট হেডার + ফিল্টার বাটন */
+(function(){
+  var hdr=document.querySelector('.sa-hdr'),bar=document.getElementById('bar'),jump=document.getElementById('evJump');
+  if(!hdr||!bar||!jump)return;
+  var mq=window.matchMedia('(max-width:640px)'),last=window.scrollY,tick=false;
+  function update(){
+    tick=false;
+    var y=window.scrollY;
+    if(!mq.matches){hdr.classList.remove('sa-hide');jump.classList.remove('on');last=y;return}
+    var d=y-last;
+    if(y<80||d<-6)hdr.classList.remove('sa-hide');
+    else if(d>6)hdr.classList.add('sa-hide');
+    if(Math.abs(d)>6)last=y;
+    var past=bar.getBoundingClientRect().bottom<0;
+    jump.classList.toggle('on',past&&d<=6);
+    var q=document.getElementById('q');
+    jump.classList.toggle('has',!!(q&&q.value)||!!document.querySelector('.ev-pill'));
+  }
+  window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(update)}},{passive:true});
+  window.addEventListener('resize',update);
+  jump.addEventListener('click',function(){
+    hdr.classList.remove('sa-hide');
+    var y=bar.getBoundingClientRect().top+window.scrollY-72;
+    window.scrollTo({top:Math.max(0,y),behavior:'smooth'});
+  });
+  /* সার্চ বক্সে ট্যাপ করলে হেডার লুকিয়ে থাকবে না */
+  document.addEventListener('focusin',function(e){if(hdr.contains(e.target))hdr.classList.remove('sa-hide')});
 })();
 </script>
 </body>
