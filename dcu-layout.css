@@ -47,6 +47,15 @@ body #hdr {
   border-bottom: 1px solid var(--dl-line);
   box-shadow: 0 12px 30px -24px rgba(15, 23, 42, 0.45);
   animation: none;
+  overflow: visible;
+  /* prevent header from contributing to horizontal scroll */
+  max-width: 100vw;
+}
+
+/* Global horizontal overflow lock */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body #hdr::after {
@@ -70,6 +79,8 @@ body #hdr::after {
   gap: 18px;
   position: relative;
   font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 /* ---------- brand ---------- */
@@ -370,9 +381,10 @@ body #hdr::after {
   .dl-nav {
     position: absolute;
     top: 100%;
-    left: 12px;
-    right: 12px;
-    margin: 0;
+    left: 0;
+    right: 0;
+    margin: 0 12px;
+    box-sizing: border-box;
     padding: 0 8px;
     flex-direction: column;
     align-items: stretch;
