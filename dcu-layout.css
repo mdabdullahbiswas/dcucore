@@ -744,71 +744,68 @@ body #ftr {
 }
 
 @media (max-width: 480px) {
-  .dl-foot-in {
-    grid-template-columns: 1fr 1fr;
-    gap: 24px 16px;
-    padding: 28px 16px 20px;
+  .dl-foot {
+    margin-top: 32px;
   }
 
-  /* brand takes full width, stacked vertically */
+  .dl-foot-in {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 14px;
+    padding: 20px 16px 14px;
+  }
+
+  /* brand: horizontal row, compact */
   .dl-foot-brand {
     grid-column: 1 / -1;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 10px;
-    text-align: left;
   }
 
   .dl-foot-brand img {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    flex: none;
   }
 
   .dl-foot-brand b {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
 
-  .dl-foot-brand p {
-    font-size: 0.82rem;
-    max-width: 100%;
-  }
-
-  /* badges wrap nicely */
+  /* hide description & badges on mobile — keep it tight */
+  .dl-foot-brand p,
   .dl-badges {
-    gap: 6px;
-    flex-wrap: wrap;
+    display: none;
   }
 
-  .dl-badges .dl-bdg {
-    font-size: 0.72rem;
-    padding: 4px 10px 4px 5px;
+  /* section headings smaller */
+  .dl-foot h4 {
+    font-size: 0.62rem;
+    margin-bottom: 8px;
+    letter-spacing: 0.15em;
   }
 
-  /* two-column link lists stay as-is */
-  .dl-foot-in > div:not(.dl-foot-brand) {
-    min-width: 0;
-  }
-
+  /* links compact */
   .dl-foot-in > div > a,
   .dl-foot-in > div > div > a {
-    font-size: 0.84rem;
-    padding: 5px 0;
+    font-size: 0.8rem;
+    padding: 3px 0;
   }
 
-  /* bottom bar: stack copyright + disclaimer */
+  /* bottom bar: single tight row */
   .dl-foot-bar {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 6px;
-    padding: 12px 16px 20px;
+    gap: 3px;
+    padding: 10px 16px 16px;
+    font-size: 0.72rem;
   }
 
-  .dl-copy,
   .dl-disc {
-    display: block;
-    width: 100%;
-    text-align: center;
+    font-size: 0.68rem;
+    opacity: 0.7;
   }
 }
 
