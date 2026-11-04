@@ -357,7 +357,14 @@ body #hdr::after {
   }
 
   .dl-bar {
-    gap: 12px;
+    gap: 8px;
+    padding: 8px 14px;
+    min-height: 58px;
+  }
+
+  /* brand: hide subtitle on mobile to save space */
+  .dl-brand-txt small {
+    display: none;
   }
 
   .dl-nav {
@@ -461,8 +468,27 @@ body #hdr::after {
 }
 
 @media (max-width: 480px) {
-  .dl-brand-txt small {
-    display: none;
+  .dl-bar {
+    gap: 6px;
+    padding: 7px 12px;
+  }
+
+  .dl-actions {
+    gap: 5px;
+  }
+
+  .dl-icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dl-brand img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .dl-brand-txt b {
+    font-size: 1rem;
   }
 }
 
