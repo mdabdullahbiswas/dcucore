@@ -981,7 +981,7 @@ var saved=null;
 try{saved=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 var init=Object.assign({},DEF,saved||{});
 set(init);
-try{var lg=localStorage.getItem(LKEY);if(lg)setLogo(lg);else setLogo('./logo.png')}catch(e){setLogo('./logo.png')}
+try{var lg=localStorage.getItem(LKEY);if(lg)setLogo(lg);else setLogo('./logo.webp')}catch(e){setLogo('./logo.webp')}
 var rT=0,rLite=document.documentElement.classList.contains('lite')||(window.matchMedia&&matchMedia('(pointer:coarse)').matches);
 function renderSoon(){clearTimeout(rT);rT=setTimeout(function(){rT=0;requestAnimationFrame(render)},rLite?110:45)}
 function renderNow(){if(rT){clearTimeout(rT);rT=0}render()}
@@ -1035,7 +1035,7 @@ var r=new FileReader();
 r.onload=function(){setLogo(r.result);try{localStorage.setItem(LKEY,r.result)}catch(x){paint('logoFile',M('tip','Logo is applied now but could not be saved for next time','লোগো এখন কাজ করছে, কিন্তু পরের বার সেভ থাকবে না'))}};
 r.readAsDataURL(f);
 });
-$('logoReset').addEventListener('click',function(){paint('logoFile',null);try{localStorage.removeItem(LKEY)}catch(e){}$('logoFile').value='';setLogo('./logo.png')});
+$('logoReset').addEventListener('click',function(){paint('logoFile',null);try{localStorage.removeItem(LKEY)}catch(e){}$('logoFile').value='';setLogo('./logo.webp')});
 var modal=$('modal'),lastFocus=null,cb={};
 var ICO={trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3"/></svg>',
 warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18.2v.1"/></svg>'};
@@ -1054,7 +1054,7 @@ function doReset(){
 try{localStorage.removeItem(KEY);localStorage.removeItem(LKEY)}catch(e){}
 var blank={};FIELDS.forEach(function(k){blank[k]=DEF[k]});
 touched={};submitted=false;paint('logoFile',null);
-$('logoFile').value='';set(blank);setLogo('./logo.png');render();
+$('logoFile').value='';set(blank);setLogo('./logo.webp');render();
 toast('All information cleared · সব তথ্য মুছে ফেলা হয়েছে');
 }
 var tt=null;
