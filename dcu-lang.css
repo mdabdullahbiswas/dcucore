@@ -74,8 +74,8 @@
 /* mobile: tiny pill with short labels (বাং | EN) */
 @media (max-width: 960px) {
   .dl-lang {
-    width: 66px;
-    height: 28px;
+    width: 60px;
+    height: 30px;
     padding: 2px;
   }
 
@@ -103,6 +103,18 @@
 
   .dl-lang-opt[data-l="en"]::before {
     content: "EN";
+  }
+}
+
+/* small phones: even more compact */
+@media (max-width: 400px) {
+  .dl-lang {
+    width: 54px;
+    height: 28px;
+  }
+
+  .dl-lang-opt::before {
+    font-size: 0.62rem;
   }
 }
 
