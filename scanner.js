@@ -133,8 +133,61 @@
   const o=n%2?cv(c.height,c.width):cv(c.width,c.height),x=o.getContext('2d');
   x.translate(o.width/2,o.height/2);x.rotate(n*Math.PI/2);x.drawImage(c,-c.width/2,-c.height/2);return o;
  }
+
+ /* ---------- অটো সোজা: কাত লেখা (deskew) ও বাঁকা/ঢেউ খেলানো লাইন (dewarp) ---------- */
+ function inkMap(c){ /* ছোট করে "কালি"-র মানচিত্র: স্থানীয় গড়ের চেয়ে গাঢ় পিক্সেল */
+  const s=Math.min(1,720/Math.max(c.width,c.height)),w=Math.max(16,Math.round(c.width*s)),h=Math.max(16,Math.round(c.height*s));
+  const sm=cv(w,h),x=sm.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(c,0,0,w,h);
+  const d=x.getImageData(0,0,w,h).data,g=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++)g[i]=d[i*4]*.299+d[i*4+1]*.587+d[i*4+2]*.114;
+  const m=Float32Array.from(g);boxBlur(m,w,h,Math.max(6,Math.round(w/50)));
+  const ink=new Float32Array(w*h);let tot=0;
+  for(let i=0;i<w*h;i++){const v=m[i]-g[i];if(v>12){ink[i]=v;tot+=v}}
+  return{ink,w,h,s,tot};
+ }
+ function skewAngle(c){
+  const{ink,w,h,tot}=inkMap(c);if(tot<w*h*0.4)return 0;
+  const pts=[];for(let y=0;y<h;y++)for(let x=0;x<w;x++){const v=ink[y*w+x];if(v>0)pts.push(x-w/2,y-h/2,v)}
+  const rows=Math.ceil(Math.hypot(w,h))+2,sc=a=>{const sn=Math.sin(a),cs=Math.cos(a),b=new Float64Array(rows),o=rows/2;
+   for(let i=0;i<pts.length;i+=3){const r=Math.round(pts[i+1]*cs-pts[i]*sn+o);if(r>=0&&r<rows)b[r]+=pts[i+2]}
+   let mean=0;for(let i=0;i<rows;i++)mean+=b[i];mean/=rows;let v=0;for(let i=0;i<rows;i++)v+=(b[i]-mean)*(b[i]-mean);return v};
+  const R=Math.PI/180;let best=0,bs=-1,base=sc(0);
+  for(let a=-10;a<=10.01;a+=.5){const v=sc(a*R);if(v>bs){bs=v;best=a}}
+  for(let a=best-.5;a<=best+.51;a+=.1){const v=sc(a*R);if(v>bs){bs=v;best=a}}
+  if(bs<base*1.03||Math.abs(best)<.15)return 0; /* স্পষ্ট উন্নতি না হলে ছুঁই না */
+  return best*R;
+ }
+ function deskew(c){
+  const a=skewAngle(c);if(!a)return c;
+  const o=cv(c.width,c.height),x=o.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,o.width,o.height);
+  x.imageSmoothingQuality='high';x.translate(o.width/2,o.height/2);x.rotate(-a);x.drawImage(c,-c.width/2,-c.height/2);return o;
+ }
+ function dewarp(c){
+  const{ink,w,h,s,tot}=inkMap(c);if(tot<w*h*0.4)return c;
+  const N=36,sw=w/N,M=Math.max(2,Math.round(h/150)),prof=[],has=[];
+  for(let i=0;i<N;i++){const p=new Float32Array(h),x0=Math.floor(i*sw),x1=Math.floor((i+1)*sw);let t=0;
+   for(let y=0;y<h;y++){let a=0;for(let x=x0;x<x1;x++)a+=ink[y*w+x];p[y]=a;t+=a}
+   boxBlur(p,h,1,1);prof.push(p);has.push(t>h*(x1-x0)*0.6)}
+  if(has.filter(Boolean).length<N*.6)return c;
+  const d=new Float32Array(N);let last=-1;
+  for(let i=0;i<N;i++){
+   if(!has[i]){d[i]=last<0?0:d[last];continue}
+   let sh=0;if(last>=0){let bs=-1;for(let k=-M;k<=M;k++){let v=0;for(let y=Math.max(0,k);y<Math.min(h,h+k);y++)v+=prof[i][y]*prof[last][y-k];if(v>bs){bs=v;sh=k}}}
+   d[i]=(last>=0?d[last]:0)+sh;last=i}
+  /* কাত ও বাঁকা — দুটোই এখানে সমান করা হয় (deskew-র ভুল অনুমানও শুধরে যায়) */
+  for(let r=0;r<2;r++){const t=Float32Array.from(d);for(let i=1;i<N-1;i++)d[i]=(t[i-1]+2*t[i]+t[i+1])/4}
+  let mx=0;for(let i=0;i<N;i++)mx=Math.max(mx,Math.abs(d[i]));
+  if(mx<1.2)return c; /* প্রায় সোজা — কিছু করার নেই */
+  const k=1/s,W=c.width,H=c.height,cap=H*.08,src=c.getContext('2d').getImageData(0,0,W,H).data,o=cv(W,H),ox=o.getContext('2d'),od=ox.createImageData(W,H),q=od.data;
+  for(let x=0;x<W;x++){
+   const f=clamp(x/W*N-.5,0,N-1),i0=Math.floor(f),i1=Math.min(N-1,i0+1),t=f-i0,D=clamp((d[i0]*(1-t)+d[i1]*t)*k,-cap,cap);
+   for(let y=0;y<H;y++){const Y=y+D,y0=Math.floor(Y),fy=Y-y0,o4=(y*W+x)*4;
+    if(y0<0||y0>=H-1){q[o4]=q[o4+1]=q[o4+2]=255;q[o4+3]=255;continue}
+    const a=(y0*W+x)*4,b=a+W*4;for(let ch=0;ch<3;ch++)q[o4+ch]=src[a+ch]*(1-fy)+src[b+ch]*fy;q[o4+3]=255}}
+  ox.putImageData(od,0,0);return o;
+ }
  function render(p){
-  const w=warp(p.src,p.q);p.out=rotate(filter(w,p.f),p.rot);
+  let w=warp(p.src,p.q);if(p.ds)w=deskew(w);if(p.dw)w=dewarp(w);p.out=rotate(filter(w,p.f),p.rot);
  }
 
  /* ---------- UI ---------- */
@@ -167,6 +220,7 @@
   el('sce').hidden=!has;el('scem').style.display=has?'none':'';
   ['scpdf','scjpg','scshr'].forEach(i=>el(i).disabled=!has);
   $$('#scan [data-f]').forEach(b=>b.classList.toggle('on',has&&P[cur]&&b.dataset.f==P[cur].f));
+  if(has&&P[cur]){el('scds').classList.toggle('on',P[cur].ds);el('scdw').classList.toggle('on',P[cur].dw)}
  }
  function select(i){
   cur=clamp(i,0,P.length-1);if(!P.length){cur=-1;refreshUI();thumbs();return}
@@ -185,7 +239,7 @@
   for(let i=0;i<files.length;i++){
    msg(L('ছবি লোড হচ্ছে|Loading image')+' '+(i+1)+'/'+files.length+'...');
    try{const src=await loadImg(files[i]);await new Promise(r=>setTimeout(r,0));
-    const p={src,q:detect(src),f:'magic',rot:0,out:null};P.push(p);cur=P.length-1;refreshUI();drawEditor();render(p);showOut();thumbs()}
+    const p={src,q:detect(src),f:'magic',rot:0,ds:true,dw:true,out:null};P.push(p);cur=P.length-1;refreshUI();drawEditor();render(p);showOut();thumbs()}
    catch(e){msg(L('এই ছবি খোলা যায়নি (HEIC হলে JPG/PNG করে নিন)।|Could not open this image (convert HEIC to JPG/PNG).'));return}
   }
   msg('');select(cur);
@@ -209,6 +263,8 @@
  el('scfull').onclick=()=>{const p=P[cur];if(!p)return;const W=p.src.width,H=p.src.height;p.q=[[0,0],[W,0],[W,H],[0,H]];p.out=null;drawEditor();recalc()};
  el('scrl').onclick=()=>{const p=P[cur];if(!p)return;p.rot--;p.out=null;recalc()};
  el('scrr').onclick=()=>{const p=P[cur];if(!p)return;p.rot++;p.out=null;recalc()};
+ el('scds').onclick=()=>{const p=P[cur];if(!p)return;p.ds=!p.ds;p.out=null;refreshUI();recalc()};
+ el('scdw').onclick=()=>{const p=P[cur];if(!p)return;p.dw=!p.dw;p.out=null;refreshUI();recalc()};
  $$('#scan [data-f]').forEach(b=>b.onclick=()=>{const p=P[cur];if(!p)return;p.f=b.dataset.f;p.out=null;refreshUI();recalc()});
  el('scl').onclick=()=>{if(cur>0){[P[cur-1],P[cur]]=[P[cur],P[cur-1]];select(cur-1)}};
  el('scr').onclick=()=>{if(cur<P.length-1){[P[cur+1],P[cur]]=[P[cur],P[cur+1]];select(cur+1)}};
