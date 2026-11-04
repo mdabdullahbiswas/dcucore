@@ -332,7 +332,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <div><label class="t">বিভাগ / বর্ষ|Department / Year</label><input id="rhd" maxlength="70" data-p="যেমন: অর্থনীতি বিভাগ · অনার্স ৩য় বর্ষ|e.g. Economics · Honours 3rd Year"></div>
 <div><label class="t">রুটিনের শিরোনাম|Routine title</label><input id="rht" maxlength="50" data-p="যেমন: ক্লাস রুটিন: অনার্স ৩য় বর্ষ|e.g. Class Routine: Honours 3rd Year"></div></div>
 <div class="g3"><div><label class="t">প্রস্তুতকারী|Prepared by</label><input id="rhb" maxlength="50" data-p="আপনার নাম|Your name"></div></div>
-<div class="rt-logo"><img id="rlpv" alt="" src="logo.png"><label class="bs t" for="rlogo">লোগো আপলোড|Upload logo</label><input type="file" id="rlogo" accept="image/*" hidden><button type="button" class="bs t" id="rlrm">লোগো সরান|Remove logo</button><span id="rlmsg" class="hint" aria-live="polite"></span></div>
+<div class="rt-logo"><img id="rlpv" alt="" src="logo.webp"><label class="bs t" for="rlogo">লোগো আপলোড|Upload logo</label><input type="file" id="rlogo" accept="image/*" hidden><button type="button" class="bs t" id="rlrm">লোগো সরান|Remove logo</button><span id="rlmsg" class="hint" aria-live="polite"></span></div>
 <button type="button" class="rt-tgrow t" id="rqN" aria-pressed="true"><span class="rt-tgic">❝</span><span class="rt-tglb">নিচের উক্তি দেখান|Show footer quote</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
 <div id="rhqWrap"><label class="t">নিচের উক্তি|Footer quote</label><input id="rhq" maxlength="120" data-p="নিজের পছন্দের একটি লাইন|A line you like"></div>
 <button type="button" class="rt-tgrow t" id="rsN" aria-pressed="true"><span class="rt-tgic">📝</span><span class="rt-tglb">নিচের নোট দেখান|Show footer note</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
@@ -612,7 +612,7 @@ document.addEventListener('click',e=>{if(e.target.closest('#hdr a,#ftr a'))setTi
 addEventListener('load',()=>{scrollTo(0,0);setTimeout(()=>scrollTo(0,0),150)});
 
 /* ===== ১. শেয়ার কার্ড ===== */
-let photo=null,CM={mx:0,my:0},cBl=null,cTk=0;const LG=new Image();LG.onload=()=>card();LG.src='logo.png';
+let photo=null,CM={mx:0,my:0},cBl=null,cTk=0;const LG=new Image();LG.onload=()=>card();LG.src='logo.webp';
 const BG=['গর্বিত শিক্ষার্থী|Proud Student','ক্লাস অব ২০২৬|Class of 2026','নবীন শিক্ষার্থী|New Student','গ্র্যাজুয়েট|Graduate'];
 const TH={navy:{a:'#06162b',b:'#0f3566',fg:'#ffffff',ac:'#e5a83b',ac2:'#f3d08a',pf:'#06162b'},
  ivory:{a:'#fffaf0',b:'#f1e2bd',fg:'#0a2240',ac:'#a8741a',ac2:'#0a2240',pf:'#ffffff'},
@@ -836,9 +836,9 @@ setInterval(exR,60000);
 let RS=ld('dcuRtS',{});
 const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q',rhn:'n'};
 Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.value=RS[RFD[id]];el.addEventListener('input',()=>{RS[RFD[id]]=el.value;sv('dcuRtS',RS);rtP()})});
-const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src=(RS.logo||'logo.png');
+const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src=(RS.logo||'logo.webp');
 const PSW=(btn,on)=>{if(!btn)return;btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on))};
-const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;PSW($('#rdN'),RS.ds===true);const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.png'};
+const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;PSW($('#rdN'),RS.ds===true);const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.webp'};
 syncRS();
 $('#rsN').onclick=()=>{RS.ns=RS.ns===false;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rqN').onclick=()=>{RS.qs=RS.qs===false;sv('dcuRtS',RS);syncRS();rtP()};
