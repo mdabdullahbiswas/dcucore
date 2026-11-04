@@ -89,12 +89,20 @@
   .dl-lang-opt {
     font-size: 0;
     letter-spacing: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .dl-lang-opt::before {
     font-size: 0.68rem;
     font-weight: 700;
     line-height: 1;
+    display: block;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    top: 0;
   }
 
   .dl-lang-opt[data-l="bn"]::before {
