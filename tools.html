@@ -62,6 +62,7 @@ table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{border:1px soli
 .kh{cursor:pointer;display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--ln);font-size:14px}
 </style>
 <link rel="stylesheet" href="calculator.css">
+<link rel="stylesheet" href="scanner.css">
 <link rel="stylesheet" href="premium.css">
 <link rel="stylesheet" href="dcu-layout.css">
 <link rel="stylesheet" href="dcu-lang.css">
@@ -285,7 +286,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <main class="tw">
 <div class="pv np">🔒 <b class="t">আপনার তথ্য শুধু আপনার ডিভাইসে থাকে।|Your data stays only on your device.</b> <span class="t">এখানে দেওয়া সব তথ্য, ছবি ও ফাইল আপনার ব্রাউজারেই প্রসেস ও সংরক্ষিত হয়; কোনো সার্ভারে পাঠানো হয় না, তাই কেউ চাইলেও তা দেখতে পারে না।|Everything you enter, including photos and files, is processed and saved in your browser only. Nothing is sent to a server, so nobody else can see it.</span></div>
 <div class="tabs" role="tablist">
-<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><a class="cvst t" href="/cv">সিভি স্টুডিও|CV Studio</a><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><a class="cvst t" href="/dcu-calendar">স্টুডেন্ট ক্যালেন্ডার|Student Calendar</a><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
+<button data-t="card" class="t">শেয়ার কার্ড|Share Card</button><button data-t="frame" class="t">প্রোফাইল ফ্রেম|Profile Frame</button><a class="cvst t" href="/cv">সিভি স্টুডিও|CV Studio</a><button data-t="routine" class="t">ক্লাস রুটিন|Class Routine</button><button data-t="cgpa" class="t">CGPA ক্যালকুলেটর|CGPA Calculator</button><button data-t="exam" class="t">পরীক্ষা প্ল্যানার|Exam Planner</button><a class="cvst t" href="/dcu-calendar">স্টুডেন্ট ক্যালেন্ডার|Student Calendar</a><button data-t="pdf" class="t">PDF টুলকিট|PDF Toolkit</button><button data-t="scan" class="t">ডকুমেন্ট স্ক্যানার|Doc Scanner</button><button data-t="calc" class="t">সায়েন্টিফিক ক্যালকুলেটর|Scientific Calculator</button><button data-t="result" class="t">রেজাল্ট|Results</button>
 </div>
 
 <!-- ============ শেয়ার কার্ড ============ -->
@@ -441,6 +442,29 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <div class="cvw"><div class="cw"><canvas id="fcv" width="1080" height="1080"></canvas><div class="hit" id="fhit" style="left:10%;top:10%;width:80%;height:80%" title="ছবি টেনে সরান | Drag the photo"></div></div></div></div></section>
 
 
+<!-- ============ ডকুমেন্ট স্ক্যানার ============ -->
+<section id="scan" class="sec-3"><div class="g2">
+<div class="bx"><h2 class="t">ডকুমেন্ট স্ক্যানার|Document Scanner</h2>
+<p class="hint t">কাগজ, বই বা নোটের ছবি তুলুন। কোণ নিজে থেকে খুঁজে সোজা করে স্ক্যানের মতো পরিষ্কার করে দেবে; তারপর PDF বানান। ছবি আপনার ডিভাইসেই প্রসেস হয়।|Snap a paper, book page or note. Corners are found and straightened automatically for a clean scan-like result, then export a PDF. Images are processed on your device.</p>
+<div class="sc-add"><button type="button" class="bt t" id="sccb">📷 ক্যামেরা|📷 Camera</button><button type="button" class="bt t" id="scfb">🖼️ ছবি যোগ করুন|🖼️ Add images</button>
+<input id="scc" type="file" accept="image/*" capture="environment"><input id="scf" type="file" accept="image/*" multiple></div>
+<p class="hint" id="scm" role="status" aria-live="polite"></p>
+<div class="sc-strip" id="scs"></div>
+<div class="sc-empty t" id="scem">এখনো কোনো পেজ নেই। ক্যামেরা বা ছবি যোগ করুন।|No pages yet. Use the camera or add images.</div>
+<div class="sc-ed" id="sce" hidden>
+<div class="sc-wrap"><canvas id="scE"></canvas></div>
+<p class="hint t">হলুদ বিন্দুগুলো টেনে কাগজের চার কোণে বসান।|Drag the yellow dots onto the four corners of the paper.</p>
+<div class="sc-row"><button type="button" class="bs t" id="scauto">✨ অটো কোণ|✨ Auto corners</button><button type="button" class="bs t" id="scfull">পুরো ছবি|Full image</button><button type="button" class="bs" id="scrl" aria-label="Rotate left">⟲</button><button type="button" class="bs" id="scrr" aria-label="Rotate right">⟳</button></div>
+</div></div>
+<div class="bx"><h2 class="t">ফলাফল|Result</h2>
+<div class="sc-row" style="margin-top:0"><button type="button" class="bs t" data-f="magic">ম্যাজিক কালার|Magic Color</button><button type="button" class="bs t" data-f="bw">সাদা-কালো|B&amp;W</button><button type="button" class="bs t" data-f="gray">গ্রেস্কেল|Grayscale</button><button type="button" class="bs t" data-f="orig">অরিজিনাল|Original</button></div>
+<div class="sc-out"><canvas id="scO" width="4" height="4"></canvas></div>
+<div class="sc-row"><button type="button" class="bs t" id="scl">← আগে|← Earlier</button><button type="button" class="bs t" id="scr">পরে →|Later →</button><button type="button" class="bs t" id="scdel">এই পেজ মুছুন|Delete page</button><button type="button" class="bs t" id="scclr">সব মুছুন|Clear all</button></div>
+<label class="t">PDF-এর পাতার মাপ|PDF page size</label><select id="scsz"><option value="a4" class="t">A4</option><option value="fit" class="t">ছবির মাপ অনুযায়ী|Fit to image</option></select>
+<button type="button" class="bt t" id="scpdf" disabled>PDF ডাউনলোড|Download PDF</button><button type="button" class="bt t" id="scshr" disabled>শেয়ার করুন|Share</button><button type="button" class="bt t" id="scjpg" disabled>এই পেজ JPG|This page JPG</button>
+<p class="hint t">সেরা ফলের জন্য: ভালো আলোয়, কাগজের নিচে গাঢ় রঙের টেবিল রেখে ছবি তুলুন।|For best results: good light, with the paper on a darker surface.</p>
+</div></div></section>
+
 <!-- ============ সায়েন্টিফিক ক্যালকুলেটর ============ -->
 <section id="calc" class="sec-8"><div class="g2"><div class="bx wmx">
 <div class="wm" id="wm">
@@ -550,7 +574,7 @@ function dragPan(el,cv,xs,ys,get){let st=null;
  ['pointerup','pointercancel'].forEach(ev=>el.addEventListener(ev,()=>st=null));
 }
 
-const TB=['card','frame','routine','cgpa','exam','pdf','calc','result'];
+const TB=['card','frame','routine','cgpa','exam','pdf','scan','calc','result'];
 /* tab from the clean path /tools/<tab>; old #tab links are turned into that path */
 function curTab(){return location.hash.slice(1)}
 function keepTabVisible(){const bar=document.querySelector('.tabs'),a=bar&&bar.querySelector('.on');if(!a)return;const sr=bar.getBoundingClientRect(),ar=a.getBoundingClientRect();bar.scrollLeft+=(ar.left-sr.left)-(sr.width-ar.width)/2}
@@ -1008,6 +1032,7 @@ $('#fsh').onclick=()=>shareImg($('#fcv'),fBl,'dcu-profile-frame.png','','fmsg');
 
 </script>
 <script src="calculator.js"></script>
+<script src="scanner.js"></script>
 <script>
 /* ফোনে ক্যালকুলেটরের ডিসপ্লে (sticky) যেন হেডারের নিচে আটকে থাকে */
 (function(){
