@@ -378,12 +378,24 @@ body #hdr::after {
     display: none;
   }
 
+  /* logo stays far left, actions snap to far right */
+  .dl-brand {
+    flex: none;
+    margin-right: 0;
+  }
+
+  .dl-actions {
+    margin-left: auto;
+    gap: 6px;
+  }
+
   .dl-nav {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     margin: 0 12px;
+    margin-left: 12px; /* reset the auto from desktop */
     box-sizing: border-box;
     padding: 0 8px;
     flex-direction: column;
