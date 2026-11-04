@@ -1009,13 +1009,29 @@ $('#fsh').onclick=()=>shareImg($('#fcv'),fBl,'dcu-profile-frame.png','','fmsg');
 </script>
 <script src="calculator.js"></script>
 <script>
-/* ফোনে ক্যালকুলেটরের ডিসপ্লে (sticky) যেন হেডারের নিচে আটকে থাকে, ওপরে ঢুকে না যায় */
-(function(){var r=document.documentElement;
-function set(){var h=document.getElementById('hdr'),l=document.getElementById('wlcd');
-r.style.setProperty('--stk',(h?Math.round(h.getBoundingClientRect().height):0)+'px');
-if(l)r.style.setProperty('--lcdh',l.offsetHeight+'px');}
-set();addEventListener('load',set);addEventListener('resize',set);setTimeout(set,500);setTimeout(set,1500);
-if(window.ResizeObserver){var h=document.getElementById('hdr');if(h)new ResizeObserver(set).observe(h);}})();
+/* ফোনে ক্যালকুলেটরের ডিসপ্লে (sticky) যেন হেডারের নিচে আটকে থাকে */
+(function(){
+  var r=document.documentElement, raf=0;
+  function set(){
+    raf=0;
+    var h=document.getElementById('hdr');
+    var l=document.getElementById('wlcd');
+    var hh=h?Math.round(h.getBoundingClientRect().height):0;
+    r.style.setProperty('--stk', hh+'px');
+    if(l) r.style.setProperty('--lcdh', l.offsetHeight+'px');
+  }
+  function qs(){ if(!raf) raf=requestAnimationFrame(set); }
+  set();
+  addEventListener('load', set);
+  addEventListener('resize', qs);
+  addEventListener('scroll', qs, {passive:true});
+  addEventListener('orientationchange', qs);
+  setTimeout(set,300); setTimeout(set,800); setTimeout(set,2000);
+  if(window.ResizeObserver){
+    var h=document.getElementById('hdr');
+    if(h) new ResizeObserver(qs).observe(h);
+  }
+})();
 </script>
 <script>
 
