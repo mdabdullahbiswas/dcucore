@@ -1,0 +1,19 @@
+/* ===== ডকুমেন্ট স্ক্যানার ===== */
+#scan .sc-add{display:flex;gap:8px;flex-wrap:wrap}
+#scan .sc-add .bt{margin:8px 0 0}
+#scan .sc-add input[type=file]{display:none}
+#scan .sc-strip{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 4px;margin-top:6px}
+#scan .sc-th{flex:none;position:relative;width:64px;height:84px;border:2px solid var(--ln);border-radius:8px;background:#fff;cursor:pointer;overflow:hidden;padding:0}
+#scan .sc-th.on{border-color:var(--accent,#D97706);box-shadow:0 0 0 2px var(--accent-soft,#FEF3C7)}
+#scan .sc-th canvas{width:100%;height:100%;object-fit:contain;display:block}
+#scan .sc-th b{position:absolute;left:3px;top:3px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;line-height:1;padding:2px 5px;border-radius:9px}
+#scan .sc-wrap{position:relative;margin-top:10px;background:#0b0f16;border-radius:10px;overflow:hidden;line-height:0}
+#scan .sc-wrap canvas{width:100%;height:auto;display:block}
+#scan #scE{cursor:crosshair}
+#scan .sc-out{margin-top:10px;background:repeating-conic-gradient(#e5e7eb 0 25%,#f8fafc 0 50%) 0 0/16px 16px;border:1px solid var(--ln);border-radius:10px;overflow:hidden;line-height:0}
+#scan .sc-out canvas{width:100%;height:auto;display:block}
+#scan .sc-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+#scan .sc-row .bs.on{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+#scan .sc-empty{padding:22px 12px;text-align:center;color:var(--mu);border:2px dashed var(--ln);border-radius:12px;margin-top:10px}
+#scan .sc-ed[hidden]{display:none}
+@media(max-width:560px){#scan .sc-row .bs{padding:9px 12px;min-height:40px}#scan .sc-th{width:58px;height:76px}}
