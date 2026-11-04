@@ -52,13 +52,9 @@ body #hdr {
   max-width: 100vw;
 }
 
-/* Global horizontal overflow lock — use clip so sticky still works */
-html {
+/* Clip overflow only on the header bar — does not break position:sticky anywhere */
+body #hdr {
   overflow-x: clip;
-}
-body {
-  overflow-x: clip;
-  max-width: 100%;
 }
 
 body #hdr::after {
