@@ -696,18 +696,68 @@ body #ftr {
 @media (max-width: 480px) {
   .dl-foot-in {
     grid-template-columns: 1fr 1fr;
-    gap: 22px 14px;
-    padding: 30px 16px 16px;
+    gap: 24px 16px;
+    padding: 28px 16px 20px;
   }
 
+  /* brand takes full width, stacked vertically */
   .dl-foot-brand {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
     text-align: left;
   }
 
-  .dl-foot-brand,
+  .dl-foot-brand img {
+    width: 42px;
+    height: 42px;
+  }
 
+  .dl-foot-brand b {
+    font-size: 1.1rem;
+  }
+
+  .dl-foot-brand p {
+    font-size: 0.82rem;
+    max-width: 100%;
+  }
+
+  /* badges wrap nicely */
+  .dl-badges {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .dl-badges .dl-bdg {
+    font-size: 0.72rem;
+    padding: 4px 10px 4px 5px;
+  }
+
+  /* two-column link lists stay as-is */
+  .dl-foot-in > div:not(.dl-foot-brand) {
+    min-width: 0;
+  }
+
+  .dl-foot-in > div > a,
+  .dl-foot-in > div > div > a {
+    font-size: 0.84rem;
+    padding: 5px 0;
+  }
+
+  /* bottom bar: stack copyright + disclaimer */
   .dl-foot-bar {
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 12px 16px 20px;
+  }
+
+  .dl-copy,
+  .dl-disc {
+    display: block;
+    width: 100%;
     text-align: center;
   }
 }
