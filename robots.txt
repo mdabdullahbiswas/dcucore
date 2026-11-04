@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-panel
+Disallow: /events-admin
+Disallow: /support-admin
+Disallow: /visitors-admin
+
+Sitemap: https://dcucore.vercel.app/sitemap.xml
