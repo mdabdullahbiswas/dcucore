@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta name="google" content="notranslate">
+<meta charset="UTF-8">
+<!-- 404 can be served from any path (/a/b/c), so every relative URL must resolve from the site root -->
+<base href="/">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>পেজ পাওয়া যায়নি (404) – DCUCore</title>
+<meta name="description" content="আপনি যে পেজটি খুঁজছেন সেটি পাওয়া যায়নি। DCUCore-এর হোম বা অন্য টুলে ফিরে যান।">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#0a2240">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/dcu-fonts.css">
+<link rel="stylesheet" href="/premium.css">
+<link rel="stylesheet" href="/dcu-layout.css">
+<link rel="stylesheet" href="/dcu-lang.css">
+<script>
+/* apply saved theme before first paint (same key as dcu-layout.js) */
+try{var t=localStorage.getItem("site-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}
+</script>
+<script src="/dcu-layout.js" defer></script>
+<script src="/dcu-lang.js" defer></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hind Siliguri','Inter',sans-serif;line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+body>main{flex:1}
+.nf-w{max-width:980px;margin:0 auto;padding:22px 16px 34px;width:100%}
+
+/* ---------- hero ---------- */
+.nf-hero{position:relative;overflow:hidden;border-radius:30px;padding:54px 28px 44px;text-align:center;color:#fff;
+  background:linear-gradient(120deg,#06162b,var(--navy) 40%,var(--navy-2) 75%,var(--navy));background-size:220% 220%;
+  animation:nfbg 14s ease-in-out infinite,nfin .8s var(--ease) backwards;
+  box-shadow:0 34px 64px -30px rgba(10,34,64,.85),inset 0 0 0 1px rgba(246,214,143,.2)}
+@keyframes nfbg{50%{background-position:100% 50%}}
+@keyframes nfin{from{opacity:0;transform:translateY(22px) scale(.985)}to{opacity:1;transform:none}}
+.nf-orb{position:absolute;border-radius:50%;filter:blur(48px);opacity:.5;pointer-events:none}
+.nf-o1{width:280px;height:280px;right:-70px;top:-90px;background:var(--gold);animation:nfdrift 9s ease-in-out infinite}
+.nf-o2{width:240px;height:240px;left:-80px;bottom:-100px;background:#2f7be0;animation:nfdrift 11s ease-in-out infinite reverse}
+@keyframes nfdrift{50%{transform:translate(-26px,22px) scale(1.12)}}
+.nf-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.13;
+  background-image:radial-gradient(rgba(246,214,143,.4) 1px,transparent 1.4px);background-size:26px 26px;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 85%);mask-image:linear-gradient(180deg,#000,transparent 85%)}
+.nf-hero>*{position:relative;z-index:1}
+
+.nf-eb{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.5px;color:var(--gold-light);padding:4px 14px;border-radius:99px;
+  background:rgba(246,214,143,.12);border:1px solid rgba(246,214,143,.32)}
+
+/* 4 [logo-ring] 4 */
+.nf-code{display:flex;align-items:center;justify-content:center;gap:clamp(6px,2vw,18px);margin:18px 0 4px;
+  font:800 clamp(84px,19vw,168px)/1 'Cinzel',serif;letter-spacing:-2px}
+.nf-d{background:linear-gradient(180deg,#fff3c9 0%,var(--gold-light) 40%,var(--gold-deep) 100%);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;filter:drop-shadow(0 10px 22px rgba(0,0,0,.35));animation:nfbob 5s ease-in-out infinite}
+.nf-d:last-child{animation-delay:-2.5s}
+@keyframes nfbob{50%{transform:translateY(-8px)}}
+.nf-ring{position:relative;width:.78em;height:.78em;flex:none;display:grid;place-items:center;animation:nfbob 5s ease-in-out infinite -1.2s}
+.nf-ring::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(var(--gold),#fff3c9,#8f6a17,var(--gold-light),var(--gold));animation:nfspin 7s linear infinite;
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));
+          mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px))}
+.nf-ring::after{content:"";position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(246,214,143,.4);animation:nfping 3.2s ease-out infinite}
+.nf-ring i{position:absolute;inset:11px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#17386A,#06162b);box-shadow:inset 0 0 28px rgba(0,0,0,.55)}
+.nf-ring img{position:relative;width:56%;height:56%;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+@keyframes nfspin{to{transform:rotate(360deg)}}
+@keyframes nfping{from{transform:scale(.9);opacity:.9}to{transform:scale(1.16);opacity:0}}
+
+.nf-h{margin:6px 0 6px;font-size:clamp(24px,4.6vw,36px);line-height:1.3;font-weight:700;
+  background:linear-gradient(90deg,#fff 20%,var(--gold-light) 45%,#fff 70%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;animation:nfshim 5s linear infinite}
+@keyframes nfshim{to{background-position:-220% 0}}
+.nf-p{max-width:560px;margin:0 auto;color:#cfdcf2;font-size:16px}
+.nf-path{display:inline-flex;max-width:100%;align-items:center;gap:8px;margin:16px auto 0;padding:7px 14px;border-radius:12px;
+  background:rgba(255,255,255,.07);border:1px dashed rgba(246,214,143,.4);color:var(--gold-light);font:600 13.5px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.nf-path span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr}
+.nf-path svg{flex:none}
+
+.nf-sg{display:none;margin:14px auto 0;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:14.5px;color:#e3ecfb}
+.nf-sg.on{display:flex}
+.nf-sg a{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;font-weight:700;text-decoration:none;color:var(--navy);
+  background:var(--brand-grad);box-shadow:0 10px 22px -12px rgba(185,138,44,.9);transition:transform .25s var(--ease)}
+.nf-sg a:hover{transform:translateY(-2px)}
+
+.nf-act{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:26px}
+.nf-btn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:10px 24px;border-radius:99px;font:700 15px 'Hind Siliguri',sans-serif;
+  text-decoration:none;cursor:pointer;border:0;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.nf-btn svg{width:18px;height:18px;flex:none}
+.nf-btn.g{background:var(--brand-grad);color:var(--navy);box-shadow:0 14px 26px -12px rgba(185,138,44,.85)}
+.nf-btn.g:hover{transform:translateY(-3px);box-shadow:0 20px 34px -12px rgba(185,138,44,.95)}
+.nf-btn.o{background:rgba(255,255,255,.08);color:var(--gold-light);border:1.5px solid rgba(246,214,143,.38);backdrop-filter:blur(6px)}
+.nf-btn.o:hover{transform:translateY(-3px);background:rgba(255,255,255,.14)}
+.nf-btn:active{transform:scale(.97)}
+
+/* ---------- explore ---------- */
+.nf-ex{margin-top:22px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:22px;position:relative;overflow:hidden;
+  box-shadow:0 14px 34px rgba(15,23,42,.07);animation:nfin .8s .15s var(--ease) backwards}
+.nf-ex::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--brand-grad)}
+body.dark .nf-ex{box-shadow:0 16px 38px rgba(0,0,0,.45)}
+.nf-eh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.nf-eh h2{margin:0;font-size:20px;color:var(--accent-deep)}
+.nf-eh h2 small{display:block;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.nf-s{position:relative;flex:1 1 260px;max-width:380px}
+.nf-s svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+.nf-s input{width:100%;min-height:46px;padding:10px 16px 10px 42px;border-radius:99px;font:500 15px 'Hind Siliguri','Inter',sans-serif}
+.nf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.nf-c{--accent:#D4AF37;--accent-soft:#FBF3DC;display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:16px;text-decoration:none;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--border);transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
+  animation:nfin .6s var(--ease) backwards;animation-delay:calc(var(--i,0)*55ms + 260ms)}
+.nf-c:hover,.nf-c:focus-visible{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 18px 34px -20px var(--accent)}
+.nf-c .ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--g,linear-gradient(135deg,#E8C46C,#B98A2C));
+  box-shadow:0 0 0 4px var(--accent-soft)}
+body.dark .nf-c{--accent-soft:color-mix(in srgb,var(--accent) 16%,transparent)}
+.nf-c .ic svg{width:22px;height:22px}
+.nf-c b{display:block;font-size:15.5px;line-height:1.3}
+.nf-c span.d{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.4;margin-top:2px}
+.nf-c[hidden]{display:none}
+.nf-empty{display:none;text-align:center;padding:22px 10px 6px;color:var(--ink-2)}
+.nf-empty.on{display:block}
+
+.nf-help{margin-top:18px;text-align:center;font-size:14.5px;color:var(--ink-2)}
+.nf-help a{color:var(--accent-deep);font-weight:700;text-decoration:none;border-bottom:1.5px solid var(--gold)}
+
+@media(max-width:640px){.nf-hero{padding:40px 18px 34px;border-radius:24px}.nf-ex{padding:18px}.nf-btn{width:100%;justify-content:center}.nf-s{max-width:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-page="404">
+<div id="hdr"></div>
+
+<main class="nf-w">
+  <section class="nf-hero" aria-labelledby="nfT">
+    <div class="nf-orb nf-o1"></div><div class="nf-orb nf-o2"></div>
+
+    <span class="nf-eb t">ত্রুটি ৪০৪|Error 404</span>
+
+    <div class="nf-code" aria-hidden="true">
+      <span class="nf-d">4</span>
+      <span class="nf-ring"><i></i><img src="/logo.webp" alt="" width="120" height="120" onerror="this.style.display='none'"></span>
+      <span class="nf-d">4</span>
+    </div>
+
+    <h1 class="nf-h t" id="nfT">পেজটি খুঁজে পাওয়া যায়নি|We couldn't find this page</h1>
+    <p class="nf-p t">আপনি যে লিংকটি খুঁজছেন সেটি হয়তো সরানো হয়েছে, নাম বদলেছে, অথবা লিংকে ভুল আছে। চিন্তা নেই — নিচ থেকে সহজেই আপনার কাঙ্ক্ষিত টুলে পৌঁছে যেতে পারবেন।|The link may have been moved, renamed, or mistyped. No worries — pick your tool below and you're back on track.</p>
+
+    <div class="nf-path" id="nfPath" hidden>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
+      <span id="nfPathTxt"></span>
+    </div>
+
+    <div class="nf-sg" id="nfSg" role="status"><span class="t">আপনি কি এটি খুঁজছিলেন?|Did you mean</span><a id="nfSgA" href="/"></a></div>
+
+    <div class="nf-act">
+      <a class="nf-btn g" href="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+        <span class="t">হোমে ফিরুন|Back to Home</span>
+      </a>
+      <button type="button" class="nf-btn o" id="nfBack">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        <span class="t">আগের পেজে যান|Go Back</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="nf-ex" aria-labelledby="nfEx">
+    <div class="nf-eh">
+      <h2 id="nfEx"><span class="t">কোথায় যেতে চান?|Where to next?</span><small class="t">জনপ্রিয় পেজ ও টুলস|Popular pages &amp; tools</small></h2>
+      <label class="nf-s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="nfQ" autocomplete="off" spellcheck="false" aria-label="Search pages">
+      </label>
+    </div>
+    <div class="nf-grid" id="nfGrid"></div>
+    <div class="nf-empty" id="nfEmpty"><span class="t">কিছু পাওয়া যায়নি — অন্য শব্দে খুঁজে দেখুন।|Nothing matched — try another word.</span></div>
+  </section>
+
+  <p class="nf-help t">সমস্যাটি কি বারবার হচ্ছে? |Keep landing here? <a href="/feedback"><span class="t">আমাদের জানান|Let us know</span></a></p>
+</main>
+
+<div id="ftr"></div>
+
+<script>
+(function(){
+  "use strict";
+  var I={
+    home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/>',
+    doc:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+    tool:'<path d="M14.7 6.3a4 4 0 005 5L21 13l-8 8-3-3 8-8z"/><path d="M3 21l6-6"/>',
+    drop:'<path d="M12 3s6 6.2 6 10.5A6 6 0 016 13.5C6 9.2 12 3 12 3z"/>',
+    cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    cv:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0114 0"/>',
+    chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>',
+    heart:'<path d="M12 20.5s-7.5-4.6-7.5-10.3A4.2 4.2 0 0112 7.6a4.2 4.2 0 017.5 2.6c0 5.7-7.5 10.3-7.5 10.3z"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/>'
+  };
+  /* path = clean URL · k = extra search keywords (matched together with the labels) */
+  var P=[
+    {p:"/",             bn:"হোম",                en:"Home",             dbn:"সব টুলের শুরু",            den:"Start here",              ic:"home", g:"linear-gradient(135deg,#E8C46C,#B98A2C)", k:"home index main"},
+    {p:"/cover",        bn:"কভার পেজ",           en:"Cover Page",       dbn:"অ্যাসাইনমেন্ট, ল্যাব, থিসিস…",den:"Assignment, lab, thesis…", ic:"doc",  g:"linear-gradient(135deg,#60A5FA,#2563EB)", k:"cover assignment lab report thesis প্রজেক্ট"},
+    {p:"/tools",        bn:"টুলস",               en:"Tools",            dbn:"CGPA, রুটিন, PDF ও আরও",   den:"CGPA, routine, PDF & more",ic:"tool", g:"linear-gradient(135deg,#34D399,#059669)", k:"tools cgpa routine pdf calculator exam planner card frame result"},
+    {p:"/cv",           bn:"সিভি স্টুডিও",       en:"CV Studio",        dbn:"পেশাদার সিভি বানান",        den:"Build a polished CV",     ic:"cv",   g:"linear-gradient(135deg,#A78BFA,#7C3AED)", k:"cv resume biodata"},
+    {p:"/blood",        bn:"ডোনার ডিরেক্টরি",    en:"Donor Directory",  dbn:"রক্তদাতা খুঁজুন",           den:"Find blood donors",       ic:"drop", g:"linear-gradient(135deg,#FB7185,#E11D48)", k:"blood donor ডোনার রক্ত"},
+    {p:"/events",       bn:"ক্যাম্পাস ইভেন্ট",   en:"Campus Events",    dbn:"আসন্ন অনুষ্ঠানসমূহ",        den:"Upcoming happenings",     ic:"cal",  g:"linear-gradient(135deg,#FBBF24,#D97706)", k:"events campus ইভেন্ট"},
+    {p:"/dcu-calendar", bn:"স্টুডেন্ট ক্যালেন্ডার",en:"Student Calendar",dbn:"তারিখ ও ছুটির হিসাব",       den:"Dates & holidays",        ic:"cal",  g:"linear-gradient(135deg,#22D3EE,#0891B2)", k:"calendar dcu-calendar ক্যালেন্ডার"},
+    {p:"/feedback",     bn:"মতামত",              en:"Feedback",         dbn:"আপনার পরামর্শ জানান",       den:"Share your thoughts",     ic:"chat", g:"linear-gradient(135deg,#E879F9,#C026D3)", k:"feedback মতামত suggestion"},
+    {p:"/support",      bn:"সাহায্য করুন",       en:"Support Us",       dbn:"প্রজেক্টের পাশে দাঁড়ান",    den:"Help keep it free",       ic:"heart",g:"linear-gradient(135deg,#FB7185,#E11D48)", k:"support help donate সাহায্য"},
+    {p:"/about",        bn:"আমাদের সম্পর্কে",    en:"About",            dbn:"কারা, কেন, কীভাবে",          den:"Who, why & how",          ic:"info", g:"linear-gradient(135deg,#A3E635,#65A30D)", k:"about developer সম্পর্কে"}
+  ];
+
+  function svg(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[n]+'</svg>';}
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+  /* ---- cards ---- */
+  var grid=document.getElementById("nfGrid");
+  grid.innerHTML=P.map(function(x,i){
+    return '<a class="nf-c" href="'+x.p+'" style="--i:'+i+';--g:'+x.g+'" data-q="'+esc((x.bn+" "+x.en+" "+x.dbn+" "+x.den+" "+x.k+" "+x.p).toLowerCase())+'">'+
+      '<span class="ic">'+svg(x.ic)+'</span><span><b class="t">'+esc(x.bn)+'|'+esc(x.en)+'</b>'+
+      '<span class="d t">'+esc(x.dbn)+'|'+esc(x.den)+'</span></span></a>';
+  }).join("");
+
+  /* ---- search ---- */
+  var q=document.getElementById("nfQ"),empty=document.getElementById("nfEmpty");
+  function placeholder(){q.placeholder=document.documentElement.getAttribute("data-lang")==="en"?"Search pages & tools…":"পেজ বা টুল খুঁজুন…";}
+  function filter(){
+    var v=q.value.trim().toLowerCase(),n=0;
+    grid.querySelectorAll(".nf-c").forEach(function(c){
+      var ok=!v||c.getAttribute("data-q").indexOf(v)>-1;
+      c.hidden=!ok; if(ok)n++;
+    });
+    empty.classList.toggle("on",n===0);
+  }
+  q.addEventListener("input",filter);
+  q.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){var f=grid.querySelector(".nf-c:not([hidden])");if(f)location.href=f.getAttribute("href");}
+  });
+  placeholder();
+  new MutationObserver(placeholder).observe(document.documentElement,{attributes:true,attributeFilter:["data-lang"]});
+
+  /* ---- the broken path ---- */
+  var raw=location.pathname||"/";
+  var shown=raw+(location.search||"");
+  if(raw!=="/"&&raw!==""){
+    document.getElementById("nfPathTxt").textContent=shown.length>90?shown.slice(0,87)+"…":shown;
+    document.getElementById("nfPath").hidden=false;
+  }
+
+  /* ---- "did you mean": nearest known page (edit distance on the first path segment) ---- */
+  function lev(a,b){
+    var m=a.length,n=b.length,d=[],i,j;
+    for(i=0;i<=m;i++){d[i]=[i];}
+    for(j=1;j<=n;j++){d[0][j]=j;}
+    for(i=1;i<=m;i++)for(j=1;j<=n;j++)
+      d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a.charAt(i-1)===b.charAt(j-1)?0:1));
+    return d[m][n];
+  }
+  try{
+    var seg=decodeURIComponent(raw).replace(/^\/+|\/+$/g,"").split("/")[0].toLowerCase().replace(/\.html?$/,"");
+    if(seg){
+      var best=null,bd=99;
+      P.forEach(function(x){
+        if(x.p==="/")return;
+        var name=x.p.slice(1);
+        var dist=lev(seg,name);
+        if(seg.length>2&&(name.indexOf(seg)===0||seg.indexOf(name)===0))dist=Math.min(dist,1);
+        if(dist<bd){bd=dist;best=x;}
+      });
+      if(best&&bd<=Math.max(2,Math.floor(best.p.length/3))){
+        var a=document.getElementById("nfSgA");
+        a.href=best.p;
+        a.innerHTML='<span class="cvx-bn">'+esc(best.bn)+'</span><span class="cvx-en">'+esc(best.en)+'</span>';
+        document.getElementById("nfSg").classList.add("on");
+      }
+    }
+  }catch(e){}
+
+  /* ---- back button ---- */
+  document.getElementById("nfBack").addEventListener("click",function(){
+    if(history.length>1&&document.referrer&&document.referrer.indexOf(location.host)>-1)history.back();
+    else location.href="/";
+  });
+})();
+</script>
+</body>
+</html>
