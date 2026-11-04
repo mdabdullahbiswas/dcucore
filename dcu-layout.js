@@ -125,7 +125,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     return (
       '<div class="dl-bar">' +
       '<a class="dl-brand" href="/" aria-label="DCUCore — হোম">' +
-      '<img src="logo.png" alt="" width="38" height="38" onerror="this.style.display=\'none\'">' +
+      '<img src="logo.webp" alt="" width="38" height="38" onerror="this.style.display=\'none\'">' +
       '<span class="dl-brand-txt"><b>DCU</b><small>Core · শিক্ষার্থী টুলকিট</small></span></a>' +
       '<nav class="dl-nav" id="dlNav" aria-label="প্রধান নেভিগেশন">' + links.join("") + "</nav>" +
       '<div class="dl-actions">' +
@@ -165,7 +165,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     return (
       '<footer class="dl-foot">' +
       '<div class="dl-foot-in">' +
-      '<div class="dl-foot-brand"><img src="logo.png" alt="" width="52" height="52" onerror="this.style.display=\'none\'">' +
+      '<div class="dl-foot-brand"><img src="logo.webp" alt="" width="52" height="52" onerror="this.style.display=\'none\'">' +
       "<div><b>DCUCore</b>" +
       "<p>" + bi(
         "শিক্ষার্থীদের জন্য প্রিমিয়াম ডিজিটাল টুলকিট — কভার পেজ, সিভি, ক্লাস রুটিন, CGPA ও আরও অনেক কিছু, বিনামূল্যে।",
