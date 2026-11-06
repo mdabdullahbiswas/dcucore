@@ -14,7 +14,10 @@
  *   "lib:dept"    → detail: { slug, college }   (কার্ডে ক্লিক/ট্যাপ করলে)
  * বাইরে থেকে ব্যবহার: window.LibUI.college(), window.LibUI.setCollege(slug)
  *   LibUI.loading(true|false)   → বিভাগের গ্রিডে স্কেলেটন দেখায়/সরায় (ডেটা আনার সময় ডাকবেন)
- *   LibUI.filesState("loading"|"empty") → "নতুন যোগ হওয়া ফাইল" অংশের অবস্থা (ধাপ ৬-এ আসল ফাইল আসবে)
+ *   LibUI.filesState("loading"|"empty") → "নতুন যোগ হওয়া ফাইল" অংশের অবস্থা
+ *   (ধাপ ৬) LibUI.setFilesRenderer(fn)  → "নতুন যোগ হওয়া ফাইল" অংশ আঁকার দায়িত্ব নেয় (library-browse.js)
+ *   (ধাপ ৬) LibUI.setCountFn(fn)        → fn(deptSlug, collegeSlug) সংখ্যা ফেরালে বিভাগের কার্ডে "N টি ফাইল" দেখায়
+ *   (ধাপ ৬) LibUI.refresh()             → বিভাগের কার্ড ও ফাইলের অংশ নতুন করে আঁকে
  */
 (function () {
   "use strict";
@@ -74,6 +77,8 @@
   var swapTimer = 0;
   var gridLoading = false;      // true হলে বিভাগের জায়গায় স্কেলেটন
   var filesState = "empty";     // "loading" | "empty"
+  var filesRenderer = null;     // (ধাপ ৬) থাকলে ফাইলের অংশ সেটিই আঁকে
+  var countFn = null;           // (ধাপ ৬) বিভাগ → ফাইলের সংখ্যা
 
   function lang() {
     return document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn";
@@ -143,6 +148,7 @@
 
   function renderFiles() {
     if (!elFiles) return;
+    if (filesRenderer) { filesRenderer(elFiles); return; }
     var busy = filesState === "loading";
     elFiles.setAttribute("aria-busy", String(busy));
     elFiles.innerHTML = busy ? repeat(skFile, 3) :
@@ -182,10 +188,12 @@
     list.forEach(function (d, i) {
       var primary = D.name(d, l);
       var alt = d[o] && d[o] !== d[l] ? d[o] : "";
+      var cnt = countFn ? Number(countFn(d.slug, selected)) || 0 : 0;
       html += '<button type="button" class="lib-dept" data-dept="' + esc(d.slug) + '" style="--i:' + Math.min(i, 14) + '">' +
         '<span class="lib-dept-ico" aria-hidden="true">' + iconSvg(d.slug) + "</span>" +
         '<span class="lib-dept-txt"><b class="lib-dept-name" lang="' + l + '">' + esc(primary) + "</b>" +
         (alt ? '<small class="lib-dept-alt" lang="' + o + '">' + esc(alt) + "</small>" : "") +
+        (cnt > 0 ? '<small class="lib-dept-count">' + tx(num(cnt) + "টি ফাইল", num(cnt) + (cnt === 1 ? " file" : " files")) + "</small>" : "") +
         "</span></button>";
     });
 
@@ -265,6 +273,18 @@
     },
     filesState: function (state) {
       filesState = state === "loading" ? "loading" : "empty";
+      renderFiles();
+    },
+    setFilesRenderer: function (fn) {
+      filesRenderer = typeof fn === "function" ? fn : null;
+      renderFiles();
+    },
+    setCountFn: function (fn) {
+      countFn = typeof fn === "function" ? fn : null;
+      renderGrid(false);
+    },
+    refresh: function () {
+      renderGrid(false);
       renderFiles();
     }
   };
