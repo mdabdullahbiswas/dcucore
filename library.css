@@ -309,6 +309,7 @@ body .lib-grid.is-swap .lib-dept {
   to { opacity: 1; transform: none; }
 }
 
+/* ---------- খালি অবস্থা (৩.৩) ---------- */
 body .lib-none {
   grid-column: 1 / -1;
   margin: 0;
@@ -318,6 +319,101 @@ body .lib-none {
   text-align: center;
   color: var(--mu, #475569);
 }
+
+body .lib-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 34px 18px;
+}
+
+body .lib-empty-ico {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 6px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, var(--navy-2, #17386A), var(--navy, #0B1F3A));
+  color: var(--gold-light, #E8C46C);
+  box-shadow: inset 0 0 0 1px rgba(246, 214, 143, 0.2), 0 14px 24px -16px rgba(10, 34, 64, 0.7);
+}
+
+body .lib-empty-title {
+  color: var(--ink, #0F172A);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+body .lib-empty-text {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ---------- নতুন যোগ হওয়া ফাইল অংশ ---------- */
+body .lib-recent { margin-top: 38px; }
+
+body .lib-recent h2 {
+  margin: 0 0 14px;
+  color: var(--ink, #0F172A);
+  font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+  font-weight: 700;
+}
+
+body .lib-files {
+  display: grid;
+  gap: 10px;
+}
+
+/* ---------- স্কেলেটন লোডিং (৩.৩) ----------
+ * ধূসর ব্লকের ওপর দিয়ে একটি আলোর ঝিলিক ডান দিকে সরে যায়।
+ * আকার আসল কার্ডের সমান, তাই ডেটা এলে পেজ লাফায় না। */
+body .lib-sk {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--ln, #E2E8F0);
+}
+
+body .lib-sk::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: lib-shimmer 1.4s ease-in-out infinite;
+}
+
+:root[data-theme="dark"] body .lib-sk::after {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+}
+
+@keyframes lib-shimmer {
+  to { transform: translateX(100%); }
+}
+
+body .lib-sk-card,
+body .lib-sk-file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 18px;
+  background: var(--cd, #fff);
+}
+
+body .lib-sk-ico { flex: none; width: 50px; height: 50px; border-radius: 14px; }
+body .lib-sk-lines { flex: 1; display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+body .lib-sk-l1 { height: 14px; width: 78%; }
+body .lib-sk-l2 { height: 11px; width: 52%; }
+body .lib-sk-tag { flex: none; width: 64px; height: 26px; border-radius: 99px; }
 
 /* ---------- মোবাইল ---------- */
 @media (max-width: 640px) {
@@ -357,11 +453,25 @@ body .lib-none {
   }
   body .lib-dept-ico { width: 46px; height: 46px; border-radius: 13px; }
   body .lib-dept-name { font-size: 1rem; }
+
+  body .lib-sk-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 12px 14px 14px;
+    border-radius: 16px;
+  }
+  body .lib-sk-card .lib-sk-ico { width: 46px; height: 46px; border-radius: 13px; }
+  body .lib-sk-card .lib-sk-lines { width: 100%; }
+  body .lib-sk-tag { display: none; }
+  body .lib-recent { margin-top: 30px; }
+  body .lib-empty { padding: 28px 14px; }
 }
 
 /* ---------- অ্যানিমেশন কমানোর সেটিং ---------- */
 @media (prefers-reduced-motion: reduce) {
   body .lib-shelf i { animation: none; }
+  body .lib-sk::after { animation: none; transform: none; opacity: 0; }
   body .lib-grid.is-swap .lib-dept { animation: none; }
   body .lib-dept,
   body .lib-chip { transition: none; }
