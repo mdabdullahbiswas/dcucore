@@ -811,3 +811,194 @@ body .lib-retry {
   body .lib-year:hover, body .lib-course:hover, body .lib-file:hover,
   body .lib-year:active, body .lib-course:active, body .lib-file:active { transform: none; }
 }
+
+
+/* =====================================================================
+ * ধাপ ৭: ফাইল ভিউয়ার (মডাল)
+ * ===================================================================== */
+html.lib-vw-lock { overflow: hidden; }
+
+body .lib-vw[hidden] { display: none; }
+body .lib-vw {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+body .lib-vw-bd {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 22, 43, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+body .lib-vw.on .lib-vw-bd { opacity: 1; }
+
+body .lib-vw-dlg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(1000px, 100%);
+  height: min(90vh, 860px);
+  height: min(90dvh, 860px);
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--ln, #E2E8F0);
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(212, 175, 55, 0.25);
+  opacity: 0;
+  transform: translateY(14px) scale(0.98);
+  transition: opacity 0.25s ease, transform 0.3s var(--dl-ease, ease);
+}
+body .lib-vw.on .lib-vw-dlg { opacity: 1; transform: none; }
+body .lib-vw-dlg:focus { outline: none; }
+
+body .lib-vw-head {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 14px 12px 20px;
+  border-bottom: 1px solid var(--ln, #E2E8F0);
+}
+body .lib-vw-ht { flex: 1; min-width: 0; }
+body .lib-vw-title { margin: 0; font-size: 1.1rem; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+body .lib-vw-meta { margin: 3px 0 0; color: var(--mu, #475569); font-size: 0.86rem; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; }
+body .lib-vw-x {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink, #0F172A);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-vw-x:focus-visible,
+body .lib-vw-btn:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+@media (hover: hover) { body .lib-vw-x:hover { border-color: var(--gold, #D4AF37); } }
+
+body .lib-vw-stage { position: relative; flex: 1; min-height: 0; background: var(--ln, #E2E8F0); }
+body .lib-vw-frame, body .lib-vw-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+body .lib-vw-load {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  place-items: center;
+  background: var(--cd, #fff);
+}
+body .lib-vw.is-loading .lib-vw-load { display: grid; }
+body .lib-vw-spin {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--ln, #E2E8F0);
+  border-top-color: var(--gold, #D4AF37);
+  border-radius: 50%;
+  animation: lib-spin 0.8s linear infinite;
+}
+@keyframes lib-spin { to { transform: rotate(360deg); } }
+
+/* ফলব্যাক বার্তা */
+body .lib-vw-fb[hidden] { display: none; }
+body .lib-vw-fb {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  background: var(--cd, #fff);
+  text-align: center;
+}
+body .lib-vw-fb b { font-size: 1.1rem; }
+body .lib-vw-fb p { max-width: 42ch; margin: 0 0 8px; color: var(--mu, #475569); line-height: 1.7; }
+
+/* নিচের বাটনের সারি */
+body .lib-vw-bar {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--ln, #E2E8F0);
+  background: var(--cd, #fff);
+}
+body .lib-vw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-vw-btn:active { transform: scale(0.97); }
+@media (hover: hover) { body .lib-vw-btn:hover { border-color: var(--gold, #D4AF37); box-shadow: 0 8px 18px -12px rgba(212, 175, 55, 0.9); } }
+body .lib-vw-btn.pri {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+}
+body .lib-vw-btn.ghost { margin-left: auto; }
+
+body .lib-vw-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 84px;
+  z-index: 3;
+  max-width: calc(100% - 32px);
+  padding: 10px 18px;
+  border-radius: 14px;
+  background: #0B1F3A;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+body .lib-vw-toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* মোবাইল: পুরো পর্দা */
+@media (max-width: 640px) {
+  body .lib-vw { padding: 0; }
+  body .lib-vw-dlg { width: 100%; height: 100%; border-radius: 0; border: 0; }
+  body .lib-vw-head { padding: 10px 10px 10px 14px; padding-top: calc(10px + env(safe-area-inset-top, 0px)); }
+  body .lib-vw-title { font-size: 1rem; }
+  body .lib-vw-bar { display: grid; grid-template-columns: 1fr 1fr; padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  body .lib-vw-btn { padding: 8px 10px; }
+  body .lib-vw-btn.pri { grid-column: 1 / -1; }
+  body .lib-vw-btn.ghost { margin-left: 0; grid-column: 1 / -1; }
+  body .lib-vw-toast { bottom: 150px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .lib-vw-bd, body .lib-vw-dlg, body .lib-vw-toast, body .lib-vw-btn { transition: none; }
+  body .lib-vw-spin { animation-duration: 2s; }
+}
