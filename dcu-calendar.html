@@ -564,6 +564,21 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 /* হেডার/ফুটার: সাইটের বাকি পেজের (site.css) লাইন-হাইট মান — যাতে সব পেজে একই উচ্চতা ও ঘনত্ব থাকে */
 #hdr,#ftr{line-height:1.7;font-family:Inter,'Noto Serif Bengali',system-ui,sans-serif}
 #ftr .dl-foot h4{line-height:1.25}
+
+/* ===== ব্যানার: ছবির ক্লাস .bph (পেজ-হেডারের .ph এর সাথে সংঘর্ষ মুক্ত) + প্রিমিয়াম মাস-বছর শিরোনাম ===== */
+.ban{background:linear-gradient(145deg,var(--night,#050E1F),var(--navy-2,#17386A));isolation:isolate}
+.ban .bph{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;padding:0!important;object-fit:cover;object-position:center 38%;display:block;z-index:0;animation:none!important;transform:none!important}
+.ban:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,14,31,.28) 0,transparent 30%,rgba(5,14,31,.35) 58%,rgba(5,14,31,.88) 100%)}
+.ban:after{z-index:3;inset:10px;border:1px solid color-mix(in srgb,var(--gold-light,#E8C46C) 55%,transparent);border-radius:16px}
+.ban .sc{z-index:4;top:22px;right:24px;background:rgba(5,14,31,.55);border:1px solid color-mix(in srgb,var(--gold-light,#E8C46C) 45%,transparent);color:#fff}
+.ban .tx{z-index:2;padding:0 26px 24px;background:none;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.ban .tm{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ban .tm h2{margin:0;font-size:clamp(1.9rem,6vw,3rem);line-height:1.08;font-weight:700;letter-spacing:.01em;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.45),0 8px 28px rgba(0,0,0,.55)}
+.ban .ty{display:inline-flex;align-items:center;padding:5px 16px;border-radius:999px;font-weight:700;font-size:clamp(.95rem,2.8vw,1.25rem);line-height:1.2;letter-spacing:.04em;color:#2a1d00;background:linear-gradient(135deg,#F3E6C4,#E8C46C 45%,#B98A2C);border:1px solid rgba(255,255,255,.55);box-shadow:0 8px 20px -8px rgba(185,138,44,.9),0 1px 0 rgba(255,255,255,.6) inset}
+.ban .tr{display:flex;gap:8px;flex-wrap:wrap}
+.ban .tc{display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:500;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);text-shadow:0 1px 4px rgba(0,0,0,.4)}
+@media(max-width:640px){.ban .tx{padding:0 18px 18px;gap:7px}.ban .tc{font-size:.7rem;padding:3px 9px}.ban:after{inset:7px;border-radius:13px}.ban .sc{top:16px;right:16px}}
+@media print{.ban .tx{padding:0 16px 10px;gap:4px}.ban .tm h2{font-size:1.5rem}.ban .ty{font-size:.8rem;padding:2px 10px}.ban .tc{font-size:.65rem;padding:1px 8px}.ban:before{background:linear-gradient(180deg,transparent 40%,rgba(5,14,31,.85))}}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -646,7 +661,7 @@ function info(d){const k=+d,c=cache[k];if(c)return c;const h=hj(d),w=d.getDay(),
  const out={h,b:bn(d),r,t,rz:h.m==8,isl:h.m==8||(r&&/ঈদ|আশুরা|শবে/.test(r[0]))};cache[k]=out;return out}
 const AC=['#1d4ed8','#ca8a04','#be185d','#c2410c','#15803d','#0369a1','#4338ca','#0f766e','#7e22ce','#be123c','#b45309','#0e7490'];
 const MAPG=[3,4,5,6,7,8,9,10,11,0,1,2],BNE=['boishakh','joishtho','asharh','srabon','bhadro','ashwin','kartik','agrahayan','poush','magh','falgun','choitro'],IMGBASE='';
-function img(b){return `<img class="ph" src="${IMG[BNE[b]]}" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()">`}
+function img(b){return `<img class="bph" src="${IMG[BNE[b]]}" alt="" onload="this.parentNode.classList.add('hi')" onerror="this.remove()">`}
 const sp=(c,R,r,n)=>{let d='';for(let i=0;i<n*2;i++){const a=i*Math.PI/n-Math.PI/2,q=i%2?r:R;d+=(i?'L':'M')+(c+Math.cos(a)*q).toFixed(1)+' '+(c+Math.sin(a)*q).toFixed(1)}return d+'z'};
 const IC={fit:'<path d="M40 8a24 24 0 1 0 6 38 19 19 0 1 1-6-38z" fill="#d4a017"/><path d="'+sp(48,9,5,5).replace(/(\d+\.?\d*) (\d+\.?\d*)/g,(m,a,b)=>(+a+4)+' '+(+b-24))+'" fill="#f59e0b"/>',
 rz:'<path d="M40 8a24 24 0 1 0 6 38 19 19 0 1 1-6-38z" fill="#10b981"/>',
@@ -713,7 +728,7 @@ function month(y,m){const n=new Date(y,m+1,0).getDate(),st=new Date(y,m,1).getDa
   g+=`<div class="c ${cls}" data-dt="${y}-${m}-${d}" tabindex="0" style="animation-delay:${d*18}ms" title="${f.r?f.r[L=='bn'?0:1]:''}"><i class="bg">${f.t=='h'&&f.r?ico(f.r[1]):f.rz?ico('Ramadan'):''}</i><b>${d}</b>${(e=>e.length?`<span class="ed">${e.slice(0,4).map(v=>`<s style="background:${EC[v.c]}"></s>`).join('')}</span>`:'')(evs(x))}${h&&f.r?`<em>${f.r[L=='bn'?0:1]}</em>`:''}<div class="s"><span${f.b.d==1?' class="lb"':''}>${bl}</span><u${f.h.d==1?' class="lb"':''}>${hl}</u></div></div>`;
   if(h)list+=`<div><span class="d ${f.isl?'i':''}">${d}</span><span><b>${f.r[L=='bn'?0:1]}</b><br><small style="color:var(--mut)">${DN[(st+d-1)%7][L=='bn'?0:1]} • ${nb(f.b.d)} ${BM[f.b.m][L=='bn'?0:1]} • ${bd(f.h.d)} ${HM[f.h.m][L=='bn'?0:1]}</small></span>${f.isl&&KM[f.r[1]]?`<button class="shb" data-o="${KM[f.r[1]]}" style="margin-left:auto;padding:4px 9px">🎁</button>`:''}</div>`}
  const wk=Array.from({length:n},(_,i)=>info(new Date(y,m,i+1)).t=='w').filter(Boolean).length;
- return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${scene(sc,0)}${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><h2>${GM[m][L=='bn'?0:1]} ${nb(y)}</h2><p>${rng(y,m)}</p><p style="opacity:.9">🌿 ${BM[bi][L=='bn'?0:1]} • ${SN[sc][L=='bn'?0:1]}</p></div></div><div class="g">${g}</div>
+ return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><div class="tm"><h2>${GM[m][L=='bn'?0:1]}</h2><span class="ty">${nb(y)}</span></div><div class="tr"><span class="tc">${rng(y,m)}</span><span class="tc">🌿 ${BM[bi][L=='bn'?0:1]} • ${SN[sc][L=='bn'?0:1]}</span></div></div></div><div class="g">${g}</div>
  <div class="ls"><h4>📌 ${T('এই মাসের ছুটি ও কারণ','Holidays & reasons')} <small style="color:var(--mut);font-weight:400">(${T('সাপ্তাহিক','weekends')}: ${nb(wk)})</small></h4>${list||`<small style="color:var(--mut)">${T('শুধু সাপ্তাহিক ছুটি (শুক্র-শনি)','Only weekends (Fri–Sat)')}</small>`}</div><div class="pt">${URL_}</div></div></section>`}
 function render(){const A=$('#all');A.innerHTML=Array.from({length:12},(_,i)=>month(Y,i)).join('');A.className=YV?'yr':'';sel(M,true);document.body.classList.toggle('isl',!!info(new Date()).isl);
  $('#tb').innerHTML=GM.map((g,i)=>`<button class="${i==M?'on':''}" data-i="${i}" style="--ac2:${AC[MAPG[bn(new Date(Y,i,16)).m]]}">${g[L=='bn'?0:1]}</button>`).join('');requestAnimationFrame(()=>ctab(0));
