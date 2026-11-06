@@ -2045,11 +2045,18 @@ update();
 (function(){
  var $=function(i){return document.getElementById(i)};
  var ENG=['221109','English (Compulsory)'],POL=['221909','Political Organization and Political System of UK and USA'],SOC=['222009','Sociology of Bangladesh'],BSC=['222115','Bangladesh Society and Culture'];
+ /* Y(year, list): প্রতিটি কোর্সে বর্ষের লেবেল যোগ করে (ড্রপডাউনে দেখায়) */
+ function Y(y,a){return a.map(function(c){return [c[0],c[1],y]})}
  var COURSES={
   'BANGLA':[['221001','History of Bengali Literature-1 (Ancient and Medieval)'],['221003','Poetry of Medieval Age'],['221005','Bengali Poetry-2'],['221007','Bengali Drama-1'],SOC,BSC,POL,ENG],
   'ENGLISH':[['221101','Introduction to Drama'],['221103','Romantic Poetry'],['221105','Advanced Reading and Writing'],['221107','History of English Literature'],SOC,BSC,POL],
   'ARABIC':[['221201','Classical Poetry'],['221203','Communicative Arabic-2'],['221205','Arabic Grammar (Nahu)'],['221207','History of Arabic Literature (750-1258 A.D)'],['221209','Islamic Ideology-2'],POL,ENG],
-  'ECONOMICS':[['222201','Intermediate Microeconomics'],['222203','Mathematical Economics'],['222205','Introduction to Business'],['222207','Computer and Information Technology'],POL,SOC,BSC,ENG],
+  'ECONOMICS':Y('1st Year',[['212201','Basic Microeconomics'],['212203','Basic Macroeconomics'],['212205','Basic Mathematics'],['212207','Basic Statistics'],['211501','History of the Emergence of Independent Bangladesh'],['212009','Introducing Sociology'],['212111','Introduction to Social Work']]).concat(
+   Y('2nd Year',[['222201','Intermediate Microeconomics'],['222203','Mathematical Economics'],['222205','Introduction to Business (In English/Bengali)'],['222207','Computer and Information Technology'],POL,SOC,BSC,ENG]),
+   Y('3rd Year',[['232201','Intermediate Macroeconomics'],['232203','Statistics for Economics'],['232205','Studies on Bangladesh Economy'],['232207','Development Economics'],['232209','International Economics I'],['232211','Public Finance'],['232213','Urban Economics'],['232215','Agricultural and Rural Economics']]),
+   Y('4th Year',[['242201','Money, Banking and Finance'],['242203','International Economics-II'],['242205','Research Methodology'],['242207','Industrial Economics'],['242209','Environmental and Resource Economics'],['242211','Population and Health Economics'],['242213','Economic Thought']]),
+   Y('4th Year · Optional (Any Two)',[['242215','Econometrics'],['242217','Economic Systems and Development Patterns'],['242219','Economics of Planning'],['242221','Islamic Economics']]),
+   Y('4th Year',[['242222','Viva-voce']])),
   'CHEMISTRY':[['222801','Physical Chemistry-II'],['222803','Organic Chemistry'],['222805','Chemistry of the Representative Elements'],['222806','Quantitative Inorganic Analysis (Practical)'],['222707','Physics-III (Electricity and Modern Physics)'],['222708','Physics-IV (Physics Practical)'],['223707','Calculus-II'],['223708','Math Lab (Practical)'],ENG],
   'BOTANY':[['223001','Higher Cryptogams'],['223003','Taxonomy of Angiosperms'],['223005','Plant Anatomy and Embryology'],['223006','Practical-II'],['222807','General Chemistry-II'],['222809','Environmental Chemistry'],['223107','Zoology-II'],['223108','Zoology Practical-II'],ENG],
   'GEOGRAPHY & ENVIRONMENT':[['223201','Geomorphology'],['223203','Climatology'],['223205','Economic Geography'],['223206','Practical-II'],['222807','General Chemistry-II'],['222809','Environmental Chemistry'],['223707','Calculus-II'],ENG],
@@ -2064,7 +2071,7 @@ update();
  function list(){return COURSES[key(($('dept')||{}).value)]||[]}
  function fill(){
   var L=list(),cl=$('courseCodeList'),nl=$('courseNameList');
-  if(cl)cl.innerHTML=L.map(function(c){return '<option value="'+esc(c[0])+'" label="'+esc(c[1])+'"></option>'}).join('');
+  if(cl)cl.innerHTML=L.map(function(c){return '<option value="'+esc(c[0])+'" label="'+esc((c[2]?c[2]+' · ':'')+c[1])+'"></option>'}).join('');
   if(nl)nl.innerHTML=L.map(function(c){return '<option value="'+esc(c[1])+'" label="'+esc(c[0])+'"></option>'}).join('');
  }
  var d=$('dept'),cc=$('courseCode'),cn=$('courseName');
