@@ -12,6 +12,7 @@
  * URL: /library#economics  ·  /library#economics-2nd  ·  /library#economics-2nd-222201
  *   (ধাপ ৮-এর শেয়ার-লিংকের সঙ্গে মেলে)। ব্রাউজারের Back বোতাম কাজ করে।
  *
+ * ধাপ ৭ (library-viewer.js) এই ইভেন্ট ধরে মডাল খোলে। লোড শেষে "lib:ready" ইভেন্ট যায়।
  * ধাপ ৭-এর জন্য:
  *   কার্ডে ক্লিক করলে document-এ cancelable ইভেন্ট "lib:open" → detail: { file }।
  *   ধাপ ৭-এর ভিউয়ার e.preventDefault() করলে এখানের ফলব্যাক (Drive-এ নতুন ট্যাবে খোলা) বন্ধ হয়।
@@ -128,6 +129,7 @@ async function load(fresh) {
     phase = "error";
   }
   renderAll();
+  if (phase === "ready") document.dispatchEvent(new CustomEvent("lib:ready"));
 }
 
 /* ---------- সাজানো ও ফিল্টার ---------- */
@@ -445,6 +447,7 @@ window.LibBrowse = {
   find: id => files.find(f => f.id === id) || null,
   view: () => ({ dept: view.dept, year: view.year, course: view.course }),
   go: v => navigate(v || {}),
+  ready: () => phase === "ready",
   reload: () => load(true)
 };
 
