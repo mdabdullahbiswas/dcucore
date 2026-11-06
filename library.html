@@ -22,6 +22,7 @@
 <script src="site-shared.js"></script>
 <script src="lib-data.js" defer></script>
 <script src="library.js" defer></script>
+<script type="module" src="library-browse.js"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -106,10 +107,13 @@
       <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
     </div>
 
+    <!-- বিভাগ বেছে নিলে বর্ষ → কোর্স → ফাইল এখানে আসে (library-browse.js আঁকে) -->
+    <div class="lib-drill" id="lib-drill" hidden></div>
+
     <noscript><p class="lib-none t">লাইব্রেরি দেখতে JavaScript চালু করুন।|Please enable JavaScript to use the library.</p></noscript>
   </section>
 
-  <!-- ===== নতুন যোগ হওয়া ফাইল (ধাপ ৬-এ ফাইলের কার্ড আসবে; এখন স্কেলেটন ও খালি অবস্থা) ===== -->
+  <!-- ===== নতুন যোগ হওয়া ফাইল (library-browse.js আঁকে; তার আগে স্কেলেটন) ===== -->
   <section class="lib-recent" id="lib-recent" aria-labelledby="lib-recent-h">
     <h2 id="lib-recent-h" class="t">নতুন যোগ হওয়া ফাইল|Recently added</h2>
     <div class="lib-files" id="lib-files" aria-busy="true">
