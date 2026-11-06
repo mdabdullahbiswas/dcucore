@@ -88,10 +88,30 @@
     <h2 id="lib-browse-h" class="t">বিভাগ অনুযায়ী ফাইল|Browse by department</h2>
 
     <div class="lib-filter" id="lib-filter" role="group" aria-label="কলেজ বেছে নিন"></div>
-    <p class="lib-status" id="lib-status" role="status" aria-live="polite"></p>
-    <div class="lib-grid" id="lib-grid"></div>
+    <p class="lib-status" id="lib-status" role="status" aria-live="polite"><span class="lib-bn">লোড হচ্ছে…</span><span class="lib-en">Loading…</span></p>
+    <!-- JS আসার আগে (ধীর নেটওয়ার্কে) স্কেলেটন দেখায়; library.js আঁকলে এগুলো বদলে যায় -->
+    <div class="lib-grid" id="lib-grid" aria-busy="true">
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+      <div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>
+    </div>
 
     <noscript><p class="lib-none t">লাইব্রেরি দেখতে JavaScript চালু করুন।|Please enable JavaScript to use the library.</p></noscript>
+  </section>
+
+  <!-- ===== নতুন যোগ হওয়া ফাইল (ধাপ ৬-এ ফাইলের কার্ড আসবে; এখন স্কেলেটন ও খালি অবস্থা) ===== -->
+  <section class="lib-recent" id="lib-recent" aria-labelledby="lib-recent-h">
+    <h2 id="lib-recent-h" class="t">নতুন যোগ হওয়া ফাইল|Recently added</h2>
+    <div class="lib-files" id="lib-files" aria-busy="true">
+      <div class="lib-sk-file" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span><span class="lib-sk lib-sk-tag"></span></div>
+      <div class="lib-sk-file" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span><span class="lib-sk lib-sk-tag"></span></div>
+      <div class="lib-sk-file" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span><span class="lib-sk lib-sk-tag"></span></div>
+    </div>
   </section>
 
 </main>
