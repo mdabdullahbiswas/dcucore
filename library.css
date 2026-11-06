@@ -1,0 +1,188 @@
+/* library.css
+ * লাইব্রেরি পেজের স্টাইল (ধাপ ৩)।
+ * লোড হবে dcu-layout.css ও dcu-lang.css-এর পরে। রঙ ও ফন্ট সাইটের টোকেন থেকেই আসে,
+ * তাই লাইট/ডার্ক থিম নিজে থেকে মিলে যায়। সব ক্লাস lib- দিয়ে শুরু, অন্য পেজের সঙ্গে সংঘাত নেই।
+ */
+
+/* ---------- পেজের মাপ (হেডারের ১১৮০px-এর সঙ্গে মেলানো) ---------- */
+body .lib-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+/* ---------- ভাষা: শুধু বর্তমান ভাষার অংশ দেখায় ---------- */
+html:not([data-lang="en"]) .lib-en { display: none; }
+html[data-lang="en"] .lib-bn { display: none; }
+
+/* ---------- হিরো ---------- */
+body .lib-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  color: #fff;
+  background: linear-gradient(125deg, #06162b 0%, var(--navy, #0B1F3A) 45%, var(--navy-2, #17386A) 100%);
+  box-shadow:
+    0 30px 60px -30px rgba(10, 34, 64, 0.8),
+    inset 0 0 0 1px rgba(246, 214, 143, 0.18);
+}
+
+body .lib-hero-body {
+  padding: clamp(28px, 5vw, 52px) clamp(20px, 4vw, 44px) clamp(22px, 3vw, 30px);
+  max-width: 780px;
+}
+
+body .lib-hero h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.65rem, 4.4vw, 2.7rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+body .lib-lead {
+  margin: 14px 0 0;
+  max-width: 60ch;
+  color: #cfdcf2;
+  font-size: clamp(1rem, 1.6vw, 1.1rem);
+  line-height: 1.75;
+}
+
+body .lib-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 26px;
+  margin: 22px 0 0;
+  color: #cfdcf2;
+  font-size: 0.98rem;
+  font-weight: 500;
+}
+
+body .lib-counts[hidden] { display: none; }
+
+body .lib-counts b {
+  color: var(--gold-light, #E8C46C);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+/* ---------- বইয়ের তাক ---------- */
+body .lib-shelf {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 92px;
+  padding: 0 clamp(20px, 4vw, 44px);
+  overflow: hidden;
+  border-bottom: 4px solid var(--gold, #D4AF37);
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.22));
+}
+
+body .lib-shelf i {
+  position: relative;
+  flex: none;
+  display: block;
+  width: var(--w, 18px);
+  height: var(--h, 60px);
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #1f4a8a, #153766 55%, #0e2a52);
+  box-shadow: inset 0 0 0 1px rgba(246, 214, 143, 0.14);
+  transform-origin: bottom;
+  animation: lib-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms + 150ms);
+}
+
+body .lib-shelf i:nth-child(3n + 2) { background: linear-gradient(90deg, #2a5ea8, #1b4380 55%, #123163); }
+body .lib-shelf i:nth-child(3n) { background: linear-gradient(90deg, #14305a, #0d2547 55%, #081a35); }
+
+/* বইয়ের মেরুদণ্ডের দুটি সোনালি দাগ */
+body .lib-shelf i::before,
+body .lib-shelf i::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(246, 214, 143, 0.55);
+}
+body .lib-shelf i::before { top: 9px; }
+body .lib-shelf i::after { top: 16px; opacity: 0.55; }
+
+/* তাকের একটিমাত্র সোনালি বই */
+body .lib-shelf i.gold {
+  background: linear-gradient(90deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.45);
+}
+body .lib-shelf i.gold::before,
+body .lib-shelf i.gold::after { background: rgba(11, 31, 58, 0.5); }
+
+@keyframes lib-rise {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+/* ---------- আন-অফিশিয়াল নোট ---------- */
+body .lib-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 14px 18px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 16px;
+  background: var(--cd, #fff);
+  color: var(--mu, #475569);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+body .lib-note svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--gold-deep, #B98A2C);
+}
+
+body .lib-note p { margin: 0; max-width: 90ch; }
+
+/* ---------- ব্রাউজ এলাকা ---------- */
+body .lib-browse { margin-top: 34px; }
+
+body .lib-browse h2 {
+  margin: 0 0 14px;
+  color: var(--ink, #0F172A);
+  font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+  font-weight: 700;
+}
+
+/* ৩.২-তে এই বাক্সের ভেতরের অংশ ফিল্টার ও কার্ড দিয়ে বদলে যাবে */
+body .lib-slot {
+  display: grid;
+  place-items: center;
+  min-height: 200px;
+  padding: 24px;
+  border: 1.5px dashed var(--ln, #E2E8F0);
+  border-radius: 20px;
+  text-align: center;
+  color: var(--mu, #475569);
+}
+
+body .lib-slot p { margin: 0; }
+
+/* ---------- মোবাইল ---------- */
+@media (max-width: 640px) {
+  body .lib-wrap { padding: 12px 12px 40px; }
+  body .lib-hero { border-radius: 22px; }
+  body .lib-shelf { height: 78px; gap: 4px; }
+  /* ছোট পর্দায় তাকের শেষের বইগুলো বাদ, যাতে ভিড় না হয় */
+  body .lib-shelf i:nth-child(n + 13) { display: none; }
+  body .lib-note { padding: 12px 14px; font-size: 0.9rem; }
+  body .lib-browse { margin-top: 26px; }
+}
+
+/* ---------- অ্যানিমেশন কমানোর সেটিং ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body .lib-shelf i { animation: none; }
+}
