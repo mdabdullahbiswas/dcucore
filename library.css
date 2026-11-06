@@ -479,3 +479,26 @@ body .lib-sk-tag { flex: none; width: 64px; height: 26px; border-radius: 99px; }
   body .lib-dept:active,
   body .lib-chip:active { transform: none; }
 }
+
+
+/* ---------- "ফাইল জমা দিন" বোতাম (হিরোতে, ধাপ ৪) ---------- */
+body .lib-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  margin-top: 22px;
+  padding: 10px 22px;
+  border-radius: 99px;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 12px 22px -12px rgba(212, 175, 55, 0.95);
+  transition: transform 0.15s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-cta:active { transform: scale(0.97); }
+body .lib-cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+@media (hover: hover) { body .lib-cta:hover { box-shadow: 0 16px 26px -12px rgba(212, 175, 55, 1); } }
+@media (prefers-reduced-motion: reduce) { body .lib-cta { transition: none; } body .lib-cta:active { transform: none; } }
