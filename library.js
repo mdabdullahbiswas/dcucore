@@ -1,9 +1,10 @@
-/* library.js — লাইব্রেরি পেজের ব্রাউজ অংশ (ধাপ ৩.২)
+/* library.js — লাইব্রেরি পেজের ব্রাউজ অংশ (ধাপ ৩.২ ও ৩.৩)
  *
  * কী করে:
  *   ১) কলেজ ফিল্টার সারি আঁকে ("সব কলেজ" + ৭ কলেজ), একটি বেছে নিলে বিভাগের তালিকা সেই কলেজ অনুযায়ী বদলায়।
  *   ২) বিভাগের কার্ডের গ্রিড আঁকে (আইকন + বাংলা ও ইংরেজি নাম)।
  *   ৩) ভাষা বদলালে (বাংলা/English) নিজে থেকে নতুন করে আঁকে।
+ *   ৪) (৩.৩) স্কেলেটন লোডিং ও খালি অবস্থার বার্তা: বিভাগের গ্রিডে এবং "নতুন যোগ হওয়া ফাইল" অংশে।
  *
  * ডেটা আসে lib-data.js (window.LibData) থেকে। অ্যাডমিন পরে Firestore থেকে যা যোগ করবেন,
  * LibData.merge() ডাকলেই এখানে নিজে থেকে হালনাগাদ হবে (LibData.onChange)।
@@ -12,6 +13,8 @@
  *   "lib:college" → detail: { slug }   (slug খালি মানে "সব কলেজ")
  *   "lib:dept"    → detail: { slug, college }   (কার্ডে ক্লিক/ট্যাপ করলে)
  * বাইরে থেকে ব্যবহার: window.LibUI.college(), window.LibUI.setCollege(slug)
+ *   LibUI.loading(true|false)   → বিভাগের গ্রিডে স্কেলেটন দেখায়/সরায় (ডেটা আনার সময় ডাকবেন)
+ *   LibUI.filesState("loading"|"empty") → "নতুন যোগ হওয়া ফাইল" অংশের অবস্থা (ধাপ ৬-এ আসল ফাইল আসবে)
  */
 (function () {
   "use strict";
@@ -64,10 +67,13 @@
   var elFilter = document.getElementById("lib-filter");
   var elGrid = document.getElementById("lib-grid");
   var elStatus = document.getElementById("lib-status");
+  var elFiles = document.getElementById("lib-files");
   if (!D || !elFilter || !elGrid) return;
 
   var selected = "";            // "" = সব কলেজ
   var swapTimer = 0;
+  var gridLoading = false;      // true হলে বিভাগের জায়গায় স্কেলেটন
+  var filesState = "empty";     // "loading" | "empty"
 
   function lang() {
     return document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn";
@@ -110,9 +116,55 @@
     return on;
   }
 
+  /* ---------- স্কেলেটন ও খালি অবস্থা (৩.৩) ---------- */
+  /* সব স্কেলেটনই aria-hidden; স্ক্রিন-রিডার শুধু aria-busy ও status-এর লেখা পায় */
+  function skCard() {
+    return '<div class="lib-sk-card" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span>' +
+      '<span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span></div>';
+  }
+  function skFile() {
+    return '<div class="lib-sk-file" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span>' +
+      '<span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span>' +
+      '<span class="lib-sk lib-sk-tag"></span></div>';
+  }
+  function repeat(fn, n) { var h = ""; for (var i = 0; i < n; i++) h += fn(); return h; }
+
+  var EMPTY_ICONS = {
+    files: '<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 13h6"/>',
+    dept: '<path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5C4.7 20 4 19.3 4 18.5v-13zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5v-13z"/>'
+  };
+  function emptyHTML(kind, title, text) {
+    return '<div class="lib-empty lib-none" role="note">' +
+      '<span class="lib-empty-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" ' +
+      'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false">' + EMPTY_ICONS[kind] + "</svg></span>" +
+      '<b class="lib-empty-title">' + esc(title) + "</b>" +
+      '<p class="lib-empty-text">' + esc(text) + "</p></div>";
+  }
+
+  function renderFiles() {
+    if (!elFiles) return;
+    var busy = filesState === "loading";
+    elFiles.setAttribute("aria-busy", String(busy));
+    elFiles.innerHTML = busy ? repeat(skFile, 3) :
+      emptyHTML("files",
+        tx("এখনো কোনো ফাইল নেই", "No files yet"),
+        tx("ফাইল জমা হয়ে অ্যাডমিনের অনুমোদন পেলেই এখানে দেখা যাবে।",
+           "Files will show up here once they are submitted and approved by an admin."));
+  }
+
   /* ---------- বিভাগের কার্ড ---------- */
   function renderGrid(animate) {
     var l = lang(), o = other(l);
+
+    if (gridLoading) {
+      elGrid.setAttribute("aria-busy", "true");
+      elStatus.textContent = tx("লোড হচ্ছে…", "Loading…");
+      elGrid.classList.remove("is-swap");
+      elGrid.innerHTML = repeat(skCard, 8);
+      return;
+    }
+    elGrid.setAttribute("aria-busy", "false");
+
     var list = D.departments(selected);
     var col = selected ? D.college(selected) : null;
 
@@ -120,8 +172,9 @@
       tx(num(list.length) + "টি বিভাগ", num(list.length) + (list.length === 1 ? " department" : " departments"));
 
     if (!list.length) {
-      elGrid.innerHTML = '<p class="lib-none">' +
-        esc(tx("এই কলেজের জন্য এখনো কোনো বিভাগ যোগ করা হয়নি।", "No departments have been added for this college yet.")) + "</p>";
+      elGrid.innerHTML = emptyHTML("dept",
+        tx("কোনো বিভাগ পাওয়া যায়নি", "No departments found"),
+        tx("এই কলেজের জন্য এখনো কোনো বিভাগ যোগ করা হয়নি।", "No departments have been added for this college yet."));
       return;
     }
 
@@ -145,6 +198,7 @@
   function renderAll() {
     renderFilter();
     renderGrid(false);
+    renderFiles();
   }
 
   /* ---------- ক্রিয়া ---------- */
@@ -202,7 +256,17 @@
 
   window.LibUI = {
     college: function () { return selected; },
-    setCollege: function (slug) { setCollege(slug, true); }
+    setCollege: function (slug) { setCollege(slug, true); },
+    loading: function (on) {
+      on = !!on;
+      if (on === gridLoading) return;
+      gridLoading = on;
+      renderGrid(!on);
+    },
+    filesState: function (state) {
+      filesState = state === "loading" ? "loading" : "empty";
+      renderFiles();
+    }
   };
 
   renderAll();
