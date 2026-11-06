@@ -2,6 +2,10 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
+<!-- favicon: logo.webp -->
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link rel="shortcut icon" type="image/webp" href="/logo.webp">
+<link rel="apple-touch-icon" href="/logo.webp">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DCU Core – স্টুডেন্ট ক্যালেন্ডার | Student Calendar</title>
 <meta name="description" content="DCUCore – DCU শিক্ষার্থীদের জন্য বিনামূল্যে ডিজিটাল টুলকিট।">
@@ -728,7 +732,7 @@ function month(y,m){const n=new Date(y,m+1,0).getDate(),st=new Date(y,m,1).getDa
   g+=`<div class="c ${cls}" data-dt="${y}-${m}-${d}" tabindex="0" style="animation-delay:${d*18}ms" title="${f.r?f.r[L=='bn'?0:1]:''}"><i class="bg">${f.t=='h'&&f.r?ico(f.r[1]):f.rz?ico('Ramadan'):''}</i><b>${d}</b>${(e=>e.length?`<span class="ed">${e.slice(0,4).map(v=>`<s style="background:${EC[v.c]}"></s>`).join('')}</span>`:'')(evs(x))}${h&&f.r?`<em>${f.r[L=='bn'?0:1]}</em>`:''}<div class="s"><span${f.b.d==1?' class="lb"':''}>${bl}</span><u${f.h.d==1?' class="lb"':''}>${hl}</u></div></div>`;
   if(h)list+=`<div><span class="d ${f.isl?'i':''}">${d}</span><span><b>${f.r[L=='bn'?0:1]}</b><br><small style="color:var(--mut)">${DN[(st+d-1)%7][L=='bn'?0:1]} • ${nb(f.b.d)} ${BM[f.b.m][L=='bn'?0:1]} • ${bd(f.h.d)} ${HM[f.h.m][L=='bn'?0:1]}</small></span>${f.isl&&KM[f.r[1]]?`<button class="shb" data-o="${KM[f.r[1]]}" style="margin-left:auto;padding:4px 9px">🎁</button>`:''}</div>`}
  const wk=Array.from({length:n},(_,i)=>info(new Date(y,m,i+1)).t=='w').filter(Boolean).length;
- return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><div class="tm"><h2>${GM[m][L=='bn'?0:1]}</h2><span class="ty">${nb(y)}</span></div><div class="tr"><span class="tc">${rng(y,m)}</span><span class="tc">🌿 ${BM[bi][L=='bn'?0:1]} • ${SN[sc][L=='bn'?0:1]}</span></div></div></div><div class="g">${g}</div>
+ return`<section class="m" data-m="${m}" data-i="${isl?1:0}" style="--ac:${AC[sc]}"><div class="panel"><div class="ban">${img(bi)}${isl?`<div class="sc">☪ ${occ.slice(0,3).join(' • ')}</div>`:''}<div class="tx"><div class="tm"><h2>${GM[m][L=='bn'?0:1]}</h2><span class="ty">${nb(y)}</span></div><div class="tr"><span class="tc">${rng(y,m)}</span></div></div></div><div class="g">${g}</div>
  <div class="ls"><h4>📌 ${T('এই মাসের ছুটি ও কারণ','Holidays & reasons')} <small style="color:var(--mut);font-weight:400">(${T('সাপ্তাহিক','weekends')}: ${nb(wk)})</small></h4>${list||`<small style="color:var(--mut)">${T('শুধু সাপ্তাহিক ছুটি (শুক্র-শনি)','Only weekends (Fri–Sat)')}</small>`}</div><div class="pt">${URL_}</div></div></section>`}
 function render(){const A=$('#all');A.innerHTML=Array.from({length:12},(_,i)=>month(Y,i)).join('');A.className=YV?'yr':'';sel(M,true);document.body.classList.toggle('isl',!!info(new Date()).isl);
  $('#tb').innerHTML=GM.map((g,i)=>`<button class="${i==M?'on':''}" data-i="${i}" style="--ac2:${AC[MAPG[bn(new Date(Y,i,16)).m]]}">${g[L=='bn'?0:1]}</button>`).join('');requestAnimationFrame(()=>ctab(0));
@@ -850,7 +854,7 @@ function rel(d){const t=new Date(),n=Math.round((Date.UTC(d.getFullYear(),d.getM
  if(!n)return T('আজ','Today');if(n==1)return T('আগামীকাল','Tomorrow');if(n==-1)return T('গতকাল','Yesterday');return n>0?T(nb(n)+' দিন পর',`In ${n} days`):T(nb(-n)+' দিন আগে',`${-n} days ago`)}
 function showDay(d){DD=d;const k=dayData(d),f=k.f,bi=bn(new Date(d.getFullYear(),d.getMonth(),16)).m,i=L=='bn'?0:1,sc=MAPG[bi],el=$('#dp');
  el.style.setProperty('--ac',AC[sc]);
- $('#dpc').innerHTML=`<div class="dph"><img src="${IMG[BNE[bi]]}" alt=""><button class="dpx" id="dpx" aria-label="close">✕</button><div class="dpn"><b>${nb(d.getDate())}</b><div><strong>${WDN[wdi(d)][i]}</strong>${GM[d.getMonth()][i]} ${nb(d.getFullYear())}<br>🌿 ${BM[bi][i]} • ${SN[sc][i]}</div></div></div>
+ $('#dpc').innerHTML=`<div class="dph"><img src="${IMG[BNE[bi]]}" alt=""><button class="dpx" id="dpx" aria-label="close">✕</button><div class="dpn"><b>${nb(d.getDate())}</b><div><strong>${WDN[wdi(d)][i]}</strong>${GM[d.getMonth()][i]} ${nb(d.getFullYear())}</div></div></div>
  <div class="dpb"><span class="dpbd" style="--bc:${k.bc}">${k.em} ${k.bdg}</span> <small style="color:var(--mut);margin-left:6px">${rel(d)}</small>
  <h3>${k.title}</h3><p class="ds">${k.desc}</p><div class="gl"></div>
  <div class="dpt"><div><i>🗓</i><span><small>${T('ইংরেজি তারিখ','Gregorian')}</small>${nb(d.getDate())} ${GM[d.getMonth()][i]} ${nb(d.getFullYear())}, ${WDN[wdi(d)][i]}</span></div>
