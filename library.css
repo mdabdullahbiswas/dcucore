@@ -1002,3 +1002,139 @@ body .lib-vw-toast.on { opacity: 1; transform: translate(-50%, 0); }
   body .lib-vw-bd, body .lib-vw-dlg, body .lib-vw-toast, body .lib-vw-btn { transition: none; }
   body .lib-vw-spin { animation-duration: 2s; }
 }
+
+
+/* =====================================================================
+ * ধাপ ৮: সার্চ, ফিল্টার চিপ, সাজানো
+ * ===================================================================== */
+body .lib-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body .lib-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 0 14px;
+}
+body .lib-search-ico { position: absolute; left: 16px; color: var(--mu, #475569); pointer-events: none; }
+body .lib-search input {
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 48px 10px 46px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+body .lib-search input::placeholder { color: var(--mu, #475569); opacity: 0.85; }
+body .lib-search input:focus { outline: none; border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3); }
+body .lib-search input::-webkit-search-cancel-button { display: none; }
+body .lib-search-x[hidden] { display: none; }
+body .lib-search-x {
+  position: absolute;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mu, #475569);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-search-x:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 1px; }
+@media (hover: hover) { body .lib-search-x:hover { color: var(--ink, #0F172A); } }
+
+/* ফিল্টার বার */
+body .lib-fbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 18px;
+  background: var(--cd, #fff);
+}
+body .lib-fg { display: flex; align-items: center; gap: 10px; min-width: 0; }
+body .lib-fg-l { flex: none; min-width: 52px; color: var(--mu, #475569); font-size: 0.82rem; font-weight: 700; }
+body .lib-fg-c { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+body .lib-fchip {
+  min-height: 36px;
+  padding: 4px 14px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: transparent;
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-fchip:focus-visible,
+body .lib-freset:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+@media (hover: hover) { body .lib-fchip:not(.on):hover { border-color: var(--gold, #D4AF37); } }
+body .lib-fchip:active { transform: scale(0.97); }
+body .lib-fchip.on {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+  font-weight: 700;
+}
+body .lib-freset {
+  align-self: flex-start;
+  min-height: 36px;
+  padding: 4px 4px;
+  border: 0;
+  background: none;
+  color: var(--gold-deep, #B98A2C);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+:root[data-theme="dark"] body .lib-freset { color: var(--gold-light, #E8C46C); }
+body .lib-more { display: block; margin: 14px auto 0; }
+body .lib-fbar + .lib-dsub { margin-top: 14px; }
+
+@media (max-width: 640px) {
+  body .lib-fbar { padding: 10px 12px; border-radius: 16px; }
+  body .lib-fg { flex-direction: column; align-items: flex-start; gap: 6px; }
+  /* মোবাইলে চিপ এক সারিতে স্ক্রল হয়, যাতে বার লম্বা না হয় */
+  body .lib-fg-c {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    margin-inline: -12px;
+    padding: 0 12px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    width: calc(100% + 24px);
+    max-width: none;
+  }
+  body .lib-fg-c::-webkit-scrollbar { display: none; }
+  body .lib-fchip { flex: none; white-space: nowrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .lib-search input, body .lib-fchip { transition: none; }
+  body .lib-fchip:active { transform: none; }
+}
