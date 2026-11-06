@@ -665,8 +665,8 @@ function bn(d){const y=d.getFullYear(),mo=d.getMonth(),t=Date.UTC(y,mo,d.getDate
  return{d:Math.round((t-bt)/864e5)+1,m:best[2],y:y-(mo>3||(mo==3&&d.getDate()>=14)?593:594)}}
 const hf=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
 function hj(d){const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()+OFF,12);const p={};hf.formatToParts(x).forEach(o=>p[o.type]=+o.value.replace(/\D/g,''));return{d:p.day,m:p.month-1,y:p.relatedYear||p.year}}
-const FX={'2-21':['শহিদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস','Language Martyrs’ Day'],'3-26':['স্বাধীনতা দিবস','Independence Day'],'4-14':['পহেলা বৈশাখ','Pohela Boishakh'],'5-1':['মে দিবস','May Day'],'8-5':['জুলাই গণঅভ্যুত্থান দিবস','July Uprising Day'],'12-16':['বিজয় দিবস','Victory Day'],'12-25':['বড়দিন','Christmas']};
-const RL={2026:{'5-1':['বুদ্ধ পূর্ণিমা','Buddha Purnima'],'9-4':['জন্মাষ্টমী','Janmashtami'],'10-20':['বিজয়া দশমী (দুর্গাপূজা)','Bijoya Dashami']},2027:{'5-20':['বুদ্ধ পূর্ণিমা','Buddha Purnima'],'8-25':['জন্মাষ্টমী','Janmashtami']}};
+const FX={'2-21':['শহিদ দিবস ও আন্তর্জাতিক মাতৃভাষা দিবস','Language Martyrs’ Day'],'3-26':['স্বাধীনতা দিবস','Independence Day'],'4-14':['পহেলা বৈশাখ','Pohela Boishakh'],'5-1':['মে দিবস','May Day'],'8-5':['জুলাই গণঅভ্যুত্থান দিবস','July Uprising Day'],'11-7':['জাতীয় বিপ্লব ও সংহতি দিবস','National Revolution & Solidarity Day'],'12-16':['বিজয় দিবস','Victory Day'],'12-25':['বড়দিন','Christmas']};
+const RL={2026:{'5-1':['বুদ্ধ পূর্ণিমা','Buddha Purnima'],'9-4':['জন্মাষ্টমী','Janmashtami'],'10-20':['বিজয়া দশমী (দুর্গাপূজা)','Bijoya Dashami'],'11-8':['শ্রী শ্রী শ্যামা পূজা','Shree Shree Shyama Puja']},2027:{'5-20':['বুদ্ধ পূর্ণিমা','Buddha Purnima'],'8-25':['জন্মাষ্টমী','Janmashtami']}};
 const cache={};
 function info(d){const k=+d,c=cache[k];if(c)return c;const h=hj(d),w=d.getDay(),key=(d.getMonth()+1)+'-'+d.getDate();let r=null,t='';
  if(w==5||w==6)r=['সাপ্তাহিক ছুটি (শুক্র-শনি)','Weekend (Fri–Sat)'],t='w';
