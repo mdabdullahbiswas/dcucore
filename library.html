@@ -21,6 +21,7 @@
 <script src="dcu-lang.js" defer></script>
 <script src="site-shared.js"></script>
 <script src="lib-data.js" defer></script>
+<script src="library.js" defer></script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,12 +83,15 @@
     <p class="t">এটি শিক্ষার্থীদের উদ্যোগে তৈরি একটি আন-অফিশিয়াল লাইব্রেরি, কোনো সরকারি বা বিশ্ববিদ্যালয়ের ওয়েবসাইট নয়। ফাইল শিক্ষার্থীরা জমা দেন এবং অ্যাডমিন দেখে অনুমোদন দিলেই তা এখানে দেখা যায়।|This is an unofficial library built by students, not a government or university website. Students submit files, and a file appears here only after an admin approves it.</p>
   </aside>
 
-  <!-- ===== ব্রাউজ এলাকা (৩.২-তে কলেজ ফিল্টার ও বিভাগের কার্ড এখানে বসবে) ===== -->
+  <!-- ===== ব্রাউজ এলাকা: কলেজ ফিল্টার ও বিভাগের কার্ড (library.js আঁকে) ===== -->
   <section class="lib-browse" id="lib-browse" aria-labelledby="lib-browse-h">
     <h2 id="lib-browse-h" class="t">বিভাগ অনুযায়ী ফাইল|Browse by department</h2>
-    <div class="lib-slot" id="lib-slot">
-      <p class="t">কলেজের ফিল্টার ও বিভাগের তালিকা এখানে আসবে।|The college filter and department list will appear here.</p>
-    </div>
+
+    <div class="lib-filter" id="lib-filter" role="group" aria-label="কলেজ বেছে নিন"></div>
+    <p class="lib-status" id="lib-status" role="status" aria-live="polite"></p>
+    <div class="lib-grid" id="lib-grid"></div>
+
+    <noscript><p class="lib-none t">লাইব্রেরি দেখতে JavaScript চালু করুন।|Please enable JavaScript to use the library.</p></noscript>
   </section>
 
 </main>

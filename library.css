@@ -157,19 +157,167 @@ body .lib-browse h2 {
   font-weight: 700;
 }
 
-/* ৩.২-তে এই বাক্সের ভেতরের অংশ ফিল্টার ও কার্ড দিয়ে বদলে যাবে */
-body .lib-slot {
+/* ---------- কলেজ ফিল্টার সারি ----------
+ * ডেস্কটপে সাজানো (wrap) সারি; মোবাইলে অনুভূমিক স্ক্রল (নিচের media query)। */
+body .lib-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+body .lib-chip {
+  flex: none;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  body .lib-chip:not(.on):hover {
+    border-color: var(--gold, #D4AF37);
+    box-shadow: 0 8px 18px -12px rgba(212, 175, 55, 0.9);
+  }
+}
+
+body .lib-chip:active { transform: scale(0.97); }
+
+body .lib-chip:focus-visible,
+body .lib-dept:focus-visible {
+  outline: 3px solid var(--gold, #D4AF37);
+  outline-offset: 2px;
+}
+
+/* বাছাই করা চিপ: সোনালি, ভাষা-বদলের বোতামের থাম্বের মতো */
+body .lib-chip.on {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C) 0%, var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C) 100%);
+  color: #0B1F3A;
+  font-weight: 700;
+  box-shadow: 0 10px 20px -12px rgba(212, 175, 55, 0.95);
+}
+
+body .lib-status {
+  margin: 16px 2px 12px;
+  color: var(--mu, #475569);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+/* ---------- বিভাগের কার্ডের গ্রিড ---------- */
+body .lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: 12px;
+}
+
+body .lib-dept {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 18px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.25s var(--dl-ease, ease), border-color 0.2s ease, box-shadow 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* আইকনের নেভি টাইল */
+body .lib-dept-ico {
+  flex: none;
   display: grid;
   place-items: center;
-  min-height: 200px;
-  padding: 24px;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--navy-2, #17386A), var(--navy, #0B1F3A));
+  color: var(--gold-light, #E8C46C);
+  box-shadow: inset 0 0 0 1px rgba(246, 214, 143, 0.2);
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+body .lib-dept-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+body .lib-dept-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+body .lib-dept-alt {
+  color: var(--mu, #475569);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* hover: ওপরে ওঠা, সোনালি কিনারা, টাইল সোনালি। শুধু মাউসওয়ালা ডিভাইসে, যাতে টাচে আটকে না থাকে */
+@media (hover: hover) {
+  body .lib-dept:hover {
+    transform: translateY(-3px);
+    border-color: var(--gold, #D4AF37);
+    box-shadow: 0 18px 30px -20px rgba(10, 34, 64, 0.55), 0 0 0 1px rgba(212, 175, 55, 0.35);
+  }
+  body .lib-dept:hover .lib-dept-ico {
+    background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+    color: #0B1F3A;
+    box-shadow: 0 8px 16px -8px rgba(212, 175, 55, 0.9);
+  }
+}
+
+/* ট্যাপ/ক্লিকের মুহূর্তে চাপ খাওয়া অনুভূতি (টাচেও কাজ করে) */
+body .lib-dept:active {
+  transform: scale(0.97);
+  border-color: var(--gold, #D4AF37);
+}
+body .lib-dept:active .lib-dept-ico {
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+}
+
+/* কলেজ বদলালে কার্ডগুলো ধাপে ধাপে ভেসে ওঠে (ব্যবহারকারীর ক্রিয়ার উত্তরে) */
+body .lib-grid.is-swap .lib-dept {
+  animation: lib-pop 0.4s var(--dl-ease, ease) both;
+  animation-delay: calc(var(--i, 0) * 22ms);
+}
+
+@keyframes lib-pop {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+body .lib-none {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 28px 16px;
   border: 1.5px dashed var(--ln, #E2E8F0);
-  border-radius: 20px;
+  border-radius: 18px;
   text-align: center;
   color: var(--mu, #475569);
 }
-
-body .lib-slot p { margin: 0; }
 
 /* ---------- মোবাইল ---------- */
 @media (max-width: 640px) {
@@ -180,9 +328,44 @@ body .lib-slot p { margin: 0; }
   body .lib-shelf i:nth-child(n + 13) { display: none; }
   body .lib-note { padding: 12px 14px; font-size: 0.9rem; }
   body .lib-browse { margin-top: 26px; }
+
+  /* কলেজ ফিল্টার: এক সারিতে অনুভূমিক স্ক্রল, দুই পাশে ফিকে হয়ে যাওয়া কিনারা */
+  body .lib-filter {
+    flex-wrap: nowrap;
+    margin-inline: -12px;
+    padding: 2px 12px 8px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(90deg, transparent 0, #000 12px, #000 calc(100% - 28px), transparent);
+  }
+  body .lib-filter::-webkit-scrollbar { display: none; }
+  body .lib-chip { scroll-snap-align: start; white-space: nowrap; }
+  body .lib-status { margin-top: 6px; }
+
+  /* বিভাগ: দুই কলাম, আইকন ওপরে ও নাম নিচে, যাতে লম্বা নামও জায়গা পায় */
+  body .lib-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  body .lib-dept {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 12px 14px 14px;
+    border-radius: 16px;
+  }
+  body .lib-dept-ico { width: 46px; height: 46px; border-radius: 13px; }
+  body .lib-dept-name { font-size: 1rem; }
 }
 
 /* ---------- অ্যানিমেশন কমানোর সেটিং ---------- */
 @media (prefers-reduced-motion: reduce) {
   body .lib-shelf i { animation: none; }
+  body .lib-grid.is-swap .lib-dept { animation: none; }
+  body .lib-dept,
+  body .lib-chip { transition: none; }
+  body .lib-dept:hover,
+  body .lib-dept:active,
+  body .lib-chip:active { transform: none; }
 }
