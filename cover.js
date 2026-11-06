@@ -4,9 +4,9 @@
 (function(){
 'use strict';var $=function(i){return document.getElementById(i)};
 var KEY='cover-studio-v3',LKEY='cover-studio-logo-v2',W=794,H=1122;
-var FIELDS=['tpl','cPri','cAcc','docType','font','lang','digits','sign','uni','campus','dept','courseCode','courseName','topic','mode','sName','sRoll','members','sClass','session','mobile','date','dateFmt','bindOn','bindSide','bindMm','bindType','teachers','dclOn','dclStyle','dclText','dclPlace','dclSup','aprStyle','aprText','aprPlace','aprExam','aprStamp','ackStyle','ackText','ackPlace','ackThanks','ackClose','tocStyle','tocEntries'];
+var FIELDS=['tpl','cPri','cAcc','docType','font','lang','digits','sign','uni','campus','dept','courseCode','courseName','topic','topicOn','asgOn','asgNo','mode','sName','sRoll','members','sClass','session','mobile','date','dateFmt','bindOn','bindSide','bindMm','bindType','teachers','dclOn','dclStyle','dclText','dclPlace','dclSup','aprStyle','aprText','aprPlace','aprExam','aprStamp','ackStyle','ackText','ackPlace','ackThanks','ackClose','tocStyle','tocEntries'];
 var DEF={tpl:'classic',cPri:'#0b1f3a',cAcc:'#d4af37',docType:'assignment',font:'Cinzel',lang:'en',digits:'en',sign:false,
-uni:'',campus:'',dept:'',courseCode:'',courseName:'',topic:'',mode:'single',sName:'',sRoll:'',members:'',sClass:'',session:'',mobile:'',date:'',dateFmt:'long',bindOn:false,bindSide:'left',bindMm:'15',bindType:'',teachers:'',dclOn:false,dclStyle:'original',dclText:'',dclPlace:'',dclSup:false,aprStyle:'supervisor',aprText:'',aprPlace:'',aprExam:false,aprStamp:true,ackStyle:'supervisor',ackText:'',ackPlace:'',ackThanks:'',ackClose:true,tocStyle:'classic',tocEntries:''};
+uni:'',campus:'',dept:'',courseCode:'',courseName:'',topic:'',topicOn:true,asgOn:false,asgNo:'',mode:'single',sName:'',sRoll:'',members:'',sClass:'',session:'',mobile:'',date:'',dateFmt:'long',bindOn:false,bindSide:'left',bindMm:'15',bindType:'',teachers:'',dclOn:false,dclStyle:'original',dclText:'',dclPlace:'',dclSup:false,aprStyle:'supervisor',aprText:'',aprPlace:'',aprExam:false,aprStamp:true,ackStyle:'supervisor',ackText:'',ackPlace:'',ackThanks:'',ackClose:true,tocStyle:'classic',tocEntries:''};
 /* ফাঁকা থাকলে প্রিভিউতে হালকা নমুনা লেখা দেখায় (PDF-এ আসে না) */
 var SAMPLE={uni:'DHAKA CENTRAL UNIVERSITY',campus:'MAIN CAMPUS',dept:'DEPARTMENT OF COMPUTER SCIENCE',cs:'CSE-101 — Programming Fundamentals',topic:'Introduction to Artificial Intelligence',sName:'ABDUL KARIM',sRoll:'101',members:'ABDUL KARIM, 101\nRAHIM UDDIN, 102',sClass:'BSc Honours 1st Year',session:'2025-26',mobile:'01700000000',teachers:'Prof. Dr. Example Name\nAssociate Professor\nCourse Instructor'};
 var T={
@@ -114,6 +114,7 @@ $('dpNext').addEventListener('click',function(){dpNav(1)});
 $('dpTitle').addEventListener('click',function(){dp.view=dp.view==='day'?'month':'day';dpBuild()});
 $('dpClear').addEventListener('click',function(){$('date').value='';touched.date=true;dpOpen(false);render()});
 function themeName(p,a){var l=document.querySelectorAll('#sws .sw');for(var k=0;k<l.length;k++)if(l[k].dataset.p.toLowerCase()===String(p).toLowerCase()&&l[k].dataset.a.toLowerCase()===String(a).toLowerCase())return l[k].dataset.uiTitle||l[k].title;return 'Custom colors · নিজের পছন্দের রং'}
+function fxSw(b,on){if(!b)return;b.setAttribute('aria-checked',on?'true':'false');var e=b.querySelector('.t-en'),n=b.querySelector('.t-bn');if(e)e.textContent=on?'On':'Off';if(n)n.textContent=on?'চালু':'বন্ধ'}
 function render(){try{typeSync($('docType').value)}catch(e){}
 var v=get(),bi=v.lang==='bi',L=T[bi?'en':(T[v.lang]?v.lang:'en')],B=T.bn,warns=[];
 var D=function(s){s=String(s);return v.digits==='bn'?s.replace(/[0-9]/g,function(c){return '০১২৩৪৫৬৭৮৯'.charAt(+c)}):s};
@@ -129,6 +130,16 @@ $('oDoc').textContent=L.docs[v.docType]||'';
 $('oDocBn').textContent=bi?(B.docs[v.docType]||''):'';$('oDocBn').style.display=bi?'':'none';
 bil($('oTl'),'topic');$('oTl').style.display='';
 G($('oTopic'),'topic',v.topic);
+var cvT=['declaration','approval','acknowledgment','contents'].indexOf(v.docType)<0,tOff=cvT&&!v.topicOn;
+if(tOff){$('oTl').style.display='none';$('oTopic').style.display='none'}
+var ag=$('oAsg');
+if(ag){var av=String(v.asgNo||'').trim(),aShow=!!v.asgOn&&cvT,aph=!av,dn=(L.docs[v.docType]||'');
+ag.style.display=aShow?'':'none';ag.classList.toggle('ph',aph);clear(ag);
+if(aShow){ag.appendChild(el('span','k',dn+(v.lang==='bn'?' নং':' NO.')));ag.appendChild(el('b','',D(aph?'01':av)));
+if(bi)ag.appendChild(el('small','bn',(B.docs[v.docType]||'')+' নং'))}}
+var fa=$('fxAsg'),ft=$('fxTopic');
+if(fa)fa.setAttribute('data-on',v.asgOn?'1':'0');if(ft)ft.setAttribute('data-on',v.topicOn?'1':'0');
+fxSw($('swAsg'),!!v.asgOn);fxSw($('swTopic'),!!v.topicOn);
 G($('oCourse'),'cs',D([v.courseCode.trim(),v.courseName.trim()].filter(Boolean).join(' — ')));
 bil($('oBy'),'by');bil($('oTo'),'to');
 /* date */
@@ -168,6 +179,7 @@ $('oSign').style.display=v.sign?'':'none';
 bil($('oS1'),'s1');bil($('oS2'),'s2');
 $('warn').textContent=warns.join(' ');
 var req=['uni','dept','courseCode','courseName','topic','sClass','session','mobile','teachers',v.mode==='group'?'members':'sName'].concat(v.mode==='group'?[]:['sRoll']);
+if(cvT&&!v.topicOn)req.splice(req.indexOf('topic'),1);
 var done=req.filter(function(k){return String(v[k]).trim()}).length;
 document.querySelector('.top').style.setProperty('--pg',Math.round(done/req.length*100)+'%');
 Array.prototype.forEach.call(document.querySelectorAll('#form input[type=text],#form input[type=tel],#form textarea'),function(e){e.classList.toggle('ok',!!e.value.trim())});
@@ -287,12 +299,13 @@ if(m&&m.t==='err')inp.classList.remove('ok');lastMsg[id]=key}
 function validate(v){
 var grp=v.mode==='group',miss=[],dec=v.docType==='declaration';
 var need=function(id,ok){if(!ok)miss.push(id)};
-need('uni',v.uni.trim());need('dept',v.dept.trim());need('courseName',v.courseCode.trim()||v.courseName.trim());need('topic',v.topic.trim());
+need('uni',v.uni.trim());need('dept',v.dept.trim());need('courseName',v.courseCode.trim()||v.courseName.trim());if(v.topicOn||v.docType==='declaration'||v.docType==='approval'||v.docType==='acknowledgment')need('topic',v.topic.trim());
 if(grp)need('members',v.members.trim());else{need('sName',v.sName.trim());need('sRoll',v.sRoll.trim())}
 need('sClass',v.sClass.trim());need('session',v.session.trim());var ack=v.docType==='acknowledgment';if(!dec&&v.docType!=='approval'&&!ack)need('date',v.date);if(ack||!dec||v.dclStyle==='thesis'||v.dclSup)need('teachers',v.teachers.trim());
 if(v.docType==='contents'){miss=[];need('uni',v.uni.trim());need('dept',v.dept.trim());need('topic',v.topic.trim())}
 ISSUES=[];var tips=0,filled=0;
 IDS.forEach(function(id){
+if(id==='topic'&&!v.topicOn&&['declaration','approval','acknowledgment','contents'].indexOf(v.docType)<0){paint(id,null);return}
 if(v.docType==='contents'&&['uni','campus','dept','topic'].indexOf(id)<0){paint(id,null);return}
 if((id==='sName'||id==='sRoll')&&grp||id==='members'&&!grp){paint(id,null);return}
 var x=id==='date'?v.date:(id==='members'||id==='teachers'?v[id]:String(v[id]).trim());
@@ -987,6 +1000,9 @@ function renderSoon(){clearTimeout(rT);rT=setTimeout(function(){rT=0;requestAnim
 function renderNow(){if(rT){clearTimeout(rT);rT=0}render()}
 $('form').addEventListener('input',renderSoon);
 $('form').addEventListener('change',renderNow);
+[['swAsg','asgOn','asgNo'],['swTopic','topicOn','topic']].forEach(function(p){var b=$(p[0]),c=$(p[1]);if(!b||!c)return;
+b.addEventListener('click',function(){c.checked=!c.checked;c.dispatchEvent(new Event('change',{bubbles:true}));
+if(c.checked){var f=$(p[2]);if(f)setTimeout(function(){try{f.focus({preventScroll:true})}catch(e){}},340)}})});
 $('sws').addEventListener('click',function(e){var b=e.target.closest('.sw');if(!b||!gOpen)return;gSetColors(b.dataset.p,b.dataset.a,true)});
 function gCust(){if(gOpen)gSetColors($('gcPri').value,$('gcAcc').value,false)}
 $('gcPri').addEventListener('input',gCust);$('gcAcc').addEventListener('input',gCust);
