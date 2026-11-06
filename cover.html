@@ -57,6 +57,40 @@ html[data-ui-lang="bn"] .pv .pbar .acts .btn > small.t-bn{display:inline!importa
 <meta property="og:url" content="https://dcucore.vercel.app/cover">
 <meta property="og:image" content="https://dcucore.vercel.app/icon-512.png">
 <meta name="twitter:card" content="summary">
+
+<style id="fx-css">
+/* ===== Premium on/off switches (Assignment No. & Topic) ===== */
+.fx-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.fx-row>label{flex:1;min-width:0}
+.fx-sw{appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;gap:9px;flex:none;margin:0 0 5px;padding:3px 4px 3px 11px;border-radius:999px;cursor:pointer;border:1px solid rgba(16,185,129,.32);background:linear-gradient(180deg,rgba(16,185,129,.12),rgba(16,185,129,.05));color:#047857;font:700 11px/1 'Inter','Noto Sans Bengali',system-ui,sans-serif;letter-spacing:.02em;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 4px 12px -6px rgba(5,150,105,.45);transition:background .25s,border-color .25s,color .25s,box-shadow .25s,transform .15s}
+.fx-sw:active{transform:scale(.97)}
+.fx-sw:focus-visible{outline:2px solid #10b981;outline-offset:3px}
+.fx-sw[aria-checked="false"]{border-color:rgba(100,116,139,.32);background:linear-gradient(180deg,rgba(100,116,139,.11),rgba(100,116,139,.04));color:#64748b;box-shadow:0 1px 0 rgba(255,255,255,.6) inset}
+.fx-tx{display:inline-block;min-width:30px;text-align:right}
+.fx-trk{position:relative;flex:none;width:38px;height:22px;border-radius:999px;background:#cbd5e1;box-shadow:inset 0 1px 3px rgba(15,23,42,.22);transition:background .3s,box-shadow .3s}
+.fx-trk i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:linear-gradient(180deg,#fff,#f1f5f9);box-shadow:0 1px 3px rgba(15,23,42,.35),0 0 0 .5px rgba(15,23,42,.08);transition:transform .32s cubic-bezier(.34,1.45,.5,1)}
+.fx-sw[aria-checked="true"] .fx-trk{background:linear-gradient(135deg,#34d399,#059669);box-shadow:inset 0 1px 3px rgba(0,60,40,.35),0 0 0 3px rgba(16,185,129,.16)}
+.fx-sw[aria-checked="true"] .fx-trk i{transform:translateX(16px)}
+.fx-body{display:grid;grid-template-rows:1fr;opacity:1;transition:grid-template-rows .32s ease,opacity .25s ease}
+.fx-in{min-height:0;overflow:hidden;padding:6px;margin:-6px}
+.fx-opt[data-on="0"] .fx-body{grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .32s ease,opacity .2s ease,visibility 0s .32s}
+.fx-opt[data-on="0"]>.fx-row>label{opacity:.6}
+/* Assignment No. exists only on cover types; Topic switch only on cover types (other pages always use the topic) */
+#form:not([data-cov]) #fxAsg{display:none}
+#form:not([data-cov]) #fxTopic .fx-sw{display:none}
+#form:not([data-cov]) #fxTopic .fx-body{grid-template-rows:1fr;opacity:1;visibility:visible}
+#form:not([data-cov]) #fxTopic>.fx-row>label{opacity:1}
+html[data-theme="dark"] .fx-sw{color:#6ee7b7;border-color:rgba(52,211,153,.35);background:linear-gradient(180deg,rgba(16,185,129,.2),rgba(16,185,129,.08));box-shadow:0 4px 12px -6px rgba(0,0,0,.6)}
+html[data-theme="dark"] .fx-sw[aria-checked="false"]{color:#94a3b8;border-color:rgba(148,163,184,.3);background:rgba(148,163,184,.08);box-shadow:none}
+html[data-theme="dark"] .fx-trk{background:#475569}
+@media (prefers-reduced-motion:reduce){.fx-sw,.fx-trk,.fx-trk i,.fx-body{transition:none!important}}
+/* ===== Preview badge ===== */
+.sheet .fx-asg{width:max-content;max-width:92%;margin:12px auto 4px;padding:6px 20px;border-radius:999px;text-align:center;border:1px solid rgba(128,128,128,.55);border-color:color-mix(in srgb,currentColor 45%,transparent);font:600 13px/1.25 'Inter','Noto Sans Bengali',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:inherit}
+.sheet .fx-asg b{font-weight:800;letter-spacing:.06em;margin-left:8px}
+.sheet .fx-asg small.bn{display:block;font-size:11px;letter-spacing:.04em;text-transform:none;opacity:.8;font-weight:500;margin-top:1px}
+.sheet .fx-asg.ph{opacity:.4}
+.pdf-host .fx-asg.ph{display:none!important}
+</style>
 </head>
 <body>
 <div id="hdr"></div>
@@ -257,8 +291,21 @@ html[data-ui-lang="bn"] .pv .pbar .acts .btn > small.t-bn{display:inline!importa
       <div><label for="courseCode"><span class="t-en">Course code</span><em class="t-bn">কোর্স কোড</em></label><input id="courseCode" type="text" list="courseCodeList" placeholder="e.g. CSE-101" autocomplete="off"><datalist id="courseCodeList"></datalist></div>
       <div><label for="courseName"><span class="t-en">Course name</span><em class="t-bn">কোর্সের নাম</em></label><input id="courseName" type="text" list="courseNameList" placeholder="e.g. Programming" autocomplete="off"><datalist id="courseNameList"></datalist></div>
     </div>
-    <label for="topic"><span class="t-en" data-d="Title of the work" data-a="Title of the work" data-ak="Title of the work" data-tc="Title of the work">Topic</span><em class="t-bn" data-d="কাজের শিরোনাম" data-a="কাজের শিরোনাম" data-ak="কাজের শিরোনাম" data-tc="কাজের শিরোনাম">বিষয়</em></label>
-    <input id="topic" type="text" placeholder="e.g. Introduction to Artificial Intelligence" autocomplete="off">
+    <input type="checkbox" id="asgOn" hidden tabindex="-1" aria-hidden="true"><input type="checkbox" id="topicOn" hidden checked tabindex="-1" aria-hidden="true">
+    <div class="fx-opt" id="fxAsg" data-on="0">
+      <div class="fx-row">
+        <label for="asgNo"><span class="t-en">Assignment No.</span><em class="t-bn">অ্যাসাইনমেন্ট নং</em></label>
+        <button type="button" class="fx-sw" id="swAsg" role="switch" aria-checked="false" aria-label="Show assignment number · অ্যাসাইনমেন্ট নং দেখান"><span class="fx-tx"><span class="t-en">Off</span><em class="t-bn">বন্ধ</em></span><span class="fx-trk"><i></i></span></button>
+      </div>
+      <div class="fx-body"><div class="fx-in"><input id="asgNo" type="text" placeholder="e.g. 01" maxlength="16" autocomplete="off"></div></div>
+    </div>
+    <div class="fx-opt" id="fxTopic" data-on="1">
+      <div class="fx-row">
+        <label for="topic"><span class="t-en" data-d="Title of the work" data-a="Title of the work" data-ak="Title of the work" data-tc="Title of the work">Topic</span><em class="t-bn" data-d="কাজের শিরোনাম" data-a="কাজের শিরোনাম" data-ak="কাজের শিরোনাম" data-tc="কাজের শিরোনাম">বিষয়</em></label>
+        <button type="button" class="fx-sw" id="swTopic" role="switch" aria-checked="true" aria-label="Show topic · বিষয় দেখান"><span class="fx-tx"><span class="t-en">On</span><em class="t-bn">চালু</em></span><span class="fx-trk"><i></i></span></button>
+      </div>
+      <div class="fx-body"><div class="fx-in"><input id="topic" type="text" placeholder="e.g. Introduction to Artificial Intelligence" autocomplete="off"></div></div>
+    </div>
   </div>
 
   <div class="card tc-hide">
@@ -362,6 +409,7 @@ html[data-ui-lang="bn"] .pv .pbar .acts .btn > small.t-bn{display:inline!importa
           <div class="dt" id="oDoc"></div>
           <div class="dtb" id="oDocBn"></div>
           <div class="rule"></div>
+          <div class="fx-asg" id="oAsg" style="display:none"></div>
           <div class="tl" id="oTl"></div>
           <div class="tt" id="oTopic"></div>
           <div class="cs" id="oCourse"></div>
