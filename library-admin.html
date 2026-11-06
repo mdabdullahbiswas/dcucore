@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>লাইব্রেরি অ্যাডমিন – DCUCore</title>
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* থিম: ফ্ল্যাশ ছাড়া আগেই বসানো (অন্য অ্যাডমিন পেজের মতো) */
+(function(){var t=null;try{t=localStorage.getItem('adminTheme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;
+if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed");})();
+</script>
+<style>
+:root{
+  --bg:#f3f6fb;--surface:#fff;--surface2:#f7f9fd;--ink:#0e1a2e;--mu:#64748b;--ln:#e4e9f2;
+  --navy:#0a2240;--navy2:#14386a;--gold:#e5a83b;--gold2:#f6d68f;
+  --red:#d92d20;--redSoft:#fee4e2;--green:#12a150;--greenSoft:#dcfae6;--amber:#b54708;--amberSoft:#fef0c7;
+  --shadow:0 1px 2px rgba(14,26,46,.05),0 8px 24px rgba(14,26,46,.06);
+  --f:'Hind Siliguri',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+html[data-theme=dark]{
+  --bg:#08101e;--surface:#101b2f;--surface2:#142339;--ink:#e8eef9;--mu:#94a5bf;--ln:#213352;
+  --redSoft:#3a1612;--greenSoft:#0d2e1d;--amberSoft:#38270a;--amber:#f5b94a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+html.embed .wrap{padding-top:12px}
+.card{background:var(--surface);border:1px solid var(--ln);border-radius:18px;box-shadow:var(--shadow)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- লগইন ---------- */
+#gate{max-width:420px;margin:6vh auto 0}
+.g-hero{padding:30px 24px 22px;text-align:center;color:#fff;border-radius:18px 18px 0 0;background:linear-gradient(140deg,#07192f,#0a2240 55%,#14386a);border-bottom:3px solid var(--gold)}
+.g-hero h1{font-size:1.5rem;line-height:1.3}
+.g-hero p{margin-top:6px;color:var(--gold2);font-size:.9rem}
+.g-body{padding:22px 22px 24px;display:grid;gap:14px}
+.g-body label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
+.in{width:100%;min-height:46px;padding:9px 13px;border:1.5px solid var(--ln);border-radius:12px;background:var(--surface);font-size:1rem}
+.in:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(229,168,59,.22)}
+.msg{min-height:1.2em;color:var(--red);font-size:.9rem;font-weight:500}
+.or{text-align:center;color:var(--mu);font-size:.85rem}
+
+/* ---------- বোতাম ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 18px;border:1.5px solid var(--ln);border-radius:99px;background:var(--surface);font-weight:600;font-size:.93rem;cursor:pointer;transition:transform .15s,border-color .2s,box-shadow .2s}
+.btn:hover{border-color:var(--gold)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn.pri{border-color:transparent;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0a2240;font-weight:700}
+.btn.ok{border-color:transparent;background:var(--green);color:#fff;font-weight:700}
+.btn.dng{border-color:transparent;background:var(--redSoft);color:var(--red);font-weight:700}
+.btn.sm{min-height:36px;padding:5px 14px;font-size:.86rem}
+.btn.wide{width:100%}
+a.btn{text-decoration:none;color:inherit}
+.fm .r2{align-items:start}
+.fm .in[type=number]{min-height:46px}
+
+/* ---------- টুলবার, ফিল্টার ---------- */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.bar h2{font-size:1.25rem;flex:1 1 220px}
+.bar h2 small{display:block;color:var(--mu);font-weight:400;font-size:.85rem}
+.who{color:var(--mu);font-size:.85rem;overflow-wrap:anywhere}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.f{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 16px;border:1px solid var(--ln);border-radius:99px;background:var(--surface);font-weight:600;font-size:.92rem;cursor:pointer}
+.f em{font-style:normal;font-size:.8rem;opacity:.75}
+.f.on{border-color:transparent;background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff}
+.search{width:100%;margin-bottom:14px}
+
+/* ---------- তালিকা ---------- */
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;padding:14px 16px}
+.item h3{font-size:1.02rem;line-height:1.4;overflow-wrap:anywhere}
+.meta{margin-top:4px;color:var(--mu);font-size:.85rem;overflow-wrap:anywhere}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;vertical-align:middle}
+.pill.warn{background:var(--amberSoft);color:var(--amber)}
+.pill.ok{background:var(--greenSoft);color:var(--green)}
+.pill.mu{background:var(--surface2);color:var(--mu);border:1px solid var(--ln)}
+.empty{padding:38px 18px;text-align:center;color:var(--mu)}
+.sk{height:74px;border-radius:18px;background:linear-gradient(90deg,var(--surface2),var(--ln),var(--surface2));background-size:200% 100%;animation:sk 1.3s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ---------- রিভিউ ডায়ালগ ---------- */
+.ov{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:16px;background:rgba(7,16,30,.62)}
+.dlg{width:100%;max-width:980px;margin:auto;overflow:hidden}
+.dh{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--ln)}
+.dh h3{flex:1;font-size:1.1rem}
+.x{width:40px;height:40px;border:0;border-radius:50%;background:var(--surface2);font-size:1.3rem;cursor:pointer}
+.db{display:grid;grid-template-columns:1.1fr 1fr;gap:0}
+.pv{padding:16px;background:var(--surface2);border-right:1px solid var(--ln);display:grid;align-content:start;gap:12px}
+.pv iframe{width:100%;height:min(62vh,520px);border:1px solid var(--ln);border-radius:12px;background:#fff}
+.probe{display:flex;align-items:center;gap:10px;font-size:.9rem;line-height:1.5}
+.probe.ok{color:var(--green)}.probe.warn{color:var(--amber)}
+.probe img{width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--ln)}
+.fm{padding:16px 18px;display:grid;gap:12px;align-content:start}
+.fm label{display:grid;gap:5px;font-weight:600;font-size:.86rem}
+.fm .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fm textarea{min-height:76px;resize:vertical}
+.sub{color:var(--mu);font-size:.84rem;font-weight:400}
+.da{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--ln);background:var(--surface)}
+.rej{grid-column:1/-1;display:none;padding:14px 18px;border-top:1px solid var(--ln);background:var(--redSoft)}
+.rej.on{display:grid;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:36px;padding:4px 14px;border:1px solid var(--ln);border-radius:99px;background:var(--surface);font-size:.85rem;cursor:pointer}
+.chips button:hover{border-color:var(--red)}
+
+.toasts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:80;display:grid;gap:8px;width:max-content;max-width:92vw}
+.toast{padding:11px 18px;border-radius:12px;background:var(--navy);color:#fff;font-weight:600;box-shadow:var(--shadow)}
+.toast.err{background:var(--red)}
+
+@media(max-width:760px){
+  .db{grid-template-columns:1fr}
+  .pv{border-right:0;border-bottom:1px solid var(--ln)}
+  .pv iframe{height:300px}
+  .item{grid-template-columns:1fr}
+  .fm .r2{grid-template-columns:1fr}
+  .da .btn{flex:1 1 140px}
+}
+@media(prefers-reduced-motion:reduce){.sk{animation:none}.btn{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== লগইন (অন্য অ্যাডমিন পেজের মতোই: আইডি/পাসওয়ার্ড বা Google) ===== -->
+  <div id="gate">
+    <div class="card">
+      <div class="g-hero"><h1>লাইব্রেরি অ্যাডমিন</h1><p>শুধু অ্যাডমিনের জন্য</p></div>
+      <div class="g-body">
+        <form id="lf" novalidate style="display:grid;gap:14px">
+          <label>অ্যাডমিন আইডি
+            <input class="in" id="lid" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="আইডি বা ইমেইল">
+          </label>
+          <label>পাসওয়ার্ড
+            <input class="in" id="lpw" type="password" autocomplete="current-password" placeholder="••••••••">
+          </label>
+          <button class="btn pri wide" id="login" type="submit">লগ ইন</button>
+        </form>
+        <div class="or">অথবা</div>
+        <button class="btn wide" id="glogin" type="button">Google দিয়ে সাইন ইন</button>
+        <p class="msg" id="gmsg" role="alert"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== অ্যাপ ===== -->
+  <div id="app" style="display:none">
+    <div class="bar">
+      <h2>লাইব্রেরি: জমা পর্যালোচনা<small>শিক্ষার্থীদের জমা দেওয়া ফাইল দেখে অনুমোদন বা বাতিল করুন</small></h2>
+      <span class="who" id="who"></span>
+      <button class="btn sm" id="ref" type="button">রিফ্রেশ</button>
+      <button class="btn sm dng" id="out" type="button">সাইন আউট</button>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
+    <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, কোর্স কোড বা কোর্সের নাম খুঁজুন">
+    <div class="list" id="list" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="lib-data.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* অন্য অ্যাডমিন পেজের (admin.html) সঙ্গে হুবহু একই অনুমোদিত অ্যাকাউন্ট ও অ্যাপ নাম, তাই একবার লগইন করলে সব অ্যাডমিন পেজে চলে */
+const ID_DOMAIN = "dcu-blood-bank.app";
+const ADMIN_LOGINS = ["admin@" + ID_DOMAIN, "mdabdullahbiswas48@gmail.com"];
+const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" }, "dcu-admin");
+const auth = getAuth(app), db = getFirestore(app);
+const D = window.LibData;
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clean = s => String(s || "").replace(/\s+/g, " ").trim();
+const BN = n => Number(n || 0).toLocaleString("bn-BD");
+const FILE_ID_RE = /^[A-Za-z0-9_-]{10,120}$/;
+
+const STATUS = { pending: ["অপেক্ষায়", "warn"], approved: ["অনুমোদিত", "ok"], rejected: ["বাতিল", "mu"] };
+const FILTERS = [["pending", "অপেক্ষমাণ"], ["approved", "অনুমোদিত"], ["rejected", "বাতিল"], ["all", "সব"]];
+const REJECT_REASONS = [
+  "ফাইল খোলা যায় না। শেয়ার সেটিং “Anyone with the link” করে আবার জমা দিন।",
+  "কলেজ, বিভাগ বা কোর্স ভুল আছে।",
+  "ফাইল অস্পষ্ট বা অসম্পূর্ণ।",
+  "কপিরাইট বা অনুপযুক্ত বিষয়বস্তু।",
+  "একই ফাইল আগেই আছে।"
+];
+
+let ALL = [], filter = "pending", query = "", current = null, busy = false;
+
+/* ---------- টোস্ট ও তারিখ ---------- */
+function toast(msg, type) {
+  const t = document.createElement("div");
+  t.className = "toast" + (type === "err" ? " err" : "");
+  t.textContent = msg;
+  $("toasts").appendChild(t);
+  setTimeout(() => t.remove(), type === "err" ? 5000 : 2600);
+}
+const errToast = e => toast("কাজটি সম্পন্ন হয়নি: " + (e.code || e.message), "err");
+const ms = t => (t && t.toMillis ? t.toMillis() : 0);
+function fd(t) {
+  const m = ms(t);
+  return m ? new Date(m).toLocaleString("bn-BD", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
+}
+
+/* ---------- লগইন ---------- */
+const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+const LERR = { "auth/invalid-credential":"আইডি বা পাসওয়ার্ড ভুল।", "auth/wrong-password":"আইডি বা পাসওয়ার্ড ভুল।", "auth/user-not-found":"আইডি বা পাসওয়ার্ড ভুল।", "auth/invalid-email":"আইডি সঠিক নয়।", "auth/too-many-requests":"অনেকবার ভুল চেষ্টা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।", "auth/network-request-failed":"ইন্টারনেট সংযোগ পরীক্ষা করুন।" };
+$("glogin").onclick = () => { $("gmsg").textContent = ""; persistReady.then(() => signInWithPopup(auth, new GoogleAuthProvider())).catch(e => $("gmsg").textContent = "সাইন ইন সম্ভব হয়নি: " + e.code); };
+$("lf").onsubmit = async ev => {
+  ev.preventDefault();
+  const id = $("lid").value.trim().toLowerCase(), pw = $("lpw").value, btn = $("login");
+  if (!id || !pw) { $("gmsg").textContent = "আইডি ও পাসওয়ার্ড দুটোই দিন।"; return; }
+  $("gmsg").textContent = ""; btn.disabled = true; btn.textContent = "যাচাই হচ্ছে...";
+  try { await persistReady; await signInWithEmailAndPassword(auth, id.includes("@") ? id : id + "@" + ID_DOMAIN, pw); $("lpw").value = ""; }
+  catch (e) { $("gmsg").textContent = LERR[e.code] || ("লগ ইন সম্ভব হয়নি: " + e.code); }
+  finally { btn.disabled = false; btn.textContent = "লগ ইন"; }
+};
+$("out").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, u => {
+  if (!u) { $("gate").style.display = ""; $("app").style.display = "none"; return; }
+  const email = (u.email || "").toLowerCase();
+  const isPw = ADMIN_LOGINS.includes(email), isG = email === GOOGLE_ADMIN_EMAIL && u.emailVerified;
+  if (!isPw && !isG) { $("gmsg").textContent = "এই অ্যাকাউন্টের প্রবেশাধিকার নেই।"; signOut(auth); return; }
+  $("gate").style.display = "none"; $("app").style.display = "block";
+  $("who").textContent = u.email || "";
+  load();
+});
+
+/* ---------- ডেটা ---------- */
+async function load() {
+  $("list").innerHTML = '<div class="sk"></div>'.repeat(3);
+  try {
+    ALL = (await getDocs(collection(db, "lib_resources"))).docs
+      .map(x => ({ id: x.id, ...x.data() }))
+      .sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
+    render();
+  } catch (e) {
+    $("list").innerHTML = '<div class="card empty">ডেটা লোড হয়নি: ' + esc(e.code || e.message) + '<br><small>Firestore Rules ও অ্যাডমিন অ্যাকাউন্ট দেখুন।</small></div>';
+  }
+}
+$("ref").onclick = load;
+
+const count = s => s === "all" ? ALL.length : ALL.filter(r => (r.status || "pending") === s).length;
+
+function render() {
+  $("filters").innerHTML = FILTERS.map(([k, l]) =>
+    '<button type="button" class="f' + (k === filter ? " on" : "") + '" data-f="' + k + '" aria-pressed="' + (k === filter) + '">' + l + " <em>" + BN(count(k)) + "</em></button>").join("");
+
+  const q = query.toLowerCase();
+  const rows = ALL.filter(r => (filter === "all" || (r.status || "pending") === filter) &&
+    (!q || [r.title, r.courseCode, r.courseName, r.submitter].some(v => String(v || "").toLowerCase().includes(q))));
+
+  if (!rows.length) {
+    $("list").innerHTML = '<div class="card empty">' + (filter === "pending" && !q ? "অপেক্ষমাণ কোনো ফাইল নেই। ✓" : "কিছু পাওয়া যায়নি।") + "</div>";
+    return;
+  }
+  $("list").innerHTML = rows.map(r => {
+    const st = STATUS[r.status] || STATUS.pending;
+    const col = D.college(r.college), dep = D.department(r.dept);
+    return '<div class="card item"><div><h3>' + esc(r.title) + ' <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
+      '<div class="meta">' + esc(r.courseCode) + " · " + esc(r.courseName) + "</div>" +
+      '<div class="meta">' + esc(D.name(col, "bn") || r.college) + " · " + esc(D.name(dep, "bn") || r.dept) + " · " + esc((D.year(r.year) || {}).bn || r.year + " বর্ষ") +
+      " · " + esc((D.fileType(r.fileType) || {}).bn || r.fileType) + " · " + fd(r.createdAt) + "</div></div>" +
+      '<button type="button" class="btn ' + ((r.status || "pending") === "pending" ? "pri" : "") + '" data-open="' + esc(r.id) + '">' +
+      ((r.status || "pending") === "pending" ? "দেখুন ও যাচাই" : "দেখুন") + "</button></div>";
+  }).join("");
+}
+
+$("filters").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if (b) { filter = b.dataset.f; render(); } });
+$("q").addEventListener("input", e => { query = e.target.value.trim(); render(); });
+$("list").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openReview(b.dataset.open, b); });
+
+/* ---------- রিভিউ ডায়ালগ ---------- */
+function opts(items, val, vf, lf) {
+  return items.map(i => '<option value="' + esc(vf(i)) + '"' + (String(vf(i)) === String(val) ? " selected" : "") + ">" + esc(lf(i)) + "</option>").join("");
+}
+function previewUrl(r) {
+  /* জমার সময় Docs লিংক /preview আর Drive লিংক /view হিসেবে রাখা হয়; এখানে সবই /preview */
+  if (/^https:\/\/docs\.google\.com\//.test(r.driveUrl || "")) return r.driveUrl;
+  return "https://drive.google.com/file/d/" + encodeURIComponent(r.fileId) + "/preview";
+}
+function probeThumb(id) {
+  return new Promise(resolve => {
+    const url = "https://drive.google.com/thumbnail?id=" + encodeURIComponent(id) + "&sz=w200";
+    const im = new Image(); im.referrerPolicy = "no-referrer";
+    const t = setTimeout(() => { im.onload = im.onerror = null; resolve(null); }, 8000);
+    im.onload = () => { clearTimeout(t); resolve(im.naturalWidth > 1 ? url : null); };
+    im.onerror = () => { clearTimeout(t); resolve(null); };
+    im.src = url;
+  });
+}
+
+let lastFocus = null, probeOk = null;
+function openReview(id, from) {
+  const r = ALL.find(x => x.id === id); if (!r) return;
+  current = r; lastFocus = from || null; probeOk = null;
+  const status = r.status || "pending", isPend = status === "pending";
+  const depts = D.departments(r.college);
+  if (!depts.some(d => d.slug === r.dept)) { const d = D.department(r.dept); if (d) depts.push(d); }
+
+  const o = document.createElement("div");
+  o.className = "ov"; o.id = "ov";
+  o.innerHTML =
+    '<div class="card dlg" role="dialog" aria-modal="true" aria-labelledby="dt">' +
+      '<div class="dh"><h3 id="dt">' + esc(r.title) + '</h3><button class="x" type="button" data-x aria-label="বন্ধ করুন">×</button></div>' +
+      '<div class="db">' +
+        '<div class="pv">' +
+          '<div class="probe" id="probe"><span>ফাইল যাচাই হচ্ছে…</span></div>' +
+          '<iframe id="pf" title="ফাইলের প্রিভিউ" src="' + esc(previewUrl(r)) + '" referrerpolicy="no-referrer" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>' +
+          '<a class="btn sm" href="' + esc(r.driveUrl) + '" target="_blank" rel="noopener noreferrer">Drive-এ খুলুন</a>' +
+          '<p class="sub">প্রিভিউতে “অনুমতি লাগবে” বা লগইন চাইলে লিংকটি ব্যক্তিগত। নিশ্চিত হতে লিংকটি প্রাইভেট/ইনকগনিটো উইন্ডোতে খুলে দেখুন, কারণ আপনার নিজের Google অ্যাকাউন্টে ফাইলটি খুলে গেলেও অন্যদের কাছে নাও খুলতে পারে।</p>' +
+        '</div>' +
+        '<div class="fm">' +
+          '<label>শিরোনাম<input class="in" id="e-title" maxlength="120" value="' + esc(r.title) + '"></label>' +
+          '<div class="r2">' +
+            '<label>কলেজ<select class="in" id="e-college">' + opts(D.colleges(), r.college, c => c.slug, c => D.name(c, "bn")) + "</select></label>" +
+            '<label>বিভাগ<select class="in" id="e-dept">' + opts(depts, r.dept, d => d.slug, d => D.name(d, "bn")) + "</select></label>" +
+          "</div>" +
+          '<div class="r2">' +
+            '<label>বর্ষ<select class="in" id="e-year">' + opts(D.YEARS, r.year, y => y.n, y => y.bn) + "</select></label>" +
+            '<label>ফাইলের ধরন<select class="in" id="e-ftype">' + opts(D.FILE_TYPES, r.fileType, t => t.id, t => t.bn) + "</select></label>" +
+          "</div>" +
+          '<div class="r2">' +
+            '<label>কোর্স কোড<input class="in" id="e-code" maxlength="20" value="' + esc(r.courseCode) + '"></label>' +
+            '<label>কোর্সের নাম<input class="in" id="e-cname" maxlength="100" value="' + esc(r.courseName) + '"></label>' +
+          "</div>" +
+          '<div class="r2">' +
+            '<label>পরীক্ষার ধরন<select class="in" id="e-etype">' + opts(D.EXAM_TYPES, r.examType, t => t.id, t => t.bn) + "</select></label>" +
+            '<label>পরীক্ষার সাল<input class="in" id="e-eyear" type="number" min="0" max="2100" value="' + esc(r.examYear || 0) + '"><span class="sub">০ মানে প্রযোজ্য নয়</span></label>' +
+          "</div>" +
+          '<label>বিবরণ<textarea class="in" id="e-desc" maxlength="500">' + esc(r.desc) + "</textarea></label>" +
+          '<p class="sub">জমাদাতা: ' + esc(r.submitter || "নাম নেই") + " · জমার সময়: " + fd(r.createdAt) +
+          (status === "rejected" && r.rejectReason ? "<br>বাতিলের কারণ: " + esc(r.rejectReason) : "") + "</p>" +
+        "</div>" +
+        '<div class="rej" id="rej"><b>বাতিলের কারণ (জমাদাতার জন্য নয়, রেকর্ডের জন্য)</b>' +
+          '<div class="chips">' + REJECT_REASONS.map((t, i) => '<button type="button" data-rr="' + i + '">' + esc(t.split("।")[0]) + "</button>").join("") + "</div>" +
+          '<textarea class="in" id="rej-t" maxlength="200" placeholder="কারণ লিখুন (সর্বোচ্চ ২০০ অক্ষর)"></textarea>' +
+          '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn dng" data-rejgo>বাতিল নিশ্চিত করুন</button><button type="button" class="btn" data-rejno>থাক</button></div>' +
+        "</div>" +
+      "</div>" +
+      '<div class="da">' +
+        (isPend
+          ? '<button type="button" class="btn dng" data-reject>বাতিল করুন</button><button type="button" class="btn ok" data-approve>অনুমোদন দিন</button>'
+          : '<button type="button" class="btn" data-pend>অপেক্ষমাণে ফেরান</button>' +
+            (status === "approved" ? '<button type="button" class="btn dng" data-reject>বাতিল করুন</button>' : "") +
+            '<button type="button" class="btn pri" data-save>তথ্য সংরক্ষণ</button>') +
+      "</div>" +
+    "</div>";
+  document.body.appendChild(o);
+  document.body.style.overflow = "hidden";
+  o.querySelector("[data-x]").focus();
+
+  /* কলেজ বদলালে বিভাগের তালিকা বদলায় */
+  o.querySelector("#e-college").addEventListener("change", e => {
+    const sel = o.querySelector("#e-dept"), keep = sel.value, list = D.departments(e.target.value);
+    sel.innerHTML = opts(list, list.some(d => d.slug === keep) ? keep : (list[0] || {}).slug, d => d.slug, d => D.name(d, "bn"));
+  });
+
+  /* আনুমানিক যাচাই: Drive-এর থাম্বনেইল লোড হয় কিনা */
+  probeThumb(r.fileId).then(url => {
+    const p = document.getElementById("probe"); if (!p || current !== r) return;
+    probeOk = !!url;
+    if (url) { p.className = "probe ok"; p.innerHTML = '<img src="' + esc(url) + '" alt=""><span>থাম্বনেইল লোড হয়েছে: ফাইলটি খোলা মনে হচ্ছে (আনুমানিক)।</span>'; }
+    else { p.className = "probe warn"; p.innerHTML = "<span>থাম্বনেইল লোড হয়নি। লিংকটি ব্যক্তিগত হতে পারে, অথবা এই ধরনের ফাইলের থাম্বনেইল নেই। প্রিভিউ দেখে নিশ্চিত হোন।</span>"; }
+  });
+}
+
+function closeReview() {
+  const o = $("ov"); if (o) o.remove();
+  document.body.style.overflow = ""; current = null;
+  if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape" && $("ov") && !busy) closeReview(); });
+
+/* ফর্ম থেকে মান পড়ে Rules-এর সীমা অনুযায়ী যাচাই; ভুল থাকলে বার্তা ফেরায় */
+function readEdits() {
+  const g = id => $(id).value;
+  const e = {
+    title: clean(g("e-title")), college: g("e-college"), dept: g("e-dept"), year: Number(g("e-year")),
+    courseCode: clean(g("e-code")), courseName: clean(g("e-cname")), fileType: g("e-ftype"), examType: g("e-etype"),
+    examYear: Number(g("e-eyear")) || 0, desc: g("e-desc").trim()
+  };
+  if (e.title.length < 3 || e.title.length > 120) return "শিরোনাম ৩ থেকে ১২০ অক্ষরের হতে হবে।";
+  if (e.courseCode.length < 2 || e.courseCode.length > 20) return "কোর্স কোড ২ থেকে ২০ অক্ষরের হতে হবে।";
+  if (e.courseName.length < 2 || e.courseName.length > 100) return "কোর্সের নাম ২ থেকে ১০০ অক্ষরের হতে হবে।";
+  if (!(e.examYear === 0 || (e.examYear >= 2000 && e.examYear <= 2100))) return "পরীক্ষার সাল ০ বা ২০০০–২১০০ হতে হবে।";
+  if (e.desc.length > 500) return "বিবরণ ৫০০ অক্ষরের বেশি হবে না।";
+  return e;
+}
+
+async function apply(extra, okMsg) {
+  if (busy || !current) return;
+  const e = readEdits();
+  if (typeof e === "string") { toast(e, "err"); return; }
+  busy = true;
+  document.querySelectorAll("#ov .btn").forEach(b => b.disabled = true);
+  try {
+    await updateDoc(doc(db, "lib_resources", current.id), Object.assign({}, e, extra, {
+      reviewedAt: serverTimestamp()   // অ্যাডমিনের ইমেইল রাখা হয় না: approved ডকুমেন্ট পাবলিক পড়তে পারে
+    }));
+    Object.assign(current, e, extra);
+    if (typeof current.rejectReason !== "string") delete current.rejectReason;   // deleteField() চিহ্ন স্মৃতিতে রাখা হয় না
+    current.reviewedAt = { toMillis: () => Date.now() };
+    toast(okMsg);
+    busy = false; closeReview(); render();
+  } catch (err) {
+    errToast(err);
+    busy = false;
+    document.querySelectorAll("#ov .btn").forEach(b => b.disabled = false);
+  }
+}
+
+document.addEventListener("click", async e => {
+  const o = $("ov"); if (!o) return;
+  if (e.target === o || e.target.closest("[data-x]")) { if (!busy) closeReview(); return; }
+
+  if (e.target.closest("[data-approve]")) {
+    /* ব্যক্তিগত লিংক আটকানো: থাম্বনেইল না এলে নিশ্চিত করতে বলে */
+    if (probeOk === false && !confirm("থাম্বনেইল লোড হয়নি, তাই লিংকটি ব্যক্তিগত হতে পারে। প্রিভিউ ও ইনকগনিটো উইন্ডোতে দেখে নিয়েছেন? তবুও অনুমোদন দেবেন?")) return;
+    apply({ status: "approved", rejectReason: deleteField() }, "অনুমোদিত হয়েছে");
+  }
+  else if (e.target.closest("[data-save]")) apply({}, "সংরক্ষিত হয়েছে");
+  else if (e.target.closest("[data-pend]")) apply({ status: "pending", rejectReason: deleteField() }, "অপেক্ষমাণে ফেরানো হয়েছে");
+  else if (e.target.closest("[data-reject]")) { $("rej").classList.add("on"); $("rej-t").focus(); $("rej").scrollIntoView({ block: "nearest" }); }
+  else if (e.target.closest("[data-rejno]")) $("rej").classList.remove("on");
+  else if (e.target.closest("[data-rr]")) $("rej-t").value = REJECT_REASONS[Number(e.target.closest("[data-rr]").dataset.rr)];
+  else if (e.target.closest("[data-rejgo]")) {
+    const reason = clean($("rej-t").value);
+    if (!reason) { toast("বাতিলের একটি কারণ লিখুন।", "err"); $("rej-t").focus(); return; }
+    apply({ status: "rejected", rejectReason: reason.slice(0, 200) }, "বাতিল করা হয়েছে");
+  }
+});
+
+/* ডায়ালগের ভেতরে Tab আটকে রাখা */
+document.addEventListener("keydown", e => {
+  if (e.key !== "Tab") return;
+  const o = $("ov"); if (!o) return;
+  const f = Array.from(o.querySelectorAll("button,input,select,textarea,a[href],iframe")).filter(x => !x.disabled && x.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (!o.contains(document.activeElement)) { first.focus(); e.preventDefault(); }
+  else if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+  else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+});
+</script>
+</body>
+</html>
