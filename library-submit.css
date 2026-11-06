@@ -1,0 +1,299 @@
+/* library-submit.css — লাইব্রেরির ফাইল জমার ফর্ম (ধাপ ৪)
+ * রঙ ও ফন্ট সাইটের টোকেন থেকে আসে, তাই লাইট/ডার্ক থিম নিজে থেকে মেলে। সব ক্লাস ls- দিয়ে শুরু।
+ */
+
+/* ভাষা: শুধু বর্তমান ভাষার অংশ (library.css-এর নিয়মেরই কপি, যাতে এই পেজ আলাদাভাবে চলে) */
+html:not([data-lang="en"]) .lib-en { display: none; }
+html[data-lang="en"] .lib-bn { display: none; }
+
+body .ls-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 16px 56px;
+}
+
+body .ls-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--mu, #475569);
+  font-weight: 500;
+  text-decoration: none;
+}
+body .ls-back:hover { color: var(--ink, #0F172A); }
+body .ls-back:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; border-radius: 8px; }
+
+body .ls-head h1 {
+  margin: 8px 0 0;
+  color: var(--ink, #0F172A);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.3;
+}
+body .ls-head p {
+  margin: 10px 0 0;
+  max-width: 62ch;
+  color: var(--mu, #475569);
+  line-height: 1.75;
+}
+
+/* ---------- ধাপের সারি (সত্যিই ক্রমিক, তাই সংখ্যা আছে) ---------- */
+body .ls-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 26px 0 18px;
+  padding: 0;
+  list-style: none;
+  counter-reset: ls;
+}
+body .ls-steps li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--mu, #475569);
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-align: center;
+}
+body .ls-steps li::before {
+  content: counter(ls, bengali);
+  counter-increment: ls;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--ln, #E2E8F0);
+  border-radius: 50%;
+  background: var(--cd, #fff);
+  color: var(--mu, #475569);
+  font-weight: 700;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+html[data-lang="en"] body .ls-steps li::before { content: counter(ls); }
+body .ls-steps li::after {
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: calc(50% + 24px);
+  right: calc(-50% + 24px);
+  height: 2px;
+  background: var(--ln, #E2E8F0);
+  transition: background-color 0.25s ease;
+}
+body .ls-steps li:last-child::after { display: none; }
+body .ls-steps li.done::before {
+  content: "✓";
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+}
+body .ls-steps li.done::after { background: var(--gold, #D4AF37); }
+body .ls-steps li.cur { color: var(--ink, #0F172A); font-weight: 700; }
+body .ls-steps li.cur::before {
+  border-color: var(--gold, #D4AF37);
+  color: var(--ink, #0F172A);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.22);
+}
+
+/* ---------- কার্ড ও ফিল্ড ---------- */
+body .ls-card {
+  padding: clamp(18px, 4vw, 30px);
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 24px;
+  background: var(--cd, #fff);
+  box-shadow: 0 24px 50px -36px rgba(10, 34, 64, 0.55);
+}
+body .ls-pane h2 {
+  margin: 0;
+  color: var(--ink, #0F172A);
+  font-size: 1.3rem;
+  font-weight: 700;
+  outline: none;
+}
+body .ls-pane:not([hidden]) { animation: ls-in 0.28s var(--ease, ease) both; }
+@keyframes ls-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+body .ls-field { display: grid; gap: 6px; margin: 18px 0 0; min-width: 0; border: 0; padding: 0; }
+body .ls-group { margin-inline: 0; }
+body .ls-lbl { padding: 0; color: var(--ink, #0F172A); font-weight: 600; font-size: 0.98rem; }
+body .ls-opt { color: var(--mu, #475569); font-weight: 400; font-size: 0.85rem; }
+body .ls-hint { margin: 0; color: var(--mu, #475569); font-size: 0.88rem; line-height: 1.6; }
+body .ls-count { text-align: right; }
+
+body .ls-row { display: flex; flex-wrap: wrap; gap: 0 14px; }
+body .ls-row .ls-field { flex: 0 1 190px; }
+body .ls-row .ls-grow { flex: 1 1 240px; }
+body .ls-narrow { max-width: 260px; }
+
+body .ls-in {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--ln, #E2E8F0);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+body .ls-in::placeholder { color: var(--muted, #94A3B8); }
+body .ls-in:focus { outline: none; border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.22); }
+body .ls-in[aria-invalid="true"] { border-color: var(--err, #EF4444); }
+body .ls-in:disabled { opacity: 0.55; cursor: not-allowed; }
+body .ls-ta { resize: vertical; min-height: 92px; line-height: 1.6; }
+body .ls-sel {
+  appearance: none;
+  padding-right: 42px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  text-overflow: ellipsis;
+}
+
+body .ls-err { margin: 0; color: var(--err, #EF4444); font-size: 0.9rem; font-weight: 500; line-height: 1.5; }
+body .ls-err[hidden] { display: none; }
+body .ls-err-block { margin: 16px 0 0; padding: 12px 14px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); }
+
+/* ---------- বাছাইয়ের চিপ (আসলে radio, তাই কীবোর্ড ও স্ক্রিন-রিডারে ঠিকঠাক) ---------- */
+body .ls-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+body .ls-chip { position: relative; display: inline-flex; }
+body .ls-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+body .ls-chip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 8px 16px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease;
+}
+@media (hover: hover) {
+  body .ls-chip input:not(:checked):hover + span { border-color: var(--gold, #D4AF37); }
+}
+body .ls-chip input:checked + span {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+  font-weight: 700;
+  box-shadow: 0 10px 20px -12px rgba(212, 175, 55, 0.95);
+}
+body .ls-chip input:focus-visible + span { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+
+/* ---------- লিংক যাচাইয়ের অবস্থা ---------- */
+body .ls-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 0;
+  margin-top: 12px;
+  color: var(--mu, #475569);
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+body .ls-status:empty { display: none; }
+body .ls-status[data-state="ok"] { color: var(--s2, #059669); }
+body .ls-status[data-state="warn"] { color: var(--accent-deep, #7A5A14); }
+body .ls-status[data-state="err"], body .ls-status[data-state="dup"] { color: var(--err, #EF4444); font-weight: 500; }
+body .ls-status img { flex: none; width: 64px; height: 64px; object-fit: cover; border-radius: 12px; border: 1px solid var(--ln, #E2E8F0); }
+body .ls-status small { display: block; color: var(--mu, #475569); font-size: 0.8rem; overflow-wrap: anywhere; }
+body .ls-spin { flex: none; width: 18px; height: 18px; border: 2.5px solid var(--ln, #E2E8F0); border-top-color: var(--gold, #D4AF37); border-radius: 50%; animation: ls-spin 0.8s linear infinite; }
+@keyframes ls-spin { to { transform: rotate(360deg); } }
+
+body .ls-help { margin-top: 20px; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; background: var(--surface-2, #F1F5F9); }
+body .ls-help summary { padding: 13px 16px; color: var(--ink, #0F172A); font-weight: 600; cursor: pointer; }
+body .ls-help summary:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; border-radius: 14px; }
+body .ls-help ol, body .ls-help p { margin: 0 16px 14px; color: var(--mu, #475569); line-height: 1.7; font-size: 0.94rem; }
+body .ls-help ol { padding-left: 20px; }
+body .ls-help li { margin-bottom: 6px; }
+
+/* ---------- যাচাইয়ের সারাংশ ও নিয়মাবলি ---------- */
+body .ls-sum { display: grid; gap: 0; margin: 16px 0 0; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; overflow: hidden; }
+body .ls-sum div { display: grid; grid-template-columns: minmax(96px, 150px) 1fr; gap: 12px; padding: 11px 16px; }
+body .ls-sum div + div { border-top: 1px solid var(--ln, #E2E8F0); }
+body .ls-sum dt { color: var(--mu, #475569); font-size: 0.9rem; }
+body .ls-sum dd { margin: 0; color: var(--ink, #0F172A); font-weight: 500; overflow-wrap: anywhere; }
+
+body .ls-terms { margin-top: 22px; }
+body .ls-terms ul { margin: 8px 0 14px; padding-left: 20px; color: var(--mu, #475569); line-height: 1.7; font-size: 0.94rem; }
+body .ls-check { display: flex; align-items: flex-start; gap: 10px; min-height: 44px; font-weight: 600; cursor: pointer; }
+body .ls-check input { flex: none; width: 22px; height: 22px; margin-top: 2px; accent-color: var(--gold-deep, #B98A2C); cursor: pointer; }
+body .ls-check input:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+
+/* ---------- বোতাম ---------- */
+body .ls-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 28px; }
+body .ls-actions-center { justify-content: center; flex-wrap: wrap; }
+body .ls-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 26px;
+  border: 1.5px solid transparent;
+  border-radius: 99px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .ls-btn[hidden] { display: none; }
+body .ls-btn:active { transform: scale(0.97); }
+body .ls-btn:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 3px; }
+body .ls-btn:disabled { opacity: 0.6; cursor: progress; }
+body .ls-btn-main {
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+  box-shadow: 0 12px 22px -14px rgba(212, 175, 55, 0.95);
+}
+body .ls-btn-ghost { border-color: var(--ln, #E2E8F0); background: transparent; color: var(--ink, #0F172A); }
+@media (hover: hover) { body .ls-btn-ghost:hover { border-color: var(--gold, #D4AF37); } }
+
+/* ---------- জমা সফল ---------- */
+body .ls-done { margin-top: 22px; text-align: center; }
+body .ls-done h2 { margin: 14px 0 0; color: var(--ink, #0F172A); font-size: 1.4rem; outline: none; }
+body .ls-done p { margin: 8px auto 0; max-width: 46ch; color: var(--mu, #475569); line-height: 1.7; }
+body .ls-done[hidden] { display: none; }
+body .ls-done-ico {
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+}
+
+/* স্প্যাম ফাঁদ: স্ক্রিনের বাইরে, কিন্তু display:none নয় (বট যেন ধরে) */
+body .ls-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- মোবাইল ---------- */
+@media (max-width: 560px) {
+  body .ls-steps li:not(.cur) > span { display: none; }
+  body .ls-steps li { gap: 0; }
+  body .ls-steps li.cur > span { position: absolute; top: 44px; width: max-content; max-width: 40vw; }
+  body .ls-steps { margin-bottom: 36px; }
+  body .ls-card { border-radius: 20px; }
+  body .ls-actions { flex-direction: column-reverse; }
+  body .ls-btn { width: 100%; }
+  body .ls-sum div { grid-template-columns: 1fr; gap: 2px; }
+  body .ls-narrow { max-width: none; }
+  body .ls-row .ls-field { flex: 1 1 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .ls-pane:not([hidden]) { animation: none; }
+  body .ls-spin { animation-duration: 2.4s; }
+  body .ls-btn, body .ls-in, body .ls-chip span, body .ls-steps li::before, body .ls-steps li::after { transition: none; }
+  body .ls-btn:active { transform: none; }
+}

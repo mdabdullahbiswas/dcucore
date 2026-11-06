@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta name="google" content="notranslate">
+<meta charset="UTF-8">
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link rel="shortcut icon" type="image/webp" href="/logo.webp">
+<link rel="apple-touch-icon" href="/logo.webp">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ফাইল জমা দিন – DCUCore লাইব্রেরি</title>
+<meta name="description" content="DCU লাইব্রেরিতে প্রশ্ন, নোট বা সাজেশনের Google Drive লিংক জমা দিন। অ্যাডমিনের অনুমোদনের পর ফাইলটি সবাই দেখতে পাবে।">
+<meta name="theme-color" content="#0a2240">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="library-submit.css">
+<script src="dcu-layout.js" defer></script>
+<script src="dcu-lang.js" defer></script>
+<script src="site-shared.js"></script>
+<script src="lib-data.js" defer></script>
+<script src="library-submit.js" type="module"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Serif+Bengali:wght@300..800&display=swap">
+<link rel="stylesheet" href="dcu-fonts.css">
+<link rel="canonical" href="https://dcucore.vercel.app/library-submit">
+</head>
+<body data-page="library">
+<div id="hdr"></div>
+
+<main class="ls-wrap">
+
+  <a class="ls-back" href="/library"><span aria-hidden="true">‹</span> <span class="t">লাইব্রেরিতে ফিরুন|Back to library</span></a>
+
+  <header class="ls-head">
+    <h1 class="t">ফাইল জমা দিন|Submit a file</h1>
+    <p class="t">Google Drive-এর লিংক দিন, ফাইলটি কোন কলেজ, বিভাগ ও কোর্সের তা বলুন। অ্যাডমিন দেখে অনুমোদন দিলে ফাইলটি লাইব্রেরিতে আসবে।|Share a Google Drive link and tell us which college, department and course it belongs to. It appears in the library once an admin approves it.</p>
+  </header>
+
+  <ol class="ls-steps" id="ls-steps" aria-label="ধাপ">
+    <li class="cur" aria-current="step"><span class="t">লিংক|Link</span></li>
+    <li><span class="t">কোর্স|Course</span></li>
+    <li><span class="t">বিবরণ|Details</span></li>
+    <li><span class="t">জমা|Submit</span></li>
+  </ol>
+
+  <form id="ls-form" class="ls-card" novalidate autocomplete="off">
+    <!-- স্প্যাম ফাঁদ: মানুষ দেখে না, বট ভরে ফেলে -->
+    <div class="ls-hp" aria-hidden="true"><label>Website <input type="text" name="website" id="ls-hp" tabindex="-1" autocomplete="off"></label></div>
+
+    <!-- ===== ধাপ ১: লিংক ===== -->
+    <section class="ls-pane" data-step="1" aria-labelledby="h-1">
+      <h2 id="h-1" tabindex="-1" class="t">ফাইলের লিংক|File link</h2>
+
+      <div class="ls-field">
+        <label class="ls-lbl t" for="ls-url">Google Drive লিংক|Google Drive link</label>
+        <input class="ls-in" id="ls-url" type="url" inputmode="url" spellcheck="false" autocapitalize="none" data-ph="https://drive.google.com/file/d/…|https://drive.google.com/file/d/…" aria-describedby="ls-url-status">
+      </div>
+
+      <div class="ls-status" id="ls-url-status" role="status" aria-live="polite" data-state="idle"></div>
+
+      <details class="ls-help">
+        <summary class="t">“Anyone with the link” কীভাবে করবেন|How to set “Anyone with the link”</summary>
+        <ol>
+          <li class="t">Drive-এ ফাইলটিতে ডান-ক্লিক করুন (মোবাইলে ⋮ চাপুন), তারপর “Share” বেছে নিন।|In Drive, right-click the file (tap ⋮ on mobile) and choose “Share”.</li>
+          <li class="t">“General access”-এ “Restricted”-এর জায়গায় “Anyone with the link” বেছে নিন।|Under “General access”, change “Restricted” to “Anyone with the link”.</li>
+          <li class="t">ভূমিকা “Viewer” রাখুন। “Editor” দেবেন না, নইলে যে কেউ ফাইল বদলে ফেলতে পারবে।|Keep the role as “Viewer”. Do not choose “Editor”, or anyone could change your file.</li>
+          <li class="t">“Copy link” চাপুন এবং লিংকটি এখানে পেস্ট করুন।|Press “Copy link” and paste it here.</li>
+        </ol>
+        <p class="t">ফোল্ডার নয়, একটি ফাইলের লিংক দিন। একাধিক ফাইল হলে প্রতিটি আলাদা করে জমা দিন।|Submit a link to one file, not a folder. For several files, submit each one separately.</p>
+      </details>
+    </section>
+
+    <!-- ===== ধাপ ২: কলেজ → বিভাগ → বর্ষ → কোর্স ===== -->
+    <section class="ls-pane" data-step="2" aria-labelledby="h-2" hidden>
+      <h2 id="h-2" tabindex="-1" class="t">ফাইলটি কোন কোর্সের|Which course is it for</h2>
+
+      <fieldset class="ls-field ls-group" id="ls-college" aria-describedby="err-college">
+        <legend class="ls-lbl t">কলেজ|College</legend>
+        <div class="ls-chips" id="ls-college-chips"></div>
+        <p class="ls-err" id="err-college" role="alert" hidden></p>
+      </fieldset>
+
+      <div class="ls-field">
+        <label class="ls-lbl t" for="ls-dept">বিভাগ|Department</label>
+        <select class="ls-in ls-sel" id="ls-dept" aria-describedby="err-dept"></select>
+        <p class="ls-err" id="err-dept" role="alert" hidden></p>
+      </div>
+
+      <fieldset class="ls-field ls-group" id="ls-year" aria-describedby="err-year">
+        <legend class="ls-lbl t">বর্ষ|Year</legend>
+        <div class="ls-chips" id="ls-year-chips"></div>
+        <p class="ls-err" id="err-year" role="alert" hidden></p>
+      </fieldset>
+
+      <div class="ls-field" id="ls-course-pick">
+        <label class="ls-lbl t" for="ls-course">কোর্স সাজেশন|Course suggestions</label>
+        <select class="ls-in ls-sel" id="ls-course"></select>
+        <p class="ls-hint" id="ls-course-hint"></p>
+      </div>
+
+      <div class="ls-row">
+        <div class="ls-field">
+          <label class="ls-lbl t" for="ls-code">কোর্স কোড|Course code</label>
+          <input class="ls-in" id="ls-code" type="text" maxlength="20" data-ph="যেমন 222201|e.g. 222201" aria-describedby="err-code">
+          <p class="ls-err" id="err-code" role="alert" hidden></p>
+        </div>
+        <div class="ls-field ls-grow">
+          <label class="ls-lbl t" for="ls-cname">কোর্সের নাম|Course name</label>
+          <input class="ls-in" id="ls-cname" type="text" maxlength="100" data-ph="যেমন Intermediate Microeconomics|e.g. Intermediate Microeconomics" aria-describedby="err-cname">
+          <p class="ls-err" id="err-cname" role="alert" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ধাপ ৩: বিবরণ ===== -->
+    <section class="ls-pane" data-step="3" aria-labelledby="h-3" hidden>
+      <h2 id="h-3" tabindex="-1" class="t">ফাইলের বিবরণ|About the file</h2>
+
+      <fieldset class="ls-field ls-group" id="ls-ftype" aria-describedby="err-ftype">
+        <legend class="ls-lbl t">ফাইলের ধরন|File type</legend>
+        <div class="ls-chips" id="ls-ftype-chips"></div>
+        <p class="ls-err" id="err-ftype" role="alert" hidden></p>
+      </fieldset>
+
+      <fieldset class="ls-field ls-group" id="ls-etype" aria-describedby="err-etype">
+        <legend class="ls-lbl t">পরীক্ষার ধরন|Exam type</legend>
+        <div class="ls-chips" id="ls-etype-chips"></div>
+        <p class="ls-err" id="err-etype" role="alert" hidden></p>
+      </fieldset>
+
+      <div class="ls-field ls-narrow">
+        <label class="ls-lbl t" for="ls-eyear">পরীক্ষার সাল|Exam year</label>
+        <select class="ls-in ls-sel" id="ls-eyear"></select>
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-lbl t" for="ls-title">শিরোনাম|Title</label>
+        <input class="ls-in" id="ls-title" type="text" maxlength="120" aria-describedby="ls-title-hint err-title">
+        <p class="ls-hint t" id="ls-title-hint">দেখে বোঝা যায় এমন নাম দিন। চাইলে বদলাতে পারেন।|Use a name that makes the file easy to recognise. You can change the suggestion.</p>
+        <p class="ls-err" id="err-title" role="alert" hidden></p>
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-lbl" for="ls-desc"><span class="t">বিবরণ|Description</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
+        <textarea class="ls-in ls-ta" id="ls-desc" rows="3" maxlength="500" aria-describedby="ls-desc-count err-desc"></textarea>
+        <p class="ls-hint ls-count" id="ls-desc-count">0 / 500</p>
+        <p class="ls-err" id="err-desc" role="alert" hidden></p>
+      </div>
+
+      <div class="ls-field">
+        <label class="ls-lbl" for="ls-submitter"><span class="t">আপনার নাম|Your name</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
+        <input class="ls-in" id="ls-submitter" type="text" maxlength="60" autocomplete="name" aria-describedby="err-submitter">
+        <p class="ls-hint t">নাম দিলে ফাইলের পাশে দেখানো হতে পারে। না দিলে নাম ছাড়াই জমা হবে।|If you add a name it may be shown next to the file. Leave it empty to submit without a name.</p>
+        <p class="ls-err" id="err-submitter" role="alert" hidden></p>
+      </div>
+    </section>
+
+    <!-- ===== ধাপ ৪: যাচাই ও জমা ===== -->
+    <section class="ls-pane" data-step="4" aria-labelledby="h-4" hidden>
+      <h2 id="h-4" tabindex="-1" class="t">দেখে নিন ও জমা দিন|Review and submit</h2>
+
+      <dl class="ls-sum" id="ls-sum"></dl>
+
+      <div class="ls-terms">
+        <p class="ls-lbl t">নিয়মাবলি|Rules</p>
+        <ul>
+          <li class="t">ফাইলটি শেয়ার করার অধিকার আমার আছে এবং এতে অন্য কারও কপিরাইট ভাঙা হচ্ছে না।|I have the right to share this file and it does not break anyone else’s copyright.</li>
+          <li class="t">লিংকটি “Anyone with the link” ও “Viewer” সেটিংয়ে আছে।|The link is set to “Anyone with the link” with “Viewer” access.</li>
+          <li class="t">অ্যাডমিন দেখে অনুমোদন দিলে তবেই ফাইল দেখা যাবে; অনুপযুক্ত হলে বাতিল বা সরানো হতে পারে।|The file is shown only after an admin approves it, and may be rejected or removed if it is inappropriate.</li>
+        </ul>
+        <label class="ls-check">
+          <input type="checkbox" id="ls-agree" aria-describedby="err-agree">
+          <span class="t">আমি নিয়মাবলিতে সম্মত।|I agree to the rules.</span>
+        </label>
+        <p class="ls-err" id="err-agree" role="alert" hidden></p>
+      </div>
+
+      <p class="ls-err ls-err-block" id="err-submit" role="alert" hidden></p>
+    </section>
+
+    <div class="ls-actions">
+      <button type="button" class="ls-btn ls-btn-ghost" id="ls-prev" hidden><span class="t">পেছনে|Back</span></button>
+      <button type="button" class="ls-btn ls-btn-main" id="ls-next"><span class="t">পরের ধাপ|Next</span></button>
+      <button type="submit" class="ls-btn ls-btn-main" id="ls-send" hidden><span class="t">ফাইল জমা দিন|Submit file</span></button>
+    </div>
+  </form>
+
+  <!-- ===== জমা সফল ===== -->
+  <section class="ls-card ls-done" id="ls-done" aria-live="polite" hidden>
+    <span class="ls-done-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h2 id="ls-done-h" tabindex="-1" class="t">ফাইল জমা হয়েছে|File submitted</h2>
+    <p class="t">অ্যাডমিন দেখে অনুমোদন দিলে এটি লাইব্রেরিতে দেখা যাবে। এতে কিছুটা সময় লাগতে পারে।|It will appear in the library once an admin approves it. This can take a little while.</p>
+    <div class="ls-actions ls-actions-center">
+      <button type="button" class="ls-btn ls-btn-ghost" id="ls-again"><span class="t">আরেকটি ফাইল জমা দিন|Submit another file</span></button>
+      <a class="ls-btn ls-btn-main" href="/library"><span class="t">লাইব্রেরিতে ফিরুন|Back to library</span></a>
+    </div>
+  </section>
+
+  <noscript><p class="ls-err ls-err-block">ফর্ম ব্যবহার করতে JavaScript চালু করুন। Please enable JavaScript to use this form.</p></noscript>
+</main>
+
+<div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
+<script src="site.js"></script>
+<script src="premium.js"></script>
+</body>
+</html>
