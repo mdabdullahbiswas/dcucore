@@ -44,7 +44,7 @@ const db = getFirestore(app);
 
 /* ---------- ধ্রুবক ---------- */
 const MAX_FILES = 1000;
-const CACHE_KEY = "dcu-lib-cache-v1";
+const CACHE_KEY = "dcu-lib-cache-v2";
 const CACHE_TTL = 3 * 60 * 1000;
 const RECENT_COUNT = 6;
 const PAGE = 60;           // সার্চ/ফাইলের তালিকায় একবারে এতটি; বাকিটা "আরও দেখান"
@@ -107,7 +107,10 @@ function norm(id, d) {
     year: Number(d.year) || 0,
     code: str(d.courseCode), cname: str(d.courseName),
     ftype: str(d.fileType) || "other", etype: str(d.examType) || "none", eyear: Number(d.examYear) || 0,
-    title: str(d.title), desc: str(d.desc), by: str(d.submitter),
+    title: str(d.title), desc: str(d.desc),
+    /* জমাদাতা নিজে রাজি হলে (showBy) তবেই নাম ও পরিচয় ধরা হয়; পুরোনো ফাইলে এই ফিল্ড নেই, তাই কিছুই দেখায় না */
+    by: d.showBy === true ? str(d.submitter) : "",
+    byCollege: d.showBy === true ? str(d.byCollege) : "", byDept: d.showBy === true ? str(d.byDept) : "", bySession: d.showBy === true ? str(d.bySession) : "",
     views: Number(d.views) || 0, downloads: Number(d.downloads) || 0,
     ms
   };
@@ -273,6 +276,7 @@ function fileCard(f, showDept) {
   if (exam) meta.push("<span>" + esc(exam) + "</span>");
   if (col) meta.push("<span>" + esc(D.name(col, l)) + "</span>");
   if (dept) meta.push("<span>" + esc(D.name(dept, l)) + "</span>");
+  if (f.by) meta.push('<span class="lib-file-by">' + esc(tx("জমা: ", "By ") + f.by) + "</span>");
 
   return '<div class="lib-fw"><button type="button" class="lib-file" data-id="' + esc(f.id) + '">' +
     '<span class="lib-file-ico" aria-hidden="true">' + svg(FT_ICONS[f.ftype] || FT_ICONS.other, 24, 1.8) + "</span>" +
