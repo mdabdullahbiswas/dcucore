@@ -1,0 +1,246 @@
+/* jobs.css
+ * জব ও টিউশন পেজের স্টাইল (ধাপ ৩)।
+ * লোড হবে dcu-layout.css ও dcu-lang.css-এর পরে। রঙ/ফন্ট সাইটের টোকেন থেকে আসে (লাইট/ডার্ক নিজে মেলে)।
+ * সব ক্লাস jobs- দিয়ে শুরু, অন্য পেজের সঙ্গে সংঘাত নেই।
+ * পোস্টের ধরন অনুযায়ী রঙ: --h (hue) দিয়ে, লাইব্রেরির জুয়েল-টোন পদ্ধতিতে।
+ */
+
+body .jobs-wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 56px; }
+
+/* ---------- ভাষা ---------- */
+html:not([data-lang="en"]) .jobs-en { display: none; }
+html[data-lang="en"] .jobs-bn { display: none; }
+
+/* ---------- রঙের সূত্র (--h থাকলে) ---------- */
+body .jobs-type, body .jobs-orb {
+  --s: 66%;
+  --t1: hsl(var(--h, 214) var(--s) 40%);
+  --t2: hsl(calc(var(--h, 214) + 14) var(--s) 22%);
+  --ti: hsl(var(--h, 214) 95% 90%);
+  --ring: hsl(var(--h, 214) 70% 52%);
+  --wash: hsl(var(--h, 214) 80% 50% / 0.08);
+}
+:root[data-theme="dark"] body .jobs-type, :root[data-theme="dark"] body .jobs-orb, body.dark .jobs-type, body.dark .jobs-orb {
+  --t1: hsl(var(--h, 214) var(--s) 46%);
+  --t2: hsl(calc(var(--h, 214) + 14) var(--s) 26%);
+  --wash: hsl(var(--h, 214) 80% 60% / 0.12);
+}
+
+/* ---------- হিরো ---------- */
+body .jobs-hero {
+  position: relative; overflow: hidden; border-radius: 28px; color: #fff;
+  background: linear-gradient(125deg, #06162b 0%, var(--navy, #0B1F3A) 45%, var(--navy-2, #17386A) 100%);
+  box-shadow: 0 30px 60px -30px rgba(10, 34, 64, 0.8), inset 0 0 0 1px rgba(246, 214, 143, 0.18);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center;
+}
+body .jobs-hero::after {           /* হালকা সোনালি আভা */
+  content: ""; position: absolute; right: -80px; top: -90px; width: 340px; height: 340px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.22), transparent 65%); pointer-events: none;
+}
+body .jobs-hero-body { position: relative; z-index: 1; padding: clamp(28px, 5vw, 52px) clamp(20px, 4vw, 44px); max-width: 780px; }
+body .jobs-hero h1 {
+  margin: 0; color: #fff; font-size: clamp(1.65rem, 4.4vw, 2.7rem); font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em; text-wrap: balance;
+}
+body .jobs-lead { margin: 14px 0 0; max-width: 60ch; color: #cfdcf2; font-size: clamp(1rem, 1.6vw, 1.1rem); line-height: 1.75; }
+body .jobs-counts { display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 22px 0 0; color: #cfdcf2; font-size: 0.98rem; font-weight: 500; }
+body .jobs-counts[hidden] { display: none; }
+body .jobs-counts b { color: var(--gold-light, #E8C46C); font-weight: 700; font-size: 1.15rem; }
+
+body .jobs-cta {
+  display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; min-height: 48px; padding: 12px 22px;
+  border-radius: 99px; text-decoration: none; font-weight: 700; font-size: 1rem; color: #0B1F3A;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C) 0%, var(--gold, #D4AF37) 50%, var(--gold-deep, #B98A2C) 100%);
+  box-shadow: 0 14px 26px -14px rgba(212, 175, 55, 0.95);
+  transition: transform 0.2s ease, box-shadow 0.25s ease; -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) { body .jobs-cta:hover { transform: translateY(-2px); box-shadow: 0 18px 30px -14px rgba(212, 175, 55, 1); } }
+body .jobs-cta:active { transform: scale(0.97); }
+body .jobs-cta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+body .jobs-cta-sm { margin-top: 0; }
+
+/* ---------- হিরোর রঙিন আইকন টাইল ---------- */
+body .jobs-orbs {
+  position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, 76px); gap: 14px;
+  padding: 0 clamp(24px, 5vw, 64px) 0 0;
+}
+body .jobs-orb {
+  display: grid; place-items: center; width: 76px; height: 76px; border-radius: 22px; color: var(--ti);
+  background: linear-gradient(145deg, var(--t1), var(--t2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18), 0 18px 30px -16px var(--t2);
+  animation: jobs-float 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -1.1s);
+}
+body .jobs-orb:nth-child(even) { transform: translateY(16px); }
+@keyframes jobs-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+
+/* ---------- নোট ---------- */
+body .jobs-note {
+  display: flex; align-items: flex-start; gap: 12px; margin: 16px 0 0; padding: 14px 18px;
+  border: 1px solid var(--ln, #E2E8F0); border-left: 4px solid var(--gold, #D4AF37); border-radius: 16px;
+  background: var(--cd, #fff); color: var(--mu, #475569); font-size: 0.95rem; line-height: 1.7;
+}
+body .jobs-note svg { flex: none; margin-top: 3px; color: var(--gold-deep, #B98A2C); }
+body .jobs-note p { margin: 0; max-width: 90ch; }
+body .jobs-note strong { color: var(--ink, #0F172A); }
+body .jobs-note a { color: var(--gold-deep, #B98A2C); font-weight: 600; }
+
+/* ---------- কীভাবে কাজ করে ---------- */
+body .jobs-steps {
+  list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); counter-reset: none;
+}
+body .jobs-steps li {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 16px; background: var(--cd, #fff); color: var(--ink, #0F172A); font-size: 0.94rem; font-weight: 500; line-height: 1.45;
+}
+body .jobs-step-n {
+  flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; font-weight: 700;
+  color: var(--gold-light, #E8C46C); background: linear-gradient(145deg, var(--navy-2, #17386A), var(--navy, #0B1F3A));
+  box-shadow: inset 0 0 0 1px rgba(246, 214, 143, 0.25);
+}
+
+/* ---------- ব্রাউজ ---------- */
+body .jobs-browse { margin-top: 34px; }
+body .jobs-browse h2 { margin: 0 0 14px; color: var(--ink, #0F172A); font-size: clamp(1.25rem, 2.6vw, 1.6rem); font-weight: 700; }
+
+/* ধরনের চারটি কার্ড */
+body .jobs-types { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+body .jobs-type {
+  position: relative; display: flex; align-items: center; gap: 12px; min-width: 0; padding: 14px 16px;
+  border: 1px solid var(--ln, #E2E8F0); border-radius: 20px; text-align: left; font: inherit; color: var(--ink, #0F172A); cursor: pointer;
+  background: linear-gradient(135deg, var(--wash), transparent 62%), var(--cd, #fff);
+  transition: transform 0.25s var(--dl-ease, ease), border-color 0.2s ease, box-shadow 0.3s ease; -webkit-tap-highlight-color: transparent;
+}
+body .jobs-type-ico {
+  flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; color: var(--ti);
+  background: linear-gradient(145deg, var(--t1), var(--t2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 8px 16px -10px var(--t2);
+  transition: transform 0.25s ease;
+}
+body .jobs-type-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+body .jobs-type-name { font-size: 1.02rem; font-weight: 700; line-height: 1.3; overflow-wrap: anywhere; }
+body .jobs-type-sub { color: var(--mu, #475569); font-size: 0.85rem; font-weight: 500; line-height: 1.35; }
+body .jobs-type-tick {
+  position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  color: #fff; background: var(--ring); opacity: 0; transform: scale(0.6); transition: opacity 0.2s ease, transform 0.25s ease;
+}
+@media (hover: hover) {
+  body .jobs-type:hover { transform: translateY(-3px); border-color: var(--ring); box-shadow: 0 18px 30px -20px var(--t2), 0 0 0 1px var(--ring); }
+  body .jobs-type:hover .jobs-type-ico { transform: scale(1.06) rotate(-3deg); }
+}
+body .jobs-type:active { transform: scale(0.97); }
+body .jobs-type.on { border-color: var(--ring); box-shadow: 0 0 0 2px var(--ring), 0 18px 30px -20px var(--t2); }
+body .jobs-type.on .jobs-type-tick { opacity: 1; transform: none; }
+body .jobs-type:focus-visible, body .jobs-chip:focus-visible, body .jobs-reset:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+
+/* ---------- সার্চ ---------- */
+body .jobs-tools { margin-top: 18px; }
+body .jobs-search {
+  position: relative; display: flex; align-items: center; min-height: 52px; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px;
+  background: var(--cd, #fff); transition: border-color 0.2s ease, box-shadow 0.25s ease;
+}
+body .jobs-search:focus-within { border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25); }
+body .jobs-search-ico { position: absolute; left: 16px; color: var(--mu, #475569); pointer-events: none; }
+body .jobs-search input {
+  flex: 1; min-width: 0; height: 50px; padding: 0 46px 0 46px; border: 0; background: transparent; outline: none; color: var(--ink, #0F172A);
+  font: inherit; font-size: 1rem;
+}
+body .jobs-search input::placeholder { color: var(--mu, #475569); opacity: 0.8; }
+body .jobs-search input::-webkit-search-cancel-button { display: none; }
+body .jobs-search-x {
+  position: absolute; right: 8px; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--mu, #475569); cursor: pointer;
+}
+body .jobs-search-x[hidden] { display: none; }
+body .jobs-search-x:hover { background: var(--ln, #E2E8F0); }
+
+/* ---------- ফিল্টার ---------- */
+body .jobs-filters { display: grid; gap: 12px; margin-top: 16px; }
+body .jobs-fgroup { display: flex; align-items: center; gap: 12px; min-width: 0; }
+body .jobs-flabel { flex: none; min-width: 56px; color: var(--mu, #475569); font-size: 0.88rem; font-weight: 600; }
+body .jobs-chips { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+body .jobs-chip {
+  flex: none; min-height: 40px; padding: 7px 15px; border: 1px solid var(--ln, #E2E8F0); border-radius: 99px; background: var(--cd, #fff);
+  color: var(--ink, #0F172A); font: inherit; font-size: 0.93rem; font-weight: 500; line-height: 1.3; cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.25s ease; -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) { body .jobs-chip:not(.on):hover { border-color: var(--gold, #D4AF37); box-shadow: 0 8px 18px -12px rgba(212, 175, 55, 0.9); } }
+body .jobs-chip:active { transform: scale(0.97); }
+body .jobs-chip.on {
+  border-color: transparent; color: #0B1F3A; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C) 0%, var(--gold, #D4AF37) 45%, var(--gold-deep, #B98A2C) 100%);
+  box-shadow: 0 10px 20px -12px rgba(212, 175, 55, 0.95);
+}
+
+body .jobs-statusrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 2px 12px; min-height: 36px; }
+body .jobs-status { margin: 0; color: var(--mu, #475569); font-size: 0.92rem; font-weight: 500; }
+body .jobs-reset {
+  min-height: 36px; padding: 6px 14px; border: 1px solid var(--ln, #E2E8F0); border-radius: 99px; background: var(--cd, #fff);
+  color: var(--ink, #0F172A); font: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+}
+body .jobs-reset[hidden] { display: none; }
+body .jobs-reset:hover { border-color: var(--gold, #D4AF37); }
+body .jobs-reset-lg { min-height: 48px; padding: 10px 20px; font-size: 0.98rem; }
+
+/* ---------- কার্ডের গ্রিড ও স্কেলেটন ---------- */
+body .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+body .jobs-grid[hidden] { display: none; }
+body .jobs-sk-card, body .jobs-sk-type {
+  border: 1px solid var(--ln, #E2E8F0); border-radius: 20px; background: var(--cd, #fff);
+}
+body .jobs-sk-card { display: flex; gap: 14px; padding: 18px; min-height: 124px; }
+body .jobs-sk-type { height: 80px; }
+body .jobs-sk-lines { display: flex; flex: 1; flex-direction: column; gap: 10px; padding-top: 4px; }
+body .jobs-sk {
+  display: block; border-radius: 10px;
+  background: linear-gradient(90deg, var(--ln, #E2E8F0) 25%, color-mix(in srgb, var(--ln, #E2E8F0) 45%, transparent) 50%, var(--ln, #E2E8F0) 75%);
+  background-size: 200% 100%; animation: jobs-shimmer 1.4s linear infinite;
+}
+body .jobs-sk-ico { flex: none; width: 52px; height: 52px; border-radius: 15px; }
+body .jobs-sk-l1 { height: 16px; width: 70%; }
+body .jobs-sk-l2 { height: 12px; width: 45%; }
+body .jobs-sk-l3 { height: 12px; width: 85%; }
+@keyframes jobs-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ---------- খালি অবস্থা ---------- */
+body .jobs-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px 44px; text-align: center;
+  border: 1.5px dashed var(--ln, #E2E8F0); border-radius: 24px; background: var(--cd, #fff);
+}
+body .jobs-empty[hidden] { display: none; }
+body .jobs-empty-art { color: var(--navy-2, #17386A); margin-bottom: 6px; }
+:root[data-theme="dark"] body .jobs-empty-art, body.dark .jobs-empty-art { color: var(--gold-light, #E8C46C); }
+body .jobs-empty-h { margin: 0; color: var(--ink, #0F172A); font-size: 1.25rem; font-weight: 700; }
+body .jobs-empty-p { margin: 0; max-width: 46ch; color: var(--mu, #475569); line-height: 1.7; }
+body .jobs-empty-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 14px; }
+body .jobs-none { color: var(--mu, #475569); }
+
+/* ---------- মোবাইল ---------- */
+@media (max-width: 900px) {
+  body .jobs-types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body .jobs-hero { grid-template-columns: 1fr; }
+  body .jobs-orbs { grid-template-columns: repeat(4, 60px); gap: 10px; padding: 0 clamp(20px, 4vw, 44px) 26px; }
+  body .jobs-orb { width: 60px; height: 60px; border-radius: 18px; }
+  body .jobs-orb:nth-child(even) { transform: none; }
+  body .jobs-orb svg { width: 26px; height: 26px; }
+  body .jobs-steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  body .jobs-wrap { padding: 14px 12px 44px; }
+  body .jobs-hero { border-radius: 22px; }
+  body .jobs-types { gap: 10px; }
+  body .jobs-type { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; }
+  body .jobs-type-sub { font-size: 0.8rem; }
+  body .jobs-fgroup { flex-direction: column; align-items: flex-start; gap: 6px; }
+  /* মোবাইলে এলাকার চিপ এক সারিতে স্ক্রল */
+  body .jobs-chips-scroll { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; margin: 0 -12px; padding: 2px 12px 6px; scrollbar-width: none; }
+  body .jobs-chips-scroll::-webkit-scrollbar { display: none; }
+  body .jobs-fgroup { width: 100%; }
+  body .jobs-grid { grid-template-columns: 1fr; }
+  body .jobs-statusrow { margin-top: 14px; }
+}
+
+/* ---------- কম-মোশন ---------- */
+@media (prefers-reduced-motion: reduce) {
+  body .jobs-orb, body .jobs-sk { animation: none; }
+  body .jobs-type, body .jobs-type-ico, body .jobs-cta { transition: none; }
+}
