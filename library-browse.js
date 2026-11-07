@@ -153,8 +153,9 @@ async function load(fresh) {
 /* ---------- সাজানো ও ফিল্টার ---------- */
 const byNew = (a, b) => b.ms - a.ms || (a.title < b.title ? -1 : 1);
 const college = () => UI.college();
-const visible = () => { const c = college(); return c ? files.filter(f => f.college === c) : files; };
-const countFor = (dept, c) => files.reduce((n, f) => n + (f.dept === dept && (!c || f.college === c) ? 1 : 0), 0);
+const isForCollege = (f, c) => f.college === c || f.college === D.ALL_COLLEGE.slug;   // “সব কলেজ” ফাইল সব ফিল্টারেই আসে
+const visible = () => { const c = college(); return c ? files.filter(f => isForCollege(f, c)) : files; };
+const countFor = (dept, c) => files.reduce((n, f) => n + (f.dept === dept && (!c || isForCollege(f, c)) ? 1 : 0), 0);
 const isNew = f => f.ms && Date.now() - f.ms < NEW_DAYS * 864e5;
 
 /* ---------- URL (hash) ----------
@@ -196,7 +197,7 @@ function readUrl() {
   f.sort = p.get("sort") === "pop" ? "pop" : "new";
   f.saved = p.get("saved") === "1";
   const c = p.get("c") || "";
-  return { view: parseRoute(i < 0 ? raw : raw.slice(0, i)), flt: f, college: D.college(c) ? c : "" };
+  return { view: parseRoute(i < 0 ? raw : raw.slice(0, i)), flt: f, college: D.colleges().some(x => x.slug === c) ? c : "" };
 }
 function urlFor() {
   const p = new URLSearchParams();
