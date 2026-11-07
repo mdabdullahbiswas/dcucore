@@ -347,13 +347,18 @@ $("ref").onclick = load;
 /* ডিফল্ট তালিকা + lib_meta মিশিয়ে কার্যকর তালিকা বানায় (পাবলিক পেজের মতোই) */
 function rebuild() { D.reset(); D.merge(META.map(m => m.data)); }
 
+/* পাবলিক লাইব্রেরির ৩ মিনিটের ক্যাশ বাতিলের চিহ্ন (একই ব্রাউজারের সব ট্যাবে কাজ করে) */
+function bust() { try { localStorage.setItem("dcu-lib-bust", String(Date.now())); } catch (e) { /* ঠিক আছে */ } }
+
 /* ব্যাচে লেখা (প্রতি ব্যাচে ৪০০টির বেশি নয়; Firestore-এর সীমা ৫০০) */
 async function commit(ops) {
-  for (let i = 0; i < ops.length; i += 400) {
-    const b = writeBatch(db);
-    ops.slice(i, i + 400).forEach(f => f(b));
-    await b.commit();
-  }
+  try {
+    for (let i = 0; i < ops.length; i += 400) {
+      const b = writeBatch(db);
+      ops.slice(i, i + 400).forEach(f => f(b));
+      await b.commit();
+    }
+  } finally { bust(); }
 }
 
 const stOf = r => r.status || "pending";
@@ -659,12 +664,14 @@ const isDefCourse = (d, y, c) => DEF.courses.some(x => x.dept === d && x.year ==
 
 async function metaSet(id, data) {
   await setDoc(doc(db, "lib_meta", id), data);
+  bust();
   const m = mdoc(id);
   if (m) m.data = data; else META.push({ id, data });
   rebuild(); renderTab();
 }
 async function metaDel(id) {
   await deleteDoc(doc(db, "lib_meta", id));
+  bust();
   META = META.filter(m => m.id !== id);
   rebuild(); renderTab();
 }
@@ -1033,6 +1040,7 @@ async function apply(extra, okMsg) {
     await updateDoc(doc(db, "lib_resources", current.id), Object.assign({}, e, extra, {
       reviewedAt: serverTimestamp()   // অ্যাডমিনের ইমেইল রাখা হয় না: approved ডকুমেন্ট পাবলিক পড়তে পারে
     }));
+    bust();
     Object.assign(current, e, extra);
     if (typeof current.rejectReason !== "string") delete current.rejectReason;   // deleteField() চিহ্ন স্মৃতিতে রাখা হয় না
     current.reviewedAt = { toMillis: () => Date.now() };
