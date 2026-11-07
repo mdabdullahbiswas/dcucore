@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta name="google" content="notranslate">
+<meta charset="UTF-8">
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link rel="shortcut icon" type="image/webp" href="/logo.webp">
+<link rel="apple-touch-icon" href="/logo.webp">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>আমার পোস্ট – জব ও টিউশন – DCUCore</title>
+<meta name="description" content="আপনার জমা দেওয়া জব ও টিউশনের পোস্ট দেখুন, নবায়ন করুন, বন্ধ করুন বা পূরণ হয়েছে চিহ্নিত করুন।">
+<meta name="theme-color" content="#0a2240">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="jobs.css">
+<link rel="stylesheet" href="jobs-post.css">
+<link rel="stylesheet" href="jobs-my.css">
+<script src="dcu-layout.js" defer></script>
+<script src="dcu-lang.js" defer></script>
+<script src="site-shared.js"></script>
+<script src="jobs-data.js" defer></script>
+<script src="jobs-my.js" type="module"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Serif+Bengali:wght@300..800&display=swap">
+<link rel="stylesheet" href="dcu-fonts.css">
+<link rel="canonical" href="https://dcucore.vercel.app/jobs-my">
+</head>
+<body data-page="jobs">
+<div id="hdr"></div>
+
+<main class="jp-wrap jm-wrap">
+  <a class="jp-back" href="/jobs"><span aria-hidden="true">‹</span> <span class="t">জব ও টিউশনে ফিরুন|Back to Jobs &amp; Tuition</span></a>
+
+  <header class="jp-head">
+    <h1 class="t" id="jm-h1" tabindex="-1">আমার পোস্ট|My posts</h1>
+    <p class="t">আপনার জমা দেওয়া সব পোস্ট এখানে। মেয়াদ বাড়ান, বন্ধ করুন, পদ পূরণ হলে চিহ্নিত করুন বা মুছে দিন।|All the posts you have submitted. Extend them, close them, mark them as filled, or delete them.</p>
+  </header>
+
+  <!-- ===== লগইন ===== -->
+  <section class="jp-card" id="jm-login" aria-labelledby="jm-h-login">
+    <h2 id="jm-h-login" class="t">লগইন|Sign in</h2>
+    <p class="jp-hint t" id="jm-login-hint">নিজের পোস্ট দেখতে যে Google অ্যাকাউন্ট দিয়ে পোস্ট করেছিলেন, তা দিয়ে লগইন করুন।|Sign in with the Google account you posted with to see your posts.</p>
+    <button type="button" class="jp-btn jp-btn-google" id="jm-signin">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+      <span class="t">Google দিয়ে লগইন|Sign in with Google</span>
+    </button>
+    <p class="jp-err jp-err-block" id="jm-auth-err" role="alert" hidden></p>
+  </section>
+
+  <!-- ===== লগইনের পর ===== -->
+  <div id="jm-in" hidden>
+    <div class="jp-user">
+      <span class="jp-avatar" id="jm-avatar" aria-hidden="true"></span>
+      <span class="jp-user-txt"><b id="jm-uname"></b><small id="jm-umail"></small></span>
+      <button type="button" class="jp-btn jp-btn-ghost jp-btn-sm" id="jm-signout"><span class="t">অন্য অ্যাকাউন্ট|Switch account</span></button>
+    </div>
+
+    <div class="jm-bar">
+      <p class="jm-summary" id="jm-summary" aria-live="polite"></p>
+      <a class="jp-btn jp-btn-main jp-btn-sm" href="/jobs-post"><span class="t">নতুন পোস্ট|New post</span></a>
+    </div>
+
+    <p class="jp-ok" id="jm-ok" role="status" hidden></p>
+    <p class="jp-err jp-err-block" id="jm-bad" role="alert" hidden></p>
+
+    <div class="jm-list" id="jm-list" aria-busy="true"></div>
+
+    <div class="jp-card jm-empty" id="jm-empty" hidden>
+      <h2 class="t" id="jm-empty-h">এখনো কোনো পোস্ট নেই|No posts yet</h2>
+      <p class="jp-hint" id="jm-empty-p"></p>
+      <div class="jp-actions jp-actions-c" id="jm-empty-act"></div>
+    </div>
+  </div>
+
+  <noscript><p class="jp-err jp-err-block t">আপনার পোস্ট দেখতে JavaScript চালু করুন।|Please enable JavaScript to see your posts.</p></noscript>
+</main>
+
+<div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
+<script src="site.js"></script>
+<script src="premium.js"></script>
+</body>
+</html>
