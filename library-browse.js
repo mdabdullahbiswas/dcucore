@@ -289,7 +289,7 @@ function fileCard(f, showDept) {
   if (dept) meta.push("<span>" + esc(D.name(dept, l)) + "</span>");
   if (f.by) meta.push('<span class="lib-file-by">' + esc(tx("জমা: ", "By ") + f.by) + "</span>");
 
-  return '<div class="lib-fw"><button type="button" class="lib-file" data-id="' + esc(f.id) + '">' +
+  return '<div class="lib-fw"><button type="button" class="lib-file" data-id="' + esc(f.id) + '" data-ft="' + esc(f.ftype || "other") + '">' +
     '<span class="lib-file-ico" aria-hidden="true">' + svg(FT_ICONS[f.ftype] || FT_ICONS.other, 24, 1.8) + "</span>" +
     '<span class="lib-file-body"><b class="lib-file-title">' + esc(f.title) + "</b>" +
     '<span class="lib-file-meta">' + meta.join("") + "</span></span>" +
