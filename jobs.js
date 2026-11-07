@@ -10,6 +10,10 @@
  * ধাপ ৯: ফিল্টার = ধরন, পদ্ধতি, অঞ্চল, নির্দিষ্ট এলাকা, বিষয়/কাজ, শ্রেণি, বেতন (মাসিক ধরে) ও সার্চ।
  * সাজানো = নতুন আগে / মেয়াদ শেষ হতে যাচ্ছে আগে। বর্তমান ফিল্টার ঠিকানার ?type=…&zone=… অংশে থাকে, তাই লিংক শেয়ার করা যায়।
  * কোনো Firestore ইনডেক্স লাগে না: কোয়েরিতে শুধু একটি where আছে, ক্রম সাজানো ক্লায়েন্টে হয়।
+ *
+ * ধাপ ১০: (ক) বুকমার্ক: ব্রাউজারের localStorage-এ (এই ডিভাইসে), লগইন ছাড়াই; কার্ড ও বিস্তারিতে বাটন, তালিকায় \"বুকমার্ক\" ছাঁকা।
+ *         (খ) রিপোর্ট: বিস্তারিতে \"রিপোর্ট করুন\" → jobs_reports/{পোস্ট}_{uid} (লগইন লাগে; একজন একটি পোস্ট একবার)।
+ *         (গ) আমার পোস্ট (নবায়ন, বন্ধ, পূরণ হয়েছে, মোছা) আলাদা পেজে: jobs-my.html + jobs-my.js।
  */
 (function () {
   "use strict";
@@ -55,7 +59,7 @@
   var CHECK = '<path d="M5 12.5l4.5 4.5L19 7.5"/>';
 
   /* ---------- অবস্থা ---------- */
-  var state = { type: "", mode: "", zone: "", area: "", cat: "", level: "", pay: "", sort: "new", q: "" };
+  var state = { type: "", mode: "", zone: "", area: "", cat: "", level: "", pay: "", sort: "new", q: "", saved: false };
   var posts = [];            // Firestore থেকে আসা, স্বাভাবিক করা পোস্ট (নতুন আগে)
   var view = [];             // বর্তমান ফিল্টারে মেলা পোস্ট
   var shownN = PAGE;         // কতগুলো কার্ড আঁকা হয়েছে
@@ -63,7 +67,32 @@
   var skeletonHTML = "";
   var els = {};
 
-  function filtersActive() { return !!(state.type || state.mode || state.zone || state.area || state.cat || state.level || state.pay || state.q); }
+  /* ---------- বুকমার্ক (ধাপ ১০): শুধু এই ব্রাউজারে, localStorage-এ; নতুনটি আগে ---------- */
+  var BM_KEY = "jobs:bookmarks", BM_MAX = 100, ID_RE = /^[A-Za-z0-9_-]{1,128}$/;
+  var BOOKMARK = '<path d="M6 3h12v18l-6-4.5L6 21z"/>';
+  var bm = readBm();
+  function readBm() {
+    try {
+      var a = JSON.parse(localStorage.getItem(BM_KEY) || "[]");
+      return Array.isArray(a) ? a.filter(function (x) { return typeof x === "string" && ID_RE.test(x); }).slice(0, BM_MAX) : [];
+    } catch (e) { return []; }
+  }
+  function saveBm() { try { localStorage.setItem(BM_KEY, JSON.stringify(bm)); return true; } catch (e) { return false; } }   // সংরক্ষণ না হলে এই সেশনে চলে
+  function isBm(id) { return bm.indexOf(id) >= 0; }
+  /* ফেরত: "on" | "off" | "full" */
+  function toggleBm(id) {
+    var i = bm.indexOf(id);
+    if (i >= 0) { bm.splice(i, 1); saveBm(); return "off"; }
+    if (bm.length >= BM_MAX) return "full";
+    bm.unshift(id); saveBm(); return "on";
+  }
+  function bmBtnHTML(id, cls) {
+    return '<button type="button" class="' + cls + '" data-bm="' + esc(id) + '" aria-pressed="' + (isBm(id) ? "true" : "false") + '">' +
+      svg(BOOKMARK, 20) + '<span class="jobs-sr">' + bi("বুকমার্ক", "Bookmark") + "</span></button>";
+  }
+
+  function filtersActive() { return !!(state.saved || state.type || state.mode || state.zone || state.area || state.cat || state.level || state.pay || state.q); }
+  function otherFilters() { return !!(state.type || state.mode || state.zone || state.area || state.cat || state.level || state.pay || state.q); }
 
   /* ---------- Firestore ---------- */
   function withTimeout(p, ms) {
@@ -90,7 +119,7 @@
       days: intv(d.days), timeNote: str(d.timeNote),
       salaryMin: intv(d.salaryMin), salaryMax: intv(d.salaryMax),
       salaryUnit: D.isKnown("salaryUnits", d.salaryUnit) ? d.salaryUnit : "negotiable",
-      orgName: str(d.orgName), authorName: str(d.authorName),
+      orgName: str(d.orgName), authorName: str(d.authorName), authorUid: str(d.authorUid),
       genderPref: str(d.genderPref), tutorGender: str(d.tutorGender),
       college: str(d.college), dept: str(d.dept),
       photo: d.type === "tutor_profile" && PHOTO_RE.test(str(d.photo)) ? d.photo : "",
@@ -164,6 +193,7 @@
   }
 
   function matches(p) {
+    if (state.saved && !isBm(p.id)) return false;
     if (state.type && p.type !== state.type) return false;
     if (state.mode) {
       /* "সরাসরি" বা "অনলাইন" বাছলে "দুটোই" পোস্টও আসে; "দুটোই" বাছলে শুধু সেগুলো */
@@ -246,7 +276,7 @@
         '<ul class="jobs-meta">' + meta + "</ul>" +
         (tags ? '<ul class="jobs-tags">' + tags + "</ul>" : "") +
         '<div class="jobs-card-foot"><span class="jobs-pay">' + pay + '</span><span class="jobs-ago">' + ago(p.createdMs, now) + "</span></div>" +
-      "</div></article>";
+      "</div>" + bmBtnHTML(p.id, "jobs-bm") + "</article>";
   }
 
   /* ---------- হিরোর সংখ্যা ---------- */
@@ -286,6 +316,14 @@
       D.zones().map(function (z) { return chipHTML(z.slug, z.bn, z.en, "zone"); }).join("");
   }
 
+  /* বুকমার্ক-করা পোস্টের মধ্যে এখন যেগুলো সত্যিই দেখানো যায় (লোডের আগে সব বুকমার্ক গোনা হয়) */
+  function savedCount() {
+    if (!loaded || failed) return bm.length;
+    var now = Date.now(), n = 0;
+    posts.forEach(function (p) { if (isBm(p.id) && isLive(p, now)) n++; });
+    return n;
+  }
+
   /* ---------- UI-তে অবস্থা প্রতিফলন ---------- */
   function syncPressed() {
     els.types.querySelectorAll(".jobs-type").forEach(function (b) {
@@ -302,9 +340,15 @@
       });
     });
     els.qx.hidden = !state.q;
+    if (els.saved) {
+      els.saved.setAttribute("aria-pressed", state.saved ? "true" : "false");
+      els.saved.classList.toggle("on", state.saved);
+      var sn = savedCount();
+      els.saved.innerHTML = svg(BOOKMARK, 16) + bi("বুকমার্ক", "Saved") + '<span class="jobs-saved-n">' + (sn ? bi(" (" + bnNum(sn) + ")", " (" + sn + ")") : "") + "</span>";
+    }
     var act = filtersActive();
     els.reset.hidden = !act;
-    els.share.hidden = !(act || state.sort !== "new");
+    els.share.hidden = !(otherFilters() || state.sort !== "new");
     els.emptyReset.hidden = !act || failed;
   }
 
@@ -331,6 +375,15 @@
 
   function showEmpty() {
     var act = filtersActive();
+    if (state.saved && !otherFilters()) {
+      showEmptyBox(
+        bm.length ? bi("বুকমার্ক করা কোনো চালু পোস্ট নেই", "None of your saved posts are live") : bi("এখনো কিছু বুকমার্ক করেননি", "Nothing saved yet"),
+        bm.length ? bi("বুকমার্ক করা পোস্টগুলোর মেয়াদ শেষ হয়েছে বা সেগুলো সরানো হয়েছে।", "The posts you saved have expired or been removed.")
+                  : bi("কার্ডের কোণার বুকমার্ক আইকনে চাপ দিলে পোস্টটি এখানে জমা থাকবে। এই ডিভাইসেই সংরক্ষিত হয়।", "Tap the bookmark icon on a card to keep it here. Bookmarks are stored on this device."),
+        false, false);
+      els.status.innerHTML = '<span class="jobs-bn">' + bnNum(0) + "টি পোস্ট</span>" + '<span class="jobs-en">0 posts</span>';
+      return;
+    }
     showEmptyBox(
       act ? bi("এই ফিল্টারে কিছু পাওয়া যায়নি", "Nothing matches these filters") : bi("এখনো কোনো পোস্ট নেই", "No posts yet"),
       act ? bi("ফিল্টার বদলে বা মুছে আবার দেখুন।", "Change or clear the filters and try again.")
@@ -454,7 +507,9 @@
     if (p.authorName) rows += row("পোস্টদাতা|Posted by", esc(p.authorName));
 
     var foot = '<div class="jobs-d-foot-row"><p class="jobs-d-foot">' + ago(p.createdMs, now) + (p.expiresMs ? " · " + bi("মেয়াদ: ", "Valid until ") + fmtDate(p.expiresMs) : "") + "</p>" +
-      '<button type="button" class="jobs-btn jobs-btn-plain jobs-btn-sm" id="jobs-d-share">' + svg('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>', 18) + bi("লিংক শেয়ার", "Share link") + "</button></div>";
+      '<div class="jobs-d-foot-btns">' + bmBtnHTML(p.id, "jobs-btn jobs-btn-plain jobs-btn-sm jobs-d-bm") +
+      '<button type="button" class="jobs-btn jobs-btn-plain jobs-btn-sm" id="jobs-d-share">' + svg('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>', 18) + bi("লিংক শেয়ার", "Share link") + "</button></div></div>" +
+      '<div class="jobs-d-report" id="jobs-d-report"></div>';
 
     return '<header class="jobs-d-head"><span class="jobs-card-ico">' + ico + "</span><div>" +
         '<div class="jobs-card-top">' + top + "</div>" +
@@ -552,7 +607,7 @@
             user = u || null; authKnown = true;
             if (changed) contact = { id: "", state: "idle", phone: "", whatsapp: "" };
             if (changed) contactErr = null;
-            syncContact(); res();
+            syncContact(); renderReport(); res();
           });
         });
       });
@@ -570,7 +625,7 @@
         : c === "auth/popup-blocked" ? ["ব্রাউজার পপআপ আটকেছে। পপআপ অনুমতি দিয়ে আবার চাপুন।", "Your browser blocked the pop-up. Allow pop-ups and try again."]
         : c === "auth/network-request-failed" ? ["ইন্টারনেট সংযোগ দেখুন, তারপর আবার চেষ্টা করুন।", "Check your internet connection and try again."]
         : ["লগইন করা যায়নি। আবার চেষ্টা করুন।", "Couldn't sign in. Please try again."];
-      renderContact();
+      renderContact(); renderReport();
     });
   }
 
@@ -586,7 +641,8 @@
     document.documentElement.classList.add("jobs-lock");
     if (!fromHash) { history.pushState({ jobsPost: id }, "", "#p-" + id); pushed = true; }
     renderContact();
-    authInit().then(syncContact, function () { authKnown = true; renderContact(); });
+    renderReport();
+    authInit().then(syncContact, function () { authKnown = true; renderContact(); renderReport(); });
     return true;
   }
 
@@ -609,6 +665,8 @@
     var dlg = els.dlg;
     if (!dlg || typeof dlg.showModal !== "function") return;
     els.grid.addEventListener("click", function (e) {
+      var b = e.target.closest(".jobs-bm");
+      if (b) { onBookmark(b.getAttribute("data-bm")); return; }
       var card = e.target.closest(".jobs-card");
       if (card) openPost(card.getAttribute("data-id"), false);
     });
@@ -616,7 +674,12 @@
     dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });   // ফাঁকা অংশে (ব্যাকড্রপে) ক্লিক
     dlg.addEventListener("close", onDialogClosed);
     els.dBody.addEventListener("click", function (e) {
-      if (e.target.closest("#jobs-d-login")) signIn();
+      var bmb = e.target.closest(".jobs-d-bm");
+      if (bmb) { onBookmark(bmb.getAttribute("data-bm")); return; }
+      if (e.target.closest("#jobs-d-login") || e.target.closest("#jobs-r-login")) signIn();
+      else if (e.target.closest("#jobs-r-open")) { rep.open = true; rep.focusNext = true; renderReport(); }
+      else if (e.target.closest("#jobs-r-cancel")) { rep.open = false; rep.err = null; renderReport(); var ob = $("jobs-r-open"); if (ob) ob.focus(); }
+      else if (e.target.closest("#jobs-r-send")) submitReport();
       else if (e.target.closest("#jobs-d-retry") && cur) loadContact(cur);
       else if (e.target.closest("#jobs-d-share") && cur) shareLink(location.origin + location.pathname + "#p-" + cur.id, cur.title, e.target.closest("#jobs-d-share"));
     });
@@ -626,6 +689,107 @@
       if (id) { if (loaded && !failed) openPost(id, true); }
       else if (dlg.open) { pushed = false; dlg.close(); }
     });
+  }
+
+  /* =====================================================================
+   * ধাপ ১০: বুকমার্ক বাটন, রিপোর্ট
+   * ===================================================================== */
+  var flashT = 0;
+  function flash(bn, en) {
+    if (!els.flash) return;
+    els.flash.innerHTML = bi(bn, en);
+    els.flash.hidden = false;
+    clearTimeout(flashT);
+    flashT = setTimeout(function () { els.flash.hidden = true; }, 4000);
+  }
+
+  function onBookmark(id) {
+    if (!ID_RE.test(id)) return;
+    var r = toggleBm(id);
+    if (r === "full") { flash("সর্বোচ্চ " + bnNum(BM_MAX) + "টি বুকমার্ক রাখা যায়। আগে কিছু সরিয়ে নিন।", "You can keep up to " + BM_MAX + " bookmarks. Remove some first."); return; }
+    var on = r === "on";
+    /* তালিকার কার্ড ও খোলা ডায়ালগ, দুই জায়গার বাটনই মেলানো (কার্ড সরাই না, যাতে ভুলে চাপলে আবার চাপা যায়) */
+    document.querySelectorAll('[data-bm="' + id + '"]').forEach(function (b) { b.setAttribute("aria-pressed", on ? "true" : "false"); });
+    syncPressed();
+    flash(on ? "বুকমার্ক করা হয়েছে।" : "বুকমার্ক সরানো হয়েছে।", on ? "Bookmarked." : "Bookmark removed.");
+  }
+
+  /* ---------- রিপোর্ট (ডায়ালগের ভেতরে) ---------- */
+  var rep = { id: "", open: false, state: "idle", err: null };   // state: idle | sending | done
+  var ICO_FLAG = '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>';
+
+  function renderReport() {
+    var box = $("jobs-d-report");
+    if (!box || !cur) return;
+    if (rep.id !== cur.id) rep = { id: cur.id, open: false, state: "idle", err: null };
+    /* নিজের পোস্ট নিজে রিপোর্ট করার দরকার নেই */
+    if (user && cur.authorUid && cur.authorUid === user.uid) { box.innerHTML = ""; return; }
+
+    if (rep.state === "done") {
+      box.innerHTML = '<p class="jobs-d-note jobs-rep-done" role="status">' + bi("ধন্যবাদ। রিপোর্টটি অ্যাডমিনের কাছে পৌঁছেছে, তিনি দেখবেন।", "Thank you. Your report has reached the admin, who will look into it.") + "</p>";
+      return;
+    }
+    if (!rep.open) {
+      box.innerHTML = '<button type="button" class="jobs-rep-open" id="jobs-r-open" aria-expanded="false" aria-controls="jobs-r-form">' + svg(ICO_FLAG, 16) + bi("এই পোস্টটি রিপোর্ট করুন", "Report this post") + "</button>";
+      return;
+    }
+    var h = '<div class="jobs-rep-box" id="jobs-r-form"><h3 class="jobs-d-h">' + bi("পোস্টটি রিপোর্ট করুন", "Report this post") + "</h3>";
+    if (!authKnown) {
+      h += '<p class="jobs-d-note">' + bi("যাচাই হচ্ছে…", "Checking…") + "</p>";
+    } else if (!user) {
+      h += '<p class="jobs-d-note">' + bi("রিপোর্ট করতে Google দিয়ে লগইন করতে হয়। এতে ভুয়া রিপোর্ট কমে।", "You need to sign in with Google to report. It keeps fake reports down.") + "</p>" +
+        '<button type="button" class="jobs-btn jobs-btn-plain jobs-btn-sm" id="jobs-r-login">' + bi("Google দিয়ে লগইন করুন", "Sign in with Google") + "</button>";
+      if (contactErr) h += '<p class="jobs-d-err" role="alert">' + bi(contactErr[0], contactErr[1]) + "</p>";
+    } else {
+      var busy = rep.state === "sending";
+      h += '<fieldset class="jobs-rep-reasons"' + (busy ? " disabled" : "") + '><legend class="jobs-d-note">' + bi("কী সমস্যা?", "What is wrong?") + "</legend>" +
+        D.reportReasons().map(function (r) {
+          return '<label class="jobs-rep-opt"><input type="radio" name="jobs-r-reason" value="' + esc(r.slug) + '"> <span>' + bi(r.bn, r.en) + "</span></label>";
+        }).join("") + "</fieldset>" +
+        '<label class="jobs-field jobs-rep-note"><span class="jobs-flabel">' + bi("আরও কিছু জানাতে চাইলে (ঐচ্ছিক)", "Anything else? (optional)") + "</span>" +
+        '<textarea id="jobs-r-note" rows="3" maxlength="300"' + (busy ? " disabled" : "") + "></textarea></label>" +
+        '<div class="jobs-rep-actions"><button type="button" class="jobs-btn jobs-btn-call jobs-btn-sm" id="jobs-r-send"' + (busy ? " disabled" : "") + ">" + (busy ? bi("পাঠানো হচ্ছে…", "Sending…") : bi("রিপোর্ট পাঠান", "Send report")) + "</button>" +
+        '<button type="button" class="jobs-btn jobs-btn-plain jobs-btn-sm" id="jobs-r-cancel"' + (busy ? " disabled" : "") + ">" + bi("বাতিল", "Cancel") + "</button></div>";
+      if (rep.err) h += '<p class="jobs-d-err" role="alert">' + bi(rep.err[0], rep.err[1]) + "</p>";
+    }
+    box.innerHTML = h + "</div>";
+    if (rep.focusNext) {
+      rep.focusNext = false;
+      var first = box.querySelector("input[type=radio], #jobs-r-login");
+      if (first) first.focus();
+    }
+  }
+
+  function submitReport() {
+    if (!cur || !user || rep.state === "sending") return;
+    var picked = document.querySelector('input[name="jobs-r-reason"]:checked');
+    var noteEl = $("jobs-r-note");
+    if (!picked) { rep.err = ["একটি কারণ বেছে নিন।", "Please pick a reason."]; keepAndRender(null, noteEl); return; }
+    var reason = picked.value, note = (noteEl ? noteEl.value : "").replace(/\s+/g, " ").trim().slice(0, 300);
+    var id = cur.id, uid = user.uid;
+    rep.state = "sending"; rep.err = null;
+    keepAndRender(reason, noteEl);
+    fb().then(function (f) {
+      var fs = f.fs;
+      /* ডকুমেন্ট আইডি = পোস্ট + "_" + UID (Rules): একজন একটি পোস্ট একবারই রিপোর্ট করতে পারে */
+      return fs.setDoc(fs.doc(f.db, "jobs_reports", id + "_" + uid), { postId: id, reporterUid: uid, reason: reason, note: note, createdAt: fs.serverTimestamp() });
+    }).then(function () {
+      if (rep.id === id) { rep.state = "done"; rep.err = null; renderReport(); }
+    }).catch(function (e) {
+      if (!cur || rep.id !== id) return;
+      rep.state = "idle";
+      rep.err = e && e.code === "permission-denied"
+        ? ["রিপোর্ট নেওয়া যায়নি। আপনি এই পোস্ট আগেই রিপোর্ট করে থাকলে আবার করার দরকার নেই।", "The report could not be saved. If you already reported this post, there is no need to do it again."]
+        : ["রিপোর্ট পাঠানো যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।", "Couldn't send the report. Check your connection and try again."];
+      keepAndRender(reason, noteEl);
+    });
+  }
+  /* আবার আঁকার সময় বাছাই করা কারণ ও লেখা ধরে রাখি */
+  function keepAndRender(reason, noteEl) {
+    var note = noteEl ? noteEl.value : "";
+    renderReport();
+    var n = $("jobs-r-note"); if (n) n.value = note;
+    if (reason) { var r = document.querySelector('input[name="jobs-r-reason"][value="' + reason + '"]'); if (r) r.checked = true; }
   }
 
   /* =====================================================================
@@ -710,6 +874,7 @@
     v = sp.get("level"); if (v && D.get("levels", v)) state.level = v;
     v = sp.get("pay"); if (v && v !== "any" && D.SALARY_BANDS.some(function (b) { return b.slug === v; })) state.pay = v;
     if (sp.get("sort") === "expiring") state.sort = "expiring";
+    if (sp.get("saved") === "1") state.saved = true;   // শুধু পড়া হয়; ঠিকানায় লেখা হয় না, কারণ বুকমার্ক শেয়ার করার জিনিস নয়
     v = sp.get("q"); if (v) state.q = v.replace(/\s+/g, " ").trim().slice(0, 80);
     normalizeState();
   }
@@ -779,7 +944,7 @@
     });
 
     function reset() {
-      state.type = ""; state.mode = ""; state.zone = ""; state.area = ""; state.cat = ""; state.level = ""; state.pay = ""; state.q = ""; els.q.value = "";
+      state.type = ""; state.mode = ""; state.zone = ""; state.area = ""; state.cat = ""; state.level = ""; state.pay = ""; state.q = ""; state.saved = false; els.q.value = "";
       changed();
     }
     [["fArea", "area"], ["fCat", "cat"], ["fLevel", "level"], ["fPay", "pay"], ["fSort", "sort"]].forEach(function (x) {
@@ -789,6 +954,7 @@
       var qs = stateQuery();
       shareLink(location.origin + location.pathname + (qs ? "?" + qs : ""), document.title, els.share);
     });
+    els.saved.addEventListener("click", function () { state.saved = !state.saved; changed(); });
     els.reset.addEventListener("click", reset);
     els.emptyReset.addEventListener("click", reset);
     els.emptyRetry.addEventListener("click", load);
@@ -805,6 +971,7 @@
     els.emptyH = $("jobs-empty-h"); els.emptyP = $("jobs-empty-p");
     els.emptyReset = $("jobs-empty-reset"); els.emptyCta = $("jobs-empty-cta"); els.emptyRetry = $("jobs-empty-retry");
     els.moreWrap = $("jobs-more-wrap"); els.more = $("jobs-more");
+    els.saved = $("jobs-saved"); els.flash = $("jobs-flash");
     els.adv = $("jobs-adv"); els.advN = $("jobs-adv-n"); els.share = $("jobs-share");
     els.fArea = $("jobs-f-area"); els.fCat = $("jobs-f-cat"); els.fLevel = $("jobs-f-level"); els.fPay = $("jobs-f-pay"); els.fSort = $("jobs-f-sort");
     els.dlg = $("jobs-dlg"); els.dBody = $("jobs-d-body"); els.dScroll = $("jobs-d-scroll");
@@ -818,7 +985,7 @@
       els.q.placeholder = en ? "Search subject, work or title…" : "বিষয়, কাজ বা শিরোনাম খুঁজুন…";
       els.q.setAttribute("aria-label", en ? "Search jobs and tuition" : "জব ও টিউশনে খুঁজুন");
       renderAdv();                // অপশনের লেখা ভাষা অনুযায়ী
-      if (cur) renderContact();   // WhatsApp-এর আগে-লেখা বার্তা ভাষা অনুযায়ী
+      if (cur) renderContact();   // WhatsApp-এর আগে-লেখা বার্তা ভাষা অনুযায়ী (রিপোর্ট ফর্মে সব লেখা দ্বিভাষিক স্প্যানে, তাই আবার আঁকা লাগে না)
     }
     setPlaceholder();
     new MutationObserver(setPlaceholder).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
@@ -833,6 +1000,12 @@
     bind();
     bindDialog();
     syncPressed();
+    window.addEventListener("storage", function (e) {      // অন্য ট্যাবে বুকমার্ক বদলালে এখানেও মেলাই
+      if (e.key !== BM_KEY) return;
+      bm = readBm();
+      document.querySelectorAll("[data-bm]").forEach(function (b) { b.setAttribute("aria-pressed", isBm(b.getAttribute("data-bm")) ? "true" : "false"); });
+      if (state.saved) render(); else syncPressed();
+    });
     load();
   }
 
