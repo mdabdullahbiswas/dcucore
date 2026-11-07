@@ -139,3 +139,29 @@ html[data-lang="en"] .jobs-bn { display: none; }
   body .jp-user { flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: reduce) { body .jp-card:not([hidden]) { animation: none; } body .jp-btn { transition: none; } }
+
+/* ---------- ধাপ ৫: যাচাই, সম্মতি, জমা ---------- */
+body .jp-hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+body .jp-dl { display: grid; gap: 0; margin: 16px 0 0; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; overflow: hidden; }
+body .jp-dl > div { display: grid; grid-template-columns: minmax(96px, 30%) 1fr; gap: 12px; padding: 10px 14px; }
+body .jp-dl > div + div { border-top: 1px solid var(--ln, #E2E8F0); }
+body .jp-dl dt { margin: 0; color: var(--mu, #475569); font-size: 0.88rem; font-weight: 600; }
+body .jp-dl dd { margin: 0; color: var(--ink, #0F172A); overflow-wrap: anywhere; white-space: pre-line; }
+body .jp-consent { align-items: flex-start; gap: 12px; margin-top: 20px; padding: 14px; border: 1.5px solid var(--ln, #E2E8F0); border-radius: 14px; line-height: 1.65; }
+body .jp-consent input { flex: none; margin-top: 3px; }
+body .jp-consent a { color: var(--gold-deep, #B98A2C); font-weight: 600; }
+body .jp-actions-2 { justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+body .jp-actions-c { justify-content: center; }
+body .jp-actions a.jp-btn { text-decoration: none; }
+body .jp-done { text-align: center; }
+body .jp-done-ico {
+  display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; color: #0B1F3A;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  box-shadow: 0 14px 26px -14px rgba(212, 175, 55, 0.95);
+}
+body .jp-done-h { margin: 14px 0 0 !important; font-size: 1.4rem !important; outline: none; }
+body .jp-done-p { margin: 10px auto 0; max-width: 52ch; color: var(--mu, #475569); line-height: 1.75; }
+@media (max-width: 560px) {
+  body .jp-dl > div { grid-template-columns: 1fr; gap: 2px; }
+  body .jp-actions-2 .jp-btn { width: 100%; }
+}
