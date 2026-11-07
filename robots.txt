@@ -3,6 +3,7 @@ Allow: /
 Disallow: /admin
 Disallow: /admin-panel
 Disallow: /events-admin
+Disallow: /library-admin
 Disallow: /support-admin
 Disallow: /visitors-admin
 
