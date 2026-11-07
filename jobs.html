@@ -112,9 +112,25 @@
       </div>
     </div>
 
+    <!-- আরও ফিল্টার: নির্দিষ্ট এলাকা, বিষয়, শ্রেণি, বেতন (jobs.js অপশন ভরে) -->
+    <details class="jobs-adv" id="jobs-adv">
+      <summary><span class="t">আরও ফিল্টার|More filters</span><span class="jobs-adv-n" id="jobs-adv-n" hidden></span></summary>
+      <div class="jobs-adv-grid">
+        <label class="jobs-field"><span class="jobs-flabel t">নির্দিষ্ট এলাকা|Specific area</span><select id="jobs-f-area"></select></label>
+        <label class="jobs-field"><span class="jobs-flabel t">বিষয় / কাজ|Subject / work</span><select id="jobs-f-cat"></select></label>
+        <label class="jobs-field"><span class="jobs-flabel t">শ্রেণি|Class level</span><select id="jobs-f-level"></select></label>
+        <label class="jobs-field"><span class="jobs-flabel t">বেতন (মাসে)|Pay (monthly)</span><select id="jobs-f-pay"></select></label>
+      </div>
+      <p class="jobs-adv-note"><span class="jobs-bn">বেতন মাসিক ধরে মেলানো হয়: সাপ্তাহিককে ×৪ ও দৈনিককে ×২৬ ধরা হয়। ঘণ্টা, প্রজেক্ট ও আলোচনা সাপেক্ষ পোস্ট বেতন ফিল্টারে আসে না। শ্রেণি শুধু টিউশনের জন্য।</span><span class="jobs-en">Pay is matched per month: weekly pay counts ×4 and daily ×26. Hourly, per-project and negotiable posts don't appear under a pay filter. Class level applies to tuition only.</span></p>
+    </details>
+
     <div class="jobs-statusrow">
       <p class="jobs-status" id="jobs-status" role="status" aria-live="polite"><span class="jobs-bn">লোড হচ্ছে…</span><span class="jobs-en">Loading…</span></p>
-      <button type="button" class="jobs-reset" id="jobs-reset" hidden><span class="t">ফিল্টার মুছুন|Clear filters</span></button>
+      <div class="jobs-status-tools">
+        <label class="jobs-sort"><span class="t">সাজান|Sort</span><select id="jobs-f-sort"></select></label>
+        <button type="button" class="jobs-reset" id="jobs-share" hidden><span class="t">লিংক শেয়ার|Share link</span></button>
+        <button type="button" class="jobs-reset" id="jobs-reset" hidden><span class="t">ফিল্টার মুছুন|Clear filters</span></button>
+      </div>
     </div>
 
     <!-- স্কেলেটন (JS আসার আগে ও ডেটা লোডের সময়) -->
