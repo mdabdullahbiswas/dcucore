@@ -982,3 +982,10 @@ html body {
   height: 18px;
 }
 @media (max-width: 960px) { .dl-menu::after { display: none !important; } }
+
+/* ---- নেভিগেশন কম্প্যাক্ট (৯৬১–১২৮০px): "জব ও টিউশন" লিংক যোগ হওয়ায় হেডার যাতে উপচে না পড়ে ---- */
+@media (min-width: 961px) and (max-width: 1280px) {
+  .dl-nav { gap: 1px; }
+  .dl-nav > a,
+  .dl-dd-btn { padding: 9px 9px; font-size: 0.9rem; }
+}
