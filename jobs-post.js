@@ -1,17 +1,14 @@
-/* jobs-post.js — জব ও টিউশনের পোস্ট ফর্ম (ধাপ ৪: প্রথম অংশ)
+/* jobs-post.js — জব ও টিউশনের পোস্ট ফর্ম (ধাপ ৪ + ৫)
  *
- * এই ধাপে আছে: Google লগইন → পোস্টের ধরন বাছাই → ধরন অনুযায়ী ফিল্ড → ঘর যাচাই।
- * এখনো নেই (ধাপ ৫): honeypot, সময়-সীমা, দিনে ২টির সীমা, নিয়মে সম্মতি, Firestore-এ জমা।
+ * ধাপ ৪: Google লগইন → ধরন বাছাই → ধরন অনুযায়ী ফিল্ড → ঘর যাচাই।
+ * ধাপ ৫: যাচাই-পর্দা → স্প্যাম রোধ (honeypot, ন্যূনতম সময়, বিরতি, দিনে ২টির সীমা) → নিয়মে সম্মতি → Firestore-এ জমা।
  *
- * ধাপ ৫-এর জন্য তৈরি রাখা হয়েছে:
- *   window.JobsPost.collect()  → { data, contact }
- *      data    = jobs_posts ডকুমেন্টের ফিল্ড (Rules-এর jobsPostOk-এর নামে হুবহু), শুধু এই ক'টি বাদে:
- *                status, filled, authorUid, authorVerified, createdAt, expiresAt (জমার সময় বসবে)
- *      contact = jobs_posts/{id}/private/contact-এর phone ও whatsapp
- *   window.JobsPost.validate() → ত্রুটির তালিকা ([] মানে ঠিক আছে)
- *   "এগিয়ে যান" চাপলে সব ঠিক থাকলে document-এ "jobspost:ready" ইভেন্ট ছাড়ে (detail = collect()-এর ফল)।
+ * জমা হয় একটি atomic ব্যাচে (Rules-এর শর্ত অনুযায়ী):
+ *   jobs_posts/{id}  +  jobs_posts/{id}/private/contact  +  jobs_limits/{uid_YYYYMMDD} (তৈরি বা count+১)
+ * status = "pending"; শুধু user_trust.autoApprove == true হলে "approved" (Rules-এর নিয়ম)।
  */
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, doc, collection, getDoc, writeBatch, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const CFG_FB = {
@@ -25,11 +22,15 @@ const CFG_FB = {
 /* ইভেন্ট পেজের মতো ডিফল্ট অ্যাপ, যাতে এক জায়গায় লগইন করলে এখানেও লগইন থাকে */
 let app; try { app = getApp(); } catch (e) { app = initializeApp(CFG_FB); }
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const D = window.JobsData, LD = window.LibData;
 const $ = id => document.getElementById(id);
 if (!D || !$("jp-form")) throw new Error("jobs-post: JobsData বা ফর্ম পাওয়া যায়নি");
 const LIM = D.LIMITS;
+const MIN_FILL_MS = 15000;          // ফর্ম খোলার পর কমপক্ষে এত সময় না গেলে জমা নেয় না
+const COOLDOWN_MS = 60 * 1000;      // এক ব্রাউজারে দুই জমার মাঝের বিরতি
+const LAST_KEY = "jobs:lastPost";
 
 /* ---------- সহায়ক ---------- */
 const lang = () => document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn";
@@ -93,7 +94,7 @@ const TYPE = {
 /* ---------- অবস্থা ---------- */
 const S = {
   user: null, type: "", cats: [], levels: [], areas: [], mode: "", days: 0, unit: "",
-  genderPref: "", tutorGender: "", college: "", dept: "", photo: "", tried: false, modeTouched: false, unitTouched: false, shown: false
+  genderPref: "", tutorGender: "", college: "", dept: "", photo: "", tried: false, modeTouched: false, unitTouched: false, shown: false, stage: "edit", formAt: 0, sending: false
 };
 const cfg = () => TYPE[S.type] || null;
 
@@ -188,7 +189,7 @@ function counters() {
 }
 
 function sync() {
-  const cur = !S.user ? 0 : !S.type ? 1 : 2;
+  const cur = S.stage === "done" ? 4 : S.stage === "review" ? 3 : !S.user ? 0 : !S.type ? 1 : 2;
   document.querySelectorAll("#jp-steps li").forEach((li, i) => {
     li.classList.toggle("done", i < cur); li.classList.toggle("cur", i === cur);
     if (i === cur) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
@@ -214,6 +215,7 @@ function setType(t) {
   renderAll();
   if (!S.shown) {
     S.shown = true;
+    S.formAt = Date.now();
     $("jp-details").scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
     $("jp-h-det").focus({ preventScroll: true });
   }
@@ -333,7 +335,7 @@ function renderAuth() {
     authErr(ok ? "" : L("এই অ্যাকাউন্টের ইমেইল যাচাই করা নয়, তাই পোস্ট করা যাবে না। যাচাইকৃত Google অ্যাকাউন্টে লগইন করুন।|This account's email is not verified, so it cannot post. Sign in with a verified Google account."));
     if (ok && !$("jp-name").value) $("jp-name").value = clean(u.displayName).slice(0, LIM.authorName[1]);
   }
-  $("jp-form").hidden = !ok;
+  $("jp-form").hidden = !ok || S.stage === "done";
   sync();
 }
 async function signIn() {
@@ -394,25 +396,129 @@ function bind() {
 
   $("jp-next").addEventListener("click", () => {
     S.tried = true;
-    const bad = validate(true), sum = $("jp-sum"), ready = $("jp-ready");
-    ready.hidden = true;
+    const bad = validate(true), sum = $("jp-sum");
     if (bad.length) {
       sum.hidden = false;
       sum.textContent = lang() === "en" ? "Please fix " + bad.length + " field" + (bad.length > 1 ? "s" : "") + " marked above." : bnNum(bad.length) + "টি ঘর ঠিক করুন।";
       return;
     }
     sum.hidden = true;
-    const out = collect();
-    ready.textContent = L("সব তথ্য ঠিক আছে ✓ যাচাই ও জমা দেওয়ার অংশ পরের ধাপে যুক্ত হবে।|All details look good ✓ The review-and-submit part is added in the next step.");
-    ready.hidden = false;
-    document.dispatchEvent(new CustomEvent("jobspost:ready", { detail: out }));
+    showStage("review");
   });
+  $("jp-edit").addEventListener("click", () => showStage("edit"));
+  $("jp-submit").addEventListener("click", submit);
+  $("jp-consent").addEventListener("change", () => { if ($("jp-consent").checked) subErr(""); });
+  $("jp-again").addEventListener("click", () => location.reload());
+}
+
+/* ---------- ধাপ ৫: যাচাই-পর্দা ---------- */
+function showStage(st) {
+  S.stage = st;
+  $("jp-details").hidden = st !== "edit" || !S.type;
+  $("jp-type-card").hidden = st !== "edit";
+  $("jp-review").hidden = st !== "review";
+  if (st === "review") { renderReview(); $("jp-h-rev").focus({ preventScroll: true }); }
+  else if (st === "edit") $("jp-h-det").focus({ preventScroll: true });
+  sync();
+  const t = st === "review" ? $("jp-review") : $("jp-details");
+  t.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
+}
+function renderReview() {
+  const x = collect(); if (!x) return;
+  const d = x.data, l = lang(), t = D.get("types", d.type), c = cfg();
+  const rows = [
+    ["ধরন|Type", t ? t[l] : d.type],
+    ["শিরোনাম|Title", d.title],
+    [c.catsLbl, D.labels("cats", d.cats, l).join(", ")]
+  ];
+  if (d.levels.length) rows.push(["শ্রেণি|Class level", D.labels("levels", d.levels, l).join(", ")]);
+  if (d.college || d.dept) rows.push(["কলেজ/বিভাগ|College / Dept", [d.college && LD ? LD.name(LD.college(d.college), l) : "", d.dept && LD ? LD.name(LD.department(d.dept), l) : ""].filter(Boolean).join(" · ")]);
+  rows.push(["পদ্ধতি|Mode", D.label("modes", d.mode, l)]);
+  if (d.areas.length) rows.push([c.areasLbl, D.labels("areas", d.areas, l).join(", ")]);
+  if (d.days) rows.push(["সপ্তাহে|Days per week", numL(d.days)]);
+  if (d.timeNote) rows.push([c.timeLbl, d.timeNote]);
+  if (d.genderPref) rows.push(["শিক্ষকের পছন্দ|Preferred tutor", D.label("genders", d.genderPref, l)]);
+  if (d.tutorGender) rows.push(["লিঙ্গ|Gender", D.label("genders", d.tutorGender, l)]);
+  rows.push([c.salaryLbl, D.salaryText(d.salaryMin, d.salaryMax, d.salaryUnit, l)]);
+  if (d.orgName) rows.push([c.orgLbl || "প্রতিষ্ঠান|Organisation", d.orgName]);
+  if (d.desc) rows.push(["বিস্তারিত|Description", d.desc]);
+  if (d.photo) rows.push(["ছবি|Photo", L("আছে|Added")]);
+  rows.push(["নাম|Name", d.authorName]);
+  rows.push(["মোবাইল|Mobile", x.contact.phone + (x.contact.whatsapp ? " · WhatsApp: " + x.contact.whatsapp : "")]);
+  $("jp-dl").innerHTML = rows.map(r => "<div><dt>" + esc(L(r[0])) + "</dt><dd>" + esc(r[1]) + "</dd></div>").join("");
+}
+
+/* ---------- ধাপ ৫: জমা ---------- */
+function subErr(msg) { const p = $("jp-sub-err"); p.hidden = !msg; p.textContent = msg || ""; if (msg) p.focus(); }
+const lastPostAt = () => { try { return parseInt(localStorage.getItem(LAST_KEY) || "0", 10) || 0; } catch (e) { return 0; } };
+
+async function readTrust(uid) {
+  try { const s = await getDoc(doc(db, "user_trust", uid)); return s.exists() ? s.data() : {}; } catch (e) { return {}; }
+}
+/* আজকের (UTC) জমার সংখ্যা। নেই এমন ডকুমেন্ট পড়তে গেলে Rules permission-denied দেয়; সেটাকে ০ ধরা হয় */
+async function readCount(uid) {
+  try { const s = await getDoc(doc(db, "jobs_limits", D.limitId(uid))); return s.exists() ? (s.data().count | 0) : 0; } catch (e) { return 0; }
+}
+
+function showDone(status) {
+  S.stage = "done";
+  $("jp-form").hidden = true; $("jp-details").hidden = true; $("jp-review").hidden = true;
+  const live = status === "approved";
+  $("jp-h-done").textContent = live ? L("পোস্ট প্রকাশিত হয়েছে|Your post is live") : L("পোস্ট জমা হয়েছে, অনুমোদনের অপেক্ষায়|Post submitted, awaiting approval");
+  $("jp-done-p").textContent = live
+    ? L("আপনার পোস্টটি এখন সবাই দেখতে পাচ্ছে। মেয়াদ ৩০ দিন।|Everyone can see your post now. It stays up for 30 days.")
+    : L("অ্যাডমিন দেখে অনুমোদন দিলে পোস্টটি সবার সামনে আসবে। এতে কিছু সময় লাগতে পারে। অনুমোদনের আগে এটি শুধু আপনি দেখতে পারবেন। অনুমোদনের পর মেয়াদ ৩০ দিন।|Once an admin reviews and approves it, your post appears for everyone. This can take a while. Until then only you can see it. After approval it stays up for 30 days.");
+  $("jp-done").hidden = false; sync();
+  $("jp-h-done").focus();
+}
+
+async function submit() {
+  if (S.sending) return;
+  subErr("");
+  if (!$("jp-consent").checked) { subErr(L("জমা দিতে নিয়মাবলিতে সম্মতি দিন।|Please accept the rules to submit.")); $("jp-consent").focus(); return; }
+  if ($("jp-hp").value) { showDone("pending"); return; }                 // বট: কিছু না লিখে "সফল" দেখানো হয়
+  if (Date.now() - S.formAt < MIN_FILL_MS) { subErr(L("একটু সময় নিয়ে তথ্য দেখে আবার চাপুন।|Take a moment to review your details, then press again.")); return; }
+  const wait = COOLDOWN_MS - (Date.now() - lastPostAt());
+  if (wait > 0) { subErr(L("আগের পোস্টের পর একটু অপেক্ষা করুন, তারপর আবার চেষ্টা করুন।|Please wait a little after your last post and try again.")); return; }
+  if (validate(false).length) { showStage("edit"); S.tried = true; validate(true); return; }
+
+  const u = auth.currentUser;
+  if (!u || !u.emailVerified) { subErr(L("লগইন নেই বা ইমেইল যাচাই করা নয়। আবার লগইন করুন।|You are signed out or your email is not verified. Please sign in again.")); return; }
+
+  S.sending = true; const btn = $("jp-submit"); btn.disabled = true;
+  try {
+    const [trust, count] = await Promise.all([readTrust(u.uid), readCount(u.uid)]);
+    if (count >= LIM.postsPerDay) throw { code: "jobs/limit" };
+    const x = collect();
+    const postRef = doc(collection(db, "jobs_posts"));
+    const status = trust.autoApprove === true ? "approved" : "pending";
+    const batch = writeBatch(db);
+    batch.set(postRef, Object.assign({}, x.data, {
+      status: status, filled: false, authorUid: u.uid, authorVerified: trust.verified === true,
+      createdAt: serverTimestamp(), expiresAt: Timestamp.fromMillis(Date.now() + LIM.expiryDays * 86400000)
+    }));
+    batch.set(doc(db, "jobs_posts", postRef.id, "private", "contact"), {
+      authorUid: u.uid, authorEmail: u.email, phone: x.contact.phone, whatsapp: x.contact.whatsapp
+    });
+    const limRef = doc(db, "jobs_limits", D.limitId(u.uid));
+    if (count === 0) batch.set(limRef, { uid: u.uid, day: D.dayKey(), count: 1 });
+    else batch.update(limRef, { count: count + 1 });
+    await batch.commit();
+    try { localStorage.setItem(LAST_KEY, String(Date.now())); } catch (e) { /* storage blocked */ }
+    showDone(status);
+  } catch (e) {
+    const code = e && e.code || "";
+    if (code === "jobs/limit") subErr(L("আজ ইতিমধ্যে ২টি পোস্ট করেছেন। দিন বদলালে আবার পোস্ট করতে পারবেন (বাংলাদেশ সময় সকাল ৬টার পর নতুন দিন ধরা হয়)।|You have already made 2 posts today. You can post again after the day resets (the new day starts at 6 am Bangladesh time)."));
+    else if (code === "unavailable" || code === "deadline-exceeded" || code === "auth/network-request-failed") subErr(L("ইন্টারনেট সংযোগ দেখুন, তারপর আবার চেষ্টা করুন। আপনার তথ্য এখানেই আছে।|Check your internet connection and try again. Your details are still here."));
+    else if (code === "permission-denied") subErr(L("জমা নেওয়া গেল না। পেজ রিলোড করে লগইন ঠিক আছে কিনা দেখুন, তারপর আবার চেষ্টা করুন। সমস্যা থাকলে আমাদের জানান।|Could not submit. Reload the page, check you are signed in, and try again. Let us know if it keeps happening."));
+    else subErr(L("জমা দেওয়া গেল না। একটু পরে আবার চেষ্টা করুন।|Could not submit. Please try again in a moment."));
+  } finally { S.sending = false; btn.disabled = false; }
 }
 
 /* ---------- শুরু ---------- */
 $("jp-out").hidden = true;                           // auth-এর অবস্থা জানার আগে বাটন ঝিলিক দেয় না
 bind();
-new MutationObserver(() => { if (S.type) renderAll(); else renderTypes(); if (S.user) renderAuth(); })
+new MutationObserver(() => { if (S.type) renderAll(); else renderTypes(); if (S.user) renderAuth(); if (S.stage === "review") renderReview(); })
   .observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 renderTypes();
 onAuthStateChanged(auth, u => { S.user = u || null; renderAuth(); });
