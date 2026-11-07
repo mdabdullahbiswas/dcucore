@@ -8,6 +8,7 @@
   <url><loc>https://dcucore.vercel.app/events</loc><priority>0.8</priority></url>
   <url><loc>https://dcucore.vercel.app/library</loc><priority>0.8</priority></url>
   <url><loc>https://dcucore.vercel.app/library-rules</loc><priority>0.5</priority></url>
+  <url><loc>https://dcucore.vercel.app/jobs</loc><priority>0.8</priority></url>
   <url><loc>https://dcucore.vercel.app/blood</loc><priority>0.8</priority></url>
   <url><loc>https://dcucore.vercel.app/dcu-calendar</loc><priority>0.8</priority></url>
   <url><loc>https://dcucore.vercel.app/support</loc><priority>0.8</priority></url>
