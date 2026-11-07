@@ -237,6 +237,10 @@
     return "bn";
   }
 
+  /* বিশেষ “সব কলেজ”: যে ফাইল সব কলেজের জন্য প্রযোজ্য। colleges() তালিকায় নেই (তাই ফিল্টার ও অ্যাডমিনের কলেজ-তালিকায় আসে না);
+   * শুধু জমার ফর্মে বাছা যায়, আর college(slug) নাম দেখাতে এটিকে চেনে। */
+  var ALL_COLLEGE = { slug: "all-colleges", bn: "সব কলেজ", en: "All colleges" };
+
   /* বর্তমান তালিকা (ডিফল্ট + অ্যাডমিনের যোগ করা) — merge() এটি বদলায় */
   var state = {
     colleges: copy(COLLEGES),
@@ -251,6 +255,7 @@
 
   var LibData = {
     YEARS: YEARS,
+    ALL_COLLEGE: ALL_COLLEGE,
     FILE_TYPES: FILE_TYPES,
     EXAM_TYPES: EXAM_TYPES,
 
@@ -262,12 +267,12 @@
     },
 
     colleges: function () { return state.colleges.slice(); },
-    college: function (slug) { return byId(state.colleges, "slug", slug); },
+    college: function (slug) { return slug === ALL_COLLEGE.slug ? ALL_COLLEGE : byId(state.colleges, "slug", slug); },
 
     /* কলেজ দিলে শুধু সেই কলেজের বিভাগ; না দিলে সব বিভাগ */
     departments: function (collegeSlug) {
       return state.departments.filter(function (d) {
-        return !collegeSlug || !d.colleges || !d.colleges.length || d.colleges.indexOf(collegeSlug) > -1;
+        return !collegeSlug || collegeSlug === ALL_COLLEGE.slug || !d.colleges || !d.colleges.length || d.colleges.indexOf(collegeSlug) > -1;
       });
     },
     department: function (slug) { return byId(state.departments, "slug", slug); },
