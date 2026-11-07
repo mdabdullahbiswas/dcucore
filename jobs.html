@@ -126,6 +126,11 @@
       <div class="jobs-sk-card" aria-hidden="true"><span class="jobs-sk jobs-sk-ico"></span><span class="jobs-sk-lines"><span class="jobs-sk jobs-sk-l1"></span><span class="jobs-sk jobs-sk-l2"></span><span class="jobs-sk jobs-sk-l3"></span></span></div>
     </div>
 
+    <!-- আরও দেখান (jobs.js দেখায়/লুকায়) -->
+    <div class="jobs-more-wrap" id="jobs-more-wrap" hidden>
+      <button type="button" class="jobs-reset jobs-reset-lg" id="jobs-more"></button>
+    </div>
+
     <!-- খালি অবস্থা (jobs.js দেখায়/লুকায়) -->
     <div class="jobs-empty" id="jobs-empty" hidden>
       <svg class="jobs-empty-art" viewBox="0 0 120 96" width="120" height="96" fill="none" aria-hidden="true">
@@ -139,7 +144,8 @@
       <h3 id="jobs-empty-h" class="jobs-empty-h"></h3>
       <p id="jobs-empty-p" class="jobs-empty-p"></p>
       <div class="jobs-empty-actions">
-        <a class="jobs-cta jobs-cta-sm" href="/jobs-post"><span class="t">প্রথম পোস্টটি আপনার হোক|Be the first to post</span></a>
+        <a class="jobs-cta jobs-cta-sm" id="jobs-empty-cta" href="/jobs-post"><span class="t">প্রথম পোস্টটি আপনার হোক|Be the first to post</span></a>
+        <button type="button" class="jobs-reset jobs-reset-lg" id="jobs-empty-retry" hidden><span class="t">আবার চেষ্টা করুন|Try again</span></button>
         <button type="button" class="jobs-reset jobs-reset-lg" id="jobs-empty-reset" hidden><span class="t">ফিল্টার মুছুন|Clear filters</span></button>
       </div>
     </div>
