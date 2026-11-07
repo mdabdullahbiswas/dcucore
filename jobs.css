@@ -12,7 +12,7 @@ html:not([data-lang="en"]) .jobs-en { display: none; }
 html[data-lang="en"] .jobs-bn { display: none; }
 
 /* ---------- রঙের সূত্র (--h থাকলে) ---------- */
-body .jobs-type, body .jobs-orb, body .jobs-card {
+body .jobs-type, body .jobs-orb, body .jobs-card, body .jobs-dlg {
   --s: 66%;
   --t1: hsl(var(--h, 214) var(--s) 40%);
   --t2: hsl(calc(var(--h, 214) + 14) var(--s) 22%);
@@ -20,7 +20,7 @@ body .jobs-type, body .jobs-orb, body .jobs-card {
   --ring: hsl(var(--h, 214) 70% 52%);
   --wash: hsl(var(--h, 214) 80% 50% / 0.08);
 }
-:root[data-theme="dark"] body .jobs-type, :root[data-theme="dark"] body .jobs-orb, :root[data-theme="dark"] body .jobs-card, body.dark .jobs-type, body.dark .jobs-orb, body.dark .jobs-card {
+:root[data-theme="dark"] body .jobs-type, :root[data-theme="dark"] body .jobs-orb, :root[data-theme="dark"] body .jobs-card, :root[data-theme="dark"] body .jobs-dlg, body.dark .jobs-type, body.dark .jobs-orb, body.dark .jobs-card, body.dark .jobs-dlg {
   --t1: hsl(var(--h, 214) var(--s) 46%);
   --t2: hsl(calc(var(--h, 214) + 14) var(--s) 26%);
   --wash: hsl(var(--h, 214) 80% 60% / 0.12);
@@ -202,14 +202,14 @@ body .jobs-sk-l3 { height: 12px; width: 85%; }
 @keyframes jobs-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
 /* ---------- পোস্টের কার্ড (ধাপ ৭) ---------- */
+body .jobs-card, body .jobs-dlg { --tx: hsl(var(--h, 214) 70% 30%); }
 body .jobs-card {
-  --tx: hsl(var(--h, 214) 70% 30%);
   position: relative; display: flex; gap: 14px; min-width: 0; padding: 16px;
   border: 1px solid var(--ln, #E2E8F0); border-radius: 20px; color: var(--ink, #0F172A);
   background: linear-gradient(135deg, var(--wash), transparent 55%), var(--cd, #fff);
   animation: jobs-in 0.35s ease both;
 }
-:root[data-theme="dark"] body .jobs-card, body.dark .jobs-card { --tx: hsl(var(--h, 214) 80% 76%); }
+:root[data-theme="dark"] body .jobs-card, :root[data-theme="dark"] body .jobs-dlg, body.dark .jobs-card, body.dark .jobs-dlg { --tx: hsl(var(--h, 214) 80% 76%); }
 body .jobs-card:focus { outline: none; }
 body .jobs-card:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
 @keyframes jobs-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
@@ -259,6 +259,80 @@ body .jobs-ago { color: var(--mu, #475569); font-size: 0.82rem; font-weight: 500
 
 body .jobs-more-wrap { display: flex; justify-content: center; margin-top: 18px; }
 body .jobs-more-wrap[hidden] { display: none; }
+
+/* ---------- কার্ড খোলার বাটন (পুরো কার্ড ক্লিকযোগ্য) ---------- */
+body .jobs-card { cursor: pointer; }
+body .jobs-card-open {
+  padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; overflow-wrap: anywhere;
+}
+body .jobs-card-open::after { content: ""; position: absolute; inset: 0; border-radius: 20px; }
+body .jobs-card-open:focus { outline: none; }
+body .jobs-card-open:focus-visible::after { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+
+/* ---------- বিস্তারিত ডায়ালগ (ধাপ ৮) ---------- */
+html.jobs-lock { overflow: hidden; }
+body dialog.jobs-dlg {
+  width: min(700px, calc(100% - 24px)); max-width: none; max-height: min(90vh, 900px); margin: auto; padding: 0;
+  border: 1px solid var(--ln, #E2E8F0); border-radius: 24px; background: var(--cd, #fff); color: var(--ink, #0F172A);
+  box-shadow: 0 40px 80px -30px rgba(6, 22, 43, 0.75); overflow: hidden;
+}
+body dialog.jobs-dlg[open] { display: flex; flex-direction: column; animation: jobs-pop 0.25s ease both; }
+body dialog.jobs-dlg::backdrop { background: rgba(6, 22, 43, 0.6); backdrop-filter: blur(3px); }
+@keyframes jobs-pop { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+body .jobs-d-scroll { position: relative; overflow-y: auto; overscroll-behavior: contain; padding: 22px 22px 26px; }
+body .jobs-d-x {
+  position: absolute; top: 12px; right: 12px; z-index: 2; display: grid; place-items: center; width: 40px; height: 40px;
+  border: 1px solid var(--ln, #E2E8F0); border-radius: 50%; background: var(--cd, #fff); color: var(--ink, #0F172A); cursor: pointer;
+}
+body .jobs-d-x:hover { border-color: var(--gold, #D4AF37); }
+body .jobs-d-x:focus-visible, body .jobs-btn:focus-visible, body .jobs-d-link:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+
+body .jobs-d-head { display: flex; gap: 14px; align-items: flex-start; padding-right: 44px; }
+body .jobs-d-head .jobs-card-ico { width: 60px; height: 60px; border-radius: 17px; }
+body .jobs-d-title { margin: 6px 0 0; color: var(--ink, #0F172A); font-size: clamp(1.15rem, 3.2vw, 1.45rem); font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+body .jobs-d-org { margin: 4px 0 0; color: var(--mu, #475569); font-weight: 500; overflow-wrap: anywhere; }
+body .jobs-d-desc { margin: 18px 0 0; color: var(--ink, #0F172A); line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+
+body .jobs-d-dl { display: grid; gap: 0; margin: 18px 0 0; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; overflow: hidden; }
+body .jobs-d-dl > div { display: grid; grid-template-columns: minmax(110px, 34%) 1fr; gap: 12px; padding: 11px 14px; }
+body .jobs-d-dl > div + div { border-top: 1px solid var(--ln, #E2E8F0); }
+body .jobs-d-dl dt { margin: 0; color: var(--mu, #475569); font-size: 0.9rem; font-weight: 600; }
+body .jobs-d-dl dd { margin: 0; min-width: 0; color: var(--ink, #0F172A); font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+
+body .jobs-d-sec { margin-top: 18px; padding: 16px 18px; border-radius: 16px; }
+body .jobs-d-h { margin: 0 0 8px; font-size: 1.02rem; font-weight: 700; }
+body .jobs-d-safe { border: 1px solid var(--ln, #E2E8F0); border-left: 4px solid var(--gold, #D4AF37); background: var(--cd, #fff); }
+body .jobs-d-safe h3 { color: var(--ink, #0F172A); }
+body .jobs-d-safe ul { margin: 0; padding-left: 20px; color: var(--mu, #475569); line-height: 1.75; font-size: 0.94rem; }
+body .jobs-d-safe li + li { margin-top: 3px; }
+body .jobs-d-contact { background: var(--wash); box-shadow: inset 0 0 0 1px var(--ring); }
+body .jobs-d-contact .jobs-d-h { color: var(--ink, #0F172A); }
+body .jobs-d-note { margin: 0 0 12px; color: var(--mu, #475569); line-height: 1.7; }
+body .jobs-d-err { margin: 10px 0 0; color: #b42318; font-weight: 600; line-height: 1.6; }
+:root[data-theme="dark"] body .jobs-d-err, body.dark .jobs-d-err { color: #fda29b; }
+body .jobs-d-btns { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+body .jobs-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; padding: 12px 18px; border: 0; border-radius: 14px;
+  font: inherit; font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+body .jobs-btn:active { transform: scale(0.97); }
+body .jobs-btn-call { color: #fff; background: linear-gradient(135deg, var(--navy-2, #17386A), var(--navy, #0B1F3A)); box-shadow: 0 14px 24px -16px rgba(10, 34, 64, 0.9); }
+body .jobs-btn-wa { color: #fff; background: #0e8a45; box-shadow: 0 14px 24px -16px rgba(14, 138, 69, 0.9); }
+body .jobs-btn-plain { color: var(--ink, #0F172A); background: var(--cd, #fff); box-shadow: inset 0 0 0 1px var(--ln, #E2E8F0); }
+body .jobs-d-num { margin: 12px 0 0; color: var(--mu, #475569); font-size: 0.92rem; }
+body .jobs-d-num bdi { color: var(--ink, #0F172A); font-weight: 700; letter-spacing: 0.02em; }
+body .jobs-d-foot { margin: 16px 2px 0; color: var(--mu, #475569); font-size: 0.85rem; line-height: 1.6; }
+
+@media (max-width: 560px) {
+  body dialog.jobs-dlg { width: 100%; max-height: 92dvh; margin: auto 0 0; border-radius: 24px 24px 0 0; border-bottom: 0; }
+  body dialog.jobs-dlg[open] { animation-name: jobs-sheet; }
+  @keyframes jobs-sheet { from { translate: 0 40px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+  body .jobs-d-scroll { padding: 18px 16px calc(22px + env(safe-area-inset-bottom, 0px)); }
+  body .jobs-d-dl > div { grid-template-columns: 1fr; gap: 2px; }
+  body .jobs-d-head .jobs-card-ico { width: 52px; height: 52px; }
+}
+@media (prefers-reduced-motion: reduce) { body dialog.jobs-dlg[open] { animation: none; } body .jobs-btn { transition: none; } }
 
 /* ---------- খালি অবস্থা ---------- */
 body .jobs-empty {
