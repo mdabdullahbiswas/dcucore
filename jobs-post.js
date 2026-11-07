@@ -9,7 +9,7 @@
  */
 import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, doc, collection, getDoc, writeBatch, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const CFG_FB = {
   apiKey: "AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0",
@@ -22,6 +22,8 @@ const CFG_FB = {
 /* ইভেন্ট পেজের মতো ডিফল্ট অ্যাপ, যাতে এক জায়গায় লগইন করলে এখানেও লগইন থাকে */
 let app; try { app = getApp(); } catch (e) { app = initializeApp(CFG_FB); }
 const auth = getAuth(app);
+/* সব অ্যাডমিন/পাবলিক পেজের মতো একই জায়গায় (localStorage) লগইন রাখা: নইলে এই পেজ খুললেই অন্য পেজের লগইন সরে যায় */
+setPersistence(auth, browserLocalPersistence).catch(() => {});
 const db = getFirestore(app);
 
 const D = window.JobsData, LD = window.LibData;
