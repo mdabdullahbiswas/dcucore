@@ -7,7 +7,8 @@
  * (Rules-ও তাই চায়) এবং লগইন ছাড়া কখনো আনা হয় না।
  * ডায়ালগ খুললে ঠিকানায় #p-<পোস্ট-আইডি> বসে, তাই মোবাইলের ব্যাক বাটন দিয়ে বন্ধ হয় এবং লিংক খুলে সরাসরি পোস্ট দেখা যায়।
  *
- * ফিল্টার: ধরন, পদ্ধতি, অঞ্চল ও সার্চ এখনই কাজ করে। বিষয়/শ্রেণি/বেতন, সাজানো ও শেয়ারযোগ্য লিংক ধাপ ৯-এ।
+ * ধাপ ৯: ফিল্টার = ধরন, পদ্ধতি, অঞ্চল, নির্দিষ্ট এলাকা, বিষয়/কাজ, শ্রেণি, বেতন (মাসিক ধরে) ও সার্চ।
+ * সাজানো = নতুন আগে / মেয়াদ শেষ হতে যাচ্ছে আগে। বর্তমান ফিল্টার ঠিকানার ?type=…&zone=… অংশে থাকে, তাই লিংক শেয়ার করা যায়।
  * কোনো Firestore ইনডেক্স লাগে না: কোয়েরিতে শুধু একটি where আছে, ক্রম সাজানো ক্লায়েন্টে হয়।
  */
 (function () {
@@ -26,6 +27,7 @@
   var FETCH_LIMIT = 300;            // একবারে সর্বোচ্চ এতগুলো approved পোস্ট আনা হয়
   var PAGE = 24;                    // একসঙ্গে এতগুলো কার্ড দেখায়, বাকিটা "আরও দেখান"-এ
   var NEW_MS = 3 * 24 * 3600 * 1000; // "নতুন" ব্যাজ: ৩ দিন
+  var EXPIRING_MS = 3 * 24 * 3600 * 1000; // "মেয়াদ শেষ হচ্ছে" ব্যাজ: শেষ ৩ দিন
   var TIMEOUT_MS = 10000;
   var PHOTO_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/;
 
@@ -53,7 +55,7 @@
   var CHECK = '<path d="M5 12.5l4.5 4.5L19 7.5"/>';
 
   /* ---------- অবস্থা ---------- */
-  var state = { type: "", mode: "", zone: "", q: "" };
+  var state = { type: "", mode: "", zone: "", area: "", cat: "", level: "", pay: "", sort: "new", q: "" };
   var posts = [];            // Firestore থেকে আসা, স্বাভাবিক করা পোস্ট (নতুন আগে)
   var view = [];             // বর্তমান ফিল্টারে মেলা পোস্ট
   var shownN = PAGE;         // কতগুলো কার্ড আঁকা হয়েছে
@@ -61,7 +63,7 @@
   var skeletonHTML = "";
   var els = {};
 
-  function filtersActive() { return !!(state.type || state.mode || state.zone || state.q); }
+  function filtersActive() { return !!(state.type || state.mode || state.zone || state.area || state.cat || state.level || state.pay || state.q); }
 
   /* ---------- Firestore ---------- */
   function withTimeout(p, ms) {
@@ -149,17 +151,34 @@
   /* ---------- ছাঁকা ---------- */
   function isLive(p, now) { return !p.filled && p.expiresMs > now; }   // মেয়াদ-উত্তীর্ণ ও পূরণ-হওয়া লুকানো
 
+  /* বেতন-ফিল্টার: পোস্টের বেতন মাসিকে নিয়ে পরিসীমা মেলানো (সাপ্তাহিক ×৪, দৈনিক ×২৬; অন্য একক বা আলোচনা সাপেক্ষ বাদ) */
+  var PAY_FACTOR = { month: 1, week: 4, day: 26 };
+  function payOk(p) {
+    var band = null;
+    D.SALARY_BANDS.forEach(function (b) { if (b.slug === state.pay) band = b; });
+    if (!band || band.slug === "any") return true;
+    var f = PAY_FACTOR[p.salaryUnit];
+    if (!f || (!p.salaryMin && !p.salaryMax)) return false;
+    var lo = (p.salaryMin || p.salaryMax) * f, hi = (p.salaryMax || p.salaryMin) * f;
+    return hi >= band.min && (!band.max || lo <= band.max);
+  }
+
   function matches(p) {
     if (state.type && p.type !== state.type) return false;
     if (state.mode) {
       /* "সরাসরি" বা "অনলাইন" বাছলে "দুটোই" পোস্টও আসে; "দুটোই" বাছলে শুধু সেগুলো */
       if (state.mode === "both" ? p.mode !== "both" : (p.mode !== state.mode && p.mode !== "both")) return false;
     }
-    if (state.zone) {
+    /* নির্দিষ্ট এলাকা বাছলে সেটাই; নইলে অঞ্চল। শুধু-অনলাইন পোস্ট সব জায়গা থেকেই করা যায়, তাই বাদ দেওয়া হয় না */
+    if (state.area) {
+      if (p.areas.indexOf(state.area) < 0 && p.mode !== "online") return false;
+    } else if (state.zone) {
       var inZone = p.areas.some(function (s) { var a = D.get("areas", s); return a && a.zone === state.zone; });
-      /* শুধু-অনলাইন পোস্টের এলাকা নেই; সেগুলো সব অঞ্চল থেকেই করা যায়, তাই বাদ দেওয়া হয় না */
       if (!inZone && p.mode !== "online") return false;
     }
+    if (state.cat && p.cats.indexOf(state.cat) < 0) return false;
+    if (state.level && p.levels.indexOf(state.level) < 0) return false;
+    if (state.pay && !payOk(p)) return false;
     if (state.q) {
       var words = state.q.toLowerCase().split(/\s+/).filter(Boolean);
       for (var i = 0; i < words.length; i++) if (p.hay.indexOf(words[i]) < 0) return false;
@@ -198,6 +217,7 @@
 
     var top = '<span class="jobs-card-type">' + bi(t.bn, t.en) + "</span>";
     if (p.createdMs && now - p.createdMs < NEW_MS) top += '<span class="jobs-badge jobs-badge-new">' + bi("নতুন", "New") + "</span>";
+    if (p.expiresMs && p.expiresMs - now < EXPIRING_MS) top += '<span class="jobs-badge jobs-badge-warn">' + bi("মেয়াদ শেষ হচ্ছে", "Ending soon") + "</span>";
     if (p.verified) top += '<span class="jobs-badge jobs-badge-ok">' + svg(CHECK, 12) + bi("যাচাইকৃত", "Verified") + "</span>";
 
     var meta = '<li>' + svg(MODE_ICON, 15) + bi(lab("modes", p.mode, "bn"), lab("modes", p.mode, "en")) + "</li>";
@@ -284,6 +304,7 @@
     els.qx.hidden = !state.q;
     var act = filtersActive();
     els.reset.hidden = !act;
+    els.share.hidden = !(act || state.sort !== "new");
     els.emptyReset.hidden = !act || failed;
   }
 
@@ -341,6 +362,8 @@
     if (failed) { showError(); return; }
     var now = Date.now();
     view = posts.filter(function (p) { return isLive(p, now) && matches(p); });
+    if (state.sort === "expiring") view.sort(function (a, b) { return a.expiresMs - b.expiresMs || b.createdMs - a.createdMs; });
+    else view.sort(function (a, b) { return b.createdMs - a.createdMs; });
     if (!view.length) { showEmpty(); return; }
     els.empty.hidden = true;
     els.grid.hidden = false;
@@ -430,7 +453,8 @@
     }
     if (p.authorName) rows += row("পোস্টদাতা|Posted by", esc(p.authorName));
 
-    var foot = '<p class="jobs-d-foot">' + ago(p.createdMs, now) + (p.expiresMs ? " · " + bi("মেয়াদ: ", "Valid until ") + fmtDate(p.expiresMs) : "") + "</p>";
+    var foot = '<div class="jobs-d-foot-row"><p class="jobs-d-foot">' + ago(p.createdMs, now) + (p.expiresMs ? " · " + bi("মেয়াদ: ", "Valid until ") + fmtDate(p.expiresMs) : "") + "</p>" +
+      '<button type="button" class="jobs-btn jobs-btn-plain jobs-btn-sm" id="jobs-d-share">' + svg('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/>', 18) + bi("লিংক শেয়ার", "Share link") + "</button></div>";
 
     return '<header class="jobs-d-head"><span class="jobs-card-ico">' + ico + "</span><div>" +
         '<div class="jobs-card-top">' + top + "</div>" +
@@ -594,6 +618,7 @@
     els.dBody.addEventListener("click", function (e) {
       if (e.target.closest("#jobs-d-login")) signIn();
       else if (e.target.closest("#jobs-d-retry") && cur) loadContact(cur);
+      else if (e.target.closest("#jobs-d-share") && cur) shareLink(location.origin + location.pathname + "#p-" + cur.id, cur.title, e.target.closest("#jobs-d-share"));
     });
     window.addEventListener("popstate", function () {
       if (closingByUs) { closingByUs = false; return; }
@@ -603,9 +628,125 @@
     });
   }
 
+  /* =====================================================================
+   * ধাপ ৯: আরও ফিল্টার, ঠিকানায় ফিল্টার ধরে রাখা, লিংক শেয়ার
+   * ===================================================================== */
+  var CAT_GROUPS = [
+    ["tuition_wanted", "বিষয় (টিউশন)", "Subjects (tuition)"],
+    ["parttime", "কাজের ধরন (পার্ট-টাইম)", "Work (part-time)"],
+    ["freelance", "দক্ষতা (ফ্রিল্যান্স)", "Skills (freelance)"]
+  ];
+  function opt(v, label, cur) { return '<option value="' + esc(v) + '"' + (v === cur ? " selected" : "") + ">" + esc(label) + "</option>"; }
+
+  /* ফিল্টারগুলো একে অপরের সঙ্গে মিললে ঠিক আছে; না মিললে অপ্রাসঙ্গিকটা সরিয়ে দিই */
+  function normalizeState() {
+    if (state.area) {
+      var a = D.get("areas", state.area);
+      if (!a || (state.zone && a.zone !== state.zone)) state.area = "";
+    }
+    if (state.cat && state.type) {
+      var ok = D.cats(state.type).some(function (c) { return c.slug === state.cat; });
+      if (!ok) state.cat = "";
+    }
+    if (state.type === "parttime" || state.type === "freelance") state.level = "";
+  }
+
+  function advCount() { return (state.area ? 1 : 0) + (state.cat ? 1 : 0) + (state.level ? 1 : 0) + (state.pay ? 1 : 0); }
+
+  function renderAdv() {
+    if (!els.fArea) return;
+    var l = curLang(), en = l === "en";
+
+    var zs = D.zones().filter(function (z) { return !state.zone || z.slug === state.zone; });
+    els.fArea.innerHTML = opt("", en ? "All areas" : "সব এলাকা", state.area) + zs.map(function (z) {
+      return '<optgroup label="' + esc(z[l]) + '">' + D.areas(z.slug).map(function (a) { return opt(a.slug, a[l], state.area); }).join("") + "</optgroup>";
+    }).join("");
+
+    var catHTML = opt("", en ? "Any" : "যেকোনো", state.cat);
+    if (state.type) {
+      catHTML += D.cats(state.type).map(function (c) { return opt(c.slug, c[l], state.cat); }).join("");
+    } else {
+      catHTML += CAT_GROUPS.map(function (g) {
+        return '<optgroup label="' + esc(en ? g[2] : g[1]) + '">' + D.cats(g[0]).map(function (c) { return opt(c.slug, c[l], state.cat); }).join("") + "</optgroup>";
+      }).join("");
+    }
+    els.fCat.innerHTML = catHTML;
+
+    els.fLevel.innerHTML = opt("", en ? "Any" : "যেকোনো", state.level) + D.levels().map(function (v) { return opt(v.slug, v[l], state.level); }).join("");
+    els.fLevel.disabled = state.type === "parttime" || state.type === "freelance";
+
+    els.fPay.innerHTML = D.SALARY_BANDS.map(function (b) { return opt(b.slug === "any" ? "" : b.slug, b[l], state.pay); }).join("");
+
+    els.fSort.innerHTML = opt("new", en ? "Newest first" : "নতুন আগে", state.sort) + opt("expiring", en ? "Ending soon first" : "মেয়াদ শেষ হতে যাচ্ছে আগে", state.sort);
+
+    var n = advCount();
+    els.advN.hidden = !n;
+    els.advN.textContent = n ? (en ? String(n) : bnNum(n)) : "";
+  }
+
+  /* ---------- ঠিকানা (?type=…) ---------- */
+  var URL_KEYS = ["type", "mode", "zone", "area", "cat", "level", "pay", "q"];
+  function stateQuery() {
+    var sp = new URLSearchParams();
+    URL_KEYS.forEach(function (k) { if (state[k]) sp.set(k, state[k]); });
+    if (state.sort === "expiring") sp.set("sort", "expiring");
+    return sp.toString();
+  }
+  function writeUrl() {
+    try {
+      var qs = stateQuery();
+      history.replaceState(history.state, "", location.pathname + (qs ? "?" + qs : "") + location.hash);
+    } catch (e) { /* কিছু ব্রাউজারে সীমাবদ্ধ থাকলে চুপচাপ বাদ */ }
+  }
+  /* অচেনা বা ভুল মান বাদ দিয়ে ঠিকানা থেকে অবস্থা পড়া */
+  function readUrl() {
+    var sp;
+    try { sp = new URLSearchParams(location.search); } catch (e) { return; }
+    var v = sp.get("type"); if (v && D.get("types", v)) state.type = v;
+    v = sp.get("mode"); if (v && D.get("modes", v)) state.mode = v;
+    v = sp.get("zone"); if (v && D.get("zones", v)) state.zone = v;
+    v = sp.get("area"); if (v) { var a = D.get("areas", v); if (a) { state.area = v; state.zone = a.zone; } }
+    v = sp.get("cat"); if (v && D.isKnown("cats", v)) state.cat = v;
+    v = sp.get("level"); if (v && D.get("levels", v)) state.level = v;
+    v = sp.get("pay"); if (v && v !== "any" && D.SALARY_BANDS.some(function (b) { return b.slug === v; })) state.pay = v;
+    if (sp.get("sort") === "expiring") state.sort = "expiring";
+    v = sp.get("q"); if (v) state.q = v.replace(/\s+/g, " ").trim().slice(0, 80);
+    normalizeState();
+  }
+
+  /* ---------- লিংক শেয়ার / কপি ---------- */
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t);
+    return new Promise(function (res, rej) {
+      var ta = document.createElement("textarea");
+      ta.value = t; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+      (els.dlg && els.dlg.open ? els.dlg : document.body).appendChild(ta);   // খোলা ডায়ালগের বাইরের কিছু নির্বাচন করা যায় না
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      ta.parentNode.removeChild(ta);
+      if (ok) res(); else rej(new Error("copy"));
+    });
+  }
+  function flashCopied(btn) {
+    if (!btn) return;
+    var orig = btn.innerHTML;
+    btn.innerHTML = bi("লিংক কপি হয়েছে ✓", "Link copied ✓");
+    setTimeout(function () { if (btn.isConnected) btn.innerHTML = orig; }, 2000);
+  }
+  function shareLink(url, title, btn) {
+    var touch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    if (navigator.share && touch) { navigator.share({ title: title, url: url }).catch(function () {}); return; }   // মোবাইলে সিস্টেম শেয়ার
+    copyText(url).then(function () { flashCopied(btn); }, function () { window.prompt(curLang() === "en" ? "Copy this link:" : "লিংকটি কপি করুন:", url); });
+  }
+
+
   function changed() {
+    normalizeState();
+    renderAdv();
     render();
-    document.dispatchEvent(new CustomEvent("jobs:filters", { detail: { type: state.type, mode: state.mode, zone: state.zone, q: state.q } }));
+    writeUrl();
+    document.dispatchEvent(new CustomEvent("jobs:filters", { detail: { type: state.type, mode: state.mode, zone: state.zone, area: state.area, cat: state.cat, level: state.level, pay: state.pay, sort: state.sort, q: state.q } }));
   }
 
   /* ---------- ইভেন্ট ---------- */
@@ -638,9 +779,16 @@
     });
 
     function reset() {
-      state.type = ""; state.mode = ""; state.zone = ""; state.q = ""; els.q.value = "";
+      state.type = ""; state.mode = ""; state.zone = ""; state.area = ""; state.cat = ""; state.level = ""; state.pay = ""; state.q = ""; els.q.value = "";
       changed();
     }
+    [["fArea", "area"], ["fCat", "cat"], ["fLevel", "level"], ["fPay", "pay"], ["fSort", "sort"]].forEach(function (x) {
+      els[x[0]].addEventListener("change", function () { state[x[1]] = els[x[0]].value || (x[1] === "sort" ? "new" : ""); changed(); });
+    });
+    els.share.addEventListener("click", function () {
+      var qs = stateQuery();
+      shareLink(location.origin + location.pathname + (qs ? "?" + qs : ""), document.title, els.share);
+    });
     els.reset.addEventListener("click", reset);
     els.emptyReset.addEventListener("click", reset);
     els.emptyRetry.addEventListener("click", load);
@@ -657,6 +805,8 @@
     els.emptyH = $("jobs-empty-h"); els.emptyP = $("jobs-empty-p");
     els.emptyReset = $("jobs-empty-reset"); els.emptyCta = $("jobs-empty-cta"); els.emptyRetry = $("jobs-empty-retry");
     els.moreWrap = $("jobs-more-wrap"); els.more = $("jobs-more");
+    els.adv = $("jobs-adv"); els.advN = $("jobs-adv-n"); els.share = $("jobs-share");
+    els.fArea = $("jobs-f-area"); els.fCat = $("jobs-f-cat"); els.fLevel = $("jobs-f-level"); els.fPay = $("jobs-f-pay"); els.fSort = $("jobs-f-sort");
     els.dlg = $("jobs-dlg"); els.dBody = $("jobs-d-body"); els.dScroll = $("jobs-d-scroll");
     if (!els.types || !D) return;
 
@@ -667,14 +817,19 @@
       var en = document.documentElement.getAttribute("data-lang") === "en";
       els.q.placeholder = en ? "Search subject, work or title…" : "বিষয়, কাজ বা শিরোনাম খুঁজুন…";
       els.q.setAttribute("aria-label", en ? "Search jobs and tuition" : "জব ও টিউশনে খুঁজুন");
+      renderAdv();                // অপশনের লেখা ভাষা অনুযায়ী
       if (cur) renderContact();   // WhatsApp-এর আগে-লেখা বার্তা ভাষা অনুযায়ী
     }
     setPlaceholder();
     new MutationObserver(setPlaceholder).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 
+    readUrl();                       // শেয়ার করা লিংক থেকে আসা ফিল্টার
+    els.q.value = state.q;
+    if (advCount()) els.adv.open = true;
     fillCounts();
     renderTypes();
     renderChips();
+    renderAdv();
     bind();
     bindDialog();
     syncPressed();
