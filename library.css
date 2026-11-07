@@ -1138,3 +1138,131 @@ body .lib-fbar + .lib-dsub { margin-top: 14px; }
   body .lib-search input, body .lib-fchip { transition: none; }
   body .lib-fchip:active { transform: none; }
 }
+
+/* =====================================================================
+ * ধাপ ৯: বুকমার্ক ★, সংরক্ষিত বাটন, রিপোর্ট
+ * ===================================================================== */
+body .lib-searchrow { display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+body .lib-searchrow .lib-search { flex: 1; min-width: 0; margin: 0; }
+
+body .lib-bm {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 8px 18px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 99px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-bm:focus-visible,
+body .lib-star:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+@media (hover: hover) { body .lib-bm:not(.on):hover { border-color: var(--gold, #D4AF37); } }
+body .lib-bm b {
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--navy, #0B1F3A);
+  color: var(--gold-light, #E8C46C);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+body .lib-bm.on {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+  color: #0B1F3A;
+}
+body .lib-bm.on svg { fill: currentColor; }
+@media (max-width: 520px) {
+  body .lib-bm { padding: 8px 14px; }
+  body .lib-bm span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* ফাইলের কার্ডে ★ (কার্ড নিজেই বাটন, তাই ★ পাশে আলাদা বাটন) */
+body .lib-fw { position: relative; min-width: 0; }
+body .lib-fw .lib-file { padding-right: 62px; }
+body .lib-star {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mu, #475569);
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body .lib-star:active { transform: scale(0.9); }
+@media (hover: hover) { body .lib-star:hover { color: var(--gold-deep, #B98A2C); } }
+body .lib-star[aria-pressed="true"] { color: var(--gold, #D4AF37); }
+body .lib-star[aria-pressed="true"] svg { fill: currentColor; }
+
+/* ভিউয়ারে বাটন ও রিপোর্ট প্যানেল */
+body .lib-vw-btn[aria-pressed="true"] { border-color: var(--gold, #D4AF37); }
+body .lib-vw-btn[aria-pressed="true"] svg { fill: var(--gold, #D4AF37); color: var(--gold, #D4AF37); }
+body .lib-vw-fbb { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+body .lib-vw-btn:disabled { opacity: 0.6; cursor: default; }
+
+body .lib-vw-rp[hidden] { display: none; }
+body .lib-vw-rp {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow-y: auto;
+  padding: 18px 20px;
+  background: var(--cd, #fff);
+}
+body .lib-vw-rpf { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+body .lib-vw-rpf fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 8px; }
+body .lib-vw-rpf legend { margin-bottom: 8px; padding: 0; font-size: 1.05rem; font-weight: 700; }
+body .lib-vw-rr {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 14px;
+  cursor: pointer;
+}
+body .lib-vw-rr:has(input:checked) { border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.5); }
+body .lib-vw-rr input { width: 18px; height: 18px; accent-color: var(--gold-deep, #B98A2C); flex: none; }
+body .lib-vw-rr input:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+body .lib-vw-rn { display: grid; gap: 6px; font-size: 0.9rem; font-weight: 600; }
+body .lib-vw-rn textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--ln, #E2E8F0);
+  border-radius: 14px;
+  background: var(--cd, #fff);
+  color: var(--ink, #0F172A);
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+body .lib-vw-rn textarea:focus { outline: none; border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3); }
+body .lib-vw-rb { display: flex; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 640px) {
+  /* মোবাইলের বাটন-গ্রিডে ৬টি বাটন: ডাউনলোড পুরো সারি, মাঝের চারটি দুই-দুইটি, Drive পুরো সারি */
+  body .lib-vw-bar { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .lib-star, body .lib-bm { transition: none; }
+  body .lib-star:active { transform: none; }
+}
