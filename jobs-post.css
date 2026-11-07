@@ -1,0 +1,141 @@
+/* jobs-post.css — জব ও টিউশনের পোস্ট ফর্ম (ধাপ ৪)
+ * jobs.css-এর পরে লোড হয়; ধরন-কার্ড (.jobs-type) ও চিপ (.jobs-chip) সেখান থেকেই নেয়।
+ * রঙ সাইটের টোকেন থেকে, তাই লাইট/ডার্ক নিজে মেলে। সব ক্লাস jp- দিয়ে শুরু।
+ */
+
+body .jp-wrap { max-width: 760px; margin: 0 auto; padding: 20px 16px 56px; }
+body .jp-wrap [hidden] { display: none !important; }
+
+body .jp-back {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 40px;
+  color: var(--mu, #475569); font-weight: 500; text-decoration: none;
+}
+body .jp-back:hover { color: var(--ink, #0F172A); }
+body .jp-back:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; border-radius: 8px; }
+
+body .jp-head h1 { margin: 8px 0 0; color: var(--ink, #0F172A); font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; line-height: 1.3; }
+body .jp-head p { margin: 10px 0 0; max-width: 62ch; color: var(--mu, #475569); line-height: 1.75; }
+
+/* ---------- ধাপের সারি ---------- */
+body .jp-steps { display: grid; grid-template-columns: repeat(4, 1fr); margin: 26px 0 18px; padding: 0; list-style: none; counter-reset: jp; }
+body .jp-steps li {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--mu, #475569); font-size: 0.88rem; font-weight: 500; text-align: center;
+}
+body .jp-steps li::before {
+  content: counter(jp, bengali); counter-increment: jp; z-index: 1; display: grid; place-items: center;
+  width: 36px; height: 36px; border: 2px solid var(--ln, #E2E8F0); border-radius: 50%;
+  background: var(--cd, #fff); color: var(--mu, #475569); font-weight: 700;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+html[data-lang="en"] body .jp-steps li::before { content: counter(jp); }
+body .jp-steps li::after {
+  content: ""; position: absolute; top: 17px; left: calc(50% + 24px); right: calc(-50% + 24px);
+  height: 2px; background: var(--ln, #E2E8F0); transition: background-color 0.25s ease;
+}
+body .jp-steps li:last-child::after { display: none; }
+body .jp-steps li.done::before {
+  content: "✓"; border-color: transparent; color: #0B1F3A;
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37) 55%, var(--gold-deep, #B98A2C));
+}
+body .jp-steps li.done::after { background: var(--gold, #D4AF37); }
+body .jp-steps li.cur { color: var(--ink, #0F172A); font-weight: 700; }
+body .jp-steps li.cur::before { border-color: var(--gold, #D4AF37); color: var(--ink, #0F172A); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.22); }
+
+/* ---------- কার্ড ---------- */
+body .jp-card {
+  margin-top: 16px; padding: clamp(18px, 4vw, 30px); border: 1px solid var(--ln, #E2E8F0); border-radius: 24px;
+  background: var(--cd, #fff); box-shadow: 0 24px 50px -36px rgba(10, 34, 64, 0.55);
+}
+body .jp-card > h2 { margin: 0 0 4px; color: var(--ink, #0F172A); font-size: 1.3rem; font-weight: 700; outline: none; }
+body .jp-card:not([hidden]) { animation: jp-in 0.28s var(--ease, ease) both; }
+@keyframes jp-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+body .jp-h3 { margin: 28px 0 4px; padding-top: 18px; border-top: 1px solid var(--ln, #E2E8F0); color: var(--ink, #0F172A); font-size: 1.1rem; font-weight: 700; }
+
+/* ---------- ফিল্ড ---------- */
+body .jp-field { display: grid; gap: 6px; margin: 18px 0 0; min-width: 0; border: 0; padding: 0; }
+body .jp-row { display: flex; flex-wrap: wrap; gap: 0 14px; }
+body .jp-row > .jp-field { flex: 1 1 200px; }
+body .jp-lbl { padding: 0; color: var(--ink, #0F172A); font-weight: 600; font-size: 0.98rem; }
+body .jp-sub { color: var(--mu, #475569); font-size: 0.86rem; font-weight: 500; }
+body .jp-opt { color: var(--mu, #475569); font-weight: 400; font-size: 0.85rem; }
+body .jp-hint { margin: 0; color: var(--mu, #475569); font-size: 0.88rem; line-height: 1.6; }
+body .jp-count { text-align: right; }
+body .jp-field .jobs-chips { margin-top: 2px; }
+
+body .jp-in {
+  width: 100%; min-height: 48px; padding: 10px 14px; border: 1.5px solid var(--ln, #E2E8F0); border-radius: 14px;
+  background: var(--surface, #fff); color: var(--ink, #0F172A); font: inherit; line-height: 1.5;
+}
+body .jp-in::placeholder { color: var(--muted, #94A3B8); }
+body .jp-in:focus { outline: none; border-color: var(--gold, #D4AF37); box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.22); }
+body .jp-in[aria-invalid="true"] { border-color: var(--err, #EF4444); }
+body .jp-in:disabled { opacity: 0.55; cursor: not-allowed; }
+body .jp-ta { resize: vertical; min-height: 120px; }
+body select.jp-in { appearance: auto; }
+
+body .jp-err { margin: 0; color: var(--err, #EF4444); font-size: 0.9rem; font-weight: 500; line-height: 1.5; }
+body .jp-err-block { margin: 16px 0 0; padding: 12px 14px; border-radius: 12px; background: rgba(239, 68, 68, 0.1); }
+body .jp-ok { margin: 16px 0 0; padding: 12px 14px; border-radius: 12px; background: rgba(16, 185, 129, 0.12); color: var(--ink, #0F172A); font-weight: 500; line-height: 1.6; }
+body .jp-check { display: flex; align-items: center; gap: 10px; min-height: 40px; color: var(--ink, #0F172A); font-size: 0.93rem; cursor: pointer; }
+body .jp-check input { width: 20px; height: 20px; accent-color: var(--gold-deep, #B98A2C); }
+
+/* চিপ-গ্রুপ: সীমা পূর্ণ হলে বাকিগুলো ম্লান */
+body .jobs-chip[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+
+/* ---------- এলাকা বাছাই ---------- */
+body .jp-picked:empty { display: none; }
+body .jp-picked .jobs-chip { display: inline-flex; align-items: center; gap: 6px; }
+body .jp-areabox { max-height: 260px; overflow-y: auto; padding: 12px; border: 1.5px solid var(--ln, #E2E8F0); border-radius: 14px; background: var(--surface, #fff); }
+body .jp-zone + .jp-zone { margin-top: 14px; }
+body .jp-zone-h { margin: 0 0 6px; color: var(--mu, #475569); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; }
+body .jp-areabox[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
+
+/* ---------- ব্যবহারকারী ও ছবি ---------- */
+body .jp-user { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; }
+body .jp-avatar {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
+  background: linear-gradient(145deg, var(--navy-2, #17386A), var(--navy, #0B1F3A)); color: var(--gold-light, #E8C46C); font-weight: 700;
+}
+body .jp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+body .jp-user-txt { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.35; }
+body .jp-user-txt b { color: var(--ink, #0F172A); overflow-wrap: anywhere; }
+body .jp-user-txt small { color: var(--mu, #475569); overflow-wrap: anywhere; }
+body .jp-photo { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+body .jp-photo img { border-radius: 16px; object-fit: cover; border: 1px solid var(--ln, #E2E8F0); }
+body .jp-typehelp { margin-top: 12px; min-height: 1.4em; }
+
+/* ---------- বাটন ---------- */
+body .jp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 10px 22px;
+  border: 1.5px solid transparent; border-radius: 99px; font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease; -webkit-tap-highlight-color: transparent;
+}
+body .jp-btn:active { transform: scale(0.97); }
+body .jp-btn:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 3px; }
+body .jp-btn:disabled { opacity: 0.6; cursor: progress; }
+body .jp-btn-sm { min-height: 40px; padding: 6px 16px; font-size: 0.92rem; }
+body .jp-btn-main {
+  color: #0B1F3A; box-shadow: 0 14px 26px -14px rgba(212, 175, 55, 0.95);
+  background: linear-gradient(135deg, var(--gold-light, #E8C46C) 0%, var(--gold, #D4AF37) 50%, var(--gold-deep, #B98A2C) 100%);
+}
+body .jp-btn-ghost { border-color: var(--ln, #E2E8F0); background: transparent; color: var(--ink, #0F172A); }
+body .jp-btn-google { margin-top: 14px; border-color: var(--ln, #E2E8F0); background: var(--surface, #fff); color: var(--ink, #0F172A); }
+@media (hover: hover) {
+  body .jp-btn-ghost:hover, body .jp-btn-google:hover { border-color: var(--gold, #D4AF37); }
+  body .jp-btn-main:hover { transform: translateY(-2px); }
+}
+body .jp-actions { display: flex; justify-content: flex-end; margin-top: 24px; }
+
+/* ভাষা-স্প্যান (jobs.css-এ আছে; এই পেজ আলাদাভাবে চললেও যেন কাজ করে) */
+html:not([data-lang="en"]) .jobs-en { display: none; }
+html[data-lang="en"] .jobs-bn { display: none; }
+
+@media (max-width: 900px) { body .jp-types { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  body .jp-types { grid-template-columns: 1fr; }
+  body .jp-actions .jp-btn, body .jp-btn-google { width: 100%; }
+  body .jp-steps li { font-size: 0.78rem; }
+  body .jp-user { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { body .jp-card:not([hidden]) { animation: none; } body .jp-btn { transition: none; } }

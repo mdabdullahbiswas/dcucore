@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta name="google" content="notranslate">
+<meta charset="UTF-8">
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link rel="shortcut icon" type="image/webp" href="/logo.webp">
+<link rel="apple-touch-icon" href="/logo.webp">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>নতুন পোস্ট – জব ও টিউশন – DCUCore</title>
+<meta name="description" content="টিউশন, পার্ট-টাইম জব বা ফ্রিল্যান্স কাজের পোস্ট জমা দিন। অ্যাডমিন দেখে অনুমোদন দিলে সবাই দেখতে পাবে।">
+<meta name="theme-color" content="#0a2240">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="premium.css">
+<link rel="stylesheet" href="dcu-layout.css">
+<link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="jobs.css">
+<link rel="stylesheet" href="jobs-post.css">
+<script src="dcu-layout.js" defer></script>
+<script src="dcu-lang.js" defer></script>
+<script src="site-shared.js"></script>
+<script src="jobs-data.js" defer></script>
+<script src="lib-data.js" defer></script>
+<script src="jobs-post.js" type="module"></script>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&family=Noto+Serif+Bengali:wght@300..800&display=swap">
+<link rel="stylesheet" href="dcu-fonts.css">
+<link rel="canonical" href="https://dcucore.vercel.app/jobs-post">
+</head>
+<body data-page="jobs">
+<div id="hdr"></div>
+
+<main class="jp-wrap">
+  <a class="jp-back" href="/jobs"><span aria-hidden="true">‹</span> <span class="t">জব ও টিউশনে ফিরুন|Back to Jobs &amp; Tuition</span></a>
+
+  <header class="jp-head">
+    <h1 class="t">নতুন পোস্ট|New post</h1>
+    <p class="t">Google দিয়ে লগইন করুন, পোস্টের ধরন বেছে তথ্য দিন। অ্যাডমিন দেখে অনুমোদন দিলে পোস্টটি সবাই দেখতে পাবে।|Sign in with Google, pick a post type and fill in the details. Everyone can see the post once an admin approves it.</p>
+  </header>
+
+  <ol class="jp-steps" id="jp-steps" aria-label="ধাপ">
+    <li class="cur" aria-current="step"><span class="t">লগইন|Sign in</span></li>
+    <li><span class="t">ধরন|Type</span></li>
+    <li><span class="t">বিবরণ|Details</span></li>
+    <li><span class="t">জমা|Submit</span></li>
+  </ol>
+
+  <!-- ===== ১. লগইন ===== -->
+  <section class="jp-card" id="jp-login" aria-labelledby="jp-h-login">
+    <h2 id="jp-h-login" class="t">লগইন|Sign in</h2>
+
+    <div id="jp-out">
+      <p class="jp-hint t">পোস্ট করতে Google অ্যাকাউন্ট লাগবে। এতে ভুয়া পোস্ট কমে। আপনার ইমেইল পাবলিকে দেখানো হয় না।|You need a Google account to post. It keeps fake posts down. Your email is never shown publicly.</p>
+      <button type="button" class="jp-btn jp-btn-google" id="jp-signin">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+        <span class="t">Google দিয়ে লগইন|Sign in with Google</span>
+      </button>
+    </div>
+
+    <div id="jp-in" class="jp-user" hidden>
+      <span class="jp-avatar" id="jp-avatar" aria-hidden="true"></span>
+      <span class="jp-user-txt"><b id="jp-uname"></b><small id="jp-umail"></small></span>
+      <button type="button" class="jp-btn jp-btn-ghost jp-btn-sm" id="jp-signout"><span class="t">অন্য অ্যাকাউন্ট|Switch account</span></button>
+    </div>
+
+    <p class="jp-err jp-err-block" id="jp-auth-err" role="alert" hidden></p>
+  </section>
+
+  <!-- ===== ফর্ম (লগইনের পর) ===== -->
+  <form id="jp-form" novalidate autocomplete="off" hidden>
+
+    <!-- ===== ২. ধরন ===== -->
+    <section class="jp-card" id="jp-type-card" aria-labelledby="jp-h-type">
+      <h2 id="jp-h-type" class="t">কী পোস্ট করবেন?|What are you posting?</h2>
+      <div class="jobs-types jp-types" id="jp-types" role="group" aria-labelledby="jp-h-type"></div>
+      <p class="jp-hint jp-typehelp" id="jp-typehelp" aria-live="polite"></p>
+    </section>
+
+    <!-- ===== ৩. বিবরণ ===== -->
+    <section class="jp-card" id="jp-details" aria-labelledby="jp-h-det" hidden>
+      <h2 id="jp-h-det" tabindex="-1" class="t">বিবরণ|Details</h2>
+
+      <div class="jp-field" data-f="title">
+        <label class="jp-lbl" for="jp-title"><span class="t">শিরোনাম|Title</span></label>
+        <input class="jp-in" id="jp-title" type="text" maxlength="100" aria-describedby="jp-title-n jp-title-e">
+        <p class="jp-hint jp-count" id="jp-title-n"></p>
+        <p class="jp-err" id="jp-title-e" role="alert" hidden></p>
+      </div>
+
+      <fieldset class="jp-field" data-f="cats">
+        <legend class="jp-lbl"><span id="jp-cats-lbl"></span> <span class="jp-opt t">(সর্বোচ্চ ৬টি)|(up to 6)</span></legend>
+        <div class="jobs-chips" id="jp-cats" role="group"></div>
+        <p class="jp-err" id="jp-cats-e" role="alert" hidden></p>
+      </fieldset>
+
+      <fieldset class="jp-field" data-show="levels" data-f="levels">
+        <legend class="jp-lbl"><span class="t">শ্রেণি|Class level</span> <span class="jp-opt t">(সর্বোচ্চ ৬টি)|(up to 6)</span></legend>
+        <div class="jobs-chips" id="jp-levels" role="group"></div>
+        <p class="jp-err" id="jp-levels-e" role="alert" hidden></p>
+      </fieldset>
+
+      <div class="jp-row" data-show="tutor">
+        <div class="jp-field">
+          <label class="jp-lbl" for="jp-college"><span class="t">কলেজ|College</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+          <select class="jp-in" id="jp-college"></select>
+        </div>
+        <div class="jp-field">
+          <label class="jp-lbl" for="jp-dept"><span class="t">বিভাগ|Department</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+          <select class="jp-in" id="jp-dept"></select>
+        </div>
+      </div>
+
+      <fieldset class="jp-field" data-f="mode">
+        <legend class="jp-lbl"><span class="t">পদ্ধতি|Mode</span></legend>
+        <div class="jobs-chips" id="jp-modes" role="group"></div>
+      </fieldset>
+
+      <fieldset class="jp-field" data-f="areas" id="jp-areas-field">
+        <legend class="jp-lbl"><span id="jp-areas-lbl"></span></legend>
+        <p class="jp-hint" id="jp-areas-n" aria-live="polite"></p>
+        <div class="jobs-chips jp-picked" id="jp-picked" aria-label="নির্বাচিত এলাকা"></div>
+        <div class="jp-areabox" id="jp-areabox" role="group"></div>
+        <p class="jp-err" id="jp-areas-e" role="alert" hidden></p>
+      </fieldset>
+
+      <fieldset class="jp-field" data-show="days" data-f="days">
+        <legend class="jp-lbl"><span class="t">সপ্তাহে কয়দিন|Days per week</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></legend>
+        <div class="jobs-chips" id="jp-days" role="group"></div>
+      </fieldset>
+
+      <div class="jp-field" data-f="timeNote">
+        <label class="jp-lbl" for="jp-time"><span class="jp-dyn" data-k="timeLbl"></span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+        <input class="jp-in" id="jp-time" type="text" maxlength="60" aria-describedby="jp-time-e">
+        <p class="jp-err" id="jp-time-e" role="alert" hidden></p>
+      </div>
+
+      <fieldset class="jp-field" data-show="genderPref">
+        <legend class="jp-lbl"><span class="t">শিক্ষক কেমন চান|Preferred tutor</span></legend>
+        <div class="jobs-chips" id="jp-genderpref" role="group"></div>
+      </fieldset>
+      <fieldset class="jp-field" data-show="tutorGender">
+        <legend class="jp-lbl"><span class="t">আপনি|You are</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></legend>
+        <div class="jobs-chips" id="jp-tutorgender" role="group"></div>
+      </fieldset>
+
+      <fieldset class="jp-field" data-f="salary">
+        <legend class="jp-lbl"><span class="jp-dyn" data-k="salaryLbl"></span></legend>
+        <div class="jobs-chips" id="jp-units" role="group"></div>
+        <div class="jp-row" id="jp-amounts">
+          <div class="jp-field">
+            <label class="jp-sub" for="jp-smin"><span class="t">থেকে (৳)|From (৳)</span></label>
+            <input class="jp-in" id="jp-smin" type="text" inputmode="numeric" maxlength="8" autocomplete="off">
+          </div>
+          <div class="jp-field">
+            <label class="jp-sub" for="jp-smax"><span class="t">পর্যন্ত (৳)|To (৳)</span></label>
+            <input class="jp-in" id="jp-smax" type="text" inputmode="numeric" maxlength="8" autocomplete="off">
+          </div>
+        </div>
+        <p class="jp-hint t">একটি অঙ্ক দিলে সেটিই ধরা হবে। দুটোই ফাঁকা রাখলে “আলোচনা সাপেক্ষ” দেখাবে।|One number is used as the exact amount. Leave both empty to show “Negotiable”.</p>
+        <p class="jp-err" id="jp-salary-e" role="alert" hidden></p>
+      </fieldset>
+
+      <div class="jp-field" data-show="org" data-f="orgName">
+        <label class="jp-lbl" for="jp-org"><span class="jp-dyn" data-k="orgLbl"></span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+        <input class="jp-in" id="jp-org" type="text" maxlength="80">
+      </div>
+
+      <div class="jp-field" data-f="desc">
+        <label class="jp-lbl" for="jp-desc"><span class="t">বিস্তারিত|Description</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+        <textarea class="jp-in jp-ta" id="jp-desc" rows="5" maxlength="800" aria-describedby="jp-desc-n jp-desc-e"></textarea>
+        <p class="jp-hint jp-count" id="jp-desc-n"></p>
+        <p class="jp-err" id="jp-desc-e" role="alert" hidden></p>
+      </div>
+
+      <div class="jp-field" data-show="tutor" data-f="photo">
+        <span class="jp-lbl"><span class="t">ছবি|Photo</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></span>
+        <p class="jp-hint t">ছবি পাবলিকে সবাই দেখবে। চাইলে বাদ দিন।|The photo is public. Skip it if you prefer.</p>
+        <div class="jp-photo">
+          <img id="jp-photo-img" alt="" width="72" height="72" hidden>
+          <label class="jp-btn jp-btn-ghost jp-btn-sm" for="jp-photo-in"><span class="t">ছবি বাছুন|Choose photo</span></label>
+          <input id="jp-photo-in" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+          <button type="button" class="jp-btn jp-btn-ghost jp-btn-sm" id="jp-photo-x" hidden><span class="t">সরান|Remove</span></button>
+        </div>
+        <p class="jp-err" id="jp-photo-e" role="alert" hidden></p>
+      </div>
+
+      <!-- যোগাযোগ -->
+      <h3 class="jp-h3 t">যোগাযোগ|Contact</h3>
+      <p class="jp-hint t">নম্বর পাবলিক তালিকায় থাকে না। শুধু লগইন করা ব্যবহারকারী, অনুমোদিত পোস্টে দেখতে পাবেন।|Your number is not in the public listing. Only signed-in users can see it, and only on approved posts.</p>
+
+      <div class="jp-row">
+        <div class="jp-field jp-grow" data-f="name">
+          <label class="jp-lbl" for="jp-name"><span class="t">আপনার নাম|Your name</span></label>
+          <input class="jp-in" id="jp-name" type="text" maxlength="80" autocomplete="name" aria-describedby="jp-name-e">
+          <p class="jp-err" id="jp-name-e" role="alert" hidden></p>
+        </div>
+        <div class="jp-field jp-grow" data-f="phone">
+          <label class="jp-lbl" for="jp-phone"><span class="t">মোবাইল নম্বর|Mobile number</span></label>
+          <input class="jp-in" id="jp-phone" type="tel" inputmode="tel" maxlength="16" autocomplete="tel" placeholder="01XXXXXXXXX" aria-describedby="jp-phone-e">
+          <p class="jp-err" id="jp-phone-e" role="alert" hidden></p>
+        </div>
+      </div>
+
+      <div class="jp-field" data-f="whatsapp">
+        <label class="jp-lbl" for="jp-wa"><span class="t">WhatsApp নম্বর|WhatsApp number</span> <span class="jp-opt t">(ঐচ্ছিক)|(optional)</span></label>
+        <label class="jp-check"><input type="checkbox" id="jp-wa-same"> <span class="t">মোবাইল নম্বরটিই WhatsApp|Same as mobile number</span></label>
+        <input class="jp-in" id="jp-wa" type="tel" inputmode="tel" maxlength="16" placeholder="01XXXXXXXXX" aria-describedby="jp-wa-e">
+        <p class="jp-err" id="jp-wa-e" role="alert" hidden></p>
+      </div>
+
+      <p class="jp-err jp-err-block" id="jp-sum" role="alert" tabindex="-1" hidden></p>
+
+      <div class="jp-actions">
+        <button type="button" class="jp-btn jp-btn-main" id="jp-next"><span class="t">এগিয়ে যান|Continue</span></button>
+      </div>
+      <p class="jp-ok" id="jp-ready" role="status" hidden></p>
+    </section>
+  </form>
+
+  <noscript><p class="jp-err jp-err-block t">পোস্ট করতে JavaScript চালু করুন।|Please enable JavaScript to post.</p></noscript>
+</main>
+
+<div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
+<script src="site.js"></script>
+<script src="premium.js"></script>
+</body>
+</html>
