@@ -334,6 +334,48 @@ body .jobs-d-foot { margin: 16px 2px 0; color: var(--mu, #475569); font-size: 0.
 }
 @media (prefers-reduced-motion: reduce) { body dialog.jobs-dlg[open] { animation: none; } body .jobs-btn { transition: none; } }
 
+/* ---------- আরও ফিল্টার, সাজানো ও শেয়ার (ধাপ ৯) ---------- */
+body .jobs-adv { margin-top: 14px; border: 1px solid var(--ln, #E2E8F0); border-radius: 16px; background: var(--cd, #fff); }
+body .jobs-adv summary {
+  display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 8px 16px; cursor: pointer; list-style: none;
+  color: var(--ink, #0F172A); font-weight: 600; font-size: 0.95rem; border-radius: 16px;
+}
+body .jobs-adv summary::-webkit-details-marker { display: none; }
+body .jobs-adv summary::after {
+  content: ""; width: 9px; height: 9px; margin-left: auto; border-right: 2px solid var(--mu, #475569); border-bottom: 2px solid var(--mu, #475569);
+  rotate: 45deg; translate: 0 -2px; transition: rotate 0.2s ease;
+}
+body .jobs-adv[open] summary::after { rotate: 225deg; translate: 0 2px; }
+body .jobs-adv summary:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+body .jobs-adv-n {
+  display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 99px; font-size: 0.78rem; font-weight: 700;
+  color: #0B1F3A; background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37));
+}
+body .jobs-adv-n[hidden] { display: none; }
+body .jobs-adv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; padding: 4px 16px 6px; }
+body .jobs-field { display: grid; gap: 6px; min-width: 0; }
+body .jobs-field .jobs-flabel, body .jobs-sort .t { min-width: 0; }
+body .jobs-adv select, body .jobs-sort select {
+  width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid var(--ln, #E2E8F0); border-radius: 12px; background: var(--cd, #fff);
+  color: var(--ink, #0F172A); font: inherit; font-size: 0.95rem; cursor: pointer;
+}
+body .jobs-adv select:disabled { opacity: 0.55; cursor: not-allowed; }
+body .jobs-adv select:focus-visible, body .jobs-sort select:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+body .jobs-adv-note { margin: 4px 16px 14px; color: var(--mu, #475569); font-size: 0.84rem; line-height: 1.65; }
+body .jobs-status-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 10px; }
+body .jobs-sort { display: inline-flex; align-items: center; gap: 8px; color: var(--mu, #475569); font-size: 0.88rem; font-weight: 600; }
+body .jobs-sort select { width: auto; min-height: 38px; padding: 5px 10px; font-size: 0.9rem; }
+body .jobs-share[hidden], body #jobs-share[hidden] { display: none; }
+body .jobs-badge-warn { color: #7a2e0e; background: #ffe7d6; box-shadow: inset 0 0 0 1px #f5b78d; }
+:root[data-theme="dark"] body .jobs-badge-warn, body.dark .jobs-badge-warn { color: #ffd9bd; background: rgba(245, 140, 70, 0.18); box-shadow: inset 0 0 0 1px rgba(245, 140, 70, 0.5); }
+body .jobs-d-foot-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 14px; margin-top: 16px; }
+body .jobs-d-foot-row .jobs-d-foot { margin: 0; }
+body .jobs-btn-sm { min-height: 42px; padding: 8px 14px; font-size: 0.92rem; }
+@media (max-width: 560px) {
+  body .jobs-statusrow { flex-wrap: wrap; align-items: flex-start; }
+  body .jobs-status-tools { justify-content: flex-start; width: 100%; }
+}
+
 /* ---------- খালি অবস্থা ---------- */
 body .jobs-empty {
   display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px 44px; text-align: center;
