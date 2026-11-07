@@ -116,10 +116,21 @@ function norm(id, d) {
   };
 }
 
+/* পেজ রিফ্রেশ (F5 / টেনে রিফ্রেশ) হলে ক্যাশ ব্যবহার হবে না: সরাসরি নতুন ডেটা আসবে */
+function isReload() {
+  try {
+    const n = performance.getEntriesByType("navigation")[0];
+    if (n) return n.type === "reload";
+    return performance.navigation && performance.navigation.type === 1;
+  } catch (e) { return false; }
+}
+/* অ্যাডমিন প্যানেল কিছু বদলালে একই ব্রাউজারে এই চিহ্ন বসায়; ক্যাশ তার আগের হলে বাতিল */
+function bustedAt() { try { return Number(localStorage.getItem("dcu-lib-bust")) || 0; } catch (e) { return 0; } }
+
 function readCache() {
   try {
     const o = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-    if (o && Array.isArray(o.rows) && Array.isArray(o.meta) && Date.now() - o.t < CACHE_TTL) return o;
+    if (o && Array.isArray(o.rows) && Array.isArray(o.meta) && Date.now() - o.t < CACHE_TTL && o.t > bustedAt()) return o;
   } catch (e) { /* ক্যাশ নেই বা নষ্ট */ }
   return null;
 }
@@ -131,7 +142,7 @@ async function load(fresh) {
   phase = "loading";
   renderAll();
   try {
-    let c = fresh ? null : readCache();
+    let c = fresh || isReload() ? null : readCache();
     if (!c) {
       let metaOk = true;
       const [m, f] = await Promise.all([
