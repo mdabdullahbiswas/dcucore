@@ -128,6 +128,7 @@ iframe[hidden]{display:none!important}
       f.src = PAGES[k];
       f.title = TITLES[k] || k;
       f.addEventListener("load", function () {
+        f._ready = true; f._since = 0;
         /* ভুল পেজ লোড হলে একবার ক্যাশ-বাস্টিং দিয়ে আবার চেষ্টা */
         try {
           var path = f.contentWindow.location.pathname;
@@ -151,6 +152,52 @@ iframe[hidden]{display:none!important}
     t.addEventListener("click", function () { location.hash = t.getAttribute("data-k"); });
   });
   window.addEventListener("hashchange", function () { show(location.hash.slice(1)); });
+  /* ---- লগইন সিঙ্ক ----
+     একটি ট্যাবে লগইন করলে অন্য ট্যাব (iframe) যদি তখনও লগইন-গেটে আটকে থাকে, তাকে নিজে থেকে রিলোড করা হয়।
+     দুইবার রিলোডেও না খুললে ওপরে কারণসহ একটি বার্তা দেখায়। */
+  var ALLOWED = ["admin@dcu-blood-bank.app", "mdabdullahbiswas48@gmail.com", "ojanaraja3@gmail.com"];
+  function storedUser() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf("firebase:authUser:") === 0) {
+          var o = JSON.parse(localStorage.getItem(key) || "null");
+          return { email: (o && o.email) ? String(o.email).toLowerCase() : "" };
+        }
+      }
+    } catch (e) {}
+    return null;
+  }
+  function gateShown(f) {
+    try {
+      var d = f.contentDocument, g = d.getElementById("gate"), a = d.getElementById("app");
+      return !!g && getComputedStyle(g).display !== "none" && (!a || getComputedStyle(a).display === "none");
+    } catch (e) { return false; }
+  }
+  var banner = document.createElement("div");
+  banner.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:50;padding:12px 14px;border-radius:12px;background:#7a0c20;color:#fff;font:600 13.5px system-ui,sans-serif;display:none;box-shadow:0 10px 30px rgba(0,0,0,.35)";
+  document.body.appendChild(banner);
+  setInterval(function () {
+    var u = storedUser(), problem = "";
+    for (var k in frames) {
+      var f = frames[k];
+      if (!f._ready || f.hidden || !u) { if (f) f._since = 0; continue; }
+      if (!gateShown(f)) { f._since = 0; continue; }
+      if (!f._since) f._since = Date.now();
+      if (Date.now() - f._since < 2500) continue;          /* লগইন যাচাইয়ের জন্য একটু সময় */
+      if ((f._reloads || 0) < 2) {
+        f._reloads = (f._reloads || 0) + 1; f._since = 0; f._ready = false;
+        try { f.contentWindow.location.reload(); } catch (e) {}
+      } else {
+        problem = (u.email && ALLOWED.indexOf(u.email) < 0)
+          ? "লগইন করা অ্যাকাউন্ট (" + u.email + ") অ্যাডমিন তালিকায় নেই। সঠিক অ্যাডমিন অ্যাকাউন্টে লগইন করুন।"
+          : "লগইন (" + (u.email || "অজানা") + ") পাওয়া গেছে, কিন্তু \"" + (TITLES[k] || k) + "\" ট্যাব সেটি নিচ্ছে না। পুরো পেজ একবার রিফ্রেশ করুন।";
+      }
+    }
+    banner.textContent = problem; banner.style.display = problem ? "block" : "none";
+  }, 1000);
+  window.addEventListener("storage", function () { for (var k in frames) { frames[k]._reloads = 0; } });
+
   paintThemeIcon();
   show(location.hash.slice(1) || "blood");
 })();
