@@ -58,6 +58,10 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         <span class="t">পোস্ট করুন|Post now</span>
       </a>
+      <a class="jobs-cta jobs-cta-ghost" href="/jobs-my">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg>
+        <span class="t">আমার পোস্ট|My posts</span>
+      </a>
     </div>
 
     <!-- সাজসজ্জা: চার ধরনের চার রঙিন আইকন টাইল (স্ক্রিন-রিডার থেকে লুকানো) -->
@@ -127,11 +131,14 @@
     <div class="jobs-statusrow">
       <p class="jobs-status" id="jobs-status" role="status" aria-live="polite"><span class="jobs-bn">লোড হচ্ছে…</span><span class="jobs-en">Loading…</span></p>
       <div class="jobs-status-tools">
+        <button type="button" class="jobs-reset jobs-saved" id="jobs-saved" aria-pressed="false"><span class="jobs-bn">বুকমার্ক</span><span class="jobs-en">Saved</span></button>
         <label class="jobs-sort"><span class="t">সাজান|Sort</span><select id="jobs-f-sort"></select></label>
         <button type="button" class="jobs-reset" id="jobs-share" hidden><span class="t">লিংক শেয়ার|Share link</span></button>
         <button type="button" class="jobs-reset" id="jobs-reset" hidden><span class="t">ফিল্টার মুছুন|Clear filters</span></button>
       </div>
     </div>
+
+    <p class="jobs-flash" id="jobs-flash" role="status" aria-live="polite" hidden></p>
 
     <!-- স্কেলেটন (JS আসার আগে ও ডেটা লোডের সময়) -->
     <div class="jobs-grid" id="jobs-grid" aria-busy="true">
