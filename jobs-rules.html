@@ -124,5 +124,22 @@ body .jr-toc a { display: inline-flex; align-items: center; min-height: 40px; pa
 <div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
 <script src="site.js"></script>
 <script src="premium.js"></script>
+<script>
+/* পোস্ট ফর্ম থেকে এলে "ফিরুন" বাটন পোস্ট ফর্মেই ফেরায় (ফর্মের লেখা খসড়া হিসেবে সংরক্ষিত থাকে) */
+(function () {
+  var ref = ""; try { ref = new URL(document.referrer).pathname; } catch (e) {}
+  var fromPost = /[?&]from=post(&|$)/.test(location.search) || /^\/jobs-post(\.html)?\/?$/.test(ref);
+  if (!fromPost) return;
+  var cameFromPage = /^\/jobs-post(\.html)?\/?$/.test(ref) && history.length > 1;
+  document.querySelectorAll('a[href="/jobs"]').forEach(function (a) {
+    if (a.textContent.indexOf("জব ও টিউশনে ফিরুন") < 0) return;
+    var b = a.cloneNode(true);
+    b.setAttribute("href", "/jobs-post");
+    var t = b.querySelector(".t"); if (t) t.textContent = "পোস্ট ফর্মে ফিরুন|Back to the post form";
+    b.addEventListener("click", function (e) { if (cameFromPage) { e.preventDefault(); history.back(); } });
+    a.parentNode.insertBefore(b, a); a.hidden = true; a.style.display = "none";
+  });
+})();
+</script>
 </body>
 </html>
