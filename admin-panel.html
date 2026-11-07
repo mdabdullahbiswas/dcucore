@@ -181,7 +181,7 @@ iframe[hidden]{display:none!important}
     var u = storedUser(), problem = "";
     for (var k in frames) {
       var f = frames[k];
-      if (!f._ready || f.hidden || !u) { if (f) f._since = 0; continue; }
+      if (!f._ready || !u) { if (f) f._since = 0; continue; }
       if (!gateShown(f)) { f._since = 0; continue; }
       if (!f._since) f._since = Date.now();
       if (Date.now() - f._since < 2500) continue;          /* লগইন যাচাইয়ের জন্য একটু সময় */
@@ -196,7 +196,21 @@ iframe[hidden]{display:none!important}
     }
     banner.textContent = problem; banner.style.display = problem ? "block" : "none";
   }, 1000);
-  window.addEventListener("storage", function () { for (var k in frames) { frames[k]._reloads = 0; } });
+  function syncNow() {
+    if (!storedUser()) return;
+    for (var k in frames) {
+      var f = frames[k];
+      if (f._ready && gateShown(f)) { f._ready = false; f._since = 0; try { f.contentWindow.location.reload(); } catch (e) {} }
+    }
+  }
+  /* এক ট্যাবে লগইন হলেই (storage ঘটনা) একটু পরে বাকিগুলো রিলোড; যে ট্যাবে লগইন হলো সেটি আর গেটে নেই, তাই ছোঁয়া হয় না */
+  window.addEventListener("storage", function (e) {
+    for (var k in frames) { frames[k]._reloads = 0; }
+    if (!e.key || e.key.indexOf("firebase:authUser:") === 0) setTimeout(syncNow, 700);
+  });
+  /* ট্যাব বদলালে ও উইন্ডোতে ফিরলে আবার যাচাই */
+  window.addEventListener("hashchange", function () { setTimeout(syncNow, 300); });
+  window.addEventListener("focus", function () { setTimeout(syncNow, 300); });
 
   paintThemeIcon();
   show(location.hash.slice(1) || "blood");
