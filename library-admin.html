@@ -962,7 +962,7 @@ function openReview(id, from) {
             '<label>পরীক্ষার সাল<input class="in" id="e-eyear" type="number" min="0" max="2100" value="' + esc(r.examYear || 0) + '"><span class="sub">০ মানে প্রযোজ্য নয়</span></label>' +
           "</div>" +
           '<label>বিবরণ<textarea class="in" id="e-desc" maxlength="500">' + esc(r.desc) + "</textarea></label>" +
-          '<p class="sub">জমাদাতা: ' + esc(r.submitter || "নাম নেই") + " · জমার সময়: " + fd(r.createdAt) +
+          '<p class="sub">জমাদাতা: ' + (r.showBy === true ? esc([r.submitter, r.byCollege && (D.name(D.college(r.byCollege), "bn") || r.byCollege), r.byDept && (D.name(D.department(r.byDept), "bn") || r.byDept), r.bySession].filter(Boolean).join(" · ")) + " (পাবলিকে দেখানো হবে)" : esc(r.submitter ? r.submitter + " (পুরোনো জমা, পাবলিকে দেখানো হবে না)" : "নাম নেই (পাবলিকে কিছু দেখানো হবে না)")) + " · জমার সময়: " + fd(r.createdAt) +
           (status === "rejected" && r.rejectReason ? "<br>বাতিলের কারণ: " + esc(r.rejectReason) : "") + "</p>" +
         "</div>" +
         '<div class="rej" id="rej"><b>বাতিলের কারণ (জমাদাতার জন্য নয়, রেকর্ডের জন্য)</b>' +
