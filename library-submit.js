@@ -216,7 +216,25 @@ function applyPlaceholders() {
   form.querySelectorAll("[data-ph]").forEach(el => el.setAttribute("placeholder", L(el.getAttribute("data-ph"))));
 }
 
+function syncBy() {
+  const on = $("ls-showby").checked;
+  $("ls-by-fields").hidden = !on;
+  $("ls-showby").setAttribute("aria-expanded", String(on));
+}
+function renderBy() {
+  const cs = $("ls-by-college"), ds = $("ls-by-dept"), curC = cs.value, curD = ds.value;
+  cs.innerHTML = '<option value="">' + esc(L("দিতে চাই না|Prefer not to say")) + "</option>" +
+    D.colleges().map(c => '<option value="' + esc(c.slug) + '">' + esc(D.name(c, lang())) + "</option>").join("");
+  cs.value = D.colleges().some(c => c.slug === curC) ? curC : "";
+  const dl = D.departments(cs.value);
+  ds.innerHTML = '<option value="">' + esc(L("দিতে চাই না|Prefer not to say")) + "</option>" +
+    dl.map(d => '<option value="' + esc(d.slug) + '">' + esc(D.name(d, lang())) + "</option>").join("");
+  ds.value = dl.some(d => d.slug === curD) ? curD : "";
+  syncBy();
+}
+
 function renderAll() {
+  renderBy();
   renderColleges(); renderYears(); renderFileTypes(); renderExamTypes();
   renderDepts(); renderCourses(); renderExamYears(); applyPlaceholders();
   if (step === 4) renderSummary();
@@ -258,6 +276,8 @@ $("ls-desc").addEventListener("input", e => {
   clearErr("desc");
 });
 $("ls-submitter").addEventListener("input", () => clearErr("submitter"));
+$("ls-showby").addEventListener("change", () => { syncBy(); clearErr("submitter"); if ($("ls-showby").checked) $("ls-submitter").focus(); });
+$("ls-by-college").addEventListener("change", renderBy);
 $("ls-ftype-chips").addEventListener("change", () => {
   clearErr("ftype");
   if (!titleTouched) $("ls-title").value = suggestedTitle();   // শিরোনাম নিজে না বদলালে ধরনসহ সাজেশন হালনাগাদ
@@ -326,7 +346,11 @@ async function validate(n) {
     const title = clean($("ls-title").value);
     if (title.length < 3 || title.length > 120) bad.push(showErr("title", "শিরোনাম ৩ থেকে ১২০ অক্ষরের মধ্যে লিখুন।|Enter a title of 3 to 120 characters."));
     if ($("ls-desc").value.length > 500) bad.push(showErr("desc", "বিবরণ ৫০০ অক্ষরের বেশি হবে না।|The description can be at most 500 characters."));
-    if (clean($("ls-submitter").value).length > 60) bad.push(showErr("submitter", "নাম ৬০ অক্ষরের বেশি হবে না।|The name can be at most 60 characters."));
+    if ($("ls-showby").checked) {
+      const nm = clean($("ls-submitter").value);
+      if (nm.length < 2) bad.push(showErr("submitter", "পাবলিকে দেখাতে চাইলে নাম লিখুন (কমপক্ষে ২ অক্ষর)। না চাইলে টিকটি তুলে দিন।|To show your details publicly, enter your name (at least 2 characters). Otherwise untick the box."));
+      else if (nm.length > 60) bad.push(showErr("submitter", "নাম ৬০ অক্ষরের বেশি হবে না।|The name can be at most 60 characters."));
+    }
   }
   if (n === 4) {
     if (!$("ls-agree").checked) bad.push(showErr("agree", "জমা দিতে নিয়মাবলিতে সম্মত হতে হবে।|You need to agree to the rules to submit."));
@@ -382,7 +406,12 @@ function collectData() {
     examYear: Number($("ls-eyear").value) || 0,
     title: clean($("ls-title").value),
     desc: $("ls-desc").value.trim(),
-    submitter: clean($("ls-submitter").value)
+    /* টিক না দিলে নাম ও পরিচয় কিছুই পাঠানো/সংরক্ষণ হয় না */
+    showBy: $("ls-showby").checked,
+    submitter: $("ls-showby").checked ? clean($("ls-submitter").value) : "",
+    byCollege: $("ls-showby").checked ? $("ls-by-college").value : "",
+    byDept: $("ls-showby").checked ? $("ls-by-dept").value : "",
+    bySession: $("ls-showby").checked ? clean($("ls-by-session").value).slice(0, 20) : ""
   };
 }
 
@@ -399,7 +428,10 @@ function renderSummary() {
     ["পরীক্ষা|Exam", D.name(D.examType(d.examType), l) + (d.examYear ? ", " + (l === "en" ? d.examYear : d.examYear.toLocaleString("bn-BD", { useGrouping: false })) : "")]
   ];
   if (d.desc) rows.push(["বিবরণ|Description", d.desc]);
-  rows.push(["জমাদাতা|Submitted by", d.submitter || L("নাম ছাড়া|Anonymous")]);
+  if (d.showBy) {
+    const who = [d.submitter, d.byCollege && D.name(D.college(d.byCollege), l), d.byDept && D.name(D.department(d.byDept), l), d.bySession].filter(Boolean).join(" · ");
+    rows.push(["জমাদাতা (পাবলিকে দেখানো হবে)|Submitted by (shown publicly)", who]);
+  } else rows.push(["জমাদাতা|Submitted by", L("নাম ছাড়া — পাবলিকে কিছু দেখানো হবে না|Anonymous — nothing shown publicly")]);
   $("ls-sum").innerHTML = rows.map(r => "<div><dt>" + esc(L(r[0])) + "</dt><dd>" + esc(r[1]) + "</dd></div>").join("");
 }
 
@@ -482,6 +514,10 @@ async function submit() {
       title: d.title,
       desc: d.desc,
       submitter: d.submitter,
+      showBy: d.showBy,
+      byCollege: d.byCollege,
+      byDept: d.byDept,
+      bySession: d.bySession,
       views: 0,
       downloads: 0,
       createdAt: serverTimestamp()
