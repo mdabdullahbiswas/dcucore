@@ -30,6 +30,7 @@ body .lr-card h2 { font-size: 1.08rem; margin: 22px 0 6px; color: var(--ink, #0F
 body .lr-card h2:first-child { margin-top: 0; }
 body .lr-card p, body .lr-card li { color: var(--mu, #475569); line-height: 1.75; font-size: 0.95rem; }
 body .lr-card ul { margin: 6px 0 0; padding-left: 20px; }
+body .lr-hint { margin: 8px 0 0; padding: 10px 14px; border-radius: 12px; background: rgba(212,175,55,.14); color: var(--ink, #0F172A); font-size: .92rem; }
 body .lr-card a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 body .lr-card a:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; border-radius: 4px; }
 </style>
@@ -39,7 +40,8 @@ body .lr-card a:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline
 
 <main class="ls-wrap">
 
-  <a class="ls-back" href="/library"><span aria-hidden="true">‹</span> <span class="t">লাইব্রেরিতে ফিরুন|Back to library</span></a>
+  <a class="ls-back lr-back" href="/library"><span aria-hidden="true">‹</span> <span class="t lr-to-lib">লাইব্রেরিতে ফিরুন|Back to library</span><span class="t lr-to-form" hidden>ফর্মে ফিরুন|Back to the form</span></a>
+  <p class="lr-hint" id="lr-hint" role="status" hidden></p>
 
   <header class="ls-head">
     <h1 class="t">নিয়মাবলি ও অপসারণ অনুরোধ|Rules and removal requests</h1>
@@ -74,10 +76,41 @@ body .lr-card a:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline
 
   </article>
 
+  <div class="ls-actions ls-actions-center">
+    <a class="ls-btn ls-btn-main lr-back" href="/library"><span class="t lr-to-lib">লাইব্রেরিতে ফিরুন|Back to library</span><span class="t lr-to-form" hidden>ফর্মে ফিরুন|Back to the form</span></a>
+  </div>
+
 </main>
 
 <div id="ftr"></div><div class="tst" id="tst" role="status" aria-live="polite"></div>
 <script src="site.js"></script>
 <script src="premium.js"></script>
+<script>
+/* জমার ফর্ম থেকে এলে (?from=submit) “ফিরুন” মানে ফর্মের ট্যাবে ফেরা: এই ট্যাব বন্ধ হয়, ফর্মের লেখা যেমন ছিল তেমনই থাকে */
+(function () {
+  var fromForm = false;
+  try { fromForm = new URLSearchParams(location.search).get("from") === "submit"; } catch (e) {}
+  if (!fromForm) return;
+  var backs = document.querySelectorAll(".lr-back");
+  backs.forEach(function (a) {
+    a.setAttribute("href", "/library-submit");
+    var l = a.querySelector(".lr-to-lib"), f = a.querySelector(".lr-to-form");
+    if (l) l.hidden = true;
+    if (f) f.hidden = false;
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      try { window.close(); } catch (x) {}
+      /* ব্রাউজার বন্ধ করতে না দিলে (যেমন কিছু Firefox) বার্তা দেখাই */
+      setTimeout(function () {
+        var h = document.getElementById("lr-hint");
+        if (!h) return;
+        var en = document.documentElement.getAttribute("data-ui-lang") === "en";
+        h.textContent = en ? "Please close this tab to go back to your form." : "এই ট্যাবটি বন্ধ করলেই আপনার ফর্ম যেমন ছিল তেমন পাবেন।";
+        h.hidden = false;
+      }, 250);
+    });
+  });
+})();
+</script>
 </body>
 </html>
