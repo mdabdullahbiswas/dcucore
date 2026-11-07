@@ -1266,3 +1266,7 @@ body .lib-vw-rb { display: flex; flex-wrap: wrap; gap: 8px; }
   body .lib-star, body .lib-bm { transition: none; }
   body .lib-star:active { transform: none; }
 }
+
+/* জমাদাতার নাম (ঐচ্ছিক, পাবলিক) */
+body .lib-file-by { font-style: italic; }
+body .lib-vw-by { display: inline-block; margin-top: 2px; font-weight: 600; color: var(--ink, #0F172A); }
