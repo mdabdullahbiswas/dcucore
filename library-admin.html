@@ -123,6 +123,53 @@ a.btn{text-decoration:none;color:inherit}
   .da .btn{flex:1 1 140px}
 }
 @media(prefers-reduced-motion:reduce){.sk{animation:none}.btn{transition:none}}
+
+/* ---------- ধাপ ১০: ট্যাব, সারাংশ, বাল্ক, রিপোর্ট, তালিকা ---------- */
+.tabs{display:flex;gap:4px;margin:0 0 14px;overflow-x:auto;border-bottom:1px solid var(--ln);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:8px 18px;border:0;border-bottom:3px solid transparent;background:none;color:var(--mu);font-weight:700;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tab em{min-width:22px;padding:1px 7px;border-radius:99px;background:var(--red);color:#fff;font-size:.76rem;font-style:normal;font-weight:800;text-align:center}
+.tab em:empty{display:none}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin:0 0 16px}
+.stat{padding:12px 14px;border:1px solid var(--ln);border-radius:16px;background:var(--surface);text-align:left;font:inherit;color:inherit}
+button.stat{cursor:pointer}
+button.stat:hover{border-color:var(--gold)}
+.stat b{display:block;font-size:1.55rem;line-height:1.25}
+.stat span{color:var(--mu);font-size:.82rem;font-weight:600}
+.stat.warn b{color:var(--amber)}.stat.ok b{color:var(--green)}.stat.dng b{color:var(--red)}
+
+.selbar{position:sticky;top:8px;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 12px;padding:10px 14px;border:1px solid var(--ln);border-radius:14px;background:var(--surface2);box-shadow:var(--shadow)}
+.selbar[hidden]{display:none}
+.selbar .grow{flex:1 1 120px;color:var(--mu);font-size:.9rem}
+.chk{display:inline-flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--gold)}
+.item.has-sel{grid-template-columns:auto 1fr auto}
+.acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+
+.rchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.note{margin-top:6px;padding:6px 10px;border-left:3px solid var(--gold);border-radius:6px;background:var(--surface2);font-size:.86rem;overflow-wrap:anywhere}
+
+.mh{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;margin:6px 0 12px}
+.mh h3{flex:1 1 200px;font-size:1.1rem}
+.mh h3 small{color:var(--mu);font-weight:400;font-size:.85rem}
+.mh .in{width:auto;min-width:180px}
+.sub-h{margin:22px 0 10px;color:var(--mu);font-size:.95rem}
+.code{display:inline-block;min-width:60px;margin-right:6px;padding:1px 9px;border-radius:8px;background:var(--navy);color:var(--gold2);font-size:.82rem;font-weight:700;text-align:center}
+.dlg.sm{max-width:520px}
+.checks{display:grid;gap:4px;max-height:220px;overflow-y:auto;padding:8px;border:1px solid var(--ln);border-radius:12px}
+.fm .checks label{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:34px;font-weight:500;font-size:.92rem}
+.fm .checks input,.fm label.one input{width:18px;height:18px;accent-color:var(--gold)}
+.fm label.one{display:flex;flex-direction:row;align-items:center;gap:8px}
+.fm .in[readonly]{background:var(--surface2);color:var(--mu)}
+@media(max-width:760px){
+  .acts{justify-content:flex-start}
+  .item.has-sel{grid-template-columns:auto 1fr}
+  .item.has-sel>.btn,.item.has-sel>.acts{grid-column:1/-1}
+  .stat b{font-size:1.3rem}
+}
 </style>
 </head>
 <body>
@@ -152,14 +199,41 @@ a.btn{text-decoration:none;color:inherit}
   <!-- ===== অ্যাপ ===== -->
   <div id="app" style="display:none">
     <div class="bar">
-      <h2>লাইব্রেরি: জমা পর্যালোচনা<small>শিক্ষার্থীদের জমা দেওয়া ফাইল দেখে অনুমোদন বা বাতিল করুন</small></h2>
+      <h2>লাইব্রেরি অ্যাডমিন<small>জমা পর্যালোচনা, রিপোর্ট ও তালিকা ব্যবস্থাপনা</small></h2>
       <span class="who" id="who"></span>
       <button class="btn sm" id="ref" type="button">রিফ্রেশ</button>
       <button class="btn sm dng" id="out" type="button">সাইন আউট</button>
     </div>
-    <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
-    <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, কোর্স কোড বা কোর্সের নাম খুঁজুন">
-    <div class="list" id="list" aria-live="polite"></div>
+    <div class="stats" id="stats" aria-label="সারাংশ"></div>
+    <div class="tabs" role="tablist" aria-label="বিভাগ">
+      <button type="button" class="tab on" role="tab" id="t-review" aria-controls="p-review" aria-selected="true" data-tab="review">জমা</button>
+      <button type="button" class="tab" role="tab" id="t-reports" aria-controls="p-reports" aria-selected="false" tabindex="-1" data-tab="reports">রিপোর্ট <em id="t-reports-n"></em></button>
+      <button type="button" class="tab" role="tab" id="t-meta" aria-controls="p-meta" aria-selected="false" tabindex="-1" data-tab="meta">তালিকা</button>
+    </div>
+
+    <!-- ===== জমা পর্যালোচনা ===== -->
+    <div id="p-review" role="tabpanel" aria-labelledby="t-review">
+      <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
+      <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, কোর্স কোড বা কোর্সের নাম খুঁজুন">
+      <div class="selbar" id="selbar" hidden>
+        <label class="chk"><input type="checkbox" id="sel-all"> সব বেছে নিন</label>
+        <span class="grow" id="sel-n"></span>
+        <button type="button" class="btn ok sm" id="bulk" disabled>বেছে নেওয়াগুলো অনুমোদন দিন</button>
+      </div>
+      <div class="list" id="list" aria-live="polite"></div>
+    </div>
+
+    <!-- ===== রিপোর্ট ===== -->
+    <div id="p-reports" role="tabpanel" aria-labelledby="t-reports" hidden>
+      <div class="filters" id="rfilters" role="group" aria-label="রিপোর্টের অবস্থা"></div>
+      <div class="list" id="rlist" aria-live="polite"></div>
+    </div>
+
+    <!-- ===== তালিকা (কলেজ / বিভাগ / কোর্স) ===== -->
+    <div id="p-meta" role="tabpanel" aria-labelledby="t-meta" hidden>
+      <div class="filters" id="mfilters" role="group" aria-label="তালিকার ধরন"></div>
+      <div id="mbody"></div>
+    </div>
   </div>
 </div>
 
@@ -169,7 +243,7 @@ a.btn{text-decoration:none;color:inherit}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, setDoc, deleteDoc, writeBatch, serverTimestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /* অন্য অ্যাডমিন পেজের (admin.html) সঙ্গে হুবহু একই অনুমোদিত অ্যাকাউন্ট ও অ্যাপ নাম, তাই একবার লগইন করলে সব অ্যাডমিন পেজে চলে */
 const ID_DOMAIN = "dcu-blood-bank.app";
@@ -184,8 +258,11 @@ const clean = s => String(s || "").replace(/\s+/g, " ").trim();
 const BN = n => Number(n || 0).toLocaleString("bn-BD");
 const FILE_ID_RE = /^[A-Za-z0-9_-]{10,120}$/;
 
-const STATUS = { pending: ["অপেক্ষায়", "warn"], approved: ["অনুমোদিত", "ok"], rejected: ["বাতিল", "mu"] };
-const FILTERS = [["pending", "অপেক্ষমাণ"], ["approved", "অনুমোদিত"], ["rejected", "বাতিল"], ["all", "সব"]];
+const STATUS = { pending: ["অপেক্ষায়", "warn"], approved: ["অনুমোদিত", "ok"], rejected: ["বাতিল", "mu"], hidden: ["লুকানো", "mu"] };
+const FILTERS = [["pending", "অপেক্ষমাণ"], ["approved", "অনুমোদিত"], ["rejected", "বাতিল"], ["hidden", "লুকানো"], ["all", "সব"]];
+const REASON_BN = { broken: "লিংক নষ্ট", private: "ব্যক্তিগত ফাইল", wrong: "ভুল তথ্য", inappropriate: "অনুপযুক্ত", copyright: "কপিরাইট/অপসারণ", other: "অন্য কারণ" };
+const SLUG_RE = /^[a-z0-9-]{2,40}$/;                 // Rules-এর libSlug-এর সঙ্গে মেলানো
+const CODE_RE = /^[A-Za-z0-9][A-Za-z0-9 ._-]{1,19}$/;  // কোর্স কোড: ২–২০ অক্ষর
 const REJECT_REASONS = [
   "ফাইল খোলা যায় না। শেয়ার সেটিং “Anyone with the link” করে আবার জমা দিন।",
   "কলেজ, বিভাগ বা কোর্স ভুল আছে।",
@@ -194,7 +271,16 @@ const REJECT_REASONS = [
   "একই ফাইল আগেই আছে।"
 ];
 
-let ALL = [], filter = "pending", query = "", current = null, busy = false;
+let ALL = [], REPORTS = [], META = [], REP_ERR = "", META_ERR = "";
+let filter = "pending", query = "", current = null, busy = false;
+let tab = "review", rfilter = "open", mtab = "colleges", mdept = "", myear = 0;
+const SEL = new Set();
+/* ডিফল্ট তালিকার ছবি (merge করার আগের): লুকানো/সম্পাদিত আইটেম চিনতে লাগে */
+const DEF = {
+  colleges: D.colleges(),
+  departments: D.departments(),
+  courses: D.departments().reduce((a, d) => a.concat(D.courses(d.slug)), [])
+};
 
 /* ---------- টোস্ট ও তারিখ ---------- */
 function toast(msg, type) {
@@ -233,52 +319,586 @@ onAuthStateChanged(auth, u => {
   if (!isPw && !isG) { $("gmsg").textContent = "এই অ্যাকাউন্টের প্রবেশাধিকার নেই।"; signOut(auth); return; }
   $("gate").style.display = "none"; $("app").style.display = "block";
   $("who").textContent = u.email || "";
+  setTab(location.hash.replace("#", ""), true);
   load();
 });
 
 /* ---------- ডেটা ---------- */
+/* একসঙ্গে ফাইল, রিপোর্ট ও তালিকা (lib_meta) আনে। রিপোর্ট বা তালিকা না এলেও ফাইলের কাজ চলে। */
 async function load() {
   $("list").innerHTML = '<div class="sk"></div>'.repeat(3);
   try {
-    ALL = (await getDocs(collection(db, "lib_resources"))).docs
-      .map(x => ({ id: x.id, ...x.data() }))
-      .sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
-    render();
+    const [rs, rp, mt] = await Promise.all([
+      getDocs(collection(db, "lib_resources")),
+      getDocs(collection(db, "lib_reports")).catch(e => { REP_ERR = e.code || e.message; return null; }),
+      getDocs(collection(db, "lib_meta")).catch(e => { META_ERR = e.code || e.message; return null; })
+    ]);
+    ALL = rs.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
+    if (rp) { REP_ERR = ""; REPORTS = rp.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, b) => ms(b.createdAt) - ms(a.createdAt)); }
+    if (mt) { META_ERR = ""; META = mt.docs.map(x => ({ id: x.id, data: x.data() })); }
+    rebuild();
+    renderTab();
   } catch (e) {
     $("list").innerHTML = '<div class="card empty">ডেটা লোড হয়নি: ' + esc(e.code || e.message) + '<br><small>Firestore Rules ও অ্যাডমিন অ্যাকাউন্ট দেখুন।</small></div>';
   }
 }
 $("ref").onclick = load;
 
-const count = s => s === "all" ? ALL.length : ALL.filter(r => (r.status || "pending") === s).length;
+/* ডিফল্ট তালিকা + lib_meta মিশিয়ে কার্যকর তালিকা বানায় (পাবলিক পেজের মতোই) */
+function rebuild() { D.reset(); D.merge(META.map(m => m.data)); }
 
+/* ব্যাচে লেখা (প্রতি ব্যাচে ৪০০টির বেশি নয়; Firestore-এর সীমা ৫০০) */
+async function commit(ops) {
+  for (let i = 0; i < ops.length; i += 400) {
+    const b = writeBatch(db);
+    ops.slice(i, i + 400).forEach(f => f(b));
+    await b.commit();
+  }
+}
+
+const stOf = r => r.status || "pending";
+const count = s => s === "all" ? ALL.length : ALL.filter(r => stOf(r) === s).length;
+
+/* ---------- রিপোর্ট: ফাইল ধরে গোছানো ---------- */
+function groups() {
+  const m = new Map();
+  REPORTS.forEach(x => {
+    if (!m.has(x.resourceId)) m.set(x.resourceId, { rid: x.resourceId, items: [] });
+    m.get(x.resourceId).items.push(x);
+  });
+  return Array.from(m.values()).map(g => {
+    g.open = g.items.filter(x => !x.resolved);
+    g.last = Math.max.apply(null, g.items.map(x => ms(x.createdAt)));
+    g.res = ALL.find(r => r.id === g.rid) || null;
+    return g;
+  });
+}
+const openGroups = () => groups().filter(g => g.open.length);
+
+/* ---------- সারাংশ ---------- */
+function renderStats() {
+  const sum = k => ALL.reduce((n, r) => n + (Number(r[k]) || 0), 0);
+  const og = openGroups().length;
+  const st = (cls, n, label, go) => (go ? '<button type="button" class="stat ' + cls + '" data-go="' + go + '">' : '<div class="stat ' + cls + '">') +
+    "<b>" + BN(n) + "</b><span>" + label + "</span>" + (go ? "</button>" : "</div>");
+  $("stats").innerHTML =
+    st("warn", count("pending"), "অপেক্ষমাণ", "pending") +
+    st("ok", count("approved"), "অনুমোদিত", "approved") +
+    st("", count("rejected"), "বাতিল", "rejected") +
+    st("", count("hidden"), "লুকানো", "hidden") +
+    st(og ? "dng" : "", og, "খোলা রিপোর্ট", "reports") +
+    st("", sum("views"), "মোট ভিউ", "") +
+    st("", sum("downloads"), "মোট ডাউনলোড", "");
+  const n = $("t-reports-n"); n.textContent = og ? BN(og) : "";
+}
+$("stats").addEventListener("click", e => {
+  const b = e.target.closest("[data-go]"); if (!b) return;
+  const g = b.dataset.go;
+  if (g === "reports") { setTab("reports"); return; }
+  filter = g; query = ""; $("q").value = ""; setTab("review");
+});
+
+/* ---------- ট্যাব ---------- */
+const TABS = ["review", "reports", "meta"];
+function setTab(t, silent) {
+  if (TABS.indexOf(t) < 0) t = "review";
+  tab = t;
+  TABS.forEach(k => {
+    $("p-" + k).hidden = k !== t;
+    const b = $("t-" + k);
+    b.setAttribute("aria-selected", String(k === t)); b.classList.toggle("on", k === t); b.tabIndex = k === t ? 0 : -1;
+  });
+  if (!silent) { try { history.replaceState(null, "", "#" + t); } catch (e) { /* ঠিক আছে */ } }
+  renderTab();
+}
+function renderTab() {
+  renderStats();
+  if (tab === "reports") renderReports();
+  else if (tab === "meta") renderMeta();
+  else render();
+}
+document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) setTab(b.dataset.tab); });
+document.querySelector(".tabs").addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const i = TABS.indexOf(tab), n = TABS[(i + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+  setTab(n); $("t-" + n).focus(); e.preventDefault();
+});
+
+/* ---------- জমা পর্যালোচনা (বাল্ক অনুমোদনসহ) ---------- */
+let visPending = [];
 function render() {
   $("filters").innerHTML = FILTERS.map(([k, l]) =>
     '<button type="button" class="f' + (k === filter ? " on" : "") + '" data-f="' + k + '" aria-pressed="' + (k === filter) + '">' + l + " <em>" + BN(count(k)) + "</em></button>").join("");
 
   const q = query.toLowerCase();
-  const rows = ALL.filter(r => (filter === "all" || (r.status || "pending") === filter) &&
+  const rows = ALL.filter(r => (filter === "all" || stOf(r) === filter) &&
     (!q || [r.title, r.courseCode, r.courseName, r.submitter].some(v => String(v || "").toLowerCase().includes(q))));
+
+  const selectable = filter === "pending";
+  visPending = selectable ? rows.map(r => r.id) : [];
+  Array.from(SEL).forEach(id => { if (visPending.indexOf(id) < 0) SEL.delete(id); });
+  $("selbar").hidden = !selectable || !rows.length;
+  renderSelBar();
 
   if (!rows.length) {
     $("list").innerHTML = '<div class="card empty">' + (filter === "pending" && !q ? "অপেক্ষমাণ কোনো ফাইল নেই। ✓" : "কিছু পাওয়া যায়নি।") + "</div>";
     return;
   }
   $("list").innerHTML = rows.map(r => {
-    const st = STATUS[r.status] || STATUS.pending;
+    const st = STATUS[stOf(r)] || STATUS.pending;
     const col = D.college(r.college), dep = D.department(r.dept);
-    return '<div class="card item"><div><h3>' + esc(r.title) + ' <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
+    const pend = stOf(r) === "pending";
+    return '<div class="card item' + (selectable ? " has-sel" : "") + '">' +
+      (selectable ? '<label class="chk"><input type="checkbox" data-sel="' + esc(r.id) + '"' + (SEL.has(r.id) ? " checked" : "") + ' aria-label="বেছে নিন: ' + esc(r.title) + '"></label>' : "") +
+      '<div><h3>' + esc(r.title) + ' <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
       '<div class="meta">' + esc(r.courseCode) + " · " + esc(r.courseName) + "</div>" +
       '<div class="meta">' + esc(D.name(col, "bn") || r.college) + " · " + esc(D.name(dep, "bn") || r.dept) + " · " + esc((D.year(r.year) || {}).bn || r.year + " বর্ষ") +
-      " · " + esc((D.fileType(r.fileType) || {}).bn || r.fileType) + " · " + fd(r.createdAt) + "</div></div>" +
-      '<button type="button" class="btn ' + ((r.status || "pending") === "pending" ? "pri" : "") + '" data-open="' + esc(r.id) + '">' +
-      ((r.status || "pending") === "pending" ? "দেখুন ও যাচাই" : "দেখুন") + "</button></div>";
+      " · " + esc((D.fileType(r.fileType) || {}).bn || r.fileType) + " · " + fd(r.createdAt) +
+      (stOf(r) === "approved" ? " · ভিউ " + BN(r.views) + " · ডাউনলোড " + BN(r.downloads) : "") + "</div></div>" +
+      '<button type="button" class="btn ' + (pend ? "pri" : "") + '" data-open="' + esc(r.id) + '">' + (pend ? "দেখুন ও যাচাই" : "দেখুন") + "</button></div>";
   }).join("");
 }
+
+function renderSelBar() {
+  const n = Array.from(SEL).filter(id => visPending.indexOf(id) > -1).length, all = visPending.length;
+  const a = $("sel-all");
+  a.checked = all > 0 && n === all; a.indeterminate = n > 0 && n < all;
+  $("sel-n").textContent = n ? BN(n) + "টি বেছে নেওয়া হয়েছে" : "অনুমোদনের আগে ফাইলগুলো দেখে নেওয়া ভালো।";
+  $("bulk").disabled = !n || busy;
+}
+$("list").addEventListener("change", e => {
+  const c = e.target.closest("[data-sel]"); if (!c) return;
+  if (c.checked) SEL.add(c.dataset.sel); else SEL.delete(c.dataset.sel);
+  renderSelBar();
+});
+$("sel-all").addEventListener("change", e => {
+  if (e.target.checked) visPending.forEach(id => SEL.add(id)); else visPending.forEach(id => SEL.delete(id));
+  render();
+});
+$("bulk").addEventListener("click", async () => {
+  const ids = Array.from(SEL).filter(id => { const r = ALL.find(x => x.id === id); return r && stOf(r) === "pending"; });
+  if (!ids.length || busy) return;
+  if (!confirm(BN(ids.length) + "টি ফাইল একসঙ্গে অনুমোদন দেবেন?\n\nমনে রাখুন: এতে ফাইলের প্রিভিউ বা “Anyone with the link” সেটিং আলাদা করে যাচাই হয় না। ব্যক্তিগত লিংক আটকাতে আগে নমুনা কয়েকটি দেখে নিন।")) return;
+  busy = true; $("bulk").disabled = true;
+  try {
+    await commit(ids.map(id => b => b.update(doc(db, "lib_resources", id), { status: "approved", rejectReason: deleteField(), reviewedAt: serverTimestamp() })));
+    ids.forEach(id => { const r = ALL.find(x => x.id === id); r.status = "approved"; delete r.rejectReason; r.reviewedAt = { toMillis: () => Date.now() }; SEL.delete(id); });
+    toast(BN(ids.length) + "টি ফাইল অনুমোদিত হয়েছে");
+  } catch (err) { errToast(err); busy = false; await load(); return; }
+  busy = false; renderTab();
+});
 
 $("filters").addEventListener("click", e => { const b = e.target.closest("[data-f]"); if (b) { filter = b.dataset.f; render(); } });
 $("q").addEventListener("input", e => { query = e.target.value.trim(); render(); });
 $("list").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openReview(b.dataset.open, b); });
+
+/* ---------- ফাইল লুকানো / মোছা ---------- */
+async function hideResource(id, quiet) {
+  const r = ALL.find(x => x.id === id); if (!r || busy) return;
+  busy = true;
+  try {
+    const ops = [b => b.update(doc(db, "lib_resources", id), { status: "hidden", reviewedAt: serverTimestamp() })];
+    REPORTS.filter(x => x.resourceId === id && !x.resolved).forEach(x => ops.push(b => b.update(doc(db, "lib_reports", x.id), { resolved: true, resolvedAt: serverTimestamp() })));
+    await commit(ops);
+    r.status = "hidden";
+    REPORTS.filter(x => x.resourceId === id).forEach(x => { x.resolved = true; });
+    if (!quiet) toast("ফাইলটি লুকানো হয়েছে");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+async function deleteResource(id) {
+  const r = ALL.find(x => x.id === id); if (busy) return false;
+  if (!confirm("“" + (r ? r.title : id) + "” স্থায়ীভাবে মুছবেন?\n\nশুধু লাইব্রেরির তালিকা থেকে মুছবে, Drive-এর মূল ফাইল মুছবে না। এর রিপোর্টগুলোও মুছে যাবে। মোছার পর একই লিংক আবার জমা দেওয়া যাবে। এটি ফেরানো যাবে না। আপাতত শুধু লুকাতে চাইলে “লুকান” বেছে নিন।")) return false;
+  busy = true;
+  let ok = false;
+  try {
+    const ops = [b => b.delete(doc(db, "lib_resources", id))];
+    REPORTS.filter(x => x.resourceId === id).forEach(x => ops.push(b => b.delete(doc(db, "lib_reports", x.id))));
+    await commit(ops);
+    ALL = ALL.filter(x => x.id !== id); REPORTS = REPORTS.filter(x => x.resourceId !== id); SEL.delete(id);
+    toast("মোছা হয়েছে"); ok = true;
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+  return ok;
+}
+async function resolveReports(id, undo) {
+  if (busy) return;
+  busy = true;
+  try {
+    const list = REPORTS.filter(x => x.resourceId === id && (undo ? x.resolved : !x.resolved));
+    await commit(list.map(x => b => b.update(doc(db, "lib_reports", x.id), undo ? { resolved: false, resolvedAt: deleteField() } : { resolved: true, resolvedAt: serverTimestamp() })));
+    list.forEach(x => { x.resolved = !undo; });
+    toast(undo ? "আবার খোলা হয়েছে" : "সমাধান হিসেবে চিহ্নিত হয়েছে");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+async function deleteReports(id) {
+  if (busy) return;
+  if (!confirm("এই ফাইলের সব রিপোর্ট মুছবেন?")) return;
+  busy = true;
+  try {
+    const list = REPORTS.filter(x => x.resourceId === id);
+    await commit(list.map(x => b => b.delete(doc(db, "lib_reports", x.id))));
+    REPORTS = REPORTS.filter(x => x.resourceId !== id);
+    toast("রিপোর্ট মোছা হয়েছে");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+
+/* ---------- রিপোর্ট ট্যাব ---------- */
+function renderReports() {
+  const gs = groups();
+  const nOpen = gs.filter(g => g.open.length).length, nDone = gs.length - nOpen;
+  $("rfilters").innerHTML = [["open", "খোলা", nOpen], ["done", "সমাধান হয়েছে", nDone], ["all", "সব", gs.length]].map(([k, l, n]) =>
+    '<button type="button" class="f' + (k === rfilter ? " on" : "") + '" data-rf="' + k + '" aria-pressed="' + (k === rfilter) + '">' + l + " <em>" + BN(n) + "</em></button>").join("");
+
+  if (REP_ERR) { $("rlist").innerHTML = '<div class="card empty">রিপোর্ট লোড হয়নি: ' + esc(REP_ERR) + "<br><small>Rules-এ lib_reports পড়ার অনুমতি দেখুন।</small></div>"; return; }
+  const rows = gs.filter(g => rfilter === "all" || (rfilter === "open" ? g.open.length : !g.open.length))
+    .sort((a, b) => b.open.length - a.open.length || b.last - a.last);
+  if (!rows.length) { $("rlist").innerHTML = '<div class="card empty">' + (rfilter === "open" ? "খোলা কোনো রিপোর্ট নেই। ✓" : "কিছু নেই।") + "</div>"; return; }
+
+  $("rlist").innerHTML = rows.map(g => {
+    const r = g.res, shown = rfilter === "done" ? g.items : (g.open.length ? g.open : g.items);
+    const by = {}; shown.forEach(x => { by[x.reason] = (by[x.reason] || 0) + 1; });
+    const chips = Object.keys(by).map(k => '<span class="pill warn">' + esc(REASON_BN[k] || k) + " × " + BN(by[k]) + "</span>").join("");
+    const notes = shown.filter(x => x.note).slice(0, 3).map(x => '<div class="note">“' + esc(x.note) + "”</div>").join("");
+    const head = r
+      ? '<h3>' + esc(r.title) + ' <span class="pill ' + (STATUS[stOf(r)] || STATUS.pending)[1] + '">' + (STATUS[stOf(r)] || STATUS.pending)[0] + "</span></h3>" +
+        '<div class="meta">' + esc(r.courseCode) + " · " + esc(r.courseName) + " · " + esc(D.name(D.college(r.college), "bn") || r.college) + " · " + esc(D.name(D.department(r.dept), "bn") || r.dept) + "</div>"
+      : '<h3>ফাইলটি আর নেই <span class="pill mu">মোছা</span></h3><div class="meta">ফাইল ID: ' + esc(g.rid) + "</div>";
+    const acts = r
+      ? '<button type="button" class="btn sm" data-ro="' + esc(g.rid) + '">ফাইল দেখুন</button>' +
+        (stOf(r) === "approved" ? '<button type="button" class="btn sm" data-rh="' + esc(g.rid) + '">লুকান</button>' : "") +
+        '<button type="button" class="btn sm dng" data-rd="' + esc(g.rid) + '">মুছুন</button>' +
+        (g.open.length ? '<button type="button" class="btn sm ok" data-rs="' + esc(g.rid) + '">সমস্যা নেই / সমাধান</button>'
+                       : '<button type="button" class="btn sm" data-ru="' + esc(g.rid) + '">আবার খুলুন</button>')
+      : '<button type="button" class="btn sm dng" data-rx="' + esc(g.rid) + '">রিপোর্ট মুছুন</button>';
+    return '<div class="card item"><div>' + head +
+      '<div class="rchips">' + chips + "</div>" + notes +
+      '<div class="meta">মোট ' + BN(g.items.length) + "টি রিপোর্ট, খোলা " + BN(g.open.length) + "টি · সর্বশেষ " + fd({ toMillis: () => g.last }) + '</div></div><div class="acts">' + acts + "</div></div>";
+  }).join("");
+}
+$("rfilters").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if (b) { rfilter = b.dataset.rf; renderReports(); } });
+$("rlist").addEventListener("click", e => {
+  const g = a => { const b = e.target.closest("[" + a + "]"); return b ? b.getAttribute(a) : null; };
+  let v;
+  if ((v = g("data-ro"))) openReview(v, e.target.closest("[data-ro]"));
+  else if ((v = g("data-rh"))) { if (confirm("ফাইলটি লুকাবেন? পাবলিক লাইব্রেরিতে আর দেখা যাবে না; পরে ফিরিয়ে আনা যাবে। এর খোলা রিপোর্টগুলো সমাধান হিসেবে চিহ্নিত হবে।")) hideResource(v); }
+  else if ((v = g("data-rd"))) deleteResource(v);
+  else if ((v = g("data-rs"))) resolveReports(v, false);
+  else if ((v = g("data-ru"))) resolveReports(v, true);
+  else if ((v = g("data-rx"))) deleteReports(v);
+});
+
+/* ---------- ফর্ম-ডায়ালগ (তালিকা সম্পাদনার জন্য) ----------
+ * fields: [{ k, label, type:"text"|"select"|"checks"|"check", value, max, ro, hint, options:[[v,l]], text }]
+ * save(values) → ত্রুটির বার্তা (string) ফেরালে ডায়ালগ খোলা থাকে; অন্যথায় বন্ধ হয় */
+function formDialog(o) {
+  closeReview();
+  lastFocus = document.activeElement;
+  const ov = document.createElement("div");
+  ov.className = "ov"; ov.id = "ov";
+  const field = f => {
+    const id = "mf-" + f.k;
+    if (f.type === "select")
+      return '<label>' + esc(f.label) + '<select class="in" id="' + id + '">' + opts(f.options, f.value, x => x[0], x => x[1]) + "</select></label>";
+    if (f.type === "checks")
+      return '<div><b class="sub" style="font-weight:600;color:var(--ink)">' + esc(f.label) + '</b><div class="checks" id="' + id + '">' +
+        f.options.map(x => '<label><input type="checkbox" value="' + esc(x[0]) + '"' + ((f.value || []).indexOf(x[0]) > -1 ? " checked" : "") + "><span>" + esc(x[1]) + "</span></label>").join("") + "</div>" +
+        (f.hint ? '<span class="sub">' + esc(f.hint) + "</span>" : "") + "</div>";
+    if (f.type === "check")
+      return '<label class="one"><input type="checkbox" id="' + id + '"' + (f.value ? " checked" : "") + "><span>" + esc(f.text || f.label) + "</span></label>";
+    return '<label>' + esc(f.label) + '<input class="in" id="' + id + '" maxlength="' + (f.max || 100) + '" value="' + esc(f.value || "") + '"' + (f.ro ? " readonly" : "") +
+      (f.ltr ? ' autocapitalize="none" spellcheck="false"' : "") + ">" + (f.hint ? '<span class="sub">' + esc(f.hint) + "</span>" : "") + "</label>";
+  };
+  ov.innerHTML = '<div class="card dlg sm" role="dialog" aria-modal="true" aria-labelledby="dt">' +
+    '<div class="dh"><h3 id="dt">' + esc(o.title) + '</h3><button class="x" type="button" data-x aria-label="বন্ধ করুন">×</button></div>' +
+    '<form class="fm" id="mf" novalidate>' + o.fields.map(field).join("") + '<p class="msg" id="mf-msg" role="alert"></p></form>' +
+    '<div class="da"><button type="button" class="btn" data-x>বাতিল</button><button type="button" class="btn pri" id="mf-ok">সংরক্ষণ</button></div></div>';
+  document.body.appendChild(ov);
+  document.body.style.overflow = "hidden";
+
+  const read = () => {
+    const v = {};
+    o.fields.forEach(f => {
+      const el = $("mf-" + f.k);
+      if (f.type === "checks") v[f.k] = Array.from(el.querySelectorAll("input:checked")).map(x => x.value);
+      else if (f.type === "check") v[f.k] = el.checked;
+      else if (f.type === "select") v[f.k] = el.value;
+      else v[f.k] = clean(el.value);
+    });
+    return v;
+  };
+  const ok = $("mf-ok");
+  const go = async () => {
+    if (busy) return;
+    busy = true; ok.disabled = true; $("mf-msg").textContent = "";
+    let err = null;
+    try { err = await o.save(read()); } catch (e) { err = "সংরক্ষণ হয়নি: " + (e.code || e.message); }
+    busy = false;
+    if (typeof err === "string") { ok.disabled = false; $("mf-msg").textContent = err; return; }
+    closeReview();
+  };
+  ok.onclick = go;
+  $("mf").onsubmit = ev => { ev.preventDefault(); go(); };
+  const first = ov.querySelector("input:not([readonly]),select");
+  (first || ov.querySelector("[data-x]")).focus();
+}
+
+/* ---------- তালিকা ট্যাব (কলেজ / বিভাগ / কোর্স) ---------- */
+const metaId = {
+  college: s => "college_" + s,
+  department: s => "dept_" + s,
+  course: (d, y, c) => "course_" + d + "_" + y + "_" + c.replace(/[\/\s.]+/g, "_")
+};
+const mdoc = id => META.find(m => m.id === id) || null;
+const hiddenMeta = type => META.filter(m => m.data.type === type && m.data.active === false);
+const isDefCollege = s => DEF.colleges.some(c => c.slug === s);
+const isDefDept = s => DEF.departments.some(d => d.slug === s);
+const isDefCourse = (d, y, c) => DEF.courses.some(x => x.dept === d && x.year === y && x.code === c);
+
+async function metaSet(id, data) {
+  await setDoc(doc(db, "lib_meta", id), data);
+  const m = mdoc(id);
+  if (m) m.data = data; else META.push({ id, data });
+  rebuild(); renderTab();
+}
+async function metaDel(id) {
+  await deleteDoc(doc(db, "lib_meta", id));
+  META = META.filter(m => m.id !== id);
+  rebuild(); renderTab();
+}
+async function metaRun(fn, okMsg) {
+  if (busy) return;
+  busy = true;
+  try { await fn(); toast(okMsg); } catch (e) { errToast(e); }
+  busy = false; renderTab();
+}
+
+const nameOk = s => s.length >= 2 && s.length <= 80;
+
+function renderMeta() {
+  $("mfilters").innerHTML = [["colleges", "কলেজ"], ["departments", "বিভাগ"], ["courses", "কোর্স"]].map(([k, l]) =>
+    '<button type="button" class="f' + (k === mtab ? " on" : "") + '" data-mt="' + k + '" aria-pressed="' + (k === mtab) + '">' + l + "</button>").join("");
+  if (META_ERR) { $("mbody").innerHTML = '<div class="card empty">তালিকা লোড হয়নি: ' + esc(META_ERR) + "<br><small>Rules-এ lib_meta পড়ার অনুমতি দেখুন।</small></div>"; return; }
+  $("mbody").innerHTML = mtab === "colleges" ? metaColleges() : mtab === "departments" ? metaDepartments() : metaCourses();
+}
+$("mfilters").addEventListener("click", e => { const b = e.target.closest("[data-mt]"); if (b) { mtab = b.dataset.mt; renderMeta(); } });
+
+const mbtn = (act, key, label, cls, extra) => '<button type="button" class="btn sm ' + (cls || "") + '" data-m="' + act + '" data-k="' + esc(key) + '"' + (extra || "") + ">" + label + "</button>";
+const tagOf = (isDef, hasOv) => isDef ? (hasOv ? "ডিফল্ট · সম্পাদিত" : "ডিফল্ট") : "নতুন";
+const nFiles = f => ALL.filter(r => stOf(r) !== "rejected" && f(r)).length;
+
+/* — কলেজ — */
+function metaColleges() {
+  const act = D.colleges(), hid = hiddenMeta("college");
+  let h = '<div class="mh"><h3>কলেজ <small>' + BN(act.length) + 'টি</small></h3><button type="button" class="btn pri sm" data-m="add-college">+ কলেজ যোগ করুন</button></div><div class="list">';
+  act.forEach(c => {
+    const def = isDefCollege(c.slug), ov = mdoc(metaId.college(c.slug));
+    h += '<div class="card item"><div><h3>' + esc(c.bn) + ' <span class="pill mu">' + tagOf(def, !!ov) + "</span></h3>" +
+      '<div class="meta">' + esc(c.en || "") + " · " + esc(c.slug) + " · " + BN(nFiles(r => r.college === c.slug)) + ' ফাইল</div></div><div class="acts">' +
+      mbtn("edit-college", c.slug, "সম্পাদনা") + mbtn("hide-college", c.slug, "লুকান") +
+      (ov ? mbtn("del-college", c.slug, def ? "ডিফল্টে ফেরান" : "মুছুন", "dng") : "") + "</div></div>";
+  });
+  h += "</div>";
+  if (hid.length) {
+    h += '<h4 class="sub-h">লুকানো কলেজ</h4><div class="list">' + hid.map(m => {
+      const c = m.data;
+      return '<div class="card item"><div><h3>' + esc(c.bn) + ' <span class="pill mu">লুকানো</span></h3><div class="meta">' + esc(c.en || "") + " · " + esc(c.slug) + '</div></div><div class="acts">' +
+        mbtn("show-college", c.slug, "ফিরিয়ে আনুন", "ok") + (isDefCollege(c.slug) ? "" : mbtn("del-college", c.slug, "মুছুন", "dng")) + "</div></div>";
+    }).join("") + "</div>";
+  }
+  return h;
+}
+
+function collegeForm(c) {
+  const edit = !!c;
+  formDialog({
+    title: edit ? "কলেজ সম্পাদনা" : "নতুন কলেজ",
+    fields: [
+      { k: "slug", label: "স্লাগ (ইংরেজি, ছোট হাতের)", value: edit ? c.slug : "", max: 40, ro: edit, ltr: true, hint: edit ? "স্লাগ বদলানো যায় না।" : "যেমন: dhaka-college। শুধু a–z, 0–9 ও হাইফেন (২–৪০ অক্ষর)।" },
+      { k: "bn", label: "বাংলা নাম", value: edit ? c.bn : "", max: 80 },
+      { k: "en", label: "ইংরেজি নাম", value: edit ? c.en : "", max: 80 }
+    ],
+    save: async v => {
+      if (!SLUG_RE.test(v.slug)) return "স্লাগ শুধু ছোট ইংরেজি অক্ষর, সংখ্যা ও হাইফেন দিয়ে ২–৪০ অক্ষরের হতে হবে।";
+      if (!nameOk(v.bn) || !nameOk(v.en)) return "বাংলা ও ইংরেজি দুই নামই ২–৮০ অক্ষরের হতে হবে।";
+      if (!edit && (D.college(v.slug) || mdoc(metaId.college(v.slug)))) return "এই স্লাগে কলেজ আগেই আছে (লুকানো তালিকাও দেখুন)।";
+      await metaSet(metaId.college(v.slug), { type: "college", slug: v.slug, bn: v.bn, en: v.en, active: true });
+      toast(edit ? "কলেজ সংরক্ষিত হয়েছে" : "কলেজ যোগ হয়েছে");
+    }
+  });
+}
+
+/* — বিভাগ — */
+function metaDepartments() {
+  const act = D.departments(), hid = hiddenMeta("department");
+  let h = '<div class="mh"><h3>বিভাগ <small>' + BN(act.length) + 'টি</small></h3><button type="button" class="btn pri sm" data-m="add-dept">+ বিভাগ যোগ করুন</button></div><div class="list">';
+  act.forEach(d => {
+    const def = isDefDept(d.slug), ov = mdoc(metaId.department(d.slug));
+    const cols = d.colleges && d.colleges.length ? d.colleges.map(s => D.name(D.college(s), "bn") || s).join(", ") : "সব কলেজ";
+    h += '<div class="card item"><div><h3>' + esc(d.bn) + ' <span class="pill mu">' + tagOf(def, !!ov) + "</span></h3>" +
+      '<div class="meta">' + esc(d.en || "") + " · " + esc(d.slug) + " · " + BN(nFiles(r => r.dept === d.slug)) + " ফাইল · " + BN(D.courses(d.slug).length) + " কোর্স সাজেশন</div>" +
+      '<div class="meta">কলেজ: ' + esc(cols) + '</div></div><div class="acts">' +
+      mbtn("edit-dept", d.slug, "সম্পাদনা") + mbtn("hide-dept", d.slug, "লুকান") +
+      (ov ? mbtn("del-dept", d.slug, def ? "ডিফল্টে ফেরান" : "মুছুন", "dng") : "") + "</div></div>";
+  });
+  h += "</div>";
+  if (hid.length) {
+    h += '<h4 class="sub-h">লুকানো বিভাগ</h4><div class="list">' + hid.map(m => {
+      const d = m.data;
+      return '<div class="card item"><div><h3>' + esc(d.bn) + ' <span class="pill mu">লুকানো</span></h3><div class="meta">' + esc(d.en || "") + " · " + esc(d.slug) + '</div></div><div class="acts">' +
+        mbtn("show-dept", d.slug, "ফিরিয়ে আনুন", "ok") + (isDefDept(d.slug) ? "" : mbtn("del-dept", d.slug, "মুছুন", "dng")) + "</div></div>";
+    }).join("") + "</div>";
+  }
+  return h;
+}
+
+function deptForm(d) {
+  const edit = !!d;
+  formDialog({
+    title: edit ? "বিভাগ সম্পাদনা" : "নতুন বিভাগ",
+    fields: [
+      { k: "slug", label: "স্লাগ (ইংরেজি, ছোট হাতের)", value: edit ? d.slug : "", max: 40, ro: edit, ltr: true, hint: edit ? "স্লাগ বদলানো যায় না।" : "যেমন: computer-science" },
+      { k: "bn", label: "বাংলা নাম", value: edit ? d.bn : "", max: 80 },
+      { k: "en", label: "ইংরেজি নাম", value: edit ? d.en : "", max: 80 },
+      { k: "colleges", type: "checks", label: "যে কলেজগুলোতে এই বিভাগ আছে", value: edit && d.colleges ? d.colleges : [], options: D.colleges().map(c => [c.slug, D.name(c, "bn")]), hint: "কিছু না বাছলে সব কলেজে দেখাবে।" }
+    ],
+    save: async v => {
+      if (!SLUG_RE.test(v.slug)) return "স্লাগ শুধু ছোট ইংরেজি অক্ষর, সংখ্যা ও হাইফেন দিয়ে ২–৪০ অক্ষরের হতে হবে।";
+      if (!nameOk(v.bn) || !nameOk(v.en)) return "বাংলা ও ইংরেজি দুই নামই ২–৮০ অক্ষরের হতে হবে।";
+      if (!edit && (D.department(v.slug) || mdoc(metaId.department(v.slug)))) return "এই স্লাগে বিভাগ আগেই আছে (লুকানো তালিকাও দেখুন)।";
+      const data = { type: "department", slug: v.slug, bn: v.bn, en: v.en, active: true };
+      if (v.colleges.length) data.colleges = v.colleges;
+      await metaSet(metaId.department(v.slug), data);
+      toast(edit ? "বিভাগ সংরক্ষিত হয়েছে" : "বিভাগ যোগ হয়েছে");
+    }
+  });
+}
+
+/* — কোর্স — */
+function metaCourses() {
+  const depts = D.departments();
+  if (!mdept || !D.department(mdept)) mdept = (depts[0] || {}).slug || "";
+  const list = mdept ? D.courses(mdept, myear || 0) : [];
+  const hid = hiddenMeta("course").filter(m => m.data.dept === mdept && (!myear || Number(m.data.year) === myear));
+
+  let h = '<div class="mh"><label class="sr" for="m-dept" style="position:absolute;left:-9999px">বিভাগ</label><select class="in" id="m-dept">' + opts(depts, mdept, d => d.slug, d => D.name(d, "bn")) + "</select>" +
+    '<div class="filters" style="margin:0" role="group" aria-label="বর্ষ">' + [0, 1, 2, 3, 4].map(y =>
+      '<button type="button" class="f' + (y === myear ? " on" : "") + '" data-my="' + y + '" aria-pressed="' + (y === myear) + '">' + (y ? BN(y) + " বর্ষ" : "সব বর্ষ") + "</button>").join("") + "</div>" +
+    '<button type="button" class="btn pri sm" data-m="add-course" style="margin-left:auto">+ কোর্স যোগ করুন</button></div>';
+  h += '<h3 class="sub-h" style="margin-top:4px">' + esc(D.name(D.department(mdept), "bn")) + " · " + BN(list.length) + 'টি কোর্স সাজেশন</h3>';
+
+  if (!list.length) h += '<div class="card empty">এই বিভাগ/বর্ষে এখনো কোনো কোর্স সাজেশন নেই। “+ কোর্স যোগ করুন” দিয়ে যোগ করুন।</div>';
+  else {
+    h += '<div class="list">';
+    list.forEach(c => {
+      const key = c.dept + "|" + c.year + "|" + c.code, def = isDefCourse(c.dept, c.year, c.code), ov = mdoc(metaId.course(c.dept, c.year, c.code));
+      h += '<div class="card item"><div><h3><span class="code">' + esc(c.code) + "</span>" + esc(c.bn || c.en) + (c.opt ? ' <span class="pill mu">ঐচ্ছিক</span>' : "") + ' <span class="pill mu">' + tagOf(def, !!ov) + "</span></h3>" +
+        '<div class="meta">' + esc(c.en || "") + " · " + BN(c.year) + " বর্ষ · " + BN(nFiles(r => r.dept === c.dept && r.year === c.year && String(r.courseCode).toLowerCase() === c.code.toLowerCase())) + ' ফাইল</div></div><div class="acts">' +
+        mbtn("edit-course", key, "সম্পাদনা") + mbtn("hide-course", key, "লুকান") + (ov ? mbtn("del-course", key, def ? "ডিফল্টে ফেরান" : "মুছুন", "dng") : "") + "</div></div>";
+    });
+    h += "</div>";
+  }
+  if (hid.length) {
+    h += '<h4 class="sub-h">লুকানো কোর্স</h4><div class="list">' + hid.map(m => {
+      const c = m.data, key = c.dept + "|" + c.year + "|" + c.code;
+      return '<div class="card item"><div><h3><span class="code">' + esc(c.code) + "</span>" + esc(c.bn || c.en) + ' <span class="pill mu">লুকানো</span></h3><div class="meta">' + BN(c.year) + ' বর্ষ</div></div><div class="acts">' +
+        mbtn("show-course", key, "ফিরিয়ে আনুন", "ok") + (isDefCourse(c.dept, Number(c.year), c.code) ? "" : mbtn("del-course", key, "মুছুন", "dng")) + "</div></div>";
+    }).join("") + "</div>";
+  }
+  return h;
+}
+
+function courseForm(c, pre) {
+  const edit = !!c;
+  const depts = D.departments();
+  formDialog({
+    title: edit ? "কোর্স সম্পাদনা" : "নতুন কোর্স সাজেশন",
+    fields: [
+      { k: "dept", type: "select", label: "বিভাগ", value: edit ? c.dept : pre.dept, options: depts.map(d => [d.slug, D.name(d, "bn")]) },
+      { k: "year", type: "select", label: "বর্ষ", value: edit ? c.year : pre.year, options: D.YEARS.map(y => [y.n, y.bn]) },
+      { k: "code", label: "কোর্স কোড", value: edit ? c.code : "", max: 20, ro: edit, ltr: true, hint: edit ? "কোড বা বর্ষ বদলাতে চাইলে পুরোনোটি লুকিয়ে নতুন করে যোগ করুন।" : "যেমন: 222201" },
+      { k: "en", label: "কোর্সের নাম (ইংরেজি)", value: edit ? c.en : "", max: 100 },
+      { k: "bn", label: "কোর্সের নাম (বাংলা, ঐচ্ছিক)", value: edit ? (c.bn || "") : "", max: 100 },
+      { k: "opt", type: "check", label: "ঐচ্ছিক", text: "ঐচ্ছিক কোর্স", value: edit && !!c.opt }
+    ],
+    save: async v => {
+      const year = Number(v.year);
+      if (edit) { v.dept = c.dept; v.code = c.code; }
+      if (!CODE_RE.test(v.code)) return "কোর্স কোড ২–২০ অক্ষরের হতে হবে (ইংরেজি অক্ষর, সংখ্যা, স্পেস, . _ -)।";
+      if (v.en.length < 2 || v.en.length > 100) return "ইংরেজি নাম ২–১০০ অক্ষরের হতে হবে।";
+      if (v.bn.length > 100) return "বাংলা নাম ১০০ অক্ষরের বেশি হবে না।";
+      const id = metaId.course(edit ? c.dept : v.dept, edit ? c.year : year, v.code);
+      if (!edit) {
+        if (D.courses(v.dept, year).some(x => x.code === v.code)) return "এই বিভাগ ও বর্ষে এই কোড আগেই আছে।";
+        if (mdoc(id)) return "এই কোডের কোর্স লুকানো তালিকায় আছে; সেখান থেকে ফিরিয়ে আনুন।";
+      }
+      const data = { type: "course", dept: edit ? c.dept : v.dept, year: edit ? c.year : year, code: v.code, en: v.en, active: true };
+      if (v.bn) data.bn = v.bn;
+      if (v.opt) data.opt = true;
+      await metaSet(id, data);
+      toast(edit ? "কোর্স সংরক্ষিত হয়েছে" : "কোর্স যোগ হয়েছে");
+    }
+  });
+}
+
+/* তালিকা ট্যাবের সব ক্লিক */
+const findCourse = key => { const [d, y, ...c] = key.split("|"); const code = c.join("|"); return D.courses(d, Number(y)).find(x => x.code === code) || null; };
+$("mbody").addEventListener("change", e => { if (e.target.id === "m-dept") { mdept = e.target.value; renderMeta(); } });
+$("mbody").addEventListener("click", e => {
+  const yb = e.target.closest("[data-my]");
+  if (yb) { myear = Number(yb.dataset.my); renderMeta(); return; }
+  const b = e.target.closest("[data-m]"); if (!b) return;
+  const act = b.dataset.m, k = b.dataset.k || "";
+  lastFocus = b;
+
+  if (act === "add-college") return collegeForm(null);
+  if (act === "edit-college") return collegeForm(D.college(k));
+  if (act === "hide-college") {
+    const c = D.college(k); if (!c) return;
+    if (!confirm("“" + c.bn + "” লুকাবেন?\n\nএর " + BN(nFiles(r => r.college === k)) + "টি ফাইল মুছে যাবে না, কিন্তু কলেজটি ফিল্টার ও জমার ফর্মে দেখাবে না। পরে ফিরিয়ে আনা যাবে।")) return;
+    return metaRun(() => metaSet(metaId.college(k), { type: "college", slug: c.slug, bn: c.bn, en: c.en || "", active: false }), "কলেজ লুকানো হয়েছে");
+  }
+  if (act === "show-college") { const m = mdoc(metaId.college(k)); if (m) return metaRun(() => metaSet(m.id, Object.assign({}, m.data, { active: true })), "কলেজ ফিরেছে"); }
+  if (act === "del-college") {
+    if (!confirm(isDefCollege(k) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই কলেজ স্থায়ীভাবে মুছবেন? (ফাইলগুলো মুছবে না)")) return;
+    return metaRun(() => metaDel(metaId.college(k)), "হয়েছে");
+  }
+
+  if (act === "add-dept") return deptForm(null);
+  if (act === "edit-dept") return deptForm(D.department(k));
+  if (act === "hide-dept") {
+    const d = D.department(k); if (!d) return;
+    if (!confirm("“" + d.bn + "” লুকাবেন?\n\nএর " + BN(nFiles(r => r.dept === k)) + "টি ফাইল মুছে যাবে না, কিন্তু বিভাগটি ফিরিয়ে না আনা পর্যন্ত লাইব্রেরিতে ব্রাউজ করা যাবে না এবং জমার ফর্মে আসবে না।")) return;
+    const data = { type: "department", slug: d.slug, bn: d.bn, en: d.en || "", active: false };
+    if (d.colleges && d.colleges.length) data.colleges = d.colleges;
+    return metaRun(() => metaSet(metaId.department(k), data), "বিভাগ লুকানো হয়েছে");
+  }
+  if (act === "show-dept") { const m = mdoc(metaId.department(k)); if (m) return metaRun(() => metaSet(m.id, Object.assign({}, m.data, { active: true })), "বিভাগ ফিরেছে"); }
+  if (act === "del-dept") {
+    if (!confirm(isDefDept(k) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই বিভাগ স্থায়ীভাবে মুছবেন? (ফাইলগুলো মুছবে না)")) return;
+    return metaRun(() => metaDel(metaId.department(k)), "হয়েছে");
+  }
+
+  if (act === "add-course") return courseForm(null, { dept: mdept, year: myear || 1 });
+  if (act === "edit-course") return courseForm(findCourse(k));
+  if (act === "hide-course") {
+    const c = findCourse(k); if (!c) return;
+    const data = { type: "course", dept: c.dept, year: c.year, code: c.code, en: c.en || "", active: false };
+    if (c.bn) data.bn = c.bn; if (c.opt) data.opt = true;
+    return metaRun(() => metaSet(metaId.course(c.dept, c.year, c.code), data), "কোর্স লুকানো হয়েছে");
+  }
+  if (act === "show-course") {
+    const [d, y, ...cc] = k.split("|"); const m = mdoc(metaId.course(d, Number(y), cc.join("|")));
+    if (m) return metaRun(() => metaSet(m.id, Object.assign({}, m.data, { active: true })), "কোর্স ফিরেছে");
+  }
+  if (act === "del-course") {
+    const [d, y, ...cc] = k.split("|"), code = cc.join("|");
+    if (!confirm(isDefCourse(d, Number(y), code) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই কোর্স সাজেশন স্থায়ীভাবে মুছবেন?")) return;
+    return metaRun(() => metaDel(metaId.course(d, Number(y), code)), "হয়েছে");
+  }
+});
 
 /* ---------- রিভিউ ডায়ালগ ---------- */
 function opts(items, val, vf, lf) {
@@ -306,7 +926,10 @@ function openReview(id, from) {
   current = r; lastFocus = from || null; probeOk = null;
   const status = r.status || "pending", isPend = status === "pending";
   const depts = D.departments(r.college);
-  if (!depts.some(d => d.slug === r.dept)) { const d = D.department(r.dept); if (d) depts.push(d); }
+  if (!depts.some(d => d.slug === r.dept)) depts.push(D.department(r.dept) || { slug: r.dept, bn: r.dept + " (লুকানো)" });
+  /* কলেজ বা বিভাগ লুকানো থাকলেও ফাইলের বর্তমান মান তালিকায় রাখি, নইলে সংরক্ষণে নিঃশব্দে বদলে যেত */
+  const cols = D.colleges();
+  if (!cols.some(c => c.slug === r.college)) cols.push({ slug: r.college, bn: r.college + " (লুকানো)" });
 
   const o = document.createElement("div");
   o.className = "ov"; o.id = "ov";
@@ -323,7 +946,7 @@ function openReview(id, from) {
         '<div class="fm">' +
           '<label>শিরোনাম<input class="in" id="e-title" maxlength="120" value="' + esc(r.title) + '"></label>' +
           '<div class="r2">' +
-            '<label>কলেজ<select class="in" id="e-college">' + opts(D.colleges(), r.college, c => c.slug, c => D.name(c, "bn")) + "</select></label>" +
+            '<label>কলেজ<select class="in" id="e-college">' + opts(cols, r.college, c => c.slug, c => D.name(c, "bn")) + "</select></label>" +
             '<label>বিভাগ<select class="in" id="e-dept">' + opts(depts, r.dept, d => d.slug, d => D.name(d, "bn")) + "</select></label>" +
           "</div>" +
           '<div class="r2">' +
@@ -349,10 +972,12 @@ function openReview(id, from) {
         "</div>" +
       "</div>" +
       '<div class="da">' +
+        '<button type="button" class="btn dng" data-del style="margin-right:auto">মুছুন</button>' +
         (isPend
           ? '<button type="button" class="btn dng" data-reject>বাতিল করুন</button><button type="button" class="btn ok" data-approve>অনুমোদন দিন</button>'
           : '<button type="button" class="btn" data-pend>অপেক্ষমাণে ফেরান</button>' +
-            (status === "approved" ? '<button type="button" class="btn dng" data-reject>বাতিল করুন</button>' : "") +
+            (status === "approved" ? '<button type="button" class="btn" data-hide>লুকান</button><button type="button" class="btn dng" data-reject>বাতিল করুন</button>' : "") +
+            (status === "hidden" ? '<button type="button" class="btn ok" data-unhide>আবার প্রকাশ করুন</button>' : "") +
             '<button type="button" class="btn pri" data-save>তথ্য সংরক্ষণ</button>') +
       "</div>" +
     "</div>";
@@ -412,7 +1037,9 @@ async function apply(extra, okMsg) {
     if (typeof current.rejectReason !== "string") delete current.rejectReason;   // deleteField() চিহ্ন স্মৃতিতে রাখা হয় না
     current.reviewedAt = { toMillis: () => Date.now() };
     toast(okMsg);
-    busy = false; closeReview(); render();
+    const rid = current.id, wasHidden = extra.status === "hidden";
+    busy = false; closeReview(); renderTab();
+    if (wasHidden && REPORTS.some(x => x.resourceId === rid && !x.resolved)) resolveReports(rid);   // লুকালে ওই ফাইলের খোলা রিপোর্ট সমাধান ধরা হয়
   } catch (err) {
     errToast(err);
     busy = false;
@@ -430,6 +1057,9 @@ document.addEventListener("click", async e => {
     apply({ status: "approved", rejectReason: deleteField() }, "অনুমোদিত হয়েছে");
   }
   else if (e.target.closest("[data-save]")) apply({}, "সংরক্ষিত হয়েছে");
+  else if (e.target.closest("[data-hide]")) apply({ status: "hidden" }, "ফাইলটি লুকানো হয়েছে");
+  else if (e.target.closest("[data-unhide]")) apply({ status: "approved", rejectReason: deleteField() }, "আবার প্রকাশ করা হয়েছে");
+  else if (e.target.closest("[data-del]")) { if (current && await deleteResource(current.id)) closeReview(); }
   else if (e.target.closest("[data-pend]")) apply({ status: "pending", rejectReason: deleteField() }, "অপেক্ষমাণে ফেরানো হয়েছে");
   else if (e.target.closest("[data-reject]")) { $("rej").classList.add("on"); $("rej-t").focus(); $("rej").scrollIntoView({ block: "nearest" }); }
   else if (e.target.closest("[data-rejno]")) $("rej").classList.remove("on");
