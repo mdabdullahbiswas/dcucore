@@ -24,6 +24,7 @@
 <script src="library.js" defer></script>
 <script type="module" src="library-browse.js"></script>
 <script type="module" src="library-viewer.js"></script>
+<script type="module" src="library-extras.js"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,10 +96,13 @@
     <h2 id="lib-browse-h" class="t">বিভাগ অনুযায়ী ফাইল|Browse by department</h2>
 
     <!-- সার্চ (library-browse.js চালায) -->
+    <div class="lib-searchrow">
     <div class="lib-search" role="search">
       <svg class="lib-search-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
       <input id="lib-q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80" placeholder="শিরোনাম, কোর্স কোড বা কোর্সের নাম খুঁজুন…" aria-label="লাইব্রেরিতে খুঁজুন">
       <button type="button" class="lib-search-x" id="lib-q-x" hidden aria-label="সার্চ মুছুন"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <button type="button" class="lib-bm" id="lib-bm" aria-pressed="false"><span>সংরক্ষিত</span></button>
     </div>
     <p class="lib-sr-only" id="lib-search-sr" role="status" aria-live="polite"></p>
 
