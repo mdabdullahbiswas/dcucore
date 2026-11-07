@@ -928,7 +928,7 @@ function openReview(id, from) {
   const depts = D.departments(r.college);
   if (!depts.some(d => d.slug === r.dept)) depts.push(D.department(r.dept) || { slug: r.dept, bn: r.dept + " (লুকানো)" });
   /* কলেজ বা বিভাগ লুকানো থাকলেও ফাইলের বর্তমান মান তালিকায় রাখি, নইলে সংরক্ষণে নিঃশব্দে বদলে যেত */
-  const cols = D.colleges();
+  const cols = D.colleges().concat([D.ALL_COLLEGE]);
   if (!cols.some(c => c.slug === r.college)) cols.push({ slug: r.college, bn: r.college + " (লুকানো)" });
 
   const o = document.createElement("div");
