@@ -163,6 +163,25 @@
     return out.join(" · ");
   }
 
+  /* জমাদাতা নিজে রাজি হলে নাম ও (দিলে) কলেজ, বিভাগ, সেশন */
+  function byLine(f) {
+    if (!f.by) return "";
+    var l = lang(), out = [f.by];
+    var c = f.byCollege && D.college(f.byCollege); if (c) out.push(D.name(c, l));
+    var d = f.byDept && D.department(f.byDept); if (d) out.push(D.name(d, l));
+    if (f.bySession) out.push(tx("সেশন ", "Session ") + f.bySession);
+    return tx("জমা দিয়েছেন: ", "Submitted by: ") + out.join(" · ");
+  }
+  function setMeta(f) {
+    elMeta.textContent = metaLine(f);
+    var b = byLine(f);
+    if (b) {
+      var s = document.createElement("span");
+      s.className = "lib-vw-by"; s.textContent = b;
+      elMeta.appendChild(document.createElement("br")); elMeta.appendChild(s);
+    }
+  }
+
   /* ---------- খোলা ও বন্ধ ---------- */
   function setFallback(on) {
     elFallback.hidden = !on;
@@ -249,7 +268,7 @@
     cur = f; curLinks = lk;
     saveLabel();
     elTitle.textContent = f.title;
-    elMeta.textContent = metaLine(f);
+    setMeta(f);
     root.querySelector('[data-vw="download"] span').textContent = lk.pdfNote ? tx("PDF ডাউনলোড", "Download PDF") : tx("ডাউনলোড", "Download");
 
     if (root.hidden) {
@@ -403,7 +422,7 @@
     if (typeof prevLang === "function") { try { prevLang(); } catch (e) { /* অন্য হুক */ } }
     if (root && !root.hidden && cur) {
       labels();
-      elMeta.textContent = metaLine(cur);
+      setMeta(cur);
       root.querySelector('[data-vw="download"] span').textContent = curLinks.pdfNote ? tx("PDF ডাউনলোড", "Download PDF") : tx("ডাউনলোড", "Download");
       if (!elFallback.hidden) setFallback(true);
     }
