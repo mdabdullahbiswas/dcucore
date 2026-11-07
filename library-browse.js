@@ -11,6 +11,7 @@
  *
  * URL: /library#economics  ·  /library#economics-2nd  ·  /library#economics-2nd-222201?type=question&sort=pop&c=dhaka-college
  *   সার্চ: /library#?q=micro। ব্রাউজারের Back বোতাম কাজ করে।
+ * ধাপ ৯: বুকমার্ক (★, localStorage, লগইন ছাড়া) ও "সংরক্ষিত" তালিকা (#?saved=1)। window.LibMarks এ has/toggle/count।
  * ধাপ ৮: সার্চ (শিরোনাম, কোড, কোর্সের নাম, বিভাগ), ফিল্টার চিপ (ধরন/পরীক্ষা/সাল), সাজানো (নতুন/জনপ্রিয়)।
  *
  * ধাপ ৭ (library-viewer.js) এই ইভেন্ট ধরে মডাল খোলে। লোড শেষে "lib:ready" ইভেন্ট যায়।
@@ -35,7 +36,7 @@ const D = window.LibData, UI = window.LibUI;
 const $ = id => document.getElementById(id);
 const elBrowse = $("lib-browse"), elH = $("lib-browse-h"), elGrid = $("lib-grid"),
       elStatus = $("lib-status"), elDrill = $("lib-drill"), elRecent = $("lib-recent"),
-      elQ = $("lib-q"), elQx = $("lib-q-x"), elSr = $("lib-search-sr");
+      elQ = $("lib-q"), elQx = $("lib-q-x"), elSr = $("lib-search-sr"), elBm = $("lib-bm");
 if (!D || !UI || !elDrill) throw new Error("library-browse: LibData, LibUI বা #lib-drill পাওয়া যায়নি");
 
 const app = getApps().find(a => a.name === "dcu-library") || initializeApp(CFG, "dcu-library");
@@ -76,6 +77,20 @@ const FT_ICONS = {
 const svg = (inner, size, sw) => '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="' + (sw || 1.8) +
   '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + "</svg>";
 const CHEVRON = svg('<path d="M9 6l6 6-6 6"/>', 18, 2);
+
+/* ---------- বুকমার্ক (লগইন ছাড়া; শুধু এই ব্রাউজারের localStorage-এ) ---------- */
+const MARK_KEY = "dcu-lib-bm", MARK_MAX = 500;
+const STAR = svg('<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>', 20, 1.8);
+let marks = new Set();
+function loadMarks() {
+  marks = new Set();
+  try {
+    const a = JSON.parse(localStorage.getItem(MARK_KEY));
+    if (Array.isArray(a)) a.slice(-MARK_MAX).forEach(x => { if (typeof x === "string" && /^[A-Za-z0-9_-]{10,120}$/.test(x)) marks.add(x); });
+  } catch (e) { /* নেই বা নষ্ট */ }
+}
+function saveMarks() { try { localStorage.setItem(MARK_KEY, JSON.stringify(Array.from(marks))); } catch (e) { /* ব্লক করা */ } }
+loadMarks();
 
 /* ---------- ডেটা ---------- */
 let files = [];
@@ -146,7 +161,8 @@ const isNew = f => f.ms && Date.now() - f.ms < NEW_DAYS * 864e5;
  * পথ:      #economics  ·  #economics-2nd  ·  #economics-2nd-222201
  * ফিল্টার: পথের পরে ?…  যেমন  #economics-2nd-222201?type=question&exam=final&year=2023&sort=pop&c=dhaka-college
  *          সার্চ: #?q=micro   (q সার্চ, type ধরন, exam পরীক্ষার ধরন, year পরীক্ষার সাল, sort=pop জনপ্রিয়, c কলেজ) */
-const FLT0 = { q: "", type: "", etype: "", eyear: 0, sort: "new" };
+const FLT0 = { q: "", type: "", etype: "", eyear: 0, sort: "new", saved: false };
+const listMode = () => !!flt.q.trim() || flt.saved;
 let flt = Object.assign({}, FLT0);
 let shown = PAGE;
 let applying = false;      // URL থেকে অবস্থা বসানোর সময় true, তাই তখন URL আবার লেখা হয় না
@@ -178,6 +194,7 @@ function readUrl() {
   f.etype = D.examType(p.get("exam")) ? p.get("exam") : "";
   f.eyear = Number(p.get("year")) || 0;
   f.sort = p.get("sort") === "pop" ? "pop" : "new";
+  f.saved = p.get("saved") === "1";
   const c = p.get("c") || "";
   return { view: parseRoute(i < 0 ? raw : raw.slice(0, i)), flt: f, college: D.college(c) ? c : "" };
 }
@@ -189,6 +206,7 @@ function urlFor() {
   if (flt.etype) p.set("exam", flt.etype);
   if (flt.eyear) p.set("year", String(flt.eyear));
   if (flt.sort === "pop") p.set("sort", "pop");
+  if (flt.saved) p.set("saved", "1");
   if (college()) p.set("c", college());
   const qs = p.toString(), h = hashOf(view), base = location.pathname + location.search;
   if (!qs) return h ? base + h : base;
@@ -208,9 +226,9 @@ const href = v => hashOf(v) || location.pathname;
 /* ব্যবহারকারীর ক্রিয়ায় (ক্লিক) বিভাগ/বর্ষ/কোর্স বদল: ফিল্টার ও সার্চ নতুন করে শুরু */
 function navigate(v) {
   if (v.dept && !D.department(v.dept)) v = { dept: "", year: 0, course: "" };
-  const changed = !sameView(v, view) || !!flt.q.trim();
+  const changed = !sameView(v, view) || listMode();
   view = { dept: v.dept || "", year: v.year || 0, course: v.course || "" };
-  flt.q = ""; flt.type = ""; flt.etype = ""; flt.eyear = 0; shown = PAGE;
+  flt.q = ""; flt.type = ""; flt.etype = ""; flt.eyear = 0; flt.saved = false; shown = PAGE;
   syncSearchBox();
   if (changed) updateUrl(true);
   renderAll();
@@ -255,13 +273,43 @@ function fileCard(f, showDept) {
   if (col) meta.push("<span>" + esc(D.name(col, l)) + "</span>");
   if (dept) meta.push("<span>" + esc(D.name(dept, l)) + "</span>");
 
-  return '<button type="button" class="lib-file" data-id="' + esc(f.id) + '">' +
+  return '<div class="lib-fw"><button type="button" class="lib-file" data-id="' + esc(f.id) + '">' +
     '<span class="lib-file-ico" aria-hidden="true">' + svg(FT_ICONS[f.ftype] || FT_ICONS.other, 24, 1.8) + "</span>" +
     '<span class="lib-file-body"><b class="lib-file-title">' + esc(f.title) + "</b>" +
     '<span class="lib-file-meta">' + meta.join("") + "</span></span>" +
     '<span class="lib-file-side">' +
     (isNew(f) ? '<span class="lib-new">' + tx("নতুন", "New") + "</span>" : "") +
-    '<span class="lib-tag">' + esc(D.name(ft, l)) + "</span></span></button>";
+    '<span class="lib-tag">' + esc(D.name(ft, l)) + "</span></span></button>" + starBtn(f.id) + "</div>";
+}
+
+function starLabel(on) { return on ? tx("সংরক্ষণ সরান", "Remove from saved") : tx("সংরক্ষণ করুন", "Save"); }
+function starBtn(id) {
+  const on = marks.has(id);
+  return '<button type="button" class="lib-star" data-star="' + esc(id) + '" aria-pressed="' + on + '" aria-label="' + esc(starLabel(on)) + '" title="' + esc(starLabel(on)) + '">' + STAR + "</button>";
+}
+
+function toggleMark(id) {
+  if (marks.has(id)) marks.delete(id);
+  else { marks.add(id); if (marks.size > MARK_MAX) marks.delete(marks.values().next().value); }
+  saveMarks();
+  document.querySelectorAll("[data-star]").forEach(b => {
+    if (b.getAttribute("data-star") !== id) return;
+    const on = marks.has(id);
+    b.setAttribute("aria-pressed", String(on));
+    b.setAttribute("aria-label", starLabel(on));
+    b.setAttribute("title", starLabel(on));
+  });
+  updateBm();
+  if (flt.saved) renderView();
+  return marks.has(id);
+}
+
+function updateBm() {
+  if (!elBm) return;
+  const n = phase === "ready" ? files.reduce((c, f) => c + (marks.has(f.id) ? 1 : 0), 0) : marks.size;
+  elBm.setAttribute("aria-pressed", String(flt.saved));
+  elBm.classList.toggle("on", flt.saved);
+  elBm.innerHTML = STAR + "<span>" + esc(tx("সংরক্ষিত", "Saved")) + "</span>" + (n ? "<b>" + esc(num(n)) + "</b>" : "");
 }
 
 function openFile(f) {
@@ -458,11 +506,20 @@ let lastCount = 0;
 function searchView() {
   const q = flt.q.trim();
   const tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
-  let h = '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(tx("“" + q + "” এর ফলাফল", "Results for “" + q + "”")) + "</h2>" + headCollege() + "</div>";
+  const title = flt.saved
+    ? tx("সংরক্ষিত ফাইল", "Saved files") + (q ? " · “" + q + "”" : "")
+    : tx("“" + q + "” এর ফলাফল", "Results for “" + q + "”");
+  let h = '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(title) + "</h2>" + (flt.saved ? "" : headCollege()) + "</div>";
+  if (flt.saved) h += '<p class="lib-dsub">' + esc(tx("এগুলো শুধু এই ব্রাউজারে সংরক্ষিত থাকে; লগইন লাগে না।", "Saved only in this browser; no login needed.")) + "</p>";
   if (phase === "loading") { lastCount = -1; return h + '<div class="lib-files" aria-busy="true">' + skFiles(4) + "</div>"; }
   if (phase === "error") { lastCount = -1; return h + retryBox(); }
-  const base = visible().filter(f => { const t = hay(f); return tokens.every(k => t.indexOf(k) > -1); });
+  const pool = flt.saved ? files.filter(f => marks.has(f.id)) : visible();
+  const base = pool.filter(f => { if (!tokens.length) return true; const t = hay(f); return tokens.every(k => t.indexOf(k) > -1); });
   lastCount = base.length;
+  if (flt.saved && !base.length) {
+    return h + emptyBox("other", q ? tx("সংরক্ষিত ফাইলে কিছু মেলেনি", "No saved file matches") : tx("এখনো কিছু সংরক্ষণ করেননি", "Nothing saved yet"),
+      q ? tx("অন্য শব্দে খুঁজুন।", "Try different words.") : tx("ফাইলের কার্ডের ★ চাপলে সেটি এখানে জমা হবে।", "Tap the ★ on a file card to keep it here."));
+  }
   if (!base.length) {
     return h + emptyBox("question", tx("কিছু পাওয়া যায়নি", "Nothing found"),
       tx("শিরোনাম, কোর্স কোড বা কোর্সের নাম দিয়ে আবার খুঁজুন। কলেজ ফিল্টার থাকলে “সব কলেজ” করে দেখুন।", "Try a title, course code or course name. If a college is selected, try “All colleges”."), submitBtn());
@@ -504,7 +561,7 @@ function filesView(dept, yearObj, code) {
  * renderAll(): তার ওপর হোমের কার্ড ও "নতুন যোগ হয়েছে" সারিও আঁকে।
  * ভাষা বা তালিকা বদলালে library.js নিজেই হোম আঁকে, তাই তখন শুধু renderView() ডাকা হয়। */
 function renderView() {
-  const searching = !!flt.q.trim();
+  const searching = listMode();
   const home = !view.dept && !searching;
   const dept = view.dept && !searching ? D.department(view.dept) : null;
   if (view.dept && !D.department(view.dept)) { view = { dept: "", year: 0, course: "" }; return renderView(); }
@@ -513,11 +570,12 @@ function renderView() {
   elDrill.hidden = home;
   if (elQx) elQx.hidden = !flt.q;
 
+  updateBm();
   if (home) { document.title = BASE_TITLE; if (elSr) elSr.textContent = ""; return; }
 
   if (searching) {
     elDrill.innerHTML = withFocus(searchView());
-    document.title = flt.q.trim() + " – " + tx("লাইব্রেরি", "Library") + " – DCUCore";
+    document.title = (flt.saved ? tx("সংরক্ষিত", "Saved") : flt.q.trim()) + " – " + tx("লাইব্রেরি", "Library") + " – DCUCore";
     if (elSr) elSr.textContent = lastCount < 0 ? "" : (lastCount ? filesWord(lastCount) : tx("কিছু পাওয়া যায়নি", "Nothing found"));
     return;
   }
@@ -549,7 +607,7 @@ function withFocus(html) {
 
 function renderAll() {
   renderView();
-  if (!view.dept && !flt.q.trim()) UI.refresh();
+  if (!view.dept && !listMode()) UI.refresh();
 }
 
 /* ---------- সার্চ বক্স ---------- */
@@ -581,6 +639,13 @@ if (elQ) {
 if (elQx) elQx.addEventListener("click", () => { clearTimeout(qTimer); elQ.value = ""; applyQuery(""); elQ.focus(); });
 
 /* ---------- ক্লিক ---------- */
+function onStarClick(e) {
+  const b = e.target.closest && e.target.closest("[data-star]");
+  if (!b) return false;
+  toggleMark(b.getAttribute("data-star"));
+  return true;
+}
+
 function onFilterClick(b) {
   const k = b.getAttribute("data-f"), v = b.getAttribute("data-v") || "";
   if (k === "more") { shown += PAGE; renderView(); return; }
@@ -592,6 +657,7 @@ function onFilterClick(b) {
 }
 
 elDrill.addEventListener("click", e => {
+  if (onStarClick(e)) return;
   const fb = e.target.closest && e.target.closest("[data-f]");
   if (fb) { onFilterClick(fb); return; }
   const a = e.target.closest && e.target.closest("a[data-dept]");
@@ -603,7 +669,18 @@ elDrill.addEventListener("click", e => {
   }
   onFileClick(e);
 });
-elRecent.addEventListener("click", onFileClick);
+elRecent.addEventListener("click", e => { if (!onStarClick(e)) onFileClick(e); });
+
+/* সংরক্ষিত বাটন */
+if (elBm) elBm.addEventListener("click", () => {
+  flt.saved = !flt.saved; shown = PAGE;
+  updateUrl(false);
+  renderAll();
+  if (flt.saved) elBrowse.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
+});
+
+/* অন্য ট্যাবে বুকমার্ক বদলালে এখানেও মেলানো */
+window.addEventListener("storage", e => { if (e.key === MARK_KEY) { loadMarks(); renderAll(); } });
 
 /* পুনরায় চেষ্টা */
 document.addEventListener("click", e => {
@@ -617,7 +694,7 @@ document.addEventListener("lib:dept", e => navigate({ dept: e.detail.slug, year:
 document.addEventListener("lib:college", () => {
   updateUrl(false);
   /* হোমে library.js নিজেই কার্ড আঁকে (অ্যানিমেশনসহ); এখানে শুধু ফাইলের সারি */
-  if (view.dept || flt.q.trim()) renderView(); else renderRecent($("lib-files"));
+  if (view.dept || listMode()) renderView(); else renderRecent($("lib-files"));
 });
 
 /* ভাষা ও তালিকা বদলালে নতুন করে আঁকা (library.js-এর হুকের পরে চলে) */
@@ -637,6 +714,12 @@ D.onChange = function () {
 UI.setFilesRenderer(renderRecent);
 UI.setCountFn((dept, c) => phase === "ready" ? countFor(dept, c) : 0);
 
+window.LibMarks = {
+  has: id => marks.has(id),
+  toggle: toggleMark,
+  count: () => marks.size
+};
+
 window.LibBrowse = {
   files: () => files.slice(),
   find: id => files.find(f => f.id === id) || null,
@@ -655,7 +738,7 @@ labelSearch();
   applying = false;
 }
 syncSearchBox();
-const startedOnRoute = !!view.dept || !!flt.q.trim();
+const startedOnRoute = !!view.dept || listMode();
 renderAll();
 if (startedOnRoute) setTimeout(() => elBrowse.scrollIntoView({ behavior: "auto", block: "start" }), 60);
 load(false);
