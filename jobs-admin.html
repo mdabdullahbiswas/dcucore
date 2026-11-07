@@ -216,14 +216,55 @@ html[data-theme=dark] .ct a{color:var(--gold2)}
   <!-- ===== অ্যাপ ===== -->
   <div id="app" style="display:none">
     <div class="bar">
-      <h2>জব ও টিউশন অ্যাডমিন<small>অপেক্ষমাণ পোস্ট দেখে অনুমোদন, সংশোধন বা বাতিল</small></h2>
+      <h2>জব ও টিউশন অ্যাডমিন<small>পোস্ট পর্যালোচনা, রিপোর্ট ও মেয়াদ-শেষ পরিষ্কার</small></h2>
       <span class="who" id="who"></span>
       <button class="btn sm" id="ref" type="button">রিফ্রেশ</button>
       <button class="btn sm dng" id="out" type="button">সাইন আউট</button>
     </div>
-    <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
-    <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, জমাদাতার নাম বা এলাকা খুঁজুন">
-    <div class="list" id="list" aria-live="polite"></div>
+    <div class="stats" id="stats" aria-label="সারাংশ"></div>
+    <div class="tabs" role="tablist" aria-label="বিভাগ">
+      <button type="button" class="tab on" role="tab" id="t-review" aria-controls="p-review" aria-selected="true" data-tab="review">পোস্ট <em id="t-review-n"></em></button>
+      <button type="button" class="tab" role="tab" id="t-reports" aria-controls="p-reports" aria-selected="false" tabindex="-1" data-tab="reports">রিপোর্ট <em id="t-reports-n"></em></button>
+      <button type="button" class="tab" role="tab" id="t-expired" aria-controls="p-expired" aria-selected="false" tabindex="-1" data-tab="expired">মেয়াদ-শেষ <em id="t-expired-n"></em></button>
+    </div>
+
+    <!-- ===== পোস্ট পর্যালোচনা (বাল্ক অনুমোদনসহ) ===== -->
+    <div id="p-review" role="tabpanel" aria-labelledby="t-review">
+      <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
+      <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, জমাদাতার নাম বা এলাকা খুঁজুন">
+      <div class="selbar" id="selbar" hidden>
+        <label class="chk"><input type="checkbox" id="sel-all"> সব বেছে নিন</label>
+        <span class="grow" id="sel-n"></span>
+        <button type="button" class="btn ok sm" id="bulk" disabled>বেছে নেওয়াগুলো অনুমোদন দিন</button>
+      </div>
+      <div class="list" id="list" aria-live="polite"></div>
+    </div>
+
+    <!-- ===== রিপোর্ট ===== -->
+    <div id="p-reports" role="tabpanel" aria-labelledby="t-reports" hidden>
+      <div class="filters" id="rfilters" role="group" aria-label="রিপোর্টের অবস্থা"></div>
+      <div class="list" id="rlist" aria-live="polite"></div>
+    </div>
+
+    <!-- ===== মেয়াদ-শেষ পরিষ্কার ===== -->
+    <div id="p-expired" role="tabpanel" aria-labelledby="t-expired" hidden>
+      <div class="mh">
+        <h3>মেয়াদ-শেষ পোস্ট<small id="x-sub"></small></h3>
+        <label class="sub" for="xgrace">কতদিন আগে শেষ হয়েছে:</label>
+        <select class="in" id="xgrace">
+          <option value="0">সব মেয়াদ-শেষ</option>
+          <option value="7" selected>৭ দিনের বেশি আগে</option>
+          <option value="30">৩০ দিনের বেশি আগে</option>
+        </select>
+      </div>
+      <p class="sub" style="margin:0 0 12px">মেয়াদ শেষের পরও মালিক নিজের “আমার পোস্ট” থেকে নবায়ন করতে পারেন (শুধু প্রকাশিত পোস্ট)। তাই কিছুদিন অপেক্ষা করে মোছাই নিরাপদ। মোছা পোস্টের যোগাযোগের তথ্য ও রিপোর্টও মুছে যায়; ফেরানো যায় না।</p>
+      <div class="selbar" id="xselbar" hidden>
+        <label class="chk"><input type="checkbox" id="xsel-all"> সব বেছে নিন</label>
+        <span class="grow" id="xsel-n"></span>
+        <button type="button" class="btn dng sm" id="xdel" disabled>বেছে নেওয়াগুলো মুছুন</button>
+      </div>
+      <div class="list" id="xlist" aria-live="polite"></div>
+    </div>
   </div>
 </div>
 
@@ -235,7 +276,7 @@ html[data-theme=dark] .ct a{color:var(--gold2)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, query, orderBy, limit, serverTimestamp, Timestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, query, orderBy, limit, writeBatch, serverTimestamp, Timestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 /* অন্য অ্যাডমিন পেজের সঙ্গে হুবহু একই অনুমোদিত অ্যাকাউন্ট, তাই একবার লগইন করলে সব অ্যাডমিন পেজে চলে */
 const ID_DOMAIN = "dcu-blood-bank.app";
@@ -263,7 +304,8 @@ const REJECT_REASONS = [
   "একই পোস্ট আগেই আছে।"
 ];
 
-let ALL = [], filter = "pending", query_ = "", busy = false, loadErr = "";
+let ALL = [], REPORTS = [], REP_ERR = "", filter = "pending", query_ = "", busy = false, loadErr = "";
+let tab = "review", rfilter = "open";
 
 function toast(msg, type) {
   const t = document.createElement("div");
@@ -303,11 +345,20 @@ onAuthStateChanged(auth, u => {
 async function load() {
   $("list").innerHTML = '<div class="sk"></div>'.repeat(3);
   try {
-    const s = await getDocs(query(collection(db, "jobs_posts"), orderBy("createdAt", "desc"), limit(300)));
-    ALL = s.docs.map(x => ({ id: x.id, ...x.data() }));
+    const [ps, rp] = await Promise.all([
+      getDocs(query(collection(db, "jobs_posts"), orderBy("createdAt", "desc"), limit(300))),
+      getDocs(query(collection(db, "jobs_reports"), orderBy("createdAt", "desc"), limit(500))).catch(e => { REP_ERR = e.code || e.message; return null; })
+    ]);
+    ALL = ps.docs.map(x => ({ id: x.id, ...x.data() }));
+    if (rp) { REP_ERR = ""; REPORTS = rp.docs.map(x => ({ id: x.id, ...x.data() })); }
+    /* ৩০০-র বাইরের পুরনো পোস্টের রিপোর্ট থাকলে ওই পোস্টগুলোও আনা */
+    const miss = Array.from(new Set(REPORTS.map(x => x.postId))).filter(id => id && !ALL.some(r => r.id === id)).slice(0, 40);
+    const got = await Promise.all(miss.map(id => getDoc(doc(db, "jobs_posts", id)).then(x => x.exists() ? { id: x.id, ...x.data() } : null).catch(() => null)));
+    got.filter(Boolean).forEach(p => ALL.push(p));
+    ALL.sort((a, b) => ms(b.createdAt) - ms(a.createdAt));
     loadErr = "";
   } catch (e) { loadErr = e.code || e.message; }
-  renderFilters(); renderList();
+  renderTab();
 }
 $("ref").onclick = load;
 
@@ -331,14 +382,23 @@ function matches(r) {
   return hay.indexOf(query_) > -1;
 }
 
+let visPending = [];
 function renderList() {
+  $("selbar").hidden = true;
   if (loadErr) { $("list").innerHTML = '<div class="card empty">ডেটা লোড হয়নি: ' + esc(loadErr) + '<br><small>Firestore Rules ও অ্যাডমিন অ্যাকাউন্ট দেখুন। প্রথমবার হলে Console-এ index তৈরির লিংক আসতে পারে।</small></div>'; return; }
   const rows = ALL.filter(matches);
+  const selectable = filter === "pending";
+  visPending = selectable ? rows.map(r => r.id) : [];
+  Array.from(SEL).forEach(id => { if (visPending.indexOf(id) < 0) SEL.delete(id); });
+  $("selbar").hidden = !selectable || !rows.length;
+  renderSelBar();
   if (!rows.length) { $("list").innerHTML = '<div class="card empty">' + (filter === "pending" && !query_ ? "অপেক্ষমাণ কোনো পোস্ট নেই। ✓" : "কিছু পাওয়া যায়নি।") + "</div>"; return; }
   $("list").innerHTML = rows.map(r => {
     const t = typeInfo(r.type), st = STATUS[stOf(r)] || [stOf(r), "mu"];
     const exp = ms(r.expiresAt) && ms(r.expiresAt) < Date.now() ? ' · <b>মেয়াদ শেষ</b>' : "";
-    return '<div class="card item"><div><h3>' + esc(r.title) + '</h3><div class="meta">' +
+    return '<div class="card item' + (selectable ? " has-sel" : "") + '">' +
+      (selectable ? '<label class="chk"><input type="checkbox" data-sel="' + esc(r.id) + '"' + (SEL.has(r.id) ? " checked" : "") + ' aria-label="বেছে নিন: ' + esc(r.title) + '"></label>' : "") +
+      '<div><h3>' + esc(r.title) + '</h3><div class="meta">' +
       '<span class="tp" style="background:hsl(' + (t.hue || 210) + ' 60% 38%)">' + esc(t.bn) + '</span> ' +
       '<span class="pill ' + st[1] + '">' + st[0] + "</span> " + esc(r.authorName || "") + " · " +
       esc(D.labels("areas", r.areas || [], "bn").join(", ") || lbl("modes", r.mode)) + " · " + esc(salary(r)) + " · " + fd(r.createdAt) + exp +
@@ -346,6 +406,278 @@ function renderList() {
   }).join("");
 }
 $("list").onclick = e => { const b = e.target.closest("[data-open]"); if (b) openReview(b.dataset.open, b); };
+
+/* ================= ধাপ ১১: ট্যাব, সারাংশ, বাল্ক অনুমোদন, রিপোর্ট, মেয়াদ-শেষ পরিষ্কার ================= */
+const TABS = ["review", "reports", "expired"];
+const REASON_BN = {}; D.reportReasons().forEach(x => { REASON_BN[x.slug] = x.bn; });
+const HIDE_REASON = "রিপোর্টের পর অ্যাডমিন পোস্টটি সরিয়েছেন।";
+const SEL = new Set(), XSEL = new Set();
+let visExpired = [];
+const fakeTsOf = m => ({ toMillis: () => m });
+const isExpired = r => stOf(r) !== "pending" && ms(r.expiresAt) > 0 && ms(r.expiresAt) < Date.now();
+const isLive = r => stOf(r) === "approved" && !isExpired(r);
+const expiredRows = () => { const g = Number($("xgrace").value) * 86400000; return ALL.filter(r => isExpired(r) && ms(r.expiresAt) < Date.now() - g); };
+
+/* ব্যাচে লেখা (প্রতি ব্যাচে ৪০০টির বেশি নয়; Firestore-এর সীমা ৫০০) */
+async function commit(ops) {
+  for (let i = 0; i < ops.length; i += 400) {
+    const b = writeBatch(db);
+    ops.slice(i, i + 400).forEach(f => f(b));
+    await b.commit();
+  }
+}
+
+/* ---------- রিপোর্ট: পোস্ট ধরে গোছানো ---------- */
+function groups() {
+  const m = new Map();
+  REPORTS.forEach(x => {
+    if (!x.postId) return;
+    if (!m.has(x.postId)) m.set(x.postId, { pid: x.postId, items: [] });
+    m.get(x.postId).items.push(x);
+  });
+  return Array.from(m.values()).map(g => {
+    g.open = g.items.filter(x => !x.resolved);
+    g.last = Math.max.apply(null, g.items.map(x => ms(x.createdAt)));
+    g.post = ALL.find(r => r.id === g.pid) || null;
+    return g;
+  });
+}
+const openGroups = () => groups().filter(g => g.open.length);
+
+/* ---------- সারাংশ ---------- */
+function renderStats() {
+  const og = openGroups().length, ex = expiredRows().length, allEx = ALL.filter(isExpired).length;
+  const st = (cls, n, label, go) => (go ? '<button type="button" class="stat ' + cls + '" data-go="' + go + '">' : '<div class="stat ' + cls + '">') +
+    "<b>" + BN(n) + "</b><span>" + label + "</span>" + (go ? "</button>" : "</div>");
+  const live = ALL.filter(isLive);
+  const byType = D.types().map(t => '<div class="stat"><b>' + BN(live.filter(r => r.type === t.slug).length) + '</b><span><span class="tp" style="background:hsl(' + (t.hue || 210) + ' 60% 38%)">' + esc(t.bn) + "</span></span></div>").join("");
+  $("stats").innerHTML =
+    st("warn", count("pending"), "অপেক্ষমাণ", "pending") +
+    st("ok", live.length, "এখন প্রকাশিত", "approved") +
+    st("", count("rejected"), "বাতিল/সরানো", "rejected") +
+    st("", count("closed"), "বন্ধ", "closed") +
+    st(og ? "dng" : "", og, "খোলা রিপোর্ট", "reports") +
+    st(allEx ? "warn" : "", allEx, "মেয়াদ-শেষ", "expired") +
+    byType;
+  const set = (id, n) => { $(id).textContent = n ? BN(n) : ""; };
+  set("t-review-n", count("pending")); set("t-reports-n", og); set("t-expired-n", ex);
+}
+$("stats").addEventListener("click", e => {
+  const b = e.target.closest("[data-go]"); if (!b) return;
+  const g = b.dataset.go;
+  if (g === "reports" || g === "expired") { setTab(g); return; }
+  filter = g; query_ = ""; $("q").value = ""; setTab("review");
+});
+
+/* ---------- ট্যাব ---------- */
+function setTab(t, silent) {
+  if (TABS.indexOf(t) < 0) t = "review";
+  tab = t;
+  TABS.forEach(k => {
+    $("p-" + k).hidden = k !== t;
+    const b = $("t-" + k);
+    b.setAttribute("aria-selected", String(k === t)); b.classList.toggle("on", k === t); b.tabIndex = k === t ? 0 : -1;
+  });
+  if (!silent) { try { history.replaceState(null, "", "#" + t); } catch (e) { /* ঠিক আছে */ } }
+  renderTab();
+}
+function renderTab() {
+  renderStats();
+  if (tab === "reports") renderReports();
+  else if (tab === "expired") renderExpired();
+  else { renderFilters(); renderList(); }
+}
+document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) setTab(b.dataset.tab); });
+document.querySelector(".tabs").addEventListener("keydown", e => {
+  if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+  const i = TABS.indexOf(tab), n = TABS[(i + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+  setTab(n); $("t-" + n).focus(); e.preventDefault();
+});
+
+/* ---------- বাল্ক অনুমোদন (অপেক্ষমাণ তালিকায়) ---------- */
+function renderSelBar() {
+  const n = Array.from(SEL).filter(id => visPending.indexOf(id) > -1).length, all = visPending.length;
+  const a = $("sel-all");
+  a.checked = all > 0 && n === all; a.indeterminate = n > 0 && n < all;
+  $("sel-n").textContent = n ? BN(n) + "টি বেছে নেওয়া হয়েছে" : "অনুমোদনের আগে পোস্টগুলো দেখে নেওয়া ভালো।";
+  $("bulk").disabled = !n || busy;
+}
+$("list").addEventListener("change", e => {
+  const c = e.target.closest("[data-sel]"); if (!c) return;
+  if (c.checked) SEL.add(c.dataset.sel); else SEL.delete(c.dataset.sel);
+  renderSelBar();
+});
+$("sel-all").addEventListener("change", e => {
+  if (e.target.checked) visPending.forEach(id => SEL.add(id)); else visPending.forEach(id => SEL.delete(id));
+  renderList();
+});
+$("bulk").addEventListener("click", async () => {
+  const ids = Array.from(SEL).filter(id => { const r = ALL.find(x => x.id === id); return r && stOf(r) === "pending"; });
+  if (!ids.length || busy) return;
+  if (!confirm(BN(ids.length) + "টি পোস্ট একসঙ্গে অনুমোদন দেবেন?\n\nমনে রাখুন: এতে প্রতিটি পোস্টের লেখা আলাদা করে যাচাই হয় না। অগ্রিম টাকা, ফোন নম্বর বা অনুপযুক্ত লেখা আছে কিনা আগে নমুনা কয়েকটি খুলে দেখে নিন। প্রতিটির মেয়াদ হবে আজ থেকে " + BN(L.expiryDays) + " দিন।")) return;
+  busy = true; $("bulk").disabled = true;
+  const exp = Timestamp.fromMillis(Date.now() + L.expiryDays * 86400000);
+  try {
+    await commit(ids.map(id => b => b.update(doc(db, "jobs_posts", id), { status: "approved", expiresAt: exp, reviewedAt: serverTimestamp(), reviewedBy: ME, rejectReason: deleteField(), adminHidden: deleteField() })));
+    ids.forEach(id => { const r = ALL.find(x => x.id === id); r.status = "approved"; r.expiresAt = exp; delete r.rejectReason; SEL.delete(id); });
+    toast(BN(ids.length) + "টি পোস্ট অনুমোদিত হয়েছে।");
+  } catch (err) { errToast(err); busy = false; await load(); return; }
+  busy = false; renderTab();
+});
+
+/* ---------- পোস্ট লুকানো / মোছা ---------- */
+async function hidePost(id) {
+  if (busy) return;
+  const r = ALL.find(x => x.id === id); if (!r) return;
+  const open = REPORTS.filter(x => x.postId === id && !x.resolved);
+  busy = true;
+  try {
+    await commit([b => b.update(doc(db, "jobs_posts", id), { status: "rejected", rejectReason: HIDE_REASON, adminHidden: true, reviewedAt: serverTimestamp(), reviewedBy: ME })]
+      .concat(open.map(x => b => b.update(doc(db, "jobs_reports", x.id), { resolved: true, resolvedAt: serverTimestamp(), resolvedBy: ME }))));
+    r.status = "rejected"; r.rejectReason = HIDE_REASON; r.adminHidden = true;
+    open.forEach(x => { x.resolved = true; });
+    toast("পোস্টটি সরানো হয়েছে; খোলা রিপোর্ট সমাধান হিসেবে চিহ্নিত।");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+/* পোস্ট + যোগাযোগের তথ্য (private/contact) + ওই পোস্টের সব রিপোর্ট মোছে */
+async function deletePosts(ids) {
+  if (busy || !ids.length) return false;
+  busy = true;
+  try {
+    const ops = [];
+    ids.forEach(id => {
+      ops.push(b => b.delete(doc(db, "jobs_posts", id, "private", "contact")));
+      REPORTS.filter(x => x.postId === id).forEach(x => ops.push(b => b.delete(doc(db, "jobs_reports", x.id))));
+      ops.push(b => b.delete(doc(db, "jobs_posts", id)));
+    });
+    await commit(ops);
+    ALL = ALL.filter(r => ids.indexOf(r.id) < 0);
+    REPORTS = REPORTS.filter(x => ids.indexOf(x.postId) < 0);
+    ids.forEach(id => { SEL.delete(id); XSEL.delete(id); });
+    toast(BN(ids.length) + "টি পোস্ট মোছা হয়েছে।");
+    busy = false; renderTab(); return true;
+  } catch (err) { errToast(err); busy = false; await load(); return false; }
+}
+async function resolveReports(pid, undo) {
+  if (busy) return;
+  busy = true;
+  try {
+    const list = REPORTS.filter(x => x.postId === pid && (undo ? x.resolved : !x.resolved));
+    await commit(list.map(x => b => b.update(doc(db, "jobs_reports", x.id), undo ? { resolved: false, resolvedAt: deleteField(), resolvedBy: deleteField() } : { resolved: true, resolvedAt: serverTimestamp(), resolvedBy: ME })));
+    list.forEach(x => { x.resolved = !undo; });
+    toast(undo ? "আবার খোলা হয়েছে।" : "সমাধান হিসেবে চিহ্নিত হয়েছে।");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+async function deleteReports(pid) {
+  if (busy) return;
+  if (!confirm("এই পোস্টের সব রিপোর্ট মুছবেন?")) return;
+  busy = true;
+  try {
+    await commit(REPORTS.filter(x => x.postId === pid).map(x => b => b.delete(doc(db, "jobs_reports", x.id))));
+    REPORTS = REPORTS.filter(x => x.postId !== pid);
+    toast("রিপোর্ট মোছা হয়েছে।");
+  } catch (err) { errToast(err); }
+  busy = false; renderTab();
+}
+
+/* ---------- রিপোর্ট ট্যাব ---------- */
+function renderReports() {
+  const gs = groups();
+  const nOpen = gs.filter(g => g.open.length).length, nDone = gs.length - nOpen;
+  $("rfilters").innerHTML = [["open", "খোলা", nOpen], ["done", "সমাধান হয়েছে", nDone], ["all", "সব", gs.length]].map(([k, l, n]) =>
+    '<button type="button" class="f' + (k === rfilter ? " on" : "") + '" data-rf="' + k + '" aria-pressed="' + (k === rfilter) + '">' + l + " <em>" + BN(n) + "</em></button>").join("");
+  if (REP_ERR) { $("rlist").innerHTML = '<div class="card empty">রিপোর্ট লোড হয়নি: ' + esc(REP_ERR) + "<br><small>Rules-এ jobs_reports পড়ার অনুমতি দেখুন।</small></div>"; return; }
+  const rows = gs.filter(g => rfilter === "all" || (rfilter === "open" ? g.open.length : !g.open.length))
+    .sort((a, b) => b.open.length - a.open.length || b.last - a.last);
+  if (!rows.length) { $("rlist").innerHTML = '<div class="card empty">' + (rfilter === "open" ? "খোলা কোনো রিপোর্ট নেই। ✓" : "কিছু নেই।") + "</div>"; return; }
+  $("rlist").innerHTML = rows.map(g => {
+    const r = g.post, shown = rfilter === "done" ? g.items : (g.open.length ? g.open : g.items);
+    const by = {}; shown.forEach(x => { by[x.reason] = (by[x.reason] || 0) + 1; });
+    const chips = Object.keys(by).map(k => '<span class="pill warn">' + esc(REASON_BN[k] || k) + " × " + BN(by[k]) + "</span>").join("");
+    const notes = shown.filter(x => x.note).slice(0, 3).map(x => '<div class="note">“' + esc(x.note) + "”</div>").join("");
+    const pid = esc(g.pid);
+    let head, acts;
+    if (r) {
+      const t = typeInfo(r.type), st = STATUS[stOf(r)] || [stOf(r), "mu"];
+      head = '<h3>' + esc(r.title) + ' <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
+        '<div class="meta"><span class="tp" style="background:hsl(' + (t.hue || 210) + ' 60% 38%)">' + esc(t.bn) + "</span> " + esc(r.authorName || "") + " · " +
+        esc(D.labels("areas", r.areas || [], "bn").join(", ") || lbl("modes", r.mode)) + "</div>";
+      acts = '<button type="button" class="btn sm" data-ro="' + pid + '">পোস্ট দেখুন</button>' +
+        (stOf(r) === "approved" ? '<button type="button" class="btn sm" data-rh="' + pid + '">সরান</button>' : "") +
+        '<button type="button" class="btn sm dng" data-rd="' + pid + '">মুছুন</button>' +
+        (g.open.length ? '<button type="button" class="btn sm ok" data-rs="' + pid + '">সমস্যা নেই / সমাধান</button>'
+                       : '<button type="button" class="btn sm" data-ru="' + pid + '">আবার খুলুন</button>');
+    } else {
+      head = '<h3>পোস্টটি আর নেই <span class="pill mu">মোছা</span></h3><div class="meta">পোস্ট ID: ' + pid + "</div>";
+      acts = '<button type="button" class="btn sm dng" data-rx="' + pid + '">রিপোর্ট মুছুন</button>';
+    }
+    return '<div class="card item"><div>' + head + '<div class="rchips">' + chips + "</div>" + notes +
+      '<div class="meta">মোট ' + BN(g.items.length) + "টি রিপোর্ট, খোলা " + BN(g.open.length) + "টি · সর্বশেষ " + fd(fakeTsOf(g.last)) + '</div></div><div class="acts">' + acts + "</div></div>";
+  }).join("");
+}
+$("rfilters").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if (b) { rfilter = b.dataset.rf; renderReports(); } });
+$("rlist").addEventListener("click", e => {
+  const g = a => { const b = e.target.closest("[" + a + "]"); return b ? b.getAttribute(a) : null; };
+  let v;
+  if ((v = g("data-ro"))) openReview(v, e.target.closest("[data-ro]"));
+  else if ((v = g("data-rh"))) { if (confirm("পোস্টটি সরাবেন? পাবলিক তালিকায় আর দেখা যাবে না এবং মালিক “বাতিল” দেখবেন। পরে “অনুমোদন দিন” চাপলে ফিরিয়ে আনা যাবে। এর খোলা রিপোর্টগুলো সমাধান হিসেবে চিহ্নিত হবে।")) hidePost(v); }
+  else if ((v = g("data-rd"))) { if (confirm("পোস্টটি স্থায়ীভাবে মুছবেন? এর যোগাযোগের তথ্য ও সব রিপোর্টও মুছে যাবে; ফেরানো যাবে না।")) deletePosts([v]); }
+  else if ((v = g("data-rs"))) resolveReports(v, false);
+  else if ((v = g("data-ru"))) resolveReports(v, true);
+  else if ((v = g("data-rx"))) deleteReports(v);
+});
+
+/* ---------- মেয়াদ-শেষ পরিষ্কার ---------- */
+function renderExpired() {
+  $("xselbar").hidden = true;
+  if (loadErr) { $("xlist").innerHTML = '<div class="card empty">ডেটা লোড হয়নি: ' + esc(loadErr) + "</div>"; return; }
+  const rows = expiredRows().sort((a, b) => ms(a.expiresAt) - ms(b.expiresAt));
+  visExpired = rows.map(r => r.id);
+  Array.from(XSEL).forEach(id => { if (visExpired.indexOf(id) < 0) XSEL.delete(id); });
+  $("x-sub").textContent = " — " + BN(rows.length) + "টি";
+  $("xselbar").hidden = !rows.length;
+  renderXSelBar();
+  if (!rows.length) { $("xlist").innerHTML = '<div class="card empty">পরিষ্কার করার মতো মেয়াদ-শেষ পোস্ট নেই। ✓</div>'; return; }
+  $("xlist").innerHTML = rows.map(r => {
+    const t = typeInfo(r.type), st = STATUS[stOf(r)] || [stOf(r), "mu"];
+    const days = Math.floor((Date.now() - ms(r.expiresAt)) / 86400000);
+    const nrep = REPORTS.filter(x => x.postId === r.id).length;
+    return '<div class="card item has-sel"><label class="chk"><input type="checkbox" data-xsel="' + esc(r.id) + '"' + (XSEL.has(r.id) ? " checked" : "") + ' aria-label="বেছে নিন: ' + esc(r.title) + '"></label>' +
+      '<div><h3>' + esc(r.title) + '</h3><div class="meta"><span class="tp" style="background:hsl(' + (t.hue || 210) + ' 60% 38%)">' + esc(t.bn) + '</span> <span class="pill ' + st[1] + '">' + st[0] + "</span> " +
+      esc(r.authorName || "") + " · মেয়াদ শেষ " + fd(r.expiresAt) + " (" + (days > 0 ? BN(days) + " দিন আগে" : "আজ") + ")" + (nrep ? " · রিপোর্ট " + BN(nrep) + "টি" : "") + '</div></div>' +
+      '<div class="acts"><button type="button" class="btn sm" data-open="' + esc(r.id) + '">দেখুন</button></div></div>';
+  }).join("");
+}
+function renderXSelBar() {
+  const n = Array.from(XSEL).filter(id => visExpired.indexOf(id) > -1).length, all = visExpired.length;
+  const a = $("xsel-all");
+  a.checked = all > 0 && n === all; a.indeterminate = n > 0 && n < all;
+  $("xsel-n").textContent = n ? BN(n) + "টি বেছে নেওয়া হয়েছে" : "মুছতে চাইলে পোস্ট বেছে নিন।";
+  $("xdel").disabled = !n || busy;
+}
+$("xgrace").addEventListener("change", () => { renderStats(); renderExpired(); });
+$("xlist").addEventListener("change", e => {
+  const c = e.target.closest("[data-xsel]"); if (!c) return;
+  if (c.checked) XSEL.add(c.dataset.xsel); else XSEL.delete(c.dataset.xsel);
+  renderXSelBar();
+});
+$("xlist").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openReview(b.dataset.open, b); });
+$("xsel-all").addEventListener("change", e => {
+  if (e.target.checked) visExpired.forEach(id => XSEL.add(id)); else visExpired.forEach(id => XSEL.delete(id));
+  renderExpired();
+});
+$("xdel").addEventListener("click", async () => {
+  const ids = Array.from(XSEL).filter(id => visExpired.indexOf(id) > -1);
+  if (!ids.length || busy) return;
+  if (!confirm(BN(ids.length) + "টি মেয়াদ-শেষ পোস্ট স্থায়ীভাবে মুছবেন?\n\nপোস্ট, যোগাযোগের তথ্য ও এগুলোর রিপোর্ট সব মুছে যাবে। এটি ফেরানো যাবে না।")) return;
+  $("xdel").disabled = true;
+  await deletePosts(ids);
+});
+
+/* হ্যাশ (#reports / #expired) থেকে ট্যাব খোলা: সব ফাংশন তৈরির পর */
+{ const h = location.hash.slice(1); if (TABS.indexOf(h) > -1) setTab(h, true); }
 
 /* ---------- রিভিউ ডায়ালগ ---------- */
 const checks = (name, items, sel) => items.map(i => '<label><input type="checkbox" name="' + name + '" value="' + esc(i.slug) + '"' + (sel.indexOf(i.slug) > -1 ? " checked" : "") + "> " + esc(i.bn) + "</label>").join("");
@@ -500,7 +832,7 @@ function openReview(id, opener) {
     const e = build(); if (!e) return;
     /* অনুমোদনের দিন থেকে ৩০ দিন মেয়াদ (অপেক্ষার সময় মেয়াদ থেকে কাটে না) */
     run(() => updateDoc(doc(db, "jobs_posts", id), Object.assign({}, e, edited(e), stamp(), {
-      status: "approved", expiresAt: Timestamp.fromMillis(Date.now() + L.expiryDays * 86400000), rejectReason: deleteField()
+      status: "approved", expiresAt: Timestamp.fromMillis(Date.now() + L.expiryDays * 86400000), rejectReason: deleteField(), adminHidden: deleteField()
     })), "অনুমোদন দেওয়া হয়েছে।");
   };
   if ($("b-rej")) $("b-rej").onclick = () => { $("rej").classList.add("on"); $("rtxt").focus(); $("rej").scrollIntoView({ block: "nearest" }); };
