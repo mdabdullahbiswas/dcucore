@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="bn" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>জব ও টিউশন অ্যাডমিন – DCUCore</title>
+<link rel="icon" type="image/webp" href="/logo.webp">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* থিম: ফ্ল্যাশ ছাড়া আগেই বসানো (অন্য অ্যাডমিন পেজের মতো) */
+(function(){var t=null;try{t=localStorage.getItem('adminTheme')}catch(e){}
+if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.dataset.theme=t;
+if(new URLSearchParams(location.search).has("embed"))document.documentElement.classList.add("embed");})();
+</script>
+<style>
+:root{
+  --bg:#f3f6fb;--surface:#fff;--surface2:#f7f9fd;--ink:#0e1a2e;--mu:#64748b;--ln:#e4e9f2;
+  --navy:#0a2240;--navy2:#14386a;--gold:#e5a83b;--gold2:#f6d68f;
+  --red:#d92d20;--redSoft:#fee4e2;--green:#12a150;--greenSoft:#dcfae6;--amber:#b54708;--amberSoft:#fef0c7;
+  --shadow:0 1px 2px rgba(14,26,46,.05),0 8px 24px rgba(14,26,46,.06);
+  --f:'Hind Siliguri',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+html[data-theme=dark]{
+  --bg:#08101e;--surface:#101b2f;--surface2:#142339;--ink:#e8eef9;--mu:#94a5bf;--ln:#213352;
+  --redSoft:#3a1612;--greenSoft:#0d2e1d;--amberSoft:#38270a;--amber:#f5b94a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+html.embed .wrap{padding-top:12px}
+.card{background:var(--surface);border:1px solid var(--ln);border-radius:18px;box-shadow:var(--shadow)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---------- লগইন ---------- */
+#gate{max-width:420px;margin:6vh auto 0}
+.g-hero{padding:30px 24px 22px;text-align:center;color:#fff;border-radius:18px 18px 0 0;background:linear-gradient(140deg,#07192f,#0a2240 55%,#14386a);border-bottom:3px solid var(--gold)}
+.g-hero h1{font-size:1.5rem;line-height:1.3}
+.g-hero p{margin-top:6px;color:var(--gold2);font-size:.9rem}
+.g-body{padding:22px 22px 24px;display:grid;gap:14px}
+.g-body label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
+.in{width:100%;min-height:46px;padding:9px 13px;border:1.5px solid var(--ln);border-radius:12px;background:var(--surface);font-size:1rem}
+.in:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(229,168,59,.22)}
+.msg{min-height:1.2em;color:var(--red);font-size:.9rem;font-weight:500}
+.or{text-align:center;color:var(--mu);font-size:.85rem}
+
+/* ---------- বোতাম ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 18px;border:1.5px solid var(--ln);border-radius:99px;background:var(--surface);font-weight:600;font-size:.93rem;cursor:pointer;transition:transform .15s,border-color .2s,box-shadow .2s}
+.btn:hover{border-color:var(--gold)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.55;cursor:progress}
+.btn.pri{border-color:transparent;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0a2240;font-weight:700}
+.btn.ok{border-color:transparent;background:var(--green);color:#fff;font-weight:700}
+.btn.dng{border-color:transparent;background:var(--redSoft);color:var(--red);font-weight:700}
+.btn.sm{min-height:36px;padding:5px 14px;font-size:.86rem}
+.btn.wide{width:100%}
+a.btn{text-decoration:none;color:inherit}
+.fm .r2{align-items:start}
+.fm .in[type=number]{min-height:46px}
+
+/* ---------- টুলবার, ফিল্টার ---------- */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:16px}
+.bar h2{font-size:1.25rem;flex:1 1 220px}
+.bar h2 small{display:block;color:var(--mu);font-weight:400;font-size:.85rem}
+.who{color:var(--mu);font-size:.85rem;overflow-wrap:anywhere}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.f{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 16px;border:1px solid var(--ln);border-radius:99px;background:var(--surface);font-weight:600;font-size:.92rem;cursor:pointer}
+.f em{font-style:normal;font-size:.8rem;opacity:.75}
+.f.on{border-color:transparent;background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff}
+.search{width:100%;margin-bottom:14px}
+
+/* ---------- তালিকা ---------- */
+.list{display:grid;gap:10px}
+.item{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;padding:14px 16px}
+.item h3{font-size:1.02rem;line-height:1.4;overflow-wrap:anywhere}
+.meta{margin-top:4px;color:var(--mu);font-size:.85rem;overflow-wrap:anywhere}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;vertical-align:middle}
+.pill.warn{background:var(--amberSoft);color:var(--amber)}
+.pill.ok{background:var(--greenSoft);color:var(--green)}
+.pill.mu{background:var(--surface2);color:var(--mu);border:1px solid var(--ln)}
+.empty{padding:38px 18px;text-align:center;color:var(--mu)}
+.sk{height:74px;border-radius:18px;background:linear-gradient(90deg,var(--surface2),var(--ln),var(--surface2));background-size:200% 100%;animation:sk 1.3s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+
+/* ---------- রিভিউ ডায়ালগ ---------- */
+.ov{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:16px;background:rgba(7,16,30,.62)}
+.dlg{width:100%;max-width:980px;margin:auto;overflow:hidden}
+.dh{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--ln)}
+.dh h3{flex:1;font-size:1.1rem}
+.x{width:40px;height:40px;border:0;border-radius:50%;background:var(--surface2);font-size:1.3rem;cursor:pointer}
+.db{display:grid;grid-template-columns:1.1fr 1fr;gap:0}
+.pv{padding:16px;background:var(--surface2);border-right:1px solid var(--ln);display:grid;align-content:start;gap:12px}
+.pv iframe{width:100%;height:min(62vh,520px);border:1px solid var(--ln);border-radius:12px;background:#fff}
+.probe{display:flex;align-items:center;gap:10px;font-size:.9rem;line-height:1.5}
+.probe.ok{color:var(--green)}.probe.warn{color:var(--amber)}
+.probe img{width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--ln)}
+.fm{padding:16px 18px;display:grid;gap:12px;align-content:start}
+.fm label{display:grid;gap:5px;font-weight:600;font-size:.86rem}
+.fm .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fm textarea{min-height:76px;resize:vertical}
+.sub{color:var(--mu);font-size:.84rem;font-weight:400}
+.da{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--ln);background:var(--surface)}
+.rej{grid-column:1/-1;display:none;padding:14px 18px;border-top:1px solid var(--ln);background:var(--redSoft)}
+.rej.on{display:grid;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{min-height:36px;padding:4px 14px;border:1px solid var(--ln);border-radius:99px;background:var(--surface);font-size:.85rem;cursor:pointer}
+.chips button:hover{border-color:var(--red)}
+
+.toasts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:80;display:grid;gap:8px;width:max-content;max-width:92vw}
+.toast{padding:11px 18px;border-radius:12px;background:var(--navy);color:#fff;font-weight:600;box-shadow:var(--shadow)}
+.toast.err{background:var(--red)}
+
+@media(max-width:760px){
+  .db{grid-template-columns:1fr}
+  .pv{border-right:0;border-bottom:1px solid var(--ln)}
+  .pv iframe{height:300px}
+  .item{grid-template-columns:1fr}
+  .fm .r2{grid-template-columns:1fr}
+  .da .btn{flex:1 1 140px}
+}
+@media(prefers-reduced-motion:reduce){.sk{animation:none}.btn{transition:none}}
+
+/* ---------- ধাপ ১০: ট্যাব, সারাংশ, বাল্ক, রিপোর্ট, তালিকা ---------- */
+.tabs{display:flex;gap:4px;margin:0 0 14px;overflow-x:auto;border-bottom:1px solid var(--ln);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:8px 18px;border:0;border-bottom:3px solid transparent;background:none;color:var(--mu);font-weight:700;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+.tab em{min-width:22px;padding:1px 7px;border-radius:99px;background:var(--red);color:#fff;font-size:.76rem;font-style:normal;font-weight:800;text-align:center}
+.tab em:empty{display:none}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:10px;margin:0 0 16px}
+.stat{padding:12px 14px;border:1px solid var(--ln);border-radius:16px;background:var(--surface);text-align:left;font:inherit;color:inherit}
+button.stat{cursor:pointer}
+button.stat:hover{border-color:var(--gold)}
+.stat b{display:block;font-size:1.55rem;line-height:1.25}
+.stat span{color:var(--mu);font-size:.82rem;font-weight:600}
+.stat.warn b{color:var(--amber)}.stat.ok b{color:var(--green)}.stat.dng b{color:var(--red)}
+
+.selbar{position:sticky;top:8px;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 12px;padding:10px 14px;border:1px solid var(--ln);border-radius:14px;background:var(--surface2);box-shadow:var(--shadow)}
+.selbar[hidden]{display:none}
+.selbar .grow{flex:1 1 120px;color:var(--mu);font-size:.9rem}
+.chk{display:inline-flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--gold)}
+.item.has-sel{grid-template-columns:auto 1fr auto}
+.acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+
+.rchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.note{margin-top:6px;padding:6px 10px;border-left:3px solid var(--gold);border-radius:6px;background:var(--surface2);font-size:.86rem;overflow-wrap:anywhere}
+
+.mh{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;margin:6px 0 12px}
+.mh h3{flex:1 1 200px;font-size:1.1rem}
+.mh h3 small{color:var(--mu);font-weight:400;font-size:.85rem}
+.mh .in{width:auto;min-width:180px}
+.sub-h{margin:22px 0 10px;color:var(--mu);font-size:.95rem}
+.code{display:inline-block;min-width:60px;margin-right:6px;padding:1px 9px;border-radius:8px;background:var(--navy);color:var(--gold2);font-size:.82rem;font-weight:700;text-align:center}
+.dlg.sm{max-width:520px}
+.checks{display:grid;gap:4px;max-height:220px;overflow-y:auto;padding:8px;border:1px solid var(--ln);border-radius:12px}
+.fm .checks label{display:flex;flex-direction:row;align-items:center;gap:8px;min-height:34px;font-weight:500;font-size:.92rem}
+.fm .checks input,.fm label.one input{width:18px;height:18px;accent-color:var(--gold)}
+.fm label.one{display:flex;flex-direction:row;align-items:center;gap:8px}
+.fm .in[readonly]{background:var(--surface2);color:var(--mu)}
+@media(max-width:760px){
+  .acts{justify-content:flex-start}
+  .item.has-sel{grid-template-columns:auto 1fr}
+  .item.has-sel>.btn,.item.has-sel>.acts{grid-column:1/-1}
+  .stat b{font-size:1.3rem}
+}
+
+/* ---------- জব অ্যাডমিন ---------- */
+.tp{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;color:#fff;vertical-align:middle}
+.kv{display:grid;gap:8px;margin:0}
+.kv>div{display:grid;grid-template-columns:104px 1fr;gap:10px;font-size:.92rem}
+.kv dt{color:var(--mu);font-weight:600}
+.kv dd{margin:0;overflow-wrap:anywhere;white-space:pre-line}
+.ct{padding:12px 14px;border:1px solid var(--ln);border-radius:12px;background:var(--surface);font-size:.92rem;display:grid;gap:4px}
+.ct a{color:var(--navy2);font-weight:700}
+html[data-theme=dark] .ct a{color:var(--gold2)}
+.ph{width:72px;height:72px;border-radius:14px;object-fit:cover;border:1px solid var(--ln)}
+.fm .checks .zh{margin:6px 0 2px;color:var(--mu);font-size:.8rem;font-weight:700}
+.fm .hint{color:var(--mu);font-size:.8rem;font-weight:400}
+.ferr{padding:10px 12px;border-radius:10px;background:var(--redSoft);color:var(--red);font-size:.88rem;font-weight:600}
+.ferr[hidden]{display:none}
+.rejtxt{min-height:70px;resize:vertical}
+@media(max-width:760px){.kv>div{grid-template-columns:1fr;gap:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== লগইন (অন্য অ্যাডমিন পেজের মতোই: আইডি/পাসওয়ার্ড বা Google) ===== -->
+  <div id="gate">
+    <div class="card">
+      <div class="g-hero"><h1>জব ও টিউশন অ্যাডমিন</h1><p>শুধু অ্যাডমিনের জন্য</p></div>
+      <div class="g-body">
+        <form id="lf" novalidate style="display:grid;gap:14px">
+          <label>অ্যাডমিন আইডি
+            <input class="in" id="lid" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="আইডি বা ইমেইল">
+          </label>
+          <label>পাসওয়ার্ড
+            <input class="in" id="lpw" type="password" autocomplete="current-password" placeholder="••••••••">
+          </label>
+          <button class="btn pri wide" id="login" type="submit">লগ ইন</button>
+        </form>
+        <div class="or">অথবা</div>
+        <button class="btn wide" id="glogin" type="button">Google দিয়ে সাইন ইন</button>
+        <p class="msg" id="gmsg" role="alert"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== অ্যাপ ===== -->
+  <div id="app" style="display:none">
+    <div class="bar">
+      <h2>জব ও টিউশন অ্যাডমিন<small>অপেক্ষমাণ পোস্ট দেখে অনুমোদন, সংশোধন বা বাতিল</small></h2>
+      <span class="who" id="who"></span>
+      <button class="btn sm" id="ref" type="button">রিফ্রেশ</button>
+      <button class="btn sm dng" id="out" type="button">সাইন আউট</button>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="অবস্থা অনুযায়ী ফিল্টার"></div>
+    <input class="in search" id="q" type="search" autocomplete="off" placeholder="শিরোনাম, জমাদাতার নাম বা এলাকা খুঁজুন">
+    <div class="list" id="list" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div id="dlg-root"></div>
+
+<script src="jobs-data.js"></script>
+<script src="lib-data.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, getDoc, doc, updateDoc, query, orderBy, limit, serverTimestamp, Timestamp, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* অন্য অ্যাডমিন পেজের সঙ্গে হুবহু একই অনুমোদিত অ্যাকাউন্ট, তাই একবার লগইন করলে সব অ্যাডমিন পেজে চলে */
+const ID_DOMAIN = "dcu-blood-bank.app";
+const ADMIN_LOGINS = ["admin@" + ID_DOMAIN, "mdabdullahbiswas48@gmail.com"];
+const GOOGLE_ADMIN_EMAIL = "ojanaraja3@gmail.com";
+const app = initializeApp({ apiKey:"AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0", authDomain:"dcu-blood-bank.firebaseapp.com", projectId:"dcu-blood-bank", storageBucket:"dcu-blood-bank.firebasestorage.app", messagingSenderId:"835221249900", appId:"1:835221249900:web:facf545941825a4efa5d49" });
+const auth = getAuth(app), db = getFirestore(app);
+const D = window.JobsData, LD = window.LibData;
+const $ = id => document.getElementById(id);
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clean = s => String(s || "").replace(/\s+/g, " ").trim();
+const BN = n => Number(n || 0).toLocaleString("bn-BD");
+const ms = t => (t && t.toMillis ? t.toMillis() : 0);
+const fd = t => { const m = ms(t); return m ? new Date(m).toLocaleString("bn-BD", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }) : "—"; };
+const L = D.LIMITS;
+
+const STATUS = { pending: ["অপেক্ষায়", "warn"], approved: ["প্রকাশিত", "ok"], rejected: ["বাতিল", "mu"], closed: ["বন্ধ", "mu"] };
+const FILTERS = [["pending", "অপেক্ষমাণ"], ["approved", "প্রকাশিত"], ["rejected", "বাতিল"], ["closed", "বন্ধ"], ["all", "সব"]];
+const REJECT_REASONS = [
+  "অগ্রিম টাকা বা ফি চাওয়া হয়েছে।",
+  "পোস্টের লেখায় ফোন নম্বর বা পূর্ণ ঠিকানা দেওয়া হয়েছে।",
+  "তথ্য অস্পষ্ট বা অসম্পূর্ণ।",
+  "অনুপযুক্ত বা আপত্তিকর বিষয়।",
+  "ঢাকার বাইরের বা নিয়ম-বহির্ভূত পোস্ট।",
+  "একই পোস্ট আগেই আছে।"
+];
+
+let ALL = [], filter = "pending", query_ = "", busy = false, loadErr = "";
+
+function toast(msg, type) {
+  const t = document.createElement("div");
+  t.className = "toast" + (type === "err" ? " err" : "");
+  t.textContent = msg; $("toasts").appendChild(t);
+  setTimeout(() => t.remove(), type === "err" ? 5000 : 2600);
+}
+const errToast = e => toast("কাজটি সম্পন্ন হয়নি: " + (e.code || e.message), "err");
+
+/* ---------- লগইন ---------- */
+const persistReady = setPersistence(auth, browserLocalPersistence).catch(() => {});
+const LERR = { "auth/invalid-credential":"আইডি বা পাসওয়ার্ড ভুল।", "auth/wrong-password":"আইডি বা পাসওয়ার্ড ভুল।", "auth/user-not-found":"আইডি বা পাসওয়ার্ড ভুল।", "auth/invalid-email":"আইডি সঠিক নয়।", "auth/too-many-requests":"অনেকবার ভুল চেষ্টা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।", "auth/network-request-failed":"ইন্টারনেট সংযোগ পরীক্ষা করুন।" };
+$("glogin").onclick = () => { $("gmsg").textContent = ""; persistReady.then(() => signInWithPopup(auth, new GoogleAuthProvider())).catch(e => $("gmsg").textContent = "সাইন ইন সম্ভব হয়নি: " + e.code); };
+$("lf").onsubmit = async ev => {
+  ev.preventDefault();
+  const id = $("lid").value.trim().toLowerCase(), pw = $("lpw").value, btn = $("login");
+  if (!id || !pw) { $("gmsg").textContent = "আইডি ও পাসওয়ার্ড দুটোই দিন।"; return; }
+  $("gmsg").textContent = ""; btn.disabled = true; btn.textContent = "যাচাই হচ্ছে...";
+  try { await persistReady; await signInWithEmailAndPassword(auth, id.includes("@") ? id : id + "@" + ID_DOMAIN, pw); $("lpw").value = ""; }
+  catch (e) { $("gmsg").textContent = LERR[e.code] || ("লগ ইন সম্ভব হয়নি: " + e.code); }
+  finally { btn.disabled = false; btn.textContent = "লগ ইন"; }
+};
+$("out").onclick = () => signOut(auth);
+let ME = "";
+onAuthStateChanged(auth, u => {
+  if (!u) { $("gate").style.display = ""; $("app").style.display = "none"; return; }
+  const email = (u.email || "").toLowerCase();
+  const isPw = ADMIN_LOGINS.includes(email), isG = email === GOOGLE_ADMIN_EMAIL && u.emailVerified;
+  if (!isPw && !isG) { $("gmsg").textContent = "এই অ্যাকাউন্টের প্রবেশাধিকার নেই।"; signOut(auth); return; }
+  ME = u.email || "";
+  $("gate").style.display = "none"; $("app").style.display = "block";
+  $("who").textContent = ME;
+  load();
+});
+
+/* ---------- ডেটা ---------- */
+async function load() {
+  $("list").innerHTML = '<div class="sk"></div>'.repeat(3);
+  try {
+    const s = await getDocs(query(collection(db, "jobs_posts"), orderBy("createdAt", "desc"), limit(300)));
+    ALL = s.docs.map(x => ({ id: x.id, ...x.data() }));
+    loadErr = "";
+  } catch (e) { loadErr = e.code || e.message; }
+  renderFilters(); renderList();
+}
+$("ref").onclick = load;
+
+const stOf = r => r.status || "pending";
+const count = s => s === "all" ? ALL.length : ALL.filter(r => stOf(r) === s).length;
+const typeInfo = t => D.get("types", t) || { bn: t, hue: 210 };
+const lbl = (list, v) => D.label(list, v, "bn");
+const salary = r => D.salaryText(r.salaryMin, r.salaryMax, r.salaryUnit, "bn");
+
+function renderFilters() {
+  $("filters").innerHTML = FILTERS.map(f =>
+    '<button type="button" class="f' + (filter === f[0] ? " on" : "") + '" data-f="' + f[0] + '" aria-pressed="' + (filter === f[0]) + '">' + f[1] + ' <em>' + BN(count(f[0])) + "</em></button>").join("");
+}
+$("filters").onclick = e => { const b = e.target.closest(".f"); if (!b) return; filter = b.dataset.f; renderFilters(); renderList(); };
+$("q").oninput = () => { query_ = clean($("q").value).toLowerCase(); renderList(); };
+
+function matches(r) {
+  if (filter !== "all" && stOf(r) !== filter) return false;
+  if (!query_) return true;
+  const hay = [r.title, r.authorName, D.labels("areas", r.areas || [], "bn").join(" "), D.labels("areas", r.areas || [], "en").join(" ")].join(" ").toLowerCase();
+  return hay.indexOf(query_) > -1;
+}
+
+function renderList() {
+  if (loadErr) { $("list").innerHTML = '<div class="card empty">ডেটা লোড হয়নি: ' + esc(loadErr) + '<br><small>Firestore Rules ও অ্যাডমিন অ্যাকাউন্ট দেখুন। প্রথমবার হলে Console-এ index তৈরির লিংক আসতে পারে।</small></div>'; return; }
+  const rows = ALL.filter(matches);
+  if (!rows.length) { $("list").innerHTML = '<div class="card empty">' + (filter === "pending" && !query_ ? "অপেক্ষমাণ কোনো পোস্ট নেই। ✓" : "কিছু পাওয়া যায়নি।") + "</div>"; return; }
+  $("list").innerHTML = rows.map(r => {
+    const t = typeInfo(r.type), st = STATUS[stOf(r)] || [stOf(r), "mu"];
+    const exp = ms(r.expiresAt) && ms(r.expiresAt) < Date.now() ? ' · <b>মেয়াদ শেষ</b>' : "";
+    return '<div class="card item"><div><h3>' + esc(r.title) + '</h3><div class="meta">' +
+      '<span class="tp" style="background:hsl(' + (t.hue || 210) + ' 60% 38%)">' + esc(t.bn) + '</span> ' +
+      '<span class="pill ' + st[1] + '">' + st[0] + "</span> " + esc(r.authorName || "") + " · " +
+      esc(D.labels("areas", r.areas || [], "bn").join(", ") || lbl("modes", r.mode)) + " · " + esc(salary(r)) + " · " + fd(r.createdAt) + exp +
+      '</div></div><div class="acts"><button type="button" class="btn sm pri" data-open="' + esc(r.id) + '">দেখুন ও পর্যালোচনা</button></div></div>';
+  }).join("");
+}
+$("list").onclick = e => { const b = e.target.closest("[data-open]"); if (b) openReview(b.dataset.open, b); };
+
+/* ---------- রিভিউ ডায়ালগ ---------- */
+const checks = (name, items, sel) => items.map(i => '<label><input type="checkbox" name="' + name + '" value="' + esc(i.slug) + '"' + (sel.indexOf(i.slug) > -1 ? " checked" : "") + "> " + esc(i.bn) + "</label>").join("");
+const optsHtml = (items, val) => items.map(i => '<option value="' + esc(i.slug) + '"' + (i.slug === val ? " selected" : "") + ">" + esc(i.bn) + "</option>").join("");
+
+function areaChecks(sel) {
+  return D.zones().map(z => '<div class="zh">' + esc(z.bn) + "</div>" + checks("e-area", D.areas(z.slug), sel)).join("");
+}
+
+function openReview(id, opener) {
+  const r = ALL.find(x => x.id === id); if (!r) return;
+  const t = typeInfo(r.type), isTuition = r.type === "tuition_wanted" || r.type === "tutor_profile", isTutor = r.type === "tutor_profile";
+  const catsList = D.cats(r.type);
+  const root = $("dlg-root");
+  const st = stOf(r);
+  const view = [
+    ["ধরন", t.bn], ["অবস্থা", (STATUS[st] || [st])[0]], ["শিরোনাম", r.title],
+    ["পদ্ধতি", lbl("modes", r.mode)],
+    ["এলাকা", D.labels("areas", r.areas || [], "bn").join(", ") || "—"],
+    [D.catsLabelKey(r.type), D.labels("cats", r.cats || [], "bn").join(", ")],
+    isTuition ? ["শ্রেণি", D.labels("levels", r.levels || [], "bn").join(", ")] : null,
+    ["সপ্তাহে", r.days ? BN(r.days) + " দিন" : "—"], ["সময়", r.timeNote || "—"], ["টাকা", salary(r)],
+    r.orgName ? ["প্রতিষ্ঠান", r.orgName] : null,
+    r.genderPref ? ["শিক্ষকের পছন্দ", lbl("genders", r.genderPref)] : null,
+    r.tutorGender ? ["লিঙ্গ", lbl("genders", r.tutorGender)] : null,
+    (r.college || r.dept) ? ["কলেজ/বিভাগ", [r.college && LD && LD.college(r.college) ? LD.college(r.college).bn : r.college, r.dept && LD && LD.department(r.dept) ? LD.department(r.dept).bn : r.dept].filter(Boolean).join(" · ")] : null,
+    ["বিস্তারিত", r.desc || "—"],
+    ["জমা", fd(r.createdAt)], ["মেয়াদ", fd(r.expiresAt)],
+    r.rejectReason ? ["বাতিলের কারণ", r.rejectReason] : null,
+    r.reviewedBy ? ["পর্যালোচনা", r.reviewedBy + " · " + fd(r.reviewedAt)] : null
+  ].filter(Boolean);
+
+  const zoneChecks = areaChecks(r.areas || []);
+  const colleges = LD ? LD.colleges() : [], depts = LD ? LD.departments() : [];
+  root.innerHTML =
+    '<div class="ov" id="ov"><div class="card dlg" role="dialog" aria-modal="true" aria-labelledby="dh-t">' +
+    '<div class="dh"><h3 id="dh-t">' + esc(r.title) + '</h3><button type="button" class="x" id="dx" aria-label="বন্ধ করুন">×</button></div>' +
+    '<div class="db"><div class="pv">' +
+      (r.photo ? '<img class="ph" src="' + esc(r.photo) + '" alt="">' : "") +
+      '<dl class="kv">' + view.map(v => "<div><dt>" + esc(v[0]) + "</dt><dd>" + esc(v[1]) + "</dd></div>").join("") + "</dl>" +
+      '<div class="ct" id="ct">যোগাযোগের তথ্য আনা হচ্ছে…</div></div>' +
+      '<form class="fm" id="ef" novalidate autocomplete="off">' +
+        '<label>শিরোনাম<input class="in" id="e-title" maxlength="100" value="' + esc(r.title) + '"></label>' +
+        '<label>বিস্তারিত<textarea class="in" id="e-desc" maxlength="800">' + esc(r.desc || "") + "</textarea></label>" +
+        '<div class="r2"><label>পদ্ধতি<select class="in" id="e-mode">' + optsHtml(D.modes(), r.mode) + "</select></label>" +
+        '<label>সপ্তাহে কয়দিন<select class="in" id="e-days">' + D.DAYS.map(n => '<option value="' + n + '"' + (n === (r.days || 0) ? " selected" : "") + ">" + (n ? BN(n) : "উল্লেখ নেই") + "</option>").join("") + "</select></label></div>" +
+        '<label>' + esc(D.catsLabelKey(r.type)) + ' <span class="hint">(১–৬টি)</span><div class="checks">' + checks("e-cat", catsList, r.cats || []) + "</div></label>" +
+        (isTuition ? '<label>শ্রেণি <span class="hint">(১–৬টি)</span><div class="checks">' + checks("e-level", D.levels(), r.levels || []) + "</div></label>" : "") +
+        '<label>এলাকা <span class="hint">(' + (r.type === "tuition_wanted" ? "একটি" : "সর্বোচ্চ ৫টি") + "; অনলাইনে লাগে না)</span>" + '<div class="checks">' + zoneChecks + "</div></label>" +
+        '<label>সময় <input class="in" id="e-time" maxlength="60" value="' + esc(r.timeNote || "") + '"></label>' +
+        '<div class="r2"><label>টাকা (থেকে)<input class="in" id="e-smin" inputmode="numeric" value="' + (r.salaryMin || "") + '"></label>' +
+        '<label>টাকা (পর্যন্ত)<input class="in" id="e-smax" inputmode="numeric" value="' + (r.salaryMax || "") + '"></label></div>' +
+        '<label>টাকার একক<select class="in" id="e-unit">' + optsHtml(D.salaryUnits(), r.salaryUnit) + "</select></label>" +
+        (r.type === "parttime" || r.type === "freelance" ? '<label>প্রতিষ্ঠান<input class="in" id="e-org" maxlength="80" value="' + esc(r.orgName || "") + '"></label>' : "") +
+        (r.type === "tuition_wanted" ? '<label>শিক্ষকের পছন্দ<select class="in" id="e-gpref">' + optsHtml(D.genders(), r.genderPref || "") + "</select></label>" : "") +
+        (isTutor ? '<label>টিউটরের লিঙ্গ<select class="in" id="e-tgen">' + optsHtml(D.genders(), r.tutorGender || "") + "</select></label>" +
+          '<div class="r2"><label>কলেজ<select class="in" id="e-college"><option value="">—</option>' + optsHtml(colleges, r.college || "") + "</select></label>" +
+          '<label>বিভাগ<select class="in" id="e-dept"><option value="">—</option>' + optsHtml(depts, r.dept || "") + "</select></label></div>" : "") +
+        (r.photo ? '<label class="one"><input type="checkbox" id="e-nophoto"> ছবি সরিয়ে দিন</label>' : "") +
+        '<div class="ferr" id="ferr" role="alert" hidden></div>' +
+      "</form></div>" +
+    '<div class="rej" id="rej"><b>বাতিলের কারণ (জমাদাতা দেখতে পাবেন)</b><div class="chips" id="rchips">' +
+      REJECT_REASONS.map(x => '<button type="button" data-r="' + esc(x) + '">' + esc(x) + "</button>").join("") + "</div>" +
+      '<textarea class="in rejtxt" id="rtxt" maxlength="200" placeholder="কারণ লিখুন (সর্বোচ্চ ২০০ অক্ষর)"></textarea>' +
+      '<div class="acts"><button type="button" class="btn sm" id="rcancel">থাক</button><button type="button" class="btn sm dng" id="rgo">বাতিল নিশ্চিত করুন</button></div></div>' +
+    '<div class="da">' +
+      (st !== "rejected" ? '<button type="button" class="btn dng" id="b-rej">বাতিল করুন</button>' : "") +
+      '<button type="button" class="btn" id="b-save">শুধু সংশোধন সংরক্ষণ</button>' +
+      (st !== "approved" ? '<button type="button" class="btn ok" id="b-ok">অনুমোদন দিন</button>' : "") +
+    "</div></div></div>";
+
+  const ov = $("ov"), form = $("ef");
+  const close = () => { if (busy) return; root.innerHTML = ""; document.removeEventListener("keydown", onKey); if (opener && opener.isConnected) opener.focus(); };
+  const onKey = e => { if (e.key === "Escape") close(); };
+  document.addEventListener("keydown", onKey);
+  $("dx").onclick = close;
+  ov.addEventListener("mousedown", e => { if (e.target === ov) close(); });
+  $("dx").focus();
+
+  /* যোগাযোগ (private/contact) */
+  getDoc(doc(db, "jobs_posts", id, "private", "contact")).then(s => {
+    if (!$("ct")) return;
+    if (!s.exists()) { $("ct").textContent = "যোগাযোগের তথ্য পাওয়া যায়নি।"; return; }
+    const c = s.data();
+    $("ct").innerHTML = "<div><b>মোবাইল:</b> " + esc(c.phone) + ' · <a href="tel:' + esc(c.phone) + '">কল</a></div>' +
+      (c.whatsapp ? "<div><b>WhatsApp:</b> " + esc(c.whatsapp) + ' · <a href="https://wa.me/88' + esc(c.whatsapp) + '" target="_blank" rel="noopener">খুলুন</a></div>' : "") +
+      "<div><b>জমাদাতা:</b> " + esc(r.authorName) + " · " + esc(c.authorEmail || "") + "</div>";
+  }).catch(e => { if ($("ct")) $("ct").textContent = "যোগাযোগের তথ্য আনা যায়নি: " + (e.code || e.message); });
+
+  /* ফর্ম থেকে মান ও যাচাই (Rules-এর jobsPostOk-এর সঙ্গে মেলানো) */
+  const vals = name => Array.from(form.querySelectorAll('input[name="' + name + '"]:checked')).map(i => i.value);
+  const num = v => { v = String(v || "").replace(/[০-৯]/g, d => "০১২৩৪৫৬৭৮৯".indexOf(d)).replace(/[,\s]/g, ""); return v === "" ? 0 : (/^\d+$/.test(v) ? parseInt(v, 10) : NaN); };
+  const norm = o => JSON.stringify(o);
+  function readForm() {
+    let min = num($("e-smin").value), max = num($("e-smax").value), unit = $("e-unit").value;
+    if (!isNaN(min) && !isNaN(max)) { if (min && !max) max = min; if (max && !min) min = max; }
+    const e = {
+      title: clean($("e-title").value), desc: $("e-desc").value.trim(), mode: $("e-mode").value, days: parseInt($("e-days").value, 10) || 0,
+      timeNote: clean($("e-time").value), cats: vals("e-cat"), levels: isTuition ? vals("e-level") : [],
+      areas: $("e-mode").value === "online" ? [] : vals("e-area"),
+      salaryMin: min, salaryMax: max, salaryUnit: unit,
+      orgName: $("e-org") ? clean($("e-org").value) : (r.orgName || ""),
+      genderPref: $("e-gpref") ? $("e-gpref").value : (r.genderPref || ""),
+      tutorGender: $("e-tgen") ? $("e-tgen").value : (r.tutorGender || ""),
+      college: $("e-college") ? $("e-college").value : (r.college || ""),
+      dept: $("e-dept") ? $("e-dept").value : (r.dept || ""),
+      photo: $("e-nophoto") && $("e-nophoto").checked ? "" : (r.photo || "")
+    };
+    return e;
+  }
+  const orig = norm(Object.assign({}, pick(r)));
+  function pick(x) {
+    const mode = x.mode;
+    return { title: x.title, desc: x.desc || "", mode: mode, days: x.days || 0, timeNote: x.timeNote || "", cats: x.cats || [], levels: x.levels || [], areas: x.areas || [],
+      salaryMin: x.salaryMin || 0, salaryMax: x.salaryMax || 0, salaryUnit: x.salaryUnit, orgName: x.orgName || "", genderPref: x.genderPref || "", tutorGender: x.tutorGender || "",
+      college: x.college || "", dept: x.dept || "", photo: x.photo || "" };
+  }
+  function problems(e) {
+    const p = [];
+    if (e.title.length < L.title[0] || e.title.length > L.title[1]) p.push("শিরোনাম ৫–১০০ অক্ষরের হতে হবে।");
+    if (e.desc.length > L.desc[1]) p.push("বিস্তারিত ৮০০ অক্ষরের বেশি।");
+    if (e.timeNote.length > L.timeNote[1]) p.push("সময়ের লেখা ৬০ অক্ষরের বেশি।");
+    if (e.cats.length < 1 || e.cats.length > L.maxCats) p.push("১–৬টি " + D.catsLabelKey(r.type) + " বাছুন।");
+    if (isTuition && (e.levels.length < 1 || e.levels.length > L.maxLevels)) p.push("১–৬টি শ্রেণি বাছুন।");
+    if (e.areas.length > L.maxAreas || (r.type === "tuition_wanted" && e.areas.length > 1)) p.push(r.type === "tuition_wanted" ? "এই ধরনে একটির বেশি এলাকা চলবে না।" : "সর্বোচ্চ ৫টি এলাকা।");
+    if (e.mode !== "online" && e.areas.length < 1) p.push("সরাসরি/দুটোই হলে অন্তত একটি এলাকা বাছুন।");
+    if (isNaN(e.salaryMin) || isNaN(e.salaryMax) || e.salaryMin > L.maxSalary || e.salaryMax > L.maxSalary) p.push("টাকার অঙ্ক সঠিক নয়।");
+    else if (e.salaryMin > e.salaryMax) p.push("“থেকে” অঙ্ক “পর্যন্ত”-এর বেশি।");
+    if (e.orgName.length > L.orgName[1]) p.push("প্রতিষ্ঠানের নাম ৮০ অক্ষরের বেশি।");
+    return p;
+  }
+  const refreshBtn = () => { const b = $("b-ok"); if (b) b.textContent = norm(readForm()) !== orig ? "সংশোধন করে অনুমোদন দিন" : "অনুমোদন দিন"; };
+  form.addEventListener("input", refreshBtn); form.addEventListener("change", refreshBtn);
+
+  function build() {
+    const e = readForm(), p = problems(e), box = $("ferr");
+    if (p.length) { box.hidden = false; box.innerHTML = p.map(esc).join("<br>"); box.scrollIntoView({ block: "nearest" }); return null; }
+    box.hidden = true;
+    return e;
+  }
+  async function run(fn, okMsg) {
+    if (busy) return; busy = true;
+    root.querySelectorAll(".da .btn, #rgo").forEach(b => b.disabled = true);
+    try { await fn(); toast(okMsg); busy = false; root.innerHTML = ""; document.removeEventListener("keydown", onKey); await load(); if (opener && opener.isConnected) opener.focus(); }
+    catch (err) { busy = false; root.querySelectorAll(".da .btn, #rgo").forEach(b => b.disabled = false); errToast(err); }
+  }
+  const stamp = () => ({ reviewedAt: serverTimestamp(), reviewedBy: ME });
+  const edited = e => (norm(e) !== orig ? { adminEdited: true } : {});
+
+  $("b-save").onclick = () => { const e = build(); if (!e) return; run(() => updateDoc(doc(db, "jobs_posts", id), Object.assign({}, e, edited(e))), "সংশোধন সংরক্ষিত।"); };
+  if ($("b-ok")) $("b-ok").onclick = () => {
+    const e = build(); if (!e) return;
+    /* অনুমোদনের দিন থেকে ৩০ দিন মেয়াদ (অপেক্ষার সময় মেয়াদ থেকে কাটে না) */
+    run(() => updateDoc(doc(db, "jobs_posts", id), Object.assign({}, e, edited(e), stamp(), {
+      status: "approved", expiresAt: Timestamp.fromMillis(Date.now() + L.expiryDays * 86400000), rejectReason: deleteField()
+    })), "অনুমোদন দেওয়া হয়েছে।");
+  };
+  if ($("b-rej")) $("b-rej").onclick = () => { $("rej").classList.add("on"); $("rtxt").focus(); $("rej").scrollIntoView({ block: "nearest" }); };
+  $("rcancel").onclick = () => $("rej").classList.remove("on");
+  $("rchips").onclick = e => { const b = e.target.closest("[data-r]"); if (b) $("rtxt").value = b.dataset.r; };
+  $("rgo").onclick = () => {
+    const reason = clean($("rtxt").value);
+    if (reason.length < 3) { toast("বাতিলের কারণ লিখুন বা একটি বেছে নিন।", "err"); $("rtxt").focus(); return; }
+    run(() => updateDoc(doc(db, "jobs_posts", id), Object.assign({}, stamp(), { status: "rejected", rejectReason: reason.slice(0, 200) })), "পোস্টটি বাতিল করা হয়েছে।");
+  };
+}
+</script>
+</body>
+</html>
