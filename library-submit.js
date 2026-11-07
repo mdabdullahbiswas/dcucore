@@ -162,7 +162,7 @@ function renderChips(boxId, name, items, valueOf, labelOf) {
   }).join("");
 }
 
-function renderColleges() { renderChips("ls-college-chips", "college", D.colleges(), c => c.slug, c => D.name(c, lang())); }
+function renderColleges() { renderChips("ls-college-chips", "college", D.colleges().concat([D.ALL_COLLEGE]), c => c.slug, c => D.name(c, lang())); }
 function renderYears() { renderChips("ls-year-chips", "year", D.YEARS, y => y.n, y => D.name(y, lang())); }
 function renderFileTypes() { renderChips("ls-ftype-chips", "ftype", D.FILE_TYPES, t => t.id, t => D.name(t, lang())); }
 function renderExamTypes() { renderChips("ls-etype-chips", "etype", D.EXAM_TYPES, t => t.id, t => D.name(t, lang())); }
