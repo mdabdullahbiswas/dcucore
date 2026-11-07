@@ -152,12 +152,34 @@
         <p class="ls-err" id="err-desc" role="alert" hidden></p>
       </div>
 
-      <div class="ls-field">
-        <label class="ls-lbl" for="ls-submitter"><span class="t">আপনার নাম|Your name</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
-        <input class="ls-in" id="ls-submitter" type="text" maxlength="60" autocomplete="name" aria-describedby="err-submitter">
-        <p class="ls-hint t">নাম দিলে ফাইলের পাশে দেখানো হতে পারে। না দিলে নাম ছাড়াই জমা হবে।|If you add a name it may be shown next to the file. Leave it empty to submit without a name.</p>
-        <p class="ls-err" id="err-submitter" role="alert" hidden></p>
-      </div>
+      <fieldset class="ls-field ls-by" id="ls-by">
+        <legend class="ls-lbl"><span class="t">জমাদাতার পরিচয়|Submitter details</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></legend>
+        <label class="ls-check">
+          <input type="checkbox" id="ls-showby" aria-controls="ls-by-fields">
+          <span class="t">আমার নাম ও পরিচয় ফাইলের সঙ্গে সবাইকে দেখাতে চাই|I want my name and details shown publicly with this file</span>
+        </label>
+        <p class="ls-hint t">না বাছলে ফাইলটি নাম ছাড়াই দেখানো হবে এবং আপনার নাম কোথাও সংরক্ষিত হবে না। বাছলে যা লিখবেন তা পাবলিক পেজে দেখা যাবে।|If you leave this off, the file is shown without a name and your name is not saved. If you turn it on, what you type is visible to everyone.</p>
+
+        <div class="ls-by-fields" id="ls-by-fields" hidden>
+          <div class="ls-field">
+            <label class="ls-lbl t" for="ls-submitter">আপনার নাম|Your name</label>
+            <input class="ls-in" id="ls-submitter" type="text" maxlength="60" autocomplete="name" aria-describedby="err-submitter">
+            <p class="ls-err" id="err-submitter" role="alert" hidden></p>
+          </div>
+          <div class="ls-field">
+            <label class="ls-lbl" for="ls-by-college"><span class="t">আপনার কলেজ|Your college</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
+            <select class="ls-in" id="ls-by-college"></select>
+          </div>
+          <div class="ls-field">
+            <label class="ls-lbl" for="ls-by-dept"><span class="t">আপনার বিভাগ|Your department</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
+            <select class="ls-in" id="ls-by-dept"></select>
+          </div>
+          <div class="ls-field">
+            <label class="ls-lbl" for="ls-by-session"><span class="t">আপনার সেশন|Your session</span> <span class="ls-opt t">ঐচ্ছিক|optional</span></label>
+            <input class="ls-in" id="ls-by-session" type="text" maxlength="20" data-ph="যেমন ২০২২-২৩|e.g. 2022-23" autocomplete="off">
+          </div>
+        </div>
+      </fieldset>
     </section>
 
     <!-- ===== ধাপ ৪: যাচাই ও জমা ===== -->
