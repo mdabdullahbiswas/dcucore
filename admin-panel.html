@@ -45,6 +45,8 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .tab.support{color:#0f766e}
 .tab.library[aria-selected="true"]{background:linear-gradient(135deg,#b98a2c,#5c4210);color:#fff4d6;box-shadow:0 12px 24px -10px rgba(185,138,44,.6)}
 .tab.library{color:#b98a2c}
+.tab.jobs[aria-selected="true"]{background:linear-gradient(135deg,#6d28d9,#2e1065);color:#ede9fe;box-shadow:0 12px 24px -10px rgba(109,40,217,.6)}
+.tab.jobs{color:#6d28d9}
 .theme{position:relative;width:40px;height:40px;border-radius:50%;padding:2px;border:0;cursor:pointer;display:grid;place-items:center;background:var(--goldGrad);box-shadow:0 8px 20px -6px rgba(201,162,74,.55);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
 .theme:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 14px 26px -8px rgba(201,162,74,.7)}
 .theme:active{transform:scale(.94)}
@@ -73,6 +75,7 @@ iframe[hidden]{display:none!important}
     <button class="tab" role="tab" data-k="visitors" type="button">👁️ ভিজিটর</button>
     <button class="tab support" role="tab" data-k="support" type="button">🤝 সহায়তা</button>
     <button class="tab library" role="tab" data-k="library" type="button">📚 লাইব্রেরি</button>
+    <button class="tab jobs" role="tab" data-k="jobs" type="button">💼 জব ও টিউশন</button>
   </nav>
   <button class="theme" id="theme" type="button" aria-label="ডার্ক / লাইট মোড">
     <span class="knob">
@@ -84,10 +87,10 @@ iframe[hidden]{display:none!important}
 <script>
 (function () {
   /* ক্লিন URL (.html ছাড়া) — Vercel-এর .html → ক্লিন রিডাইরেক্ট/ক্যাশ এড়াতে */
-  var PAGES = { blood: "/admin?embed=1", events: "/events-admin?embed=1", visitors: "/visitors-admin?embed=1", support: "/support-admin?embed=1", library: "/library-admin?embed=1" };
+  var PAGES = { blood: "/admin?embed=1", events: "/events-admin?embed=1", visitors: "/visitors-admin?embed=1", support: "/support-admin?embed=1", library: "/library-admin?embed=1", jobs: "/jobs-admin?embed=1" };
   /* কোন ট্যাবে কোন পেজ লোড হওয়ার কথা — ভুল পেজ এলে ধরা পড়বে */
-  var EXPECT = { blood: /^\/admin(\.html)?\/?$/, events: /^\/events-admin(\.html)?\/?$/, visitors: /^\/visitors-admin(\.html)?\/?$/, support: /^\/support-admin(\.html)?\/?$/, library: /^\/library-admin(\.html)?\/?$/ };
-  var TITLES = { blood: "ব্লাড ডোনার এডমিন", events: "ইভেন্ট এডমিন", visitors: "ভিজিটর অ্যানালিটিক্স", support: "সহায়তা অ্যাডমিন", library: "লাইব্রেরি অ্যাডমিন" };
+  var EXPECT = { blood: /^\/admin(\.html)?\/?$/, events: /^\/events-admin(\.html)?\/?$/, visitors: /^\/visitors-admin(\.html)?\/?$/, support: /^\/support-admin(\.html)?\/?$/, library: /^\/library-admin(\.html)?\/?$/, jobs: /^\/jobs-admin(\.html)?\/?$/ };
+  var TITLES = { blood: "ব্লাড ডোনার এডমিন", events: "ইভেন্ট এডমিন", visitors: "ভিজিটর অ্যানালিটিক্স", support: "সহায়তা অ্যাডমিন", library: "লাইব্রেরি অ্যাডমিন", jobs: "জব ও টিউশন অ্যাডমিন" };
   var frames = {};
   /* এডমিনের নিজের ভিজিট যাতে সাইটের ভিজিটর গণনায় না আসে */
   try { localStorage.setItem("dcuNoTrack", "1"); } catch (e) {}
