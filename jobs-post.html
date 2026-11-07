@@ -72,6 +72,9 @@
 
   <!-- ===== ফর্ম (লগইনের পর) ===== -->
   <form id="jp-form" novalidate autocomplete="off" hidden>
+    <!-- স্প্যাম ফাঁদ: মানুষ দেখে না, বট ভরে ফেলে -->
+    <div class="jp-hp" aria-hidden="true"><label>Website <input type="text" id="jp-hp" tabindex="-1" autocomplete="off"></label></div>
+
 
     <!-- ===== ২. ধরন ===== -->
     <section class="jp-card" id="jp-type-card" aria-labelledby="jp-h-type">
@@ -217,9 +220,40 @@
       <div class="jp-actions">
         <button type="button" class="jp-btn jp-btn-main" id="jp-next"><span class="t">এগিয়ে যান|Continue</span></button>
       </div>
-      <p class="jp-ok" id="jp-ready" role="status" hidden></p>
+    </section>
+
+    <!-- ===== ৪. যাচাই ও জমা ===== -->
+    <section class="jp-card" id="jp-review" aria-labelledby="jp-h-rev" hidden>
+      <h2 id="jp-h-rev" tabindex="-1" class="t">যাচাই করে জমা দিন|Review and submit</h2>
+      <p class="jp-hint t">সব ঠিক আছে কিনা দেখে নিন। জমার পর পোস্টের তথ্য বদলানো যায় না; বদলাতে হলে মুছে নতুন পোস্ট করতে হবে।|Check that everything is right. A post cannot be edited after it is submitted; to change it you delete it and post again.</p>
+
+      <dl class="jp-dl" id="jp-dl"></dl>
+
+      <label class="jp-check jp-consent">
+        <input type="checkbox" id="jp-consent" aria-describedby="jp-sub-err">
+        <span class="jobs-bn">আমি <a href="/jobs-rules" target="_blank" rel="noopener">নিয়মাবলি</a> পড়েছি ও মানছি। তথ্য সত্য, আমি কারো কাছে অগ্রিম টাকা চাইব না, আর এটি আন-অফিশিয়াল শিক্ষার্থী-উদ্যোগ; লেনদেন ও নিরাপত্তার দায় ব্যবহারকারীর নিজের, এটা বুঝেছি।</span>
+        <span class="jobs-en">I have read and accept the <a href="/jobs-rules" target="_blank" rel="noopener">rules</a>. The details are true, I will not ask anyone for advance money, and I understand this is an unofficial student initiative where deals and safety are the users' own responsibility.</span>
+      </label>
+
+      <p class="jp-err jp-err-block" id="jp-sub-err" role="alert" tabindex="-1" hidden></p>
+
+      <div class="jp-actions jp-actions-2">
+        <button type="button" class="jp-btn jp-btn-ghost" id="jp-edit"><span class="t">‹ তথ্য ঠিক করুন|‹ Edit details</span></button>
+        <button type="button" class="jp-btn jp-btn-main" id="jp-submit"><span class="t">পোস্ট জমা দিন|Submit post</span></button>
+      </div>
     </section>
   </form>
+
+  <!-- ===== জমা হয়ে গেলে ===== -->
+  <section class="jp-card jp-done" id="jp-done" aria-labelledby="jp-h-done" hidden>
+    <span class="jp-done-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h2 id="jp-h-done" tabindex="-1" class="jp-done-h"></h2>
+    <p class="jp-done-p" id="jp-done-p"></p>
+    <div class="jp-actions jp-actions-2 jp-actions-c">
+      <a class="jp-btn jp-btn-ghost" href="/jobs"><span class="t">জব ও টিউশনে ফিরুন|Back to Jobs &amp; Tuition</span></a>
+      <button type="button" class="jp-btn jp-btn-main" id="jp-again"><span class="t">আরেকটি পোস্ট করুন|Post another</span></button>
+    </div>
+  </section>
 
   <noscript><p class="jp-err jp-err-block t">পোস্ট করতে JavaScript চালু করুন।|Please enable JavaScript to post.</p></noscript>
 </main>
