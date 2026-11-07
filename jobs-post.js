@@ -463,7 +463,7 @@ async function readCount(uid) {
 }
 
 function showDone(status) {
-  S.stage = "done";
+  S.stage = "done"; clearDraft();
   $("jp-form").hidden = true; $("jp-details").hidden = true; $("jp-review").hidden = true;
   const live = status === "approved";
   $("jp-h-done").textContent = live ? L("পোস্ট প্রকাশিত হয়েছে|Your post is live") : L("পোস্ট জমা হয়েছে, অনুমোদনের অপেক্ষায়|Post submitted, awaiting approval");
@@ -523,6 +523,45 @@ bind();
 new MutationObserver(() => { if (S.type) renderAll(); else renderTypes(); if (S.user) renderAuth(); if (S.stage === "review") renderReview(); })
   .observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
 renderTypes();
+
+/* ---------- খসড়া সংরক্ষণ ----------
+   নিয়মাবলি দেখে ফিরে এলে (বা পেজ রিলোড হলে) যেন ফর্ম ফাঁকা না হয়ে যায়: তথ্য এই ট্যাবের sessionStorage-এ থাকে।
+   ট্যাব বন্ধ করলে মুছে যায়; জমা হলে সঙ্গে সঙ্গে মোছা হয়। সম্মতির টিক রাখা হয় না, প্রতিবার নিজে দিতে হবে। */
+const DRAFT_KEY = "dcuJobsPostDraft", DRAFT_MAX_AGE = 3 * 3600 * 1000;
+const DRAFT_FIELDS = ["jp-title", "jp-time", "jp-smin", "jp-smax", "jp-org", "jp-desc", "jp-name", "jp-phone", "jp-wa"];
+const DRAFT_KEYS = ["cats", "levels", "areas", "mode", "days", "unit", "genderPref", "tutorGender", "college", "dept", "photo", "modeTouched", "unitTouched", "tried", "formAt"];
+function saveDraft() {
+  if (S.stage === "done" || !S.type) return;
+  try {
+    const st = {}; DRAFT_KEYS.forEach(k => { st[k] = S[k]; });
+    const f = {}; DRAFT_FIELDS.forEach(id => { f[id] = $(id).value; });
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ at: Date.now(), type: S.type, stage: S.stage, st: st, f: f, waSame: $("jp-wa-same").checked }));
+  } catch (e) { /* storage blocked */ }
+}
+function clearDraft() { try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+function restoreDraft() {
+  let d = null;
+  try { d = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || "null"); } catch (e) {}
+  if (!d || !d.type || !TYPE[d.type] || Date.now() - (d.at || 0) > DRAFT_MAX_AGE) return;
+  try {
+    setType(d.type);
+    DRAFT_KEYS.forEach(k => { if (d.st && d.st[k] !== undefined) S[k] = d.st[k]; });
+    if (!Array.isArray(S.cats)) S.cats = []; if (!Array.isArray(S.levels)) S.levels = []; if (!Array.isArray(S.areas)) S.areas = [];
+    DRAFT_FIELDS.forEach(id => { if (d.f && typeof d.f[id] === "string") $(id).value = d.f[id]; });
+    $("jp-wa-same").checked = d.waSame !== false; $("jp-wa").disabled = $("jp-wa-same").checked;
+    setPhoto(S.photo || "");
+    S.shown = true; S.formAt = S.formAt || (Date.now() - 60000);
+    renderAll();
+    if (d.stage === "review") showStage("review");
+  } catch (e) { clearDraft(); }
+}
+restoreDraft();
+let draftTimer = 0;
+const saveSoon = () => { clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 150); };
+["input", "change", "click"].forEach(ev => document.addEventListener(ev, saveSoon, true));
+window.addEventListener("pagehide", saveDraft);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") saveDraft(); });
+
 onAuthStateChanged(auth, u => { S.user = u || null; renderAuth(); });
 
 window.JobsPost = { collect: collect, validate: function () { return validate(false); }, state: S };
