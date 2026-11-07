@@ -297,3 +297,10 @@ body .ls-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overfl
   body .ls-btn, body .ls-in, body .ls-chip span, body .ls-steps li::before, body .ls-steps li::after { transition: none; }
   body .ls-btn:active { transform: none; }
 }
+
+/* ---------- জমাদাতার পরিচয় (ঐচ্ছিক, পাবলিকে দেখানো) ---------- */
+body .ls-by { border: 0; padding: 0; margin: 18px 0 0; min-width: 0; }
+body .ls-by legend { padding: 0; margin-bottom: 8px; }
+body .ls-by-fields { margin-top: 4px; padding: 14px 16px 18px; border: 1px solid var(--ln, rgba(15,23,42,.10)); border-radius: 16px; background: rgba(212,175,55,.06); }
+body .ls-by-fields[hidden] { display: none; }
+body .ls-by-fields .ls-field:first-child { margin-top: 0; }
