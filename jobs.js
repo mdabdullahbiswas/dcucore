@@ -2,7 +2,10 @@
  *
  * ধাপ ৭: Firestore থেকে শুধু status == "approved" পোস্ট আনে (Rules-এর সঙ্গে মেলানো), ক্লায়েন্টে
  * মেয়াদ-উত্তীর্ণ ও filled পোস্ট বাদ দেয়, নতুন থেকে পুরনো ক্রমে ধরন অনুযায়ী রঙিন কার্ড আঁকে।
- * ফোন/WhatsApp এই ফাইল কখনো পড়ে না (সেগুলো jobs_posts/{id}/private/contact-এ, ধাপ ৮-এর কাজ)।
+ * ধাপ ৮: কার্ড খুললে বিস্তারিত (ডায়ালগ) → নিরাপত্তা-সতর্কতা → "কল করুন"/"WhatsApp" বাটন।
+ * ফোন/WhatsApp থাকে jobs_posts/{id}/private/contact-এ; শুধু Google-লগইন করা ব্যবহারকারীর জন্য পড়া হয়
+ * (Rules-ও তাই চায়) এবং লগইন ছাড়া কখনো আনা হয় না।
+ * ডায়ালগ খুললে ঠিকানায় #p-<পোস্ট-আইডি> বসে, তাই মোবাইলের ব্যাক বাটন দিয়ে বন্ধ হয় এবং লিংক খুলে সরাসরি পোস্ট দেখা যায়।
  *
  * ফিল্টার: ধরন, পদ্ধতি, অঞ্চল ও সার্চ এখনই কাজ করে। বিষয়/শ্রেণি/বেতন, সাজানো ও শেয়ারযোগ্য লিংক ধাপ ৯-এ।
  * কোনো Firestore ইনডেক্স লাগে না: কোয়েরিতে শুধু একটি where আছে, ক্রম সাজানো ক্লায়েন্টে হয়।
@@ -86,6 +89,8 @@
       salaryMin: intv(d.salaryMin), salaryMax: intv(d.salaryMax),
       salaryUnit: D.isKnown("salaryUnits", d.salaryUnit) ? d.salaryUnit : "negotiable",
       orgName: str(d.orgName), authorName: str(d.authorName),
+      genderPref: str(d.genderPref), tutorGender: str(d.tutorGender),
+      college: str(d.college), dept: str(d.dept),
       photo: d.type === "tutor_profile" && PHOTO_RE.test(str(d.photo)) ? d.photo : "",
       filled: d.filled === true, verified: d.authorVerified === true,
       createdMs: tsMs(d.createdAt), expiresMs: tsMs(d.expiresAt)
@@ -99,13 +104,25 @@
     return p;
   }
 
+  /* Firebase মডিউল একবারই লোড হয়; ইভেন্ট/অন্য পেজের মতো ডিফল্ট অ্যাপ ব্যবহার, যাতে লগইন এক থাকে */
+  var fbP = null;
+  function fb() {
+    if (!fbP) {
+      fbP = Promise.all([import(FB_BASE + "firebase-app.js"), import(FB_BASE + "firebase-firestore.js")]).then(function (m) {
+        var app;
+        try { app = m[0].getApp(); } catch (e) { app = m[0].initializeApp(FB_CFG); }
+        return { app: app, fs: m[1], db: m[1].getFirestore(app) };
+      });
+      fbP.catch(function () { fbP = null; });   // ব্যর্থ হলে পরে আবার চেষ্টা করা যাবে
+    }
+    return fbP;
+  }
+
   function fetchPosts() {
-    return Promise.all([import(FB_BASE + "firebase-app.js"), import(FB_BASE + "firebase-firestore.js")]).then(function (m) {
-      var app;
-      try { app = m[0].getApp(); } catch (e) { app = m[0].initializeApp(FB_CFG); }
-      var fs = m[1], db = fs.getFirestore(app);
+    return fb().then(function (f) {
+      var fs = f.fs;
       /* Rules: পাবলিক শুধু approved পড়তে পারে, তাই কোয়েরিতে এই শর্ত থাকা বাধ্যতামূলক */
-      return fs.getDocs(fs.query(fs.collection(db, "jobs_posts"), fs.where("status", "==", "approved"), fs.limit(FETCH_LIMIT)));
+      return fs.getDocs(fs.query(fs.collection(f.db, "jobs_posts"), fs.where("status", "==", "approved"), fs.limit(FETCH_LIMIT)));
     }).then(function (snap) {
       var out = [];
       snap.forEach(function (doc) { var p = normalize(doc.id, doc.data()); if (p) out.push(p); });
@@ -120,7 +137,8 @@
     showSkeleton();
     return withTimeout(fetchPosts(), TIMEOUT_MS).then(function (list) {
       if (my !== loadId) return;
-      posts = list; loaded = true; render();
+      posts = list; loaded = true; render(); openFromHash();
+      setTimeout(authInit, 1200);   // লগইনের অবস্থা আগেভাগে জেনে রাখি, যাতে ডায়ালগ দ্রুত খোলে
     }).catch(function (e) {
       if (my !== loadId) return;
       if (window.console) console.warn("jobs: তালিকা আনা যায়নি", e);
@@ -165,6 +183,13 @@
   /* ---------- কার্ড ---------- */
   function listText(list, slugs, lang, sep) { return slugs.map(function (s) { return lab(list, s, lang); }).join(sep); }
 
+  function payHTML(p) {
+    var open = !p.salaryMin && !p.salaryMax || p.salaryUnit === "negotiable";
+    return open
+      ? bi(lab("salaryUnits", "negotiable", "bn"), lab("salaryUnits", "negotiable", "en"))
+      : bi(D.salaryText(p.salaryMin, p.salaryMax, p.salaryUnit, "bn"), D.salaryText(p.salaryMin, p.salaryMax, p.salaryUnit, "en"));
+  }
+
   function cardHTML(p, now) {
     var t = D.get("types", p.type);
     var ico = p.photo
@@ -190,16 +215,13 @@
     }).join("");
     if (tagSlugs.length > 4) tags += '<li class="jobs-tag-more">' + bi("+" + bnNum(tagSlugs.length - 4), "+" + (tagSlugs.length - 4)) + "</li>";
 
-    var open = !p.salaryMin && !p.salaryMax || p.salaryUnit === "negotiable";
-    var pay = open
-      ? bi(lab("salaryUnits", "negotiable", "bn"), lab("salaryUnits", "negotiable", "en"))
-      : bi(D.salaryText(p.salaryMin, p.salaryMax, p.salaryUnit, "bn"), D.salaryText(p.salaryMin, p.salaryMax, p.salaryUnit, "en"));
+    var pay = payHTML(p);
 
     return '<article class="jobs-card" data-id="' + esc(p.id) + '" data-type="' + esc(p.type) + '" style="--h:' + t.hue + '">' +
       '<span class="jobs-card-ico">' + ico + "</span>" +
       '<div class="jobs-card-body">' +
         '<div class="jobs-card-top">' + top + "</div>" +
-        '<h3 class="jobs-card-title">' + esc(p.title) + "</h3>" +
+        '<h3 class="jobs-card-title"><button type="button" class="jobs-card-open" aria-haspopup="dialog">' + esc(p.title) + "</button></h3>" +
         (p.orgName ? '<p class="jobs-card-org">' + esc(p.orgName) + "</p>" : "") +
         '<ul class="jobs-meta">' + meta + "</ul>" +
         (tags ? '<ul class="jobs-tags">' + tags + "</ul>" : "") +
@@ -333,7 +355,252 @@
     shownN = Math.min(shownN + PAGE, view.length);
     drawMore(from);
     var c = els.grid.children[from];     // কীবোর্ড/স্ক্রিন-রিডারের ফোকাস নতুন কার্ডে
-    if (c) { c.setAttribute("tabindex", "-1"); c.focus({ preventScroll: true }); }
+    var b = c && c.querySelector(".jobs-card-open");
+    if (b) b.focus({ preventScroll: true });
+  }
+
+  /* =====================================================================
+   * ধাপ ৮: বিস্তারিত ডায়ালগ, নিরাপত্তা-সতর্কতা ও যোগাযোগ
+   * ===================================================================== */
+  var PHONE_RE = /^01[3-9][0-9]{8}$/;
+  var LD = function () { return window.LibData || null; };
+  var cur = null;                     // এখন খোলা পোস্ট
+  var pushed = false, closingByUs = false, hashHandled = false;
+  var user = null, authKnown = false, authApi = null, authP = null;
+  var contact = { id: "", state: "idle", phone: "", whatsapp: "" };   // state: idle | loading | ok | missing | denied | error
+  var contactErr = null;              // [bn, en] — লগইন ব্যর্থতার বার্তা
+
+  var LBL = {
+    tuition_wanted: { cats: "বিষয়|Subjects", areas: "এলাকা|Area", time: "পড়ানোর সময়|Preferred time", pay: "মাসিক বাজেট|Budget" },
+    tutor_profile:  { cats: "যে বিষয় পড়ান|Subjects taught", areas: "যেসব এলাকায় যান|Areas", time: "কখন পড়াতে পারবেন|Available time", pay: "প্রত্যাশিত ফি|Expected fee" },
+    parttime:       { cats: "কাজের ধরন|Kind of work", areas: "কাজের এলাকা|Work area", time: "কাজের সময়|Working hours", pay: "বেতন|Pay" },
+    freelance:      { cats: "দক্ষতা|Skills", areas: "এলাকা|Area", time: "সময়সীমা|Timing", pay: "পারিশ্রমিক|Pay" }
+  };
+
+  function curLang() { return document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn"; }
+  function pair(s) { var i = s.indexOf("|"); return bi(s.slice(0, i), s.slice(i + 1)); }
+  function row(lbl, valHTML) { return "<div><dt>" + pair(lbl) + "</dt><dd>" + valHTML + "</dd></div>"; }
+  function listBi(list, slugs) { return bi(listText(list, slugs, "bn", "، "), listText(list, slugs, "en", ", ")); }
+  function fmtDate(ms) {
+    var o = { day: "numeric", month: "long", year: "numeric" };
+    var d = new Date(ms);
+    return bi(d.toLocaleDateString("bn-BD", o), d.toLocaleDateString("en-GB", o));
+  }
+  function libPair(slug, kind) {
+    var L = LD(); if (!slug || !L) return null;
+    var it = kind === "c" ? L.college(slug) : L.department(slug);
+    return it ? [L.name(it, "bn"), L.name(it, "en")] : null;
+  }
+
+  function byId(id) {
+    var now = Date.now();
+    for (var i = 0; i < posts.length; i++) if (posts[i].id === id) return isLive(posts[i], now) ? posts[i] : null;
+    return null;
+  }
+
+  function safetyHTML(p) {
+    var S = D.SAFETY, k = (p.type === "tuition_wanted" || p.type === "tutor_profile") ? S.tuition : S.job;
+    var bn = S.all.bn.concat(k.bn), en = S.all.en.concat(k.en);
+    return '<section class="jobs-d-sec jobs-d-safe" aria-labelledby="jobs-d-safe-h"><h3 class="jobs-d-h" id="jobs-d-safe-h">' + bi("নিরাপত্তা-সতর্কতা", "Stay safe") + "</h3><ul>" +
+      bn.map(function (t, i) { return "<li>" + bi(t, en[i] || t) + "</li>"; }).join("") + "</ul></section>";
+  }
+
+  function detailHTML(p) {
+    var t = D.get("types", p.type), L = LBL[p.type] || LBL.parttime, now = Date.now();
+    var ico = p.photo ? '<img src="' + esc(p.photo) + '" alt="" decoding="async">' : svg(ICON_PATHS[t.icon] || "", 28);
+    var top = '<span class="jobs-card-type">' + bi(t.bn, t.en) + "</span>";
+    if (p.createdMs && now - p.createdMs < NEW_MS) top += '<span class="jobs-badge jobs-badge-new">' + bi("নতুন", "New") + "</span>";
+    if (p.verified) top += '<span class="jobs-badge jobs-badge-ok">' + svg(CHECK, 12) + bi("যাচাইকৃত", "Verified") + "</span>";
+
+    var rows = row("পদ্ধতি|Mode", bi(lab("modes", p.mode, "bn"), lab("modes", p.mode, "en")));
+    if (p.cats.length) rows += row(L.cats, listBi("cats", p.cats));
+    if (p.levels.length) rows += row("শ্রেণি|Class level", listBi("levels", p.levels));
+    if (p.areas.length) rows += row(L.areas, listBi("areas", p.areas));
+    if (p.days > 0) rows += row("সপ্তাহে|Days per week", bi(bnNum(p.days) + " দিন", p.days + (p.days === 1 ? " day" : " days")));
+    if (p.timeNote) rows += row(L.time, esc(p.timeNote));
+    rows += row(L.pay, payHTML(p));
+    if (p.type === "tuition_wanted" && p.genderPref) rows += row("শিক্ষকের পছন্দ|Preferred tutor", bi(lab("genders", p.genderPref, "bn"), lab("genders", p.genderPref, "en")));
+    if (p.type === "tutor_profile") {
+      if (p.tutorGender) rows += row("লিঙ্গ|Gender", bi(lab("genders", p.tutorGender, "bn"), lab("genders", p.tutorGender, "en")));
+      var c = libPair(p.college, "c"), dp = libPair(p.dept, "d");
+      if (c || dp) {
+        var bnA = [c && c[0], dp && dp[0]].filter(Boolean).join(" · "), enA = [c && c[1], dp && dp[1]].filter(Boolean).join(" · ");
+        rows += row("কলেজ/বিভাগ|College / Dept", bi(bnA, enA));
+      }
+    }
+    if (p.authorName) rows += row("পোস্টদাতা|Posted by", esc(p.authorName));
+
+    var foot = '<p class="jobs-d-foot">' + ago(p.createdMs, now) + (p.expiresMs ? " · " + bi("মেয়াদ: ", "Valid until ") + fmtDate(p.expiresMs) : "") + "</p>";
+
+    return '<header class="jobs-d-head"><span class="jobs-card-ico">' + ico + "</span><div>" +
+        '<div class="jobs-card-top">' + top + "</div>" +
+        '<h2 class="jobs-d-title" id="jobs-d-title">' + esc(p.title) + "</h2>" +
+        (p.orgName ? '<p class="jobs-d-org">' + esc(p.orgName) + "</p>" : "") +
+      "</div></header>" +
+      (p.desc ? '<p class="jobs-d-desc">' + esc(p.desc) + "</p>" : "") +
+      '<dl class="jobs-d-dl">' + rows + "</dl>" +
+      safetyHTML(p) +
+      '<section class="jobs-d-sec jobs-d-contact" id="jobs-d-contact" aria-live="polite"></section>' +
+      foot;
+  }
+
+  /* ---------- WhatsApp-এ আগে থেকে লেখা বার্তা ---------- */
+  function waText(p, lang) {
+    var title = p.title.length > 70 ? p.title.slice(0, 70) + "…" : p.title;
+    if (lang === "en") {
+      if (p.type === "tuition_wanted") return "Assalamu alaikum. I saw your tuition post \"" + title + "\" on DCUCore and would like to talk about it.";
+      if (p.type === "tutor_profile") return "Assalamu alaikum. I saw your tutor profile \"" + title + "\" on DCUCore and would like to talk about tuition.";
+      return "Assalamu alaikum. I saw your post \"" + title + "\" on DCUCore. I am interested and would like to know more.";
+    }
+    if (p.type === "tuition_wanted") return "আসসালামু আলাইকুম। DCUCore-এ আপনার \"" + title + "\" টিউশনের পোস্টটি দেখেছি। এ বিষয়ে কথা বলতে চাই।";
+    if (p.type === "tutor_profile") return "আসসালামু আলাইকুম। DCUCore-এ আপনার টিউটর প্রোফাইল \"" + title + "\" দেখেছি। টিউশন নিয়ে কথা বলতে চাই।";
+    return "আসসালামু আলাইকুম। DCUCore-এ আপনার \"" + title + "\" পোস্টটি দেখেছি। আমি আগ্রহী, আরও জানতে চাই।";
+  }
+
+  /* ---------- যোগাযোগ অংশ ---------- */
+  var ICO_PHONE = '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>';
+  var ICO_CHAT = '<path d="M21 12a8.5 8.5 0 0 1-12.4 7.5L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/>';
+
+  function renderContact() {
+    var box = $("jobs-d-contact");
+    if (!box || !cur) return;
+    var h = '<h3 class="jobs-d-h">' + bi("যোগাযোগ", "Contact") + "</h3>";
+    if (!authKnown) {
+      h += '<p class="jobs-d-note">' + bi("যাচাই হচ্ছে…", "Checking…") + "</p>";
+    } else if (!user) {
+      h += '<p class="jobs-d-note">' + bi("ফোন নম্বর শুধু লগইন করা ব্যবহারকারীরা দেখতে পান। এতে ভুয়া পোস্টদাতা ও স্প্যাম কমে।", "Phone numbers are visible to signed-in users only. This helps keep out fake posts and spam.") + "</p>" +
+        '<button type="button" class="jobs-btn jobs-btn-call" id="jobs-d-login">' + bi("Google দিয়ে লগইন করুন", "Sign in with Google") + "</button>";
+      if (contactErr) h += '<p class="jobs-d-err" role="alert">' + bi(contactErr[0], contactErr[1]) + "</p>";
+    } else if (contact.id !== cur.id || contact.state === "loading" || contact.state === "idle") {
+      h += '<p class="jobs-d-note">' + bi("নম্বর আনা হচ্ছে…", "Loading the number…") + "</p>";
+    } else if (contact.state === "ok") {
+      var lang = curLang();
+      h += '<div class="jobs-d-btns"><a class="jobs-btn jobs-btn-call" href="tel:' + contact.phone + '">' + svg(ICO_PHONE, 20) + bi("কল করুন", "Call") + "</a>";
+      if (contact.whatsapp) {
+        h += '<a class="jobs-btn jobs-btn-wa" target="_blank" rel="noopener noreferrer" href="https://wa.me/88' + contact.whatsapp + "?text=" + encodeURIComponent(waText(cur, lang)) + '">' + svg(ICO_CHAT, 20) + "WhatsApp</a>";
+      }
+      h += '</div><p class="jobs-d-num">' + bi("নম্বর: ", "Number: ") + "<bdi>" + contact.phone + "</bdi></p>";
+    } else {
+      var msg = contact.state === "denied" ? ["এই পোস্টের নম্বর এখন দেখানো যাচ্ছে না।", "This post's number can't be shown right now."]
+        : contact.state === "missing" ? ["পোস্টদাতা কোনো নম্বর রাখেননি।", "The poster hasn't left a number."]
+        : ["নম্বর আনা যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।", "Couldn't load the number. Check your connection and try again."];
+      h += '<p class="jobs-d-err" role="alert">' + bi(msg[0], msg[1]) + "</p>";
+      if (contact.state === "error") h += '<button type="button" class="jobs-btn jobs-btn-plain" id="jobs-d-retry">' + bi("আবার চেষ্টা করুন", "Try again") + "</button>";
+    }
+    box.innerHTML = h;
+  }
+
+  function loadContact(p) {
+    contact = { id: p.id, state: "loading", phone: "", whatsapp: "" };
+    renderContact();
+    fb().then(function (f) {
+      return f.fs.getDoc(f.fs.doc(f.db, "jobs_posts", p.id, "private", "contact"));
+    }).then(function (snap) {
+      if (!cur || cur.id !== p.id || !user) return;
+      var d = snap.exists() ? snap.data() : null;
+      var ph = d && typeof d.phone === "string" ? d.phone : "", wa = d && typeof d.whatsapp === "string" ? d.whatsapp : "";
+      contact = PHONE_RE.test(ph)
+        ? { id: p.id, state: "ok", phone: ph, whatsapp: PHONE_RE.test(wa) ? wa : "" }
+        : { id: p.id, state: "missing", phone: "", whatsapp: "" };
+      renderContact();
+    }).catch(function (e) {
+      if (!cur || cur.id !== p.id) return;
+      contact = { id: p.id, state: e && e.code === "permission-denied" ? "denied" : "error", phone: "", whatsapp: "" };
+      renderContact();
+    });
+  }
+
+  function syncContact() {
+    if (!cur) return;
+    if (!user) { renderContact(); return; }
+    if (contact.id !== cur.id || contact.state === "idle") loadContact(cur); else renderContact();
+  }
+
+  /* ---------- লগইন ---------- */
+  function authInit() {
+    if (!authP) {
+      authP = Promise.all([fb(), import(FB_BASE + "firebase-auth.js")]).then(function (r) {
+        var au = r[1], a = au.getAuth(r[0].app);
+        authApi = { au: au, auth: a };
+        return new Promise(function (res) {
+          au.onAuthStateChanged(a, function (u) {
+            var changed = (u ? u.uid : "") !== (user ? user.uid : "");
+            user = u || null; authKnown = true;
+            if (changed) contact = { id: "", state: "idle", phone: "", whatsapp: "" };
+            if (changed) contactErr = null;
+            syncContact(); res();
+          });
+        });
+      });
+      authP.catch(function () { authP = null; });
+    }
+    return authP;
+  }
+
+  function signIn() {
+    if (!authApi) return;
+    var au = authApi.au;
+    au.signInWithPopup(authApi.auth, new au.GoogleAuthProvider()).then(function () { contactErr = null; }).catch(function (e) {
+      var c = e && e.code;
+      contactErr = (c === "auth/popup-closed-by-user" || c === "auth/cancelled-popup-request") ? ["লগইন সম্পূর্ণ হয়নি। আবার চেষ্টা করুন।", "Sign-in was not completed. Please try again."]
+        : c === "auth/popup-blocked" ? ["ব্রাউজার পপআপ আটকেছে। পপআপ অনুমতি দিয়ে আবার চাপুন।", "Your browser blocked the pop-up. Allow pop-ups and try again."]
+        : c === "auth/network-request-failed" ? ["ইন্টারনেট সংযোগ দেখুন, তারপর আবার চেষ্টা করুন।", "Check your internet connection and try again."]
+        : ["লগইন করা যায়নি। আবার চেষ্টা করুন।", "Couldn't sign in. Please try again."];
+      renderContact();
+    });
+  }
+
+  /* ---------- খোলা ও বন্ধ ---------- */
+  function openPost(id, fromHash) {
+    var p = byId(id);
+    if (!p || !els.dlg) return false;
+    cur = p;
+    els.dlg.style.setProperty("--h", String(D.get("types", p.type).hue));
+    els.dBody.innerHTML = detailHTML(p);
+    els.dScroll.scrollTop = 0;
+    if (!els.dlg.open) els.dlg.showModal();
+    document.documentElement.classList.add("jobs-lock");
+    if (!fromHash) { history.pushState({ jobsPost: id }, "", "#p-" + id); pushed = true; }
+    renderContact();
+    authInit().then(syncContact, function () { authKnown = true; renderContact(); });
+    return true;
+  }
+
+  function onDialogClosed() {
+    document.documentElement.classList.remove("jobs-lock");
+    cur = null;
+    if (pushed) { pushed = false; closingByUs = true; history.back(); }
+    else if (/^#p-/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
+  }
+
+  function hashId() { var m = /^#p-([A-Za-z0-9_-]{1,128})$/.exec(location.hash); return m ? m[1] : ""; }
+  function openFromHash() {
+    if (hashHandled) return;
+    hashHandled = true;
+    var id = hashId();
+    if (id && !openPost(id, true)) history.replaceState(null, "", location.pathname + location.search);   // মেয়াদ-শেষ/অচেনা লিংক
+  }
+
+  function bindDialog() {
+    var dlg = els.dlg;
+    if (!dlg || typeof dlg.showModal !== "function") return;
+    els.grid.addEventListener("click", function (e) {
+      var card = e.target.closest(".jobs-card");
+      if (card) openPost(card.getAttribute("data-id"), false);
+    });
+    $("jobs-d-x").addEventListener("click", function () { dlg.close(); });
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });   // ফাঁকা অংশে (ব্যাকড্রপে) ক্লিক
+    dlg.addEventListener("close", onDialogClosed);
+    els.dBody.addEventListener("click", function (e) {
+      if (e.target.closest("#jobs-d-login")) signIn();
+      else if (e.target.closest("#jobs-d-retry") && cur) loadContact(cur);
+    });
+    window.addEventListener("popstate", function () {
+      if (closingByUs) { closingByUs = false; return; }
+      var id = hashId();
+      if (id) { if (loaded && !failed) openPost(id, true); }
+      else if (dlg.open) { pushed = false; dlg.close(); }
+    });
   }
 
   function changed() {
@@ -390,6 +657,7 @@
     els.emptyH = $("jobs-empty-h"); els.emptyP = $("jobs-empty-p");
     els.emptyReset = $("jobs-empty-reset"); els.emptyCta = $("jobs-empty-cta"); els.emptyRetry = $("jobs-empty-retry");
     els.moreWrap = $("jobs-more-wrap"); els.more = $("jobs-more");
+    els.dlg = $("jobs-dlg"); els.dBody = $("jobs-d-body"); els.dScroll = $("jobs-d-scroll");
     if (!els.types || !D) return;
 
     skeletonHTML = els.grid.innerHTML;   // HTML-এর স্কেলেটন কার্ডগুলো মনে রাখি; পরে আবার লোডে কাজে লাগে
@@ -399,6 +667,7 @@
       var en = document.documentElement.getAttribute("data-lang") === "en";
       els.q.placeholder = en ? "Search subject, work or title…" : "বিষয়, কাজ বা শিরোনাম খুঁজুন…";
       els.q.setAttribute("aria-label", en ? "Search jobs and tuition" : "জব ও টিউশনে খুঁজুন");
+      if (cur) renderContact();   // WhatsApp-এর আগে-লেখা বার্তা ভাষা অনুযায়ী
     }
     setPlaceholder();
     new MutationObserver(setPlaceholder).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
@@ -407,6 +676,7 @@
     renderTypes();
     renderChips();
     bind();
+    bindDialog();
     syncPressed();
     load();
   }
