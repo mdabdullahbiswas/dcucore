@@ -12,7 +12,7 @@ html:not([data-lang="en"]) .jobs-en { display: none; }
 html[data-lang="en"] .jobs-bn { display: none; }
 
 /* ---------- রঙের সূত্র (--h থাকলে) ---------- */
-body .jobs-type, body .jobs-orb {
+body .jobs-type, body .jobs-orb, body .jobs-card {
   --s: 66%;
   --t1: hsl(var(--h, 214) var(--s) 40%);
   --t2: hsl(calc(var(--h, 214) + 14) var(--s) 22%);
@@ -20,7 +20,7 @@ body .jobs-type, body .jobs-orb {
   --ring: hsl(var(--h, 214) 70% 52%);
   --wash: hsl(var(--h, 214) 80% 50% / 0.08);
 }
-:root[data-theme="dark"] body .jobs-type, :root[data-theme="dark"] body .jobs-orb, body.dark .jobs-type, body.dark .jobs-orb {
+:root[data-theme="dark"] body .jobs-type, :root[data-theme="dark"] body .jobs-orb, :root[data-theme="dark"] body .jobs-card, body.dark .jobs-type, body.dark .jobs-orb, body.dark .jobs-card {
   --t1: hsl(var(--h, 214) var(--s) 46%);
   --t2: hsl(calc(var(--h, 214) + 14) var(--s) 26%);
   --wash: hsl(var(--h, 214) 80% 60% / 0.12);
@@ -201,6 +201,65 @@ body .jobs-sk-l2 { height: 12px; width: 45%; }
 body .jobs-sk-l3 { height: 12px; width: 85%; }
 @keyframes jobs-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 
+/* ---------- পোস্টের কার্ড (ধাপ ৭) ---------- */
+body .jobs-card {
+  --tx: hsl(var(--h, 214) 70% 30%);
+  position: relative; display: flex; gap: 14px; min-width: 0; padding: 16px;
+  border: 1px solid var(--ln, #E2E8F0); border-radius: 20px; color: var(--ink, #0F172A);
+  background: linear-gradient(135deg, var(--wash), transparent 55%), var(--cd, #fff);
+  animation: jobs-in 0.35s ease both;
+}
+:root[data-theme="dark"] body .jobs-card, body.dark .jobs-card { --tx: hsl(var(--h, 214) 80% 76%); }
+body .jobs-card:focus { outline: none; }
+body .jobs-card:focus-visible { outline: 3px solid var(--gold, #D4AF37); outline-offset: 2px; }
+@keyframes jobs-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@media (hover: hover) {
+  body .jobs-card { transition: transform 0.25s var(--dl-ease, ease), border-color 0.2s ease, box-shadow 0.3s ease; }
+  body .jobs-card:hover { transform: translateY(-3px); border-color: var(--ring); box-shadow: 0 18px 30px -22px var(--t2); }
+}
+
+body .jobs-card-ico {
+  flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; overflow: hidden; color: var(--ti);
+  background: linear-gradient(145deg, var(--t1), var(--t2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 8px 16px -10px var(--t2);
+}
+body .jobs-card-ico img { width: 100%; height: 100%; object-fit: cover; display: block; }
+body .jobs-card-body { display: flex; flex: 1; flex-direction: column; gap: 8px; min-width: 0; }
+
+body .jobs-card-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-height: 22px; }
+body .jobs-card-type { color: var(--tx); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
+body .jobs-badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; line-height: 1.4;
+}
+body .jobs-badge-new {
+  color: #0B1F3A; background: linear-gradient(135deg, var(--gold-light, #E8C46C), var(--gold, #D4AF37));
+  box-shadow: 0 6px 12px -8px rgba(212, 175, 55, 0.95);
+}
+body .jobs-badge-ok { color: var(--tx); background: var(--wash); box-shadow: inset 0 0 0 1px var(--ring); }
+
+body .jobs-card-title { margin: 0; color: var(--ink, #0F172A); font-size: 1.05rem; font-weight: 700; line-height: 1.45; overflow-wrap: anywhere; }
+body .jobs-card-org { margin: -3px 0 0; color: var(--mu, #475569); font-size: 0.88rem; font-weight: 500; overflow-wrap: anywhere; }
+
+body .jobs-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0; padding: 0; list-style: none; color: var(--mu, #475569); font-size: 0.88rem; line-height: 1.5; }
+body .jobs-meta li { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+body .jobs-meta svg { flex: none; color: var(--tx); }
+body .jobs-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+body .jobs-tags li {
+  padding: 2px 10px; border: 1px solid var(--ln, #E2E8F0); border-radius: 99px; background: var(--wash);
+  color: var(--ink, #0F172A); font-size: 0.8rem; font-weight: 500; line-height: 1.6;
+}
+body .jobs-tags li.jobs-tag-more { color: var(--mu, #475569); background: transparent; }
+
+body .jobs-card-foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-top: auto; padding-top: 10px;
+  border-top: 1px dashed var(--ln, #E2E8F0);
+}
+body .jobs-pay { color: var(--ink, #0F172A); font-size: 0.98rem; font-weight: 700; }
+body .jobs-ago { color: var(--mu, #475569); font-size: 0.82rem; font-weight: 500; }
+
+body .jobs-more-wrap { display: flex; justify-content: center; margin-top: 18px; }
+body .jobs-more-wrap[hidden] { display: none; }
+
 /* ---------- খালি অবস্থা ---------- */
 body .jobs-empty {
   display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 40px 20px 44px; text-align: center;
@@ -241,6 +300,6 @@ body .jobs-none { color: var(--mu, #475569); }
 
 /* ---------- কম-মোশন ---------- */
 @media (prefers-reduced-motion: reduce) {
-  body .jobs-orb, body .jobs-sk { animation: none; }
-  body .jobs-type, body .jobs-type-ico, body .jobs-cta { transition: none; }
+  body .jobs-orb, body .jobs-sk, body .jobs-card { animation: none; }
+  body .jobs-type, body .jobs-type-ico, body .jobs-cta, body .jobs-card { transition: none; }
 }
