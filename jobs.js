@@ -601,7 +601,9 @@
       authP = Promise.all([fb(), import(FB_BASE + "firebase-auth.js")]).then(function (r) {
         var au = r[1], a = au.getAuth(r[0].app);
         authApi = { au: au, auth: a };
-        return new Promise(function (res) {
+        /* সব পেজের মতো একই জায়গায় (localStorage) লগইন রাখা, নইলে এই পেজ অন্য পেজের লগইন সরিয়ে দেয় */
+        var persistReady = au.setPersistence(a, au.browserLocalPersistence).catch(function () {});
+        return persistReady.then(function () { return new Promise(function (res) {
           au.onAuthStateChanged(a, function (u) {
             var changed = (u ? u.uid : "") !== (user ? user.uid : "");
             user = u || null; authKnown = true;
@@ -609,7 +611,7 @@
             if (changed) contactErr = null;
             syncContact(); renderReport(); res();
           });
-        });
+        }); });
       });
       authP.catch(function () { authP = null; });
     }
