@@ -155,6 +155,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       ["/events", "ক্যাম্পাস ইভেন্ট", "Campus Events"],
       ["/library", "লাইব্রেরি", "Library"],
       ["/jobs", "জব ও টিউশন", "Jobs & Tuition"],
+      ["/faq", "প্রশ্নোত্তর", "FAQ"],
       ["/feedback", "মতামত দিন", "Give Feedback"],
       ["/support", "সাহায্য করুন", "Support Us"],
       ["/about", "আমাদের সম্পর্কে", "About"]
