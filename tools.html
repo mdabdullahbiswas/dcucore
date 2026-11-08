@@ -260,6 +260,8 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
  .rt-studio{grid-template-columns:minmax(0,1fr)}
  .rt-pv{position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#f4f6fa;padding:0 14px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(100%);visibility:hidden;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s linear .38s}
  body.dark .rt-pv{background:#0f172a}
+ /* section#routine কাটা (isolation:isolate) স্ট্যাকিং কনটেক্সট বানায়, তাই প্যানেলের z-index সাইট হেডারের (50) নিচে পড়ত এবং "বন্ধ" বাটন ঢেকে যেত। খোলা থাকলে সেকশনটি হেডারের ওপরে তুলি। */
+ body.rt-pv-open #routine{z-index:60}
  body.rt-pv-open .rt-pv{transform:none;visibility:visible;transition:transform .38s cubic-bezier(.2,.8,.2,1),visibility 0s}
  body.rt-pv-open{overflow:hidden}
  .rt-pvhead{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:2;margin:0 -14px 12px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;background:#f4f6fa;border-bottom:1px solid rgba(0,0,0,.08)}
