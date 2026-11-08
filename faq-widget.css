@@ -13,6 +13,8 @@
   --fw-ink-2:var(--dl-ink-2,#475569);
   --fw-line:var(--dl-line,#E2E8F0);
   --fw-navy:var(--dl-navy,#0B1F3A);
+  /* display:block on purpose: some pages (tools) hide every bare <section> to switch tabs */
+  display:block;
   box-sizing:border-box;width:100%;max-width:880px;margin:12px auto 44px;
   padding:0 clamp(14px,2vw,30px);
   font-family:var(--dcu-font,"Inter","Noto Serif Bengali",system-ui,sans-serif);
