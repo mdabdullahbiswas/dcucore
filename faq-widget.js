@@ -52,9 +52,16 @@
     return l === "bn" ? String(n).replace(/\d/g, function (d) { return "০১২৩৪৫৬৭৮৯".charAt(d); }) : String(n);
   }
 
+  /* a button that points to the page we are already on is just noise, so it is left out */
+  function isHere(href) {
+    var clean = function (p) { return String(p).split("#")[0].split("?")[0].replace(/\.html$/, "").replace(/\/+$/, ""); };
+    if (String(href).indexOf("#") > -1) return false;   /* page#tab can still switch something here */
+    return clean(href) === clean(location.pathname);
+  }
+
   function itemHTML(it, idx, l) {
     var paras = it.a[l].split("\n").map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("");
-    var link = it.link
+    var link = it.link && !isHere(it.link.href)
       ? '<a class="fw-go" href="' + esc(it.link.href) + '"><span>' + esc(it.link[l]) + "</span>" + ARROW + "</a>"
       : "";
     var hide = idx >= LIMIT && !expanded ? " hidden" : "";
