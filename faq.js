@@ -10,6 +10,7 @@
   var clearBtn = document.getElementById("fqClear");
   var chipsEl = document.getElementById("fqChips");
   var statusEl = document.getElementById("fqStatus");
+  var askEl = document.getElementById("fqAsk");
   if (!data || !host || !input || !chipsEl) return;
 
   var ICONS = {
@@ -144,6 +145,9 @@
     clearBtn.setAttribute("aria-label", T.clear[l]);
     clearBtn.hidden = !state.q;
     renderChips(l, inQuery);
+
+    /* the empty state already has its own "ask us" button */
+    if (askEl) askEl.hidden = !shown.length;
 
     if (!shown.length) {
       host.innerHTML = emptyHTML(l);
