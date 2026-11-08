@@ -1,0 +1,92 @@
+/* faq-widget.css - the FAQ box at the bottom of feature pages.
+ * Colours come from the --dl-* tokens in dcu-layout.css (loaded on every page), which already
+ * switch for dark mode, so this file does not depend on any one page's own stylesheet.
+ * Every class starts with fw- so it cannot clash with page styles. */
+
+.fw{
+  --fw-gold:var(--dl-gold,#D4AF37);
+  --fw-gold-d:var(--dl-gold-d,#B98A2C);
+  --fw-grad:var(--dl-grad,linear-gradient(135deg,#E8C46C,#D4AF37 45%,#B98A2C));
+  --fw-surface:var(--dl-surface,#fff);
+  --fw-surface-2:var(--dl-surface-2,#F1F5F9);
+  --fw-ink:var(--dl-ink,#0F172A);
+  --fw-ink-2:var(--dl-ink-2,#475569);
+  --fw-line:var(--dl-line,#E2E8F0);
+  --fw-navy:var(--dl-navy,#0B1F3A);
+  box-sizing:border-box;width:100%;max-width:880px;margin:12px auto 44px;
+  padding:0 clamp(14px,2vw,30px);
+  font-family:var(--dcu-font,"Inter","Noto Serif Bengali",system-ui,sans-serif);
+  color:var(--fw-ink);text-align:left;
+}
+.fw *,.fw *::before,.fw *::after{box-sizing:border-box}
+
+.fw-head{margin:0 0 16px}
+.fw-eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--fw-gold-d);
+  padding:5px 12px;border-radius:99px;background:color-mix(in srgb,var(--fw-gold) 16%,transparent);
+  border:1px solid color-mix(in srgb,var(--fw-gold) 40%,transparent)}
+.fw-head h2{margin:10px 0 0;font-size:clamp(20px,2.6vw,26px);line-height:1.3;font-weight:700;color:var(--fw-ink)}
+
+.fw-list{display:grid;gap:10px}
+.fw-item{background:var(--fw-surface);border:1px solid var(--fw-line);border-radius:16px;overflow:hidden;
+  transition:border-color .25s,box-shadow .3s}
+.fw-item[hidden]{display:none}
+.fw-item:hover{border-color:color-mix(in srgb,var(--fw-gold) 60%,var(--fw-line))}
+.fw-item.open{border-color:var(--fw-gold);box-shadow:0 18px 36px -24px rgba(10,34,64,.45)}
+.fw-item h3{margin:0;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit;
+  background:none;border:0;padding:0;box-shadow:none}
+.fw-item h3::before,.fw-item h3::after{content:none}
+
+.fw-q{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;min-height:54px;
+  padding:14px 18px;cursor:pointer;font-size:16.5px;font-weight:600;line-height:1.5;color:var(--fw-ink);
+  -webkit-tap-highlight-color:transparent}
+.fw-q:focus-visible{outline:3px solid var(--fw-gold);outline-offset:-3px;border-radius:16px}
+.fw-q>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}
+.fw-chev{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--fw-surface-2);color:var(--fw-ink-2);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),background .25s,color .25s}
+.fw-chev svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.fw-item.open .fw-chev{transform:rotate(180deg);background:var(--fw-grad);color:#3b2a05}
+
+.fw-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1)}
+.fw-item.open .fw-a{grid-template-rows:1fr}
+.fw-a-in{overflow:hidden;min-height:0}
+.fw-a-txt{padding:0 18px 18px;color:var(--fw-ink-2);font-size:15.5px;line-height:1.75;overflow-wrap:anywhere}
+.fw-a-txt p{margin:0 0 9px}
+.fw-a-txt p:last-of-type{margin-bottom:0}
+
+.fw-go,.fw-all{display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-weight:700}
+.fw-go{margin-top:12px;padding:9px 16px;border-radius:99px;font-size:14.5px;color:#3b2a05;background:var(--fw-grad);
+  transition:transform .2s,box-shadow .2s}
+.fw-go:hover{transform:translateY(-1px);box-shadow:0 10px 20px -12px rgba(185,138,44,.95)}
+.fw-go svg,.fw-all svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.fw-go:focus-visible,.fw-all:focus-visible,.fw-ask a:focus-visible,.fw-more:focus-visible{outline:3px solid var(--fw-navy);outline-offset:2px}
+:root[data-theme="dark"] .fw-go:focus-visible,:root[data-theme="dark"] .fw-all:focus-visible,
+:root[data-theme="dark"] .fw-ask a:focus-visible,:root[data-theme="dark"] .fw-more:focus-visible,
+body.dark .fw-go:focus-visible,body.dark .fw-all:focus-visible,body.dark .fw-ask a:focus-visible,body.dark .fw-more:focus-visible{outline-color:var(--fw-gold)}
+
+.fw-more{all:unset;box-sizing:border-box;display:block;width:100%;margin-top:10px;padding:12px 16px;text-align:center;cursor:pointer;
+  border:1px dashed color-mix(in srgb,var(--fw-gold) 70%,var(--fw-line));border-radius:14px;
+  font-size:15px;font-weight:700;color:var(--fw-gold-d);transition:background .2s,border-color .2s}
+.fw-more:hover{background:color-mix(in srgb,var(--fw-gold) 12%,transparent);border-color:var(--fw-gold)}
+
+.fw-foot{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:20px}
+.fw-all{padding:11px 20px;border-radius:99px;font-size:15.5px;color:#3b2a05;background:var(--fw-grad);
+  box-shadow:0 14px 26px -14px rgba(185,138,44,.95);transition:transform .2s,box-shadow .2s}
+.fw-all:hover{transform:translateY(-2px);box-shadow:0 18px 30px -14px rgba(185,138,44,1)}
+.fw-ask{font-size:15px;color:var(--fw-ink-2)}
+.fw-ask a{font-weight:700;color:var(--fw-gold-d);text-underline-offset:3px}
+:root[data-theme="dark"] .fw-ask a,body.dark .fw-ask a,
+:root[data-theme="dark"] .fw-more,body.dark .fw-more,
+:root[data-theme="dark"] .fw-eyebrow,body.dark .fw-eyebrow{color:var(--dl-gold-l,#E8C46C)}
+
+:root[data-theme="dark"] .fw-item.open,body.dark .fw-item.open{box-shadow:0 18px 36px -24px #000}
+
+@media (max-width:560px){
+  .fw{margin-bottom:32px}
+  .fw-q{padding:13px 14px;font-size:16px;gap:10px}
+  .fw-a-txt{padding:0 14px 16px;font-size:15px}
+  .fw-all{width:100%;justify-content:center}
+  .fw-ask{width:100%;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.fw-a,.fw-chev,.fw-item,.fw-go,.fw-all,.fw-more{transition:none}}
+@media print{.fw{display:none}}
