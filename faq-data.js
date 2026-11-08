@@ -325,7 +325,7 @@
            en: "Please use the Feedback page. We read every message. You can also use it to ask for a file or post to be removed." },
       link: { href: "/feedback", bn: "ফিডব্যাক দিন", en: "Give feedback" } },
 
-    { id: "who-built", cat: "support", pages: [], top: false,
+    { id: "who-built", cat: "support", pages: ["support"], top: false,
       q: { bn: "সাইটটি কে বানিয়েছেন? ডেভেলপারের সাথে যোগাযোগ করব কীভাবে?", en: "Who built the site? How can I contact the developer?" },
       a: { bn: "সাইটটি ডেভেলপ করেছেন মো. আব্দুল্লাহ বিশ্বাস। তাঁর সম্পর্কে ও যোগাযোগের উপায় \"আমাদের সম্পর্কে\" পাতায় আছে।",
            en: "The site was developed by Md Abdullah Biswas. His details and ways to get in touch are on the About page." },
