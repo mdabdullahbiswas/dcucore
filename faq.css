@@ -129,3 +129,25 @@ body.dark mark.fq-hit{background:rgba(232,196,108,.35)}
   .fq-search input{height:48px;font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){.fq-item.flash{animation:none}}
+
+/* ================= step 4: "didn't find your answer?" card ================= */
+.fq-ask{position:relative;overflow:hidden;margin-top:34px;border-radius:24px;padding:34px 28px;text-align:center;color:#fff;
+  background:linear-gradient(130deg,#06162b,var(--navy) 45%,var(--navy-2));
+  box-shadow:0 26px 54px -30px rgba(10,34,64,.75),inset 0 0 0 1px rgba(246,214,143,.18)}
+.fq-ask[hidden]{display:none}
+.fq-ask .fq-orb.a{width:220px;height:220px;right:-70px;top:-100px;opacity:.4}
+.fq-ask-in{position:relative;z-index:1}
+.fq-ask-ico{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;margin-bottom:12px;
+  color:var(--gold-light);background:rgba(255,255,255,.08);border:1px solid rgba(232,196,108,.35)}
+.fq-ask-ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.fq-ask h2{margin:0 0 8px;font-size:clamp(21px,3.6vw,26px);line-height:1.35}
+.fq-ask p{margin:0 auto;max-width:480px;color:rgba(255,255,255,.78);font-size:16px}
+.fq-ask-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+.fq-ask .fq-go{margin-top:0}
+.fq-ask .fq-go.ghost{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.3);box-shadow:none}
+.fq-ask .fq-go.ghost:hover{background:rgba(255,255,255,.16)}
+.fq-ask .fq-go:focus-visible{outline-color:var(--gold-light)}
+@media (max-width:560px){
+  .fq-ask{padding:28px 18px;border-radius:20px;margin-top:26px}
+  .fq-ask-acts .fq-go{width:100%;justify-content:center;box-sizing:border-box}
+}
