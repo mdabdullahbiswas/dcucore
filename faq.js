@@ -242,7 +242,33 @@
   }
   window.addEventListener("hashchange", openFromHash);
 
-  window.onLang = render;
+  /* ---------- SEO: FAQPage structured data, built from the same data as the page ----------
+   * Answers are the plain text of faq-data.js (no HTML), in the language currently shown,
+   * so the markup always matches what a visitor can read. */
+  function seo() {
+    var l = lang();
+    var el = document.getElementById("faqLd");
+    if (!el) {
+      el = document.createElement("script");
+      el.type = "application/ld+json";
+      el.id = "faqLd";
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "inLanguage": l === "en" ? "en" : "bn",
+      "mainEntity": data.items.map(function (it) {
+        return {
+          "@type": "Question",
+          "name": it.q[l],
+          "acceptedAnswer": { "@type": "Answer", "text": it.a[l].replace(/\n+/g, " ") }
+        };
+      })
+    });
+  }
+
+  window.onLang = function () { render(); seo(); };
 
   /* ---------- start ---------- */
   try {
@@ -254,5 +280,6 @@
   } catch (e) { /* old browser: ignore */ }
 
   render();
+  seo();
   openFromHash();
 })();
