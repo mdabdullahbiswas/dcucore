@@ -723,6 +723,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
 <!-- STANDALONE:END head -->
 <link rel="stylesheet" href="dcu-layout.css">
 <link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="faq-widget.css">
 <style>
 /* হেডার/ফুটার: সাইটের বাকি পেজের (site.css) লাইন-হাইট মান — যাতে সব পেজে একই উচ্চতা ও ঘনত্ব থাকে */
 #hdr,#ftr{line-height:1.7;font-family:Inter,'Noto Serif Bengali',system-ui,sans-serif}
@@ -813,6 +814,7 @@ d.setAttribute('data-lang',L);d.lang=L;d.setAttribute('data-theme',T);})();
   <div id="view"></div>
   <div class="ev-more" id="more"></div>
 </main>
+<section id="faqBox" data-faq-page="events"></section>
 
 <!-- ===== Detail dialog ===== -->
 <dialog class="ev-dlg" id="dDetail" aria-labelledby="dTitle"><div class="ev-dlg-in" id="dBody"></div></dialog>
@@ -2595,5 +2597,7 @@ window.onLang=function(){renderAll();previewRender();if(curId&&$('#dDetail').ope
 })();
 </script>
 <script src="dcu-layout.js" defer></script><!-- হেডার + ফুটার + ভিজিট ট্র্যাকার (track.js এখান থেকেই লোড হয়) -->
+<script src="faq-data.js"></script>
+<script src="faq-widget.js"></script>
 </body>
 </html>
