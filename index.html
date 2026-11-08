@@ -403,6 +403,7 @@ body.dark .sh .mn{background:transparent}
 </style>
 <link rel="stylesheet" href="dcu-layout.css">
 <link rel="stylesheet" href="dcu-lang.css">
+<link rel="stylesheet" href="home-faq.css">
 <script src="dcu-layout.js" defer></script>
 <script src="dcu-lang.js" defer></script>
 <link rel="manifest" href="manifest.json">
@@ -528,6 +529,24 @@ body.dark .sh .mn{background:transparent}
         <p class="t">রক্তের গ্রুপ ও এলাকা দিয়ে নিকটস্থ রক্তদাতা খুঁজুন; জরুরি অনুরোধও পোস্ট করুন।|Find nearby donors by blood group and area, and post urgent requests.</p>
         <span class="go"><span class="t">খুঁজুন|Find donors</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
       </a>
+    </div>
+  </section>
+
+  <section class="sec s3" id="faq">
+    <div class="rv">
+      <div class="hp-head">
+        <span class="hp-num" aria-hidden="true"><span class="t">০৩|03</span></span>
+        <div>
+          <span class="hp-kicker t">সাধারণ প্রশ্নোত্তর|FAQ</span>
+          <h2 class="hp-title t">সবচেয়ে বেশি জিজ্ঞাসা করা প্রশ্ন|Questions people ask most</h2>
+          <p class="hp-sub t">শুরুর আগে মনে আসা সাধারণ প্রশ্নগুলোর সহজ উত্তর এখানে।|Quick answers to what most people wonder before they start.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hf-list rv" id="hfList"></div>
+    <div class="hf-more rv">
+      <a class="hf-all" href="/faq"><span class="t">সব প্রশ্ন দেখুন|See all questions</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <span class="hf-note"><span class="t">মোট|Total</span> <b id="hfTotal">৫৪</b> <span class="t">টি প্রশ্ন, বিষয় ধরে সাজানো|questions, sorted by topic</span></span>
     </div>
   </section>
 
@@ -834,5 +853,7 @@ body.dark .sh .mn{background:transparent}
 
 })();
 </script>
+<script src="faq-data.js"></script>
+<script src="home-faq.js"></script>
 </body>
 </html>
