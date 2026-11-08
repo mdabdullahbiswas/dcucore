@@ -39,7 +39,17 @@
     <p class="t">DCUCore ব্যবহার নিয়ে সবচেয়ে বেশি জিজ্ঞাসা করা প্রশ্নগুলোর সহজ উত্তর এক জায়গায়।|Simple answers to the questions people ask most about using DCUCore, all in one place.</p>
   </header>
 
-  <div id="fqBody" class="fq-body" aria-live="polite"></div>
+  <div class="fq-bar" id="fqBar">
+    <div class="fq-search">
+      <svg class="fq-s-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="fqSearch" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="fqBody">
+      <button type="button" class="fq-clear" id="fqClear" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="fq-chips" id="fqChips" role="group"></div>
+    <p class="fq-status" id="fqStatus" role="status" aria-live="polite"></p>
+  </div>
+
+  <div id="fqBody" class="fq-body"></div>
 
   <noscript><p class="fq-note">প্রশ্নোত্তর দেখতে JavaScript চালু করুন। | Please enable JavaScript to view the FAQ.</p></noscript>
 </main>
