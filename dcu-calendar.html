@@ -221,6 +221,7 @@ body.hp #hv{display:block!important;position:static!important;opacity:1!importan
 .xfb span{color:var(--mut)}.xfb b{font-size:.78rem}
 .xmg .on{border-color:#10b981;background:#10b98118;box-shadow:0 0 0 2px #10b98133}
 .xfb .on{background:#ef444433;border-color:#ef4444}
+.xds{font:inherit;color:inherit;background:transparent;border:1px solid var(--mut);border-radius:8px;padding:1px 4px;max-width:58%;vertical-align:middle}.xds option{color:#111}
 .xpf{display:block;color:var(--mut);font-size:.7rem;line-height:1.4;margin-top:4px}
 .xrz{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .xrz div{border-radius:16px;padding:10px 12px;color:#fff;background:linear-gradient(135deg,#312e81,#6d28d9 60%,#f59e0b)}
@@ -929,6 +930,7 @@ gold:{n:['সোনালি','Gold'],bg:'#fbf5e4',ink:'#1f2937',mut:'#6b5b3a',g
 emer:{n:['পান্না','Emerald'],bg:'#06281f',ink:'#f5f0d8',mut:'#b6d3c3',gd:'#fbbf24',ln:'#d4a017',pt:'#052e2b'},
 indi:{n:['নীলা','Indigo'],bg:'#1b1747',ink:'#ffffff',mut:'#c7c3ee',gd:'#fcd34d',ln:'#fcd34d',pt:'#1b1747'}};
 let SO={th:'night',fmt:'p',nm:'',pr:'0'},SK2=0;try{SO.nm=localStorage.sn||'';SO.pr=localStorage.spr=='1'?'1':'0'}catch(e){}
+const dn=()=>DCUTime.districtName(L=="bn"?"bn":"en");
 /* শেয়ার ছবির নামাজ প্যানেল: ৫ ওয়াক্ত + সেহরি/ইফতার/ইশরাক/চাশত/যাওয়াল/তাহাজ্জুদ + নিষিদ্ধ সময় (DCUTime.extras) */
 function dayPanel(x,d,f,t,i,F,pt){const X=DCUTime.extras(d),p=xpt(d),rz=f.h.m==8,PW=940,X0=70,PN=DCUTime.PN,red=t==TH.gold?'#b91c1c':'#fca5a5',
  fit=(s,mw,px,wt)=>{let z=px;x.font=wt+' '+z+'px '+F;while(z>16&&x.measureText(s).width>mw){z--;x.font=wt+' '+z+'px '+F}return z},
@@ -936,7 +938,7 @@ function dayPanel(x,d,f,t,i,F,pt){const X=DCUTime.extras(d),p=xpt(d),rz=f.h.m==8
   const sx=cx-(wn+8+wp)/2,bn1=L=='bn',nx=bn1?sx+wp+8:sx,px2=bn1?sx:sx+wn+8;x.textAlign='left';x.font='700 '+z+'px '+F;x.fillStyle=t.ink;x.fillText(nu,nx,by);x.font='500 '+Math.round(z*.52)+'px '+F;x.fillStyle=t.mut;x.fillText(pe,px2,by)};
  x.save();x.shadowBlur=0;
  x.fillStyle=t.ink+'14';rr(x,X0,pt,PW,470,28);x.fill();x.strokeStyle=t.ln;x.globalAlpha=.4;x.lineWidth=2;rr(x,X0,pt,PW,470,28);x.stroke();x.globalAlpha=1;
- x.textAlign='left';x.fillStyle=t.gd;x.font='700 30px '+F;x.fillText(T('নামাজের সময় • ঢাকা','Prayer times • Dhaka'),X0+30,pt+44);
+ x.textAlign='left';x.fillStyle=t.gd;x.font='700 30px '+F;x.fillText(T('নামাজের সময় • '+dn(),'Prayer times • '+dn()),X0+30,pt+44);
  x.textAlign='right';x.fillStyle=t.mut;x.font='400 24px '+F;x.fillText(T('আনুমানিক সময়','Approximate'),X0+PW-30,pt+44);
  const cw=(PW-60)/5;
  ['fj','dh','as','mg','is'].forEach((k,n)=>{const cx=X0+30+cw*n+cw/2,sp=xf(p[k]).split(' '),nu=L=='bn'?sp[1]:sp[0],pe=L=='bn'?sp[0]:sp[1];
@@ -1005,7 +1007,7 @@ function xmark(){document.querySelectorAll('.c[data-dt]').forEach(c=>{const p=c.
  if(!dif(r.a,d)||d.getDate()==1)c.insertAdjacentHTML('afterbegin',`<i class="xch">🏖 ${nb(r.n)}</i>`)})}
 function xsHTML(d){const r=xrun(d);if(!r||r.n<3)return'';return`<div class="xsk">🏖 <b>${T('টানা '+nb(r.n)+' দিন ছুটি','Long break: '+r.n+' days')}</b><br><small>${wdy(r.a)} ${sdt(r.a)} – ${wdy(r.b)} ${sdt(r.b)}</small></div>`}
 
-/* --- নামাজ ও সেহরি-ইফতার (ঢাকা, অফলাইন গণনা) --- */
+/* --- নামাজ ও সেহরি-ইফতার (বাছাই করা জেলা, ডিফল্ট ঢাকা; অফলাইন গণনা) --- */
 const PL=DCUTime.PL,xpt=DCUTime.prayer;
 const xf=h=>DCUTime.fmtTime(h,L);
 const XPN=DCUTime.PN;
@@ -1018,7 +1020,7 @@ function xmHTML(d){const x=DCUTime.extras(d),i=L=='bn'?0:1,
  fb={sr:T('সূর্যোদয়ের সময়','At sunrise'),zw:T('ঠিক দুপুর (যাওয়াল)','High noon (zawal)'),ss:T('সূর্যাস্তের সময়','At sunset')};
  return`<h5>🕰 ${T('আরও সময়','More times')}</h5><div class="xmg">${it.map(q=>`<div${q[3]?` data-s="${q[3].s}" data-e="${q[3].e}"`:''}><small>${q[1]}</small><b>${q[2]}</b></div>`).join('')}</div><h5>⛔ ${T('নামাজ নিষিদ্ধ (মাকরুহ) সময়','Times when prayer is not allowed')}</h5><div class="xfb">${x.forbid.map(f=>`<div data-s="${f.s}" data-e="${f.e}"><span>${fb[f.k]}</span><b>${xt1(f.s)} – ${xf(f.e)}</b></div>`).join('')}</div>`}
 function xpHTML(d){const p=xpt(d),i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['dh','☀️'],['as','🌤'],['mg','🌇'],['is','🌙']];
- return`<div class="xp" id="xp">${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}<h5>🕌 ${T('নামাজের সময় • ঢাকা','Prayer times • Dhaka')}</h5><div class="xpg">${P5.map(q=>`<div data-k="${q[0]}"><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div><p class="xpn" id="xpn"></p>${xmHTML(d)}<small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। ইশরাক সূর্যোদয়ের ১৫ মিনিট পর শুরু; তাহাজ্জুদ = রাতের শেষ তৃতীয়াংশ। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Ishraq starts 15 min after sunrise; Tahajjud = last third of the night. Please confirm with your mosque / Islamic Foundation timetable.')}</small></div>`}
+ return`<div class="xp" id="xp">${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}<h5>🕌 ${T('নামাজের সময়','Prayer times')} • <select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,n)=>`<option value="${n}"${n==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></h5><div class="xpg">${P5.map(q=>`<div data-k="${q[0]}"><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div><p class="xpn" id="xpn"></p>${xmHTML(d)}<small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। ইশরাক সূর্যোদয়ের ১৫ মিনিট পর শুরু; তাহাজ্জুদ = রাতের শেষ তৃতীয়াংশ। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Ishraq starts 15 min after sunrise; Tahajjud = last third of the night. Please confirm with your mosque / Islamic Foundation timetable.')}</small></div>`}
 function xtp(){const e=$('#xpn');if(!e||!DD||dif(tdy(),DD))return;const p=xpt(DD),n=new Date(),c=n.getHours()+n.getMinutes()/60+n.getSeconds()/3600;let k=['fj','sr','dh','as','mg','is'].find(q=>p[q]>c),h;
  if(k)h=p[k]-c;else{k='fj';h=xpt(xd(DD,1)).fj+24-c}
  const m=Math.max(0,Math.floor(h*60)),t=(m>=60?nb(Math.floor(m/60))+T(' ঘণ্টা ',' h '):'')+nb(m%60)+T(' মিনিট',' min');
@@ -1030,7 +1032,7 @@ setInterval(xtp,15000);
 /* --- আগামী ছুটি ব্যানার + রমজান স্ট্রিপ --- */
 function xnext(){const t=tdy();for(let i=0;i<500;i++){const d=xd(t,i),f=info(d);if(f.t=='h')return{d,i,f}}}
 function xbanner(){const e=$('#xnb');if(!e)return;const t=tdy(),n=xnext(),i=L=='bn'?0:1;let h='';
- if(info(t).rz){const p=xpt(t);h+=`<div class="xnh" style="background:linear-gradient(135deg,#312e81,#6d28d9 60%,#f59e0b)"><div class="xn"><b>🌙</b></div><div><small>${T('আজকের রমজান • ঢাকা','Ramadan today • Dhaka')}</small><div class="xrs"><div>${T('সেহরি শেষ','Sehri ends')}<b>${xf(p.fj)}</b></div><div>${T('ইফতার','Iftar')}<b>${xf(p.mg)}</b></div></div></div></div>`}
+ if(info(t).rz){const p=xpt(t);h+=`<div class="xnh" style="background:linear-gradient(135deg,#312e81,#6d28d9 60%,#f59e0b)"><div class="xn"><b>🌙</b></div><div><small>${T('আজকের রমজান • '+dn(),'Ramadan today • '+dn())}</small><div class="xrs"><div>${T('সেহরি শেষ','Sehri ends')}<b>${xf(p.fj)}</b></div><div>${T('ইফতার','Iftar')}<b>${xf(p.mg)}</b></div></div></div></div>`}
  if(n){const r=xrun(n.d),ti=n.i==0?T('আজ ছুটি 🎉','Holiday today 🎉'):n.i==1?T('আগামীকাল ছুটি','Holiday tomorrow'):T('আগামী ছুটি আর '+nb(n.i)+' দিন পর','Next holiday in '+n.i+' days'),
   b=xbr(xd(t,-10),xd(t,150)).find(x=>x.s>=t);
   h+=`<div class="xnh"><div class="xn">${n.i?`<b>${nb(n.i)}</b><small>${T('দিন পর','days')}</small>`:'<b>🎉</b>'}</div><div><button type=\"button\" class=\"xrb\" data-x=\"rm\" aria-haspopup=\"dialog\">🔔 ${T('ছুটির রিমাইন্ডার','Holiday reminder')}${(XS.on&&('Notification' in window)&&Notification.permission=='granted')?' • '+T('চালু','On'):''}<i aria-hidden=\"true\">›</i></button><h3>${ti}</h3><p>${n.f.r[i]} • ${wdy(n.d)}, ${sdt(n.d)}${r&&r.n>=3?`<br>🏖 ${T('টানা '+nb(r.n)+' দিন ছুটি','Long break: '+r.n+' days')} (${sdt(r.a)} – ${sdt(r.b)})`:''}</p>${b?`<p class="xtip">💡 ${sdt(b.s)}${b.k>1?' – '+sdt(b.e):''} ${T(nb(b.k)+' দিন ছুটি নিলে টানা '+nb(b.n)+' দিন ছুটি',`take ${b.k} day(s) off → ${b.n} days in a row`)}</p>`:''}</div></div>`}
@@ -1094,8 +1096,8 @@ function xqpanel(){const q=xqb(),i=L=='bn'?0:1,D=[['উত্তর','North'],['
  lb=[['N','উ',0],['E','পূ',90],['S','দ',180],['W','প',270]].map(l=>`<text transform="rotate(${l[2]}) translate(0,-78) rotate(${-l[2]})" y="5" ${l[2]?'':'style="fill:#dc2626"'}>${i?l[0]:l[1]}</text>`).join('');
  xopen(`<h3>🧭 ${T('কিবলার দিক','Qibla direction')}<button data-x="c">✕</button></h3><svg id="qs" viewBox="-130 -130 260 260" style="width:100%;max-width:290px;display:block;margin:auto;color:var(--ink)"><circle class="rg" r="112"/><g id="qd">${tk}${lb}<g transform="rotate(${q.b})"><line y2="-86" stroke="#d4a017" stroke-width="4" stroke-linecap="round"/><rect x="-10" y="-108" width="20" height="20" rx="2" fill="#111"/><rect x="-10" y="-102" width="20" height="4" fill="#d4a017"/></g></g><path d="M-9 -130 L9 -130 L0 -114z" fill="#dc2626"/></svg>
  <p class="xpn" id="qt"></p><div class="xq"><div><small>${T('কিবলা (উত্তর থেকে)','Qibla (from North)')}</small><b>${nb(q.b.toFixed(1))}°</b>${D[Math.round(q.b/45)%8][i]}</div><div><small>${T('মক্কা পর্যন্ত দূরত্ব','Distance to Makkah')}</small><b>${nb(q.km.toLocaleString('en-US'))} ${T('কিমি','km')}</b></div></div>
- <small class="n" style="text-align:center">📍 ${XQ.me?T('আপনার বর্তমান অবস্থান','Your current location'):T('ঢাকা (ডিফল্ট)','Dhaka (default)')}</small>
- <div class="row" style="justify-content:center"><button class="pri" data-x="qc">📱 ${T('লাইভ কম্পাস চালু','Start live compass')}</button><button data-x="ql">📍 ${T('আমার অবস্থান','My location')}</button>${XQ.me?`<button data-x="qr">${T('ঢাকায় ফিরুন','Back to Dhaka')}</button>`:''}</div>
+ <small class="n" style="text-align:center">📍 ${XQ.me?T('আপনার বর্তমান অবস্থান','Your current location'):T(dn()+' (ডিফল্ট)',dn()+' (default)')}</small>
+ <div class="row" style="justify-content:center"><button class="pri" data-x="qc">📱 ${T('লাইভ কম্পাস চালু','Start live compass')}</button><button data-x="ql">📍 ${T('আমার অবস্থান','My location')}</button>${XQ.me?`<button data-x="qr">${T('জেলায় ফিরুন','Back to district')}</button>`:''}</div>
  <small class="n">${T('ফোন সমতলে ধরুন, ধাতব বস্তু ও চুম্বক থেকে দূরে রাখুন; ভুল মনে হলে ফোনটি ৮ আকারে ঘুরিয়ে ক্যালিব্রেট করুন। সোনালি রেখা ও কালো কাবা-চিহ্ন কিবলার দিক; লাল তীরের নিচে এলে আপনি কিবলামুখী। কম্পাস না চললেও স্থির দিক সঠিক।','Hold the phone flat, away from metal and magnets; wave it in a figure-8 to calibrate. The gold line with the black Kaaba marks Qibla; when it sits under the red arrow you are facing it. Without a compass the fixed bearing still applies.')}</small>`);xqupd()}
 function xqupd(){const g=$('#qd');if(!g){xqstop();return}const q=xqb(),h=QH==null?0:QH,d=((q.b-h+540)%360)-180,ok=QH!=null&&Math.abs(d)<4;g.setAttribute('transform','rotate('+(-h)+')');$('#qs').classList.toggle('ok',ok);
  const t=$('#qt');if(QH==null)return;t.textContent=ok?T('✅ আপনি কিবলামুখী','✅ You are facing the Qibla'):T('আরও ','Turn ')+nb(Math.abs(Math.round(d)))+'° '+(d>0?T('ডানে ঘুরুন','right'):T('বাঁয়ে ঘুরুন','left'));
@@ -1118,6 +1120,8 @@ function xrv(){document.querySelectorAll('.yr .m,.lg,.pf,.xnh,.ls').forEach(e=>{
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),z=Math.max(r.width,r.height)*2,p=document.createElement('i');p.className='rp';p.style.cssText=`width:${z}px;height:${z}px;left:${e.clientX-r.left-z/2}px;top:${e.clientY-r.top-z/2}px`;b.appendChild(p);setTimeout(()=>p.remove(),650)});
 const _r5=render;render=function(){_r5();document.body.classList.remove('isl');const a=$('#all');a.classList.remove('xf');void a.offsetWidth;a.classList.add('xf');xrv()};
 
+document.addEventListener('change',e=>{if(e.target&&e.target.id=='xds')DCUTime.setDistrict(+e.target.value)});
+window.addEventListener('dcu:district',()=>{if(!XQ.me){XQ.lat=PL.lat;XQ.lon=PL.lon}if(DD)showDay(DD);xbanner()});
 window.onLang=()=>{L=document.documentElement.getAttribute('data-lang')==='en'?'en':'bn';render()};
 render();
 
