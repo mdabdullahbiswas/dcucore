@@ -75,6 +75,7 @@
 .ht-p .ht-pn{font-size:.9rem;font-weight:700;line-height:1.2}
 .ht-p .ht-pt{font-size:1.12rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
 .ht-p .ht-pp{font-size:.72rem;font-weight:600;color:#a8b3c7;line-height:1}
+.ht-p .ht-pn small{font-size:.72em;font-weight:600;opacity:.8}
 .ht-p.is-past{opacity:.55}
 .ht-p.is-past::after{
   content:"";position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)
