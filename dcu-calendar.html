@@ -697,6 +697,65 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 @media (max-width:340px){.np{padding:14px 8px 10px}.np-g{gap:3px}.np-g div{padding:9px 1px 8px}.np-g small{font-size:.64rem}.np-g b{font-size:.6rem;letter-spacing:-.02em}}
 @media (prefers-reduced-motion:reduce){.np,.np:before,.np-more{animation:none}.np-bar i,.np-g div{transition:none}}
 @media print{#npc{display:none!important}}
+
+/* ===== নামাজ শিট: মাসায়েল ও ফজিলত (ফজর) ===== */
+.np-g .ms{position:relative;cursor:pointer}
+.np-g .ms:after{content:"";position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 25%,transparent)}
+.np-g .ms:hover{transform:translateY(-3px);background:color-mix(in srgb,#fff 14%,transparent)}
+.np-g .ms.nx:hover{background:linear-gradient(160deg,var(--gold-light),var(--gold-deep))}
+.np-g .ms.nx:after{background:var(--night);box-shadow:0 0 0 3px #0b1f3a33}
+.np-g .ms:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
+.pq{position:fixed;inset:0;z-index:1000;display:grid;align-items:end;justify-items:center;background:color-mix(in srgb,var(--night) 64%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.pq.o{opacity:1;visibility:visible}
+body.pqL{overflow:hidden}
+.pq-s{position:relative;width:100%;max-width:560px;max-height:92vh;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;color:#fff;border-radius:28px 28px 0 0;border:1px solid transparent;padding-bottom:env(safe-area-inset-bottom,0px);
+ background:radial-gradient(110% 60% at 100% 0%,color-mix(in srgb,var(--gold) 24%,transparent),transparent 55%) padding-box,linear-gradient(160deg,var(--night),var(--navy) 60%,var(--navy-2)) padding-box,var(--hair) border-box;
+ box-shadow:0 -20px 60px #0008;transform:translateY(44px);transition:transform .5s var(--ease);font-family:Inter,'Noto Serif Bengali',system-ui,sans-serif}
+.pq.o .pq-s{transform:none}
+.pq-s::-webkit-scrollbar{width:0}
+@media(min-width:700px){.pq{align-items:center;padding:20px}.pq-s{border-radius:28px;max-height:88vh}}
+.pq-h{position:sticky;top:0;z-index:3;padding:14px 18px 12px;background:linear-gradient(var(--night),color-mix(in srgb,var(--night) 94%,transparent));border-bottom:1px solid color-mix(in srgb,var(--gold-light) 22%,transparent)}
+.pq-h:before{content:"";display:block;width:42px;height:4px;border-radius:9px;background:#ffffff40;margin:0 auto 12px}
+@media(min-width:700px){.pq-h:before{display:none}}
+.pq-t{display:flex;align-items:center;gap:13px}
+.pq-b{flex:none;width:52px;height:52px;border-radius:17px;display:grid;place-items:center;font-size:1.65rem;background:linear-gradient(150deg,var(--gold-light),var(--gold-deep));box-shadow:0 10px 22px color-mix(in srgb,var(--gold) 40%,transparent)}
+.pq-t h3{font-size:1.28rem;line-height:1.25;color:#fff}
+.pq-t small{display:block;margin-top:3px;color:var(--gold-light);font-size:.78rem;font-weight:600}
+.pq .pq-x{margin-left:auto;flex:none;position:relative;overflow:hidden;width:38px;height:38px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:1rem;color:#fff;background:color-mix(in srgb,#fff 12%,transparent);border:1px solid color-mix(in srgb,#fff 22%,transparent)}
+.pq .pq-x:hover{transform:none;box-shadow:none;background:color-mix(in srgb,#fff 22%,transparent)}
+.pq-tb{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:14px;padding:4px;border-radius:15px;background:color-mix(in srgb,#fff 8%,transparent);border:1px solid color-mix(in srgb,#fff 12%,transparent)}
+.pq .pq-tb button{position:relative;overflow:hidden;padding:10px 6px;border-radius:12px;border:0;background:transparent;color:#ffffffc4;font-weight:700;font-size:.92rem}
+.pq .pq-tb button:hover{transform:none;box-shadow:none;color:#fff;border:0}
+.pq .pq-tb button[aria-selected=true]{background:linear-gradient(150deg,var(--gold-light),var(--gold-deep));color:var(--night);box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 35%,transparent)}
+.pq-p{padding:16px 18px 22px;display:grid;gap:12px;animation:up .45s both}.pq-p[hidden]{display:none}
+.pq-sec{margin:6px 0 -2px;font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--gold-light);display:flex;align-items:center;gap:8px}
+.pq-sec:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--gold-light) 45%,transparent),transparent)}
+.pq-sec:first-child{margin-top:0}
+.pq-c{display:flex;gap:12px;padding:13px 14px;border-radius:18px;background:linear-gradient(165deg,color-mix(in srgb,#fff 11%,transparent),color-mix(in srgb,#fff 4%,transparent));border:1px solid color-mix(in srgb,#fff 14%,transparent);box-shadow:0 1px 0 color-mix(in srgb,#fff 14%,transparent) inset}
+.pq-c>i{flex:none;font-style:normal;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:1.05rem;background:linear-gradient(150deg,color-mix(in srgb,var(--gold-light) 32%,transparent),color-mix(in srgb,var(--gold-deep) 20%,transparent));border:1px solid color-mix(in srgb,var(--gold-light) 38%,transparent)}
+.pq-c h5{font-size:.9rem;color:var(--gold-light);margin-bottom:3px}
+.pq-c p{font-size:.88rem;line-height:1.8;color:#ffffffe0}
+.pq-w{display:grid;gap:8px}
+.pq-w>div{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border-radius:16px;background:color-mix(in srgb,#fff 7%,transparent);border:1px solid color-mix(in srgb,#fff 12%,transparent);border-left:3px solid var(--gold)}
+.pq-w em{flex:none;font-style:normal;font-size:.74rem;font-weight:700;padding:3px 10px;border-radius:99px;background:color-mix(in srgb,var(--gold) 24%,transparent);color:var(--gold-light);margin-top:2px}
+.pq-w p{flex:1;font-size:.86rem;line-height:1.75;color:#ffffffe0}
+.pq-w b{flex:none;font-size:.95rem;color:var(--gold-light);white-space:nowrap;margin-top:1px}
+.pq-rk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pq-rk div{text-align:center;padding:12px 4px 10px;border-radius:16px;background:color-mix(in srgb,#fff 8%,transparent);border:1px solid color-mix(in srgb,#fff 14%,transparent)}
+.pq-rk b{display:block;font-size:1.7rem;line-height:1.1;color:var(--gold-light)}
+.pq-rk small{display:block;margin-top:3px;font-size:.72rem;line-height:1.35;color:#ffffffc4}
+.pq-rk .tt{background:linear-gradient(160deg,var(--gold-light),var(--gold-deep));border-color:var(--gold-light);box-shadow:0 10px 22px color-mix(in srgb,var(--gold) 38%,transparent)}
+.pq-rk .tt b,.pq-rk .tt small{color:var(--night)}
+.pq-q{position:relative;overflow:hidden;padding:18px 16px 14px 18px;border-radius:20px;background:linear-gradient(165deg,color-mix(in srgb,var(--gold) 18%,transparent),color-mix(in srgb,#fff 5%,transparent));border:1px solid color-mix(in srgb,var(--gold-light) 34%,transparent);border-left:4px solid var(--gold)}
+.pq-q:before{content:"“";position:absolute;top:-14px;right:12px;font-size:5.5rem;line-height:1;font-family:Georgia,serif;color:color-mix(in srgb,var(--gold-light) 24%,transparent)}
+.pq-q h5{position:relative;font-size:.86rem;color:var(--gold-light);margin-bottom:7px}
+.pq-q p{position:relative;font-size:.95rem;line-height:1.9;color:#fff}
+.pq-r{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:4px 11px;border-radius:99px;font-size:.74rem;font-weight:600;color:var(--gold-light);background:color-mix(in srgb,var(--night) 55%,transparent);border:1px solid color-mix(in srgb,var(--gold-light) 30%,transparent)}
+.pq-rf{margin-top:2px;padding:11px 14px;border-radius:15px;font-size:.78rem;line-height:1.7;color:#ffffffb8;background:color-mix(in srgb,#fff 5%,transparent);border:1px dashed color-mix(in srgb,var(--gold-light) 32%,transparent)}
+.pq-rf b{color:var(--gold-light)}
+@media(max-width:380px){.pq-h{padding:12px 12px 10px}.pq-p{padding:14px 12px 20px}.pq-t h3{font-size:1.1rem}.pq-b{width:44px;height:44px;font-size:1.4rem}}
+@media(prefers-reduced-motion:reduce){.pq,.pq-s,.pq-p{transition:none;animation:none}}
+@media print{.pq{display:none!important}}
 </style>
 </head>
 <body>
@@ -1114,6 +1173,45 @@ function xtp(){const e=$('#npc');if(!e)return;if(XND!==+tdy()||!e.querySelector(
 const _sd=showDay;showDay=function(d){_sd(d);const a=$('#dpc .evs');if(a)a.insertAdjacentHTML('beforebegin',xsHTML(d))};
 setInterval(xtp,1000);
 
+/* --- নামাজ শিট: টাইলে ক্লিক করলে মাসায়েল ও ফজিলত (এখন শুধু ফজর; বাকি ওয়াক্ত পরে MS-এ যোগ হবে) --- */
+const MS={fj:{ic:'🌌',nm:['ফজর নামাজ','Fajr prayer'],tot:'৪',
+ rk:[['২','সুন্নতে মুয়াক্কাদা'],['২','ফরজ']],
+ wk:[['শুরু','সুবহে সাদিক (পূর্ব দিগন্তে প্রকৃত আলো ফোটার পর) থেকে ফজরের ওয়াক্ত শুরু হয়।','s'],['শেষ','ঠিক সূর্যোদয়ের আগ মুহূর্ত পর্যন্ত ফজরের ওয়াক্ত বলবৎ থাকে।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','২ রাকাত সুন্নতে মুয়াক্কাদা এবং ২ রাকাত ফরজ—মোট ৪ রাকাত। সুন্নতের তাকীদ অত্যন্ত বেশি।'],
+     ['⏳','কাজা মাসআলা','সূর্য উদিত হওয়ার আগ পর্যন্ত পড়া যায়। সূর্য ওঠার মাকরুহ সময়ে পড়া নিষেধ। সূর্য পুরোপুরি ওঠার পর কাজা আদায় করলে শুধু ফরজ ২ রাকাতের কাজা আদায় করতে হবে, সুন্নতের নয়।'],
+     ['🔊','জেহরী (জোরে কিরাত)','ইমাম সাহেব উচ্চস্বরে কেরাত পাঠ করবেন।']],
+ rf:'হেদায়া; ফাতাওয়া শামী: ২/১২; বুখারি ও মুসলিম।',
+ fz:[['আল্লাহর জিম্মায় সুরক্ষা','যে ব্যক্তি ফজরের নামাজ আদায় করল, সে আল্লাহর জিম্মায় (নিরাপত্তায়) চলে গেল...','সহিহ মুসলিম: ৬৫৭'],
+     ['জান্নাতের সুসংবাদ','যে ব্যক্তি দুই ঠান্ডা সময়ে (ফজর ও আসর) নামাজ আদায় করবে, সে জান্নাতে প্রবেশ করবে।','সহিহ বুখারি: ৫৭১; সহিহ মুসলিম: ৬৩৫']]}};
+function xcls(q,k){const m=MS[q],i=L=='bn'?0:1;return' class="'+(q==k?'nx':'')+(m?' ms':'')+'"'+(m?' role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+XPN[q][i]+' — '+T('মাসায়েল ও ফজিলত','Rulings & virtues')+'"':'')}
+document.body.insertAdjacentHTML('beforeend','<div class="pq" id="pq" aria-hidden="true"><div class="pq-s" id="pqs" role="dialog" aria-modal="true" aria-labelledby="pqT"></div></div>');
+let PQF=null;
+function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy());
+ return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(p.fj)} • ${T('শেষ ','Ends ')}${xf(p.sr)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
+ <div class="pq-tb" role="tablist"><button type="button" role="tab" id="pqt1" aria-selected="true" aria-controls="pqp1" data-pq="t1">${T('মাসায়েল','Rulings')}</button><button type="button" role="tab" id="pqt2" aria-selected="false" aria-controls="pqp2" data-pq="t2">${T('ফজিলত','Virtues')}</button></div></div>
+ <div class="pq-p" id="pqp1" role="tabpanel" aria-labelledby="pqt1">
+  <div class="pq-sec">${T('ওয়াক্ত বা সময়সীমা','Prayer time')}</div>
+  <div class="pq-w">${m.wk.map(w=>`<div><em>${w[0]}</em><p>${w[1]}</p><b>${xf(w[2]=='s'?p.fj:p.sr)}</b></div>`).join('')}</div>
+  <div class="pq-sec">${T('রাকাত সংখ্যা','Rakats')}</div>
+  <div class="pq-rk">${m.rk.map(r=>`<div><b>${r[0]}</b><small>${r[1]}</small></div>`).join('')}<div class="tt"><b>${m.tot}</b><small>মোট রাকাত</small></div></div>
+  <div class="pq-sec">${T('গুরুত্বপূর্ণ মাসআলাসমূহ','Key rulings')}</div>
+  ${m.ms.map(c=>`<div class="pq-c"><i aria-hidden="true">${c[0]}</i><div><h5>${c[1]}</h5><p>${c[2]}</p></div></div>`).join('')}
+  <div class="pq-rf"><b>📚 ${T('রেফারেন্স','Reference')}:</b> ${m.rf}</div></div>
+ <div class="pq-p" id="pqp2" role="tabpanel" aria-labelledby="pqt2" hidden>
+  <div class="pq-sec">${T('ফজিলত ও গুরুত্ব','Virtues & importance')}</div>
+  ${m.fz.map(f=>`<div class="pq-q"><h5>${f[0]}</h5><p>“${f[1]}”</p><span class="pq-r">📖 ${f[2]}</span></div>`).join('')}</div>`}
+function pqOpen(k,el){const m=MS[k];if(!m)return;PQF=el||document.activeElement;const o=$('#pq'),s=$('#pqs');s.innerHTML=pqHTML(k);s.scrollTop=0;o.classList.add('o');o.setAttribute('aria-hidden','false');document.body.classList.add('pqL');setTimeout(()=>{const x=s.querySelector('.pq-x');if(x)x.focus()},60)}
+function pqClose(){const o=$('#pq');if(!o.classList.contains('o'))return;o.classList.remove('o');o.setAttribute('aria-hidden','true');document.body.classList.remove('pqL');if(PQF&&PQF.focus)try{PQF.focus()}catch(e){}}
+function pqTab(n){const s=$('#pqs');[1,2].forEach(j=>{const t=s.querySelector('#pqt'+j),b=s.querySelector('#pqp'+j);t.setAttribute('aria-selected',j==n);b.hidden=j!=n});s.scrollTop=0}
+document.addEventListener('click',ev=>{
+ const t=ev.target.closest('.np-g .ms');if(t){pqOpen(t.dataset.k,t);return}
+ if(ev.target.id=='pq'){pqClose();return}
+ const b=ev.target.closest('[data-pq]');if(!b)return;const v=b.dataset.pq;if(v=='x')pqClose();else if(v=='t1')pqTab(1);else if(v=='t2')pqTab(2)});
+document.addEventListener('keydown',ev=>{
+ if(ev.key=='Escape'){pqClose();return}
+ if((ev.key=='Enter'||ev.key==' ')&&ev.target.matches&&ev.target.matches('.np-g .ms')){ev.preventDefault();pqOpen(ev.target.dataset.k,ev.target)}});
+window.addEventListener('dcu:district',()=>{const o=$('#pq');if(o&&o.classList.contains('o'))pqClose()});
+
 /* --- আগামী ছুটি ব্যানার + রমজান স্ট্রিপ --- */
 function xnext(){const t=tdy();for(let i=0;i<500;i++){const d=xd(t,i),f=info(d);if(f.t=='h')return{d,i,f}}}
 function xbanner(){const e=$('#xnb');if(!e)return;const t=tdy(),n=xnext(),i=L=='bn'?0:1;let h='';
@@ -1151,7 +1249,7 @@ function xnpcHTML(d){const i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['d
  <div class="np-h"><h4>🕌 ${T('আজকের নামাজের সময়','Today’s prayer times')}<small>${wdy(d)}, ${sdt(d)}</small></h4><select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,j)=>`<option value="${j}"${j==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></div>
  ${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}
  <div class="np-hero"><small id="npL">${H.l}</small><div class="np-hn"><b id="npN">${H.n}</b><span id="npA">${H.a}</span></div><p id="npR">${H.r}</p><div class="np-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i id="npP" style="width:${pct}%"></i></div><div class="np-nx" id="npT"${H.x?'':' hidden'}>${H.x}</div></div>
- <div class="np-g">${P5.map(q=>`<div data-k="${q[0]}"${q[0]==k?' class="nx"':''}><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div>
+ <div class="np-g">${P5.map(q=>`<div data-k="${q[0]}"${xcls(q[0],k)}><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div>
  <button type="button" class="np-mb" id="npm" aria-expanded="${XNM}" aria-controls="npx"><span>🕰 ${T('আরও সময় ও নিষিদ্ধ সময়','More times & forbidden times')}</span><i aria-hidden="true">${XNM?'▴':'▾'}</i></button>
  <div class="np-more" id="npx"${XNM?'':' hidden'}>${xmHTML(d)}</div>
  <small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Please confirm with your mosque / Islamic Foundation timetable.')}</small>
