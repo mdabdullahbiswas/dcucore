@@ -96,12 +96,21 @@
 @keyframes htPulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.07)}}
 
 /* ----- more times (sehri, iftar, ishraq, chasht, zawal, tahajjud) ----- */
-.ht-more{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}
+.ht-mt{display:inline-flex;align-items:center;gap:7px;margin-top:10px;min-height:44px;padding:0 4px;font:inherit;font-size:.82rem;font-weight:600;color:#a8b3c7;background:none;border:0;cursor:pointer;border-radius:10px}
+.ht-mt:hover{color:#e2e8f0}
+.ht-mt:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-mt svg{width:14px;height:14px;transition:transform .25s}
+.ht-mt.is-open svg{transform:rotate(180deg)}
+.ht-mt-d{display:none;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+.ht-mt.has-on .ht-mt-d{display:inline-block}
+.ht-more{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:2px}
+.ht-more[hidden]{display:none}
 .ht-m{display:flex;flex-direction:column;gap:2px;min-width:0;padding:9px 11px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background-color .3s,border-color .3s}
 .ht-m span{font-size:.72rem;font-weight:700;color:#a8b3c7;line-height:1.3}
 .ht-m b{font-size:.88rem;font-weight:700;color:#e2e8f0;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ht-m b small{font-size:.68rem;font-weight:600;color:#a8b3c7}
 .ht-m.is-rz{background:rgba(232,196,108,.12);border-color:rgba(232,196,108,.45)}
+.ht-m.is-rz span{color:#E8C46C}
 .ht-m.is-on{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.55)}
 .ht-m.is-on span{color:#a7f3d0}
 @media(max-width:1100px){.ht-more{grid-template-columns:repeat(3,minmax(0,1fr))}}
