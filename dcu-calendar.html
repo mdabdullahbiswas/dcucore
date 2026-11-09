@@ -1060,7 +1060,7 @@ const PL=DCUTime.PL,xpt=DCUTime.prayer;
 const xf=h=>DCUTime.fmtTime(h,L);
 const XPN=DCUTime.PN;
 /* আরও সময়: সেহরি, ইফতার, ইশরাক, চাশত, যাওয়াল, তাহাজ্জুদ + নিষিদ্ধ সময় (DCUTime.extras) */
-const xt1=h=>{const a=xf(h).split(' ');return L=='bn'?a[1]:a[0]},xr=(a,b)=>xt1(a)+' – '+xf(b);
+const xt1=h=>{const a=xf(h).split(' ');return L=='bn'?a[1]:a[0]},xr=(a,b)=>{const pe=t=>{const s=xf(t).split(' ');return L=='bn'?s[0]:s[1]};return(pe(a)==pe(b)?xt1(a):xf(a))+' – '+xf(b)};
 function xmHTML(d){const x=DCUTime.extras(d),i=L=='bn'?0:1,
  it=[['sehri',T('সেহরি শেষ','Sehri ends'),xf(x.sehri.e)],['iftar',T('ইফতার','Iftar'),xf(x.iftar.s)],
   ['ishraq',T('ইশরাক','Ishraq'),xr(x.ishraq.s,x.ishraq.e),x.ishraq],['chasht',T('চাশত','Chasht'),xr(x.chasht.s,x.chasht.e),x.chasht],
