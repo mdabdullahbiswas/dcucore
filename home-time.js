@@ -114,7 +114,7 @@
   function rerender() { render(dhakaNow()); }
 
   /* ---------- state ---------- */
-  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false };
+  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, ex: null, exY: null, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false };
 
   function compute(now) {
     var key = now.y + "-" + now.m + "-" + now.d;
@@ -123,6 +123,8 @@
       st.today = DT.prayer(dateOf(now, 0));
       st.tomorrow = DT.prayer(dateOf(now, 1));
       st.yesterday = DT.prayer(dateOf(now, -1));
+      st.ex = DT.extras(dateOf(now, 0));
+      st.exY = DT.extras(dateOf(now, -1));
       st.rz = !!DT.holiday(dateOf(now, 0)).rz;
       st.jumu = dateOf(now, 0).getDay() === 5;
     }
@@ -194,6 +196,29 @@
       T(azanOn ? "আজান চালু" : "আজান নোটিফিকেশন", azanOn ? "Azan on" : "Azan alert") + "</button>";
   }
 
+  /* ---------- "more times": sehri, iftar, ishraq, chasht, zawal, tahajjud ---------- */
+  function moreChips(now) {
+    var E = st.ex, T0 = st.today;
+    /* before Fajr the night we are in started yesterday evening */
+    var tj = now.h < T0.fj ? { s: st.exY.tahajjud.s - 24, e: st.exY.tahajjud.e - 24 } : { s: E.tahajjud.s, e: E.tahajjud.e };
+    var items = [
+      { k: "sehri", n: T("সেহরি শেষ", "Sehri ends"), a: E.sehri.e, rz: 1 },
+      { k: "iftar", n: T("ইফতার", "Iftar"), a: E.iftar.s, rz: 1 },
+      { k: "ishraq", n: T("ইশরাক", "Ishraq"), a: E.ishraq.s, b: E.ishraq.e },
+      { k: "chasht", n: T("চাশত", "Chasht"), a: E.chasht.s, b: E.chasht.e },
+      { k: "zawal", n: T("যাওয়াল", "Zawal"), a: E.zawal.s, b: E.zawal.e },
+      { k: "tahajjud", n: T("তাহাজ্জুদ", "Tahajjud"), a: tj.s, b: tj.e }
+    ];
+    return '<div class="ht-more" role="list" aria-label="' + T("আরও সময়", "More times") + '">' + items.map(function (x) {
+      var v;
+      if (x.b == null) { var c = clock(x.a); v = c.t + " <small>" + c.p + "</small>"; }
+      else { var c1 = clock(x.a), c2 = clock(x.b); v = c1.t + "–" + c2.t + " <small>" + c2.p + "</small>"; }
+      var on = x.b != null && now.h >= x.a && now.h < x.b;
+      var cls = "ht-m" + (on ? " is-on" : "") + (x.rz && st.rz ? " is-rz" : "");
+      return '<div class="' + cls + '" role="listitem" data-s="' + (x.b != null ? x.a : "") + '" data-e="' + (x.b != null ? x.b : "") + '"><span>' + x.n + "</span><b>" + v + "</b></div>";
+    }).join("") + "</div>";
+  }
+
   /* ---------- render ---------- */
   var els = {};
 
@@ -235,9 +260,9 @@
       '<div class="ht-cd" role="timer"><small>' + cdLabel + '</small><b class="ht-t">' + hms((hend - now.h) * 3600) + "</b></div>" +
       "</div>" +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
-      '<ul class="ht-list">' + lis + "</ul>" +
+      '<ul class="ht-list">' + lis + "</ul>" + moreChips(now) +
       '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" +
-      "<span>" + T("সূর্যাস্ত", "Sunset") + " <b>" + (lang() === "en" ? ss.t + " " + ss.p : ss.p + " " + ss.t) + "</b></span>" + rz +
+      "<span>" + T("সূর্যাস্ত", "Sunset") + " <b>" + (lang() === "en" ? ss.t + " " + ss.p : ss.p + " " + ss.t) + "</b></span>" +
       '<span class="ht-sp"></span>' + distSel() + azanBtn() +
       "<span>" + T("আনুমানিক", "Approx.") + "</span>" +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
@@ -253,6 +278,11 @@
     if (!els.t) return;
     els.t.textContent = hms((st.cdH - now.h) * 3600);
     var span = st.barB - st.barA, pct = span > 0 ? (now.h - st.barA) / span : 0;
+    var ms = host.querySelectorAll(".ht-m[data-s]");
+    for (var i = 0; i < ms.length; i++) {
+      var a = ms[i].getAttribute("data-s"), b = ms[i].getAttribute("data-e");
+      if (a !== "") ms[i].classList.toggle("is-on", now.h >= +a && now.h < +b);
+    }
     els.bar.style.width = Math.min(100, Math.max(0, pct * 100)).toFixed(2) + "%";
   }
 
