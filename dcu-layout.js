@@ -66,6 +66,35 @@
     { href: "/tools#result", bn: "রেজাল্ট", en: "Results Portal" }
   ];
 
+  /* tools mega menu: groups + per-tool icon / one-line description.  nw:true shows a small NEW badge */
+  var TOOL_GROUPS = [
+    { id: "study", bn: "পড়াশোনা", en: "Study" },
+    { id: "career", bn: "ক্যারিয়ার", en: "Career" },
+    { id: "util", bn: "ইউটিলিটি", en: "Utilities" }
+  ];
+  var TOOL_META = {
+    "/tools#routine": { g: "study", nw: false, d: ["ক্লাস রুটিন বানিয়ে ডাউনলোড করুন", "Design & download your routine"],
+      ic: '<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2.5v3M16 2.5v3M8 13h2M12 13h4M8 17h5"/>' },
+    "/tools#cgpa": { g: "study", nw: false, d: ["সেমিস্টার ধরে মোট CGPA হিসাব", "Work out your cumulative CGPA"],
+      ic: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>' },
+    "/tools#exam": { g: "study", nw: false, d: ["পরীক্ষা, টপিক ও ফোকাস টাইমার", "Exams, topics & focus timer"],
+      ic: '<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M9.5 2.5h5"/>' },
+    "/dcu-calendar": { g: "study", nw: false, d: ["বাংলা ও ইংরেজি তারিখসহ ক্যালেন্ডার", "Calendar with Bangla & English dates"],
+      ic: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>' },
+    "/cv": { g: "career", nw: false, d: ["৬টি টেমপ্লেটে সিভি বানান", "Build a CV with 6 templates"],
+      ic: '<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><circle cx="10.5" cy="12.5" r="1.6"/><path d="M8 17c.4-1.4 1.3-2 2.5-2s2.1.6 2.5 2"/>' },
+    "/tools#pdf": { g: "career", nw: false, d: ["ছবি থেকে PDF বানান", "Turn images into a PDF"],
+      ic: '<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M8.5 17l2-3 1.5 2 1.2-1.4 1.3 2.4"/>' },
+    "/tools#card": { g: "util", nw: false, d: ["পরিচয়ের কার্ড বানিয়ে শেয়ার করুন", "Make a card and share it"],
+      ic: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.6-1.6 1.8-2.4 3-2.4s2.4.8 3 2.4M14.5 10h4M14.5 13.5h3"/>' },
+    "/tools#frame": { g: "util", nw: false, d: ["প্রোফাইল ছবির জন্য গোল ফ্রেম", "Round frame for your profile photo"],
+      ic: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 18c1-2.6 3-3.6 5.5-3.6s4.5 1 5.5 3.6"/>' },
+    "/tools#calc": { g: "util", nw: false, d: ["ফ্র্যাকশন ও ডিগ্রি মোডসহ", "With fraction & degree modes"],
+      ic: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>' },
+    "/tools#result": { g: "util", nw: false, d: ["ঢাবি অধিভুক্ত ৭ কলেজের ফল", "Results of 7 DU-affiliated colleges"],
+      ic: '<path d="M4 6l1.5 1.5L8 5M4 12l1.5 1.5L8 11M4 18l1.5 1.5L8 17M11 6.5h9M11 12.5h9M11 18.5h9"/>' }
+  };
+
   var ICON_CHEVRON =
     '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   var ICON_BURGER =
@@ -137,17 +166,24 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     // insert the tools dropdown after the "কভার পেজ" link (index 1)
     var toolsActive = file === "tools.html";
-    var items = TOOLS.map(function (t, i) {
-      return (
-        '<a href="' + t.href + '" role="menuitem" style="--i:' + i + '" data-dl-href="' + t.href + '"><b><span class="cvx-bn">' + esc(t.bn) +
-        '</span><span class="cvx-en">' + esc(t.en) + "</span></b></a>"
-      );
+    var seq = 0;
+    var cols = TOOL_GROUPS.map(function (g) {
+      var list = TOOLS.filter(function (t) { return TOOL_META[t.href] && TOOL_META[t.href].g === g.id; }).map(function (t) {
+        var m = TOOL_META[t.href];
+        return (
+          '<a href="' + t.href + '" role="menuitem" style="--i:' + (seq++) + '" data-dl-href="' + t.href + '">' +
+          '<span class="cvx-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + m.ic + "</svg></span>" +
+          '<b><span class="mg-t">' + bi(t.bn, t.en) + (m.nw ? '<i class="mg-new">NEW</i>' : "") + "</span>" +
+          '<span class="mg-d">' + bi(m.d[0], m.d[1]) + "</span></b></a>"
+        );
+      }).join("");
+      return '<div class="dl-mg" role="group"><p class="dl-mgh">' + bi(g.bn, g.en) + "</p>" + list + "</div>";
     }).join("");
     var dd =
       '<div class="dl-dd" data-dl-dd>' +
       '<button type="button" class="dl-dd-btn"' + (toolsActive ? ' aria-current="page"' : "") +
       ' aria-haspopup="true" aria-expanded="false">' + bi("টুলস", "Tools") + " " + ICON_CHEVRON + "</button>" +
-      '<div class="dl-menu" role="menu">' + items + "</div></div>";
+      '<div class="dl-menu dl-menu-mega" role="menu">' + cols + "</div></div>";
 
     links.splice(2, 0, dd);
     GROUPS.forEach(function (g) { links.push(groupDD(g)); });
@@ -536,6 +572,18 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     "html:not([data-lang=\"en\"]) .dl-menu-grp .cvx-en,html[data-lang=\"en\"] .dl-menu-grp .cvx-bn{display:none}",
     "@media(min-width:961px){.dl-menu-r{left:auto!important;right:0;transform-origin:100% 0!important}.dl-dd:not(.open) .dl-menu.dl-menu-r{transform:translate(0,-10px) scale(.96)!important}.dl-dd.open .dl-menu.dl-menu-r{transform:translate(0,0) scale(1)!important}.dl-menu-r::before{left:auto;right:26px;transform:rotate(45deg)}}",
     "@media(max-width:960px){.dl-menu-grp{width:auto}}",
+    "@media(min-width:961px){.dl-menu-mega{width:min(94vw,700px);grid-template-columns:repeat(3,1fr);gap:4px 10px;padding:14px}}",
+    "@media(max-width:960px){.dl-menu-mega{width:auto}}",
+    ".dl-mg{display:flex;flex-direction:column;gap:2px;min-width:0}",
+    ".dl-mgh{margin:0 0 4px;padding:2px 10px 7px;font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--dl-gold-d,#9a7414);border-bottom:1px solid var(--dl-line)}",
+    ".dl-menu-mega a{position:relative;flex-direction:row;align-items:flex-start;justify-content:flex-start;text-align:left;gap:10px;padding:9px 10px}",
+    ".dl-menu-mega a b{display:flex;flex-direction:column;gap:1px;min-width:0}",
+    ".dl-menu-mega a .mg-d{display:block;line-height:1.35;font-size:.72rem;font-weight:400;color:var(--dl-ink-2)}",
+    ".dl-menu-mega a .cvx-ic{width:34px;height:34px;border-radius:10px;margin-top:1px}",
+    ".dl-menu-mega a:hover .cvx-ic{transform:scale(1.08) rotate(-4deg)}",
+    ".dl-menu-mega a.on b::after{content:none}",
+    ".dl-menu-mega a.on .cvx-ic{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#1d1400}",
+    ".mg-new{font-style:normal;margin-left:6px;padding:1px 6px;border-radius:99px;font-size:.62rem;font-weight:800;letter-spacing:.04em;color:#1d1400;background:linear-gradient(135deg,#F3E6C4,#D9B26A 55%,#B88A3E);vertical-align:middle}",
     ".dl-dd.open .dl-menu a{animation:cvxIn .42s calc(var(--i,0)*30ms + 30ms) cubic-bezier(.2,.8,.2,1) both}",
     "@media(min-width:961px){.dl-menu{transform-origin:50% 0;filter:blur(6px);transition:opacity .24s ease,transform .32s cubic-bezier(.2,.9,.25,1.15),visibility .24s,filter .24s ease!important}}",
     ".dl-dd.open .dl-menu{filter:blur(0)}",
