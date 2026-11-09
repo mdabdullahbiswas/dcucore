@@ -195,10 +195,11 @@
       : T(pname(k) + " শুরু হতে বাকি", "Until " + pname(k));
 
     var lis = KEYS.map(function (q) {
-      var cl = clock(st.today[q]);
-      var cls = q === k && c.nextH < 24 ? " is-next" : (st.today[q] <= now.h ? " is-past" : "");
+      var wrap = q === "fj" && k === "fj" && c.nextH >= 24;   /* after Isha: next is tomorrow's Fajr */
+      var cl = clock(wrap ? st.tomorrow.fj : st.today[q]);
+      var cls = q === k && (c.nextH < 24 || wrap) ? " is-next" : (st.today[q] <= now.h ? " is-past" : "");
       return '<li class="ht-p' + cls + '" data-k="' + q + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[q] + "</svg>" +
-        '<span class="ht-pn">' + pname(q) + '</span><span class="ht-pt">' + cl.t + '</span><span class="ht-pp">' + cl.p + "</span></li>";
+        '<span class="ht-pn">' + pname(q) + (wrap ? " <small>" + T("(কাল)", "(tmrw)") + "</small>" : "") + '</span><span class="ht-pt">' + cl.t + '</span><span class="ht-pp">' + cl.p + "</span></li>";
     }).join("");
 
     var rz = st.rz
@@ -216,7 +217,7 @@
       "</div>" +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
       '<ul class="ht-list">' + lis + "</ul>" +
-      '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + sr.p + " " + sr.t + "</b></span>" + rz +
+      '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" + rz +
       '<span class="ht-sp"></span><span>' + T("ঢাকার সময় • আনুমানিক", "Dhaka time • approximate") + "</span>" +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
       "</div>" + calHTML(now) + "</div>";
