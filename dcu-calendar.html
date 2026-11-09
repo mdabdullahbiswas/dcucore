@@ -698,6 +698,13 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 @media (prefers-reduced-motion:reduce){.np,.np:before,.np-more{animation:none}.np-bar i,.np-g div{transition:none}}
 @media print{#npc{display:none!important}}
 
+
+/* ===== নিষিদ্ধ সময়: ক্লিক করলে মাসায়েল ===== */
+.xfb .ms{cursor:pointer;transition:transform .25s,background .25s}
+.xfb .ms b:after{content:"›";margin-left:8px;font-weight:700;opacity:.75}
+.xfb .ms:hover{transform:translateX(3px)}
+.xfb .ms:focus-visible{outline:2px solid var(--gold-light,#f5d27a);outline-offset:2px}
+
 /* ===== নামাজ শিট: মাসায়েল ও ফজিলত (ফজর) ===== */
 .np-g .ms{position:relative;cursor:pointer}
 .np-g .ms:after{content:"";position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 25%,transparent)}
@@ -1162,7 +1169,7 @@ function xmHTML(d){const x=xex(d),
  sf=[['🌙','sehri',T('সেহরি শেষ','Sehri ends'),xf(x.sehri.e)],['🌅','iftar',T('ইফতার','Iftar'),xf(x.iftar.s)]],
  nf=[['🌄','ishraq',T('ইশরাক','Ishraq'),xr(x.ishraq.s,x.ishraq.e),x.ishraq],['☀️','chasht',T('চাশত','Chasht'),xr(x.chasht.s,x.chasht.e),x.chasht],['🌌','tahajjud',T('তাহাজ্জুদ (রাত)','Tahajjud (night)'),xr(x.tahajjud.s,x.tahajjud.e)]],
  fb={sr:[T('সূর্যোদয়ের সময়','At sunrise'),'🌄'],zw:[T('ঠিক দুপুর','High noon'),'☀️'],ss:[T('সূর্যাস্তের সময়','At sunset'),'🌇']};
- return`<div class="xcat xc-sf"><h5><i aria-hidden="true">🍽</i>${T('সেহরি ও ইফতার','Sehri & Iftar')}</h5><div class="xmg xm2">${sf.map(card).join('')}</div></div><div class="xcat xc-nf"><h5><i aria-hidden="true">🤲</i>${T('নফল নামাজ','Nafl prayers')}</h5><div class="xmg xm3">${nf.map(card).join('')}</div></div><div class="xcat xc-fb"><h5><i aria-hidden="true">⛔</i>${T('নামাজের নিষিদ্ধ সময়','Forbidden prayer times')}</h5><div class="xfb">${x.forbid.map(f=>`<div data-s="${f.s}" data-e="${f.e}"><span><i aria-hidden="true">${fb[f.k][1]}</i>${fb[f.k][0]}</span><b>${xt1(f.s)} – ${xf(f.e)}</b></div>`).join('')}</div></div>`}
+ return`<div class="xcat xc-sf"><h5><i aria-hidden="true">🍽</i>${T('সেহরি ও ইফতার','Sehri & Iftar')}</h5><div class="xmg xm2">${sf.map(card).join('')}</div></div><div class="xcat xc-nf"><h5><i aria-hidden="true">🤲</i>${T('নফল নামাজ','Nafl prayers')}</h5><div class="xmg xm3">${nf.map(card).join('')}</div></div><div class="xcat xc-fb"><h5><i aria-hidden="true">⛔</i>${T('নামাজের নিষিদ্ধ সময়','Forbidden prayer times')}</h5><div class="xfb">${x.forbid.map(f=>`<div data-s="${f.s}" data-e="${f.e}" class="ms" data-k="f${f.k}" role="button" tabindex="0" aria-haspopup="dialog" aria-label="${fb[f.k][0]} — ${T('মাসায়েল','Rulings')}"><span><i aria-hidden="true">${fb[f.k][1]}</i>${fb[f.k][0]}</span><b>${xt1(f.s)} – ${xf(f.e)}</b></div>`).join('')}</div></div>`}
 function xpHTML(d){const p=xpt(d),i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['dh','☀️'],['as','🌤'],['mg','🌇'],['is','🌙']];
  const td=+d==+tdy();return`<div class="xp" id="xp">${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}<h5>🕌 ${td?T('আজকের নামাজের সময়','Today’s prayer times'):T('নামাজের সময়','Prayer times')} • <select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,n)=>`<option value="${n}"${n==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></h5><div class="xpg">${P5.map(q=>`<div data-k="${q[0]}"><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div><p class="xpn" id="xpn"></p>${xmHTML(d)}<small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। ইশরাক সূর্যোদয়ের ১৫ মিনিট পর শুরু; তাহাজ্জুদ = রাতের শেষ তৃতীয়াংশ। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Ishraq starts 15 min after sunrise; Tahajjud = last third of the night. Please confirm with your mosque / Islamic Foundation timetable.')}</small></div>`}
 /* লাইভ টাইমার (ধাপ ৬): আজকের দিনের উপর নির্ভর করে, নির্বাচিত তারিখের উপর নয়। কার্ড নতুন করে না এঁকে জায়গায় জায়গায় আপডেট করে (ড্রপডাউন/"আরও সময়" খোলা থাকলে বন্ধ হয় না)। */
@@ -1244,9 +1251,52 @@ tahajjud:{ic:'🌌',nm:['তাহাজ্জুদ নামাজ (রাত�
  fz:[['সর্বোত্তম নফল নামাজ — রাসূলুল্লাহ (সা.) বলেছেন','ফরজ নামাজের পর সবচেয়ে উত্তম নামাজ হলো রাতের নামাজ (তাহাজ্জুদ)।','সহিহ মুসলিম: ১১৬৩'],
      ['মাকামে মাহমুদ — আল্লাহ তাআলা কুরআনে ইরশাদ করেছেন','আর রাতের কিছু অংশে তাহাজ্জুদ আদায় করুন, এটি আপনার জন্য একটি অতিরিক্ত নফল দায়িত্ব। আশা করা যায় আপনার রব আপনাকে ‘মাকামে মাহমুদে’ (প্রশংসিত স্থানে) উন্নীত করবেন।','সূরা বনী ইসরাইল: ৭৯']]}};
 function xcls(q,k){const m=MS[q],i=L=='bn'?0:1;return' class="'+(q==k?'nx':'')+(m?' ms':'')+'"'+(m?' role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+XPN[q][i]+' — '+T('মাসায়েল ও ফজিলত','Rulings & virtues')+'"':'')}
+/* --- নামাজের নিষিদ্ধ ৩ সময়: ক্লিক করলে মাসায়েল ও সতর্কতা --- */
+const FBW=[['✅','যা করা জায়েজ','এই তিনটি নিষিদ্ধ সময়ে কোরআন তেলাওয়াত, দোয়া-দরুদ ও জিকির-আজকার করা জায়েজ আছে।'],['🚫','যা নিষেধ','কেবল রুকু-সিজদা বিশিষ্ট সালাত বা নামাজ আদায় করা নিষেধ।']];
+MS.fsr={fb:'sr',ic:'🌄',nm:['সূর্যোদয়ের সময়','At sunrise'],
+ wt:'সূর্য ওঠার ঠিক শুরু থেকে নিয়ে সূর্য পুরোপুরি ওপরে ওঠার আগ পর্যন্ত (সাধারণত সূর্যোদয়ের পর থেকে ১৫ থেকে ২০ মিনিট পর্যন্ত এই নিষেধাজ্ঞা থাকে)।',
+ ms:[['🚫','এই সময়ে কোনো নামাজ নয়','এই সময়ে কোনো নামাজ পড়া যায় না। এমনকি গতকালের কাজা হয়ে যাওয়া ফজর নামাজও এই সময়ে পড়া নিষিদ্ধ।'],
+     ['✅','কখন নামাজ বৈধ হয়','সূর্য পুরোপুরি উদিত হয়ে সামান্য ওপরে ওঠার পরই কেবল নফল বা অন্যান্য নামাজ পড়া বৈধ হয়।']],cx:[]};
+MS.fzw={fb:'zw',ic:'☀️',nm:['ঠিক দুপুর বা যাওয়াউল','High noon (Zawal)'],
+ wt:'সূর্য যখন আকাশের ঠিক মধ্যগগনে বা মাথার ওপর থাকে (অর্থাৎ জোহরের ওয়াক্ত শুরু হওয়ার ঠিক পূর্বের অত্যন্ত সংক্ষিপ্ত সময়, সাধারণত ৫ থেকে ১০ মিনিট)।',
+ ms:[['☀️','ইস্তিজাওয়া বা যাওয়াউল','একে ‘ইস্তিজাওয়া’ বা যাওয়াউল বলা হয়। এই সময়ে সূর্য ঠিক পশ্চিম দিকে ঢোকা শুরু করার আগ পর্যন্ত কোনো নামাজ পড়া যায় না।'],
+     ['✅','কখন নামাজ বৈধ হয়','ঠিক এই সময়টি অতিক্রান্ত হয়ে জোহরের ওয়াক্ত শুরু হওয়ার সাথে সাথেই আবার নামাজ পড়া বৈধ হয়ে যায়।']],cx:[]};
+MS.fss={fb:'ss',ic:'🌇',nm:['সূর্যাস্তের সময়','At sunset'],
+ wt:'সূর্য ডোবার ঠিক আগ মুহূর্ত থেকে, যখন খালি চোখে সূর্যের দিকে তাকানো যায় (সাধারণত সূর্যাস্তের পূর্বের ১৫ থেকে ২০ মিনিট)।',
+ ms:[['🚫','অন্য নামাজ জায়েজ নেই','এই সময়ে নফল বা অন্য কোনো ওয়াক্তের (কাজা) নামাজ পড়া জায়েজ নেই।'],
+     ['⚠️','ওই দিনের আসর বাকি থাকলে','যদি ওই দিনের আসরের ফরজ নামাজ কোনো কারণে আদায় করা না হয়ে থাকে, তবুও সূর্যাস্তের ঠিক আগের এই মাকরুহ সময়ে তাড়াহুড়ো করে হলেও তা আদায় করে নিতে হয় (যদিও বিলম্বে পড়ার কারণে তা মাকরুহ হয়ে যায়, তবুও ওয়াক্ত চলে যাওয়ার চেয়ে পড়ে নেওয়া জরুরি)।']],
+ cx:[['📜','কেন নিষিদ্ধ','হাদিসে এসেছে, এই সময়ে কাফেররা সূর্যের পূজা করে থাকে, তাই তাদের সাথে সাদৃশ্য এড়াতে এই সময়ে নামাজ নিষিদ্ধ করা হয়েছে।']]};
+function pqFB(k){const m=MS[k],i=L=='bn'?0:1,f=xex(tdy()).forbid.find(q=>q.k==m.fb);
+ return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>⛔ ${T('নামাজের নিষিদ্ধ সময়','Forbidden prayer time')} • ${xt1(f.s)} – ${xf(f.e)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
+ <div class="pq-tb" role="tablist"><button type="button" role="tab" id="pqt1" aria-selected="true" aria-controls="pqp1" data-pq="t1">${T('মাসায়েল','Rulings')}</button><button type="button" role="tab" id="pqt2" aria-selected="false" aria-controls="pqp2" data-pq="t2">${T('সতর্কতা','Cautions')}</button></div></div>
+ <div class="pq-p" id="pqp1" role="tabpanel" aria-labelledby="pqt1">
+  <div class="pq-sec">${T('সময়সীমা','Time span')}</div>
+  <div class="pq-w"><div><em>${T('সময়','Time')}</em><p>${m.wt}</p><b>${xt1(f.s)} – ${xf(f.e)}</b></div></div>
+  <div class="pq-sec">${T('গুরুত্বপূর্ণ মাসআলাসমূহ','Key rulings')}</div>
+  ${m.ms.map(c=>`<div class="pq-c"><i aria-hidden="true">${c[0]}</i><div><h5>${c[1]}</h5><p>${c[2]}</p></div></div>`).join('')}</div>
+ <div class="pq-p" id="pqp2" role="tabpanel" aria-labelledby="pqt2" hidden>
+  <div class="pq-sec">${T('সাধারণ সতর্কতা','General cautions')}</div>
+  ${m.cx.concat(FBW).map(c=>`<div class="pq-c"><i aria-hidden="true">${c[0]}</i><div><h5>${c[1]}</h5><p>${c[2]}</p></div></div>`).join('')}</div>`}
+/* --- সেহরি শেষ ও ইফতার: ক্লিক করলে মাসায়েল --- */
+MS.sehri={sf:'sehri',ic:'🌙',nm:['সেহরি শেষ (সুবহে সাদিক)','Sehri ends (Subh Sadiq)'],
+ wt:'সুবহে সাদিক (পূর্ব দিগন্তে আড়াআড়িভাবে যে সাদা আলো ছড়িয়ে পড়ে) শুরু হওয়ার সাথে সাথেই সেহরি খাওয়ার সময় শেষ হয়ে যায় এবং ফজরের ওয়াক্ত শুরু হয়।',
+ ms:[['⏱️','আজানের অপেক্ষা নয়','আজান হোক বা না হোক, সুবহে সাদিক শুরু হওয়ার আগেই সেহরির খাবার খাওয়া সম্পূর্ণরূপে শেষ করতে হবে।'],
+     ['🚫','এক মুহূর্তও জায়েজ নয়','সুবহে সাদিক শুরু হওয়ার পর এক মুহূর্তও পানাহার করা জায়েজ নয়।'],
+     ['🛡️','সতর্কতা (ইহতিয়াত)','ঘড়ির নির্দিষ্ট ক্যালেন্ডার বা সতর্কতামূলক সময়ের (Ihtiyat) একটু আগে সেহরি শেষ করা নিরাপদ।']]};
+MS.iftar={sf:'iftar',ic:'🌅',nm:['ইফতার','Iftar'],
+ wt:'ঠিক সূর্যাস্তের সাথে সাথেই (পশ্চিম আকাশে সূর্য পুরোপুরি ডুবে যাওয়ার পর) ইফতারের ওয়াক্ত শুরু হয়।',
+ ms:[['⚡','দ্রুত ইফতার করা সুন্নাত','সূর্যাস্ত নিশ্চিত হওয়ার সাথে সাথে দেরি না করে দ্রুত ইফতার করা মুস্তাহাব (সুন্নাত)।'],
+     ['📜','রাসূলুল্লাহ (সা.)-এর তাগিদ','রাসূলুল্লাহ (সা.) সময় হওয়ার সাথে সাথে ইফতার করতে তাগিদ দিয়েছেন।']]};
+function pqSF(k){const m=MS[k],i=L=='bn'?0:1,x=xex(tdy())[m.sf],t=m.sf=='sehri'?x.e:x.s;
+ return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${m.sf=='sehri'?T('সেহরির শেষ সময় ','Sehri ends '):T('ইফতারের সময় ','Iftar at ')}${xf(t)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div></div>
+ <div class="pq-p" id="pqp1" role="tabpanel">
+  <div class="pq-sec">${T('সময়সীমা','Time span')}</div>
+  <div class="pq-w"><div><em>${T('সময়','Time')}</em><p>${m.wt}</p><b>${xf(t)}</b></div></div>
+  <div class="pq-sec">${T('গুরুত্বপূর্ণ মাসআলাসমূহ','Key rulings')}</div>
+  ${m.ms.map(c=>`<div class="pq-c"><i aria-hidden="true">${c[0]}</i><div><h5>${c[1]}</h5><p>${c[2]}</p></div></div>`).join('')}</div>`}
 document.body.insertAdjacentHTML('beforeend','<div class="pq" id="pq" aria-hidden="true"><div class="pq-s" id="pqs" role="dialog" aria-modal="true" aria-labelledby="pqT"></div></div>');
 let PQF=null;
-function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy()),W=m.x?xex(tdy())[m.x]:null,S0=W?W.s%24:p[m.a],E0=W?W.e%24:p[m.z];
+function pqHTML(k){if(MS[k]&&MS[k].fb)return pqFB(k);if(MS[k]&&MS[k].sf)return pqSF(k);const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy()),W=m.x?xex(tdy())[m.x]:null,S0=W?W.s%24:p[m.a],E0=W?W.e%24:p[m.z];
  return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(S0)} • ${T('শেষ ','Ends ')}${xf(E0)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
  <div class="pq-tb" role="tablist"><button type="button" role="tab" id="pqt1" aria-selected="true" aria-controls="pqp1" data-pq="t1">${T('মাসায়েল','Rulings')}</button><button type="button" role="tab" id="pqt2" aria-selected="false" aria-controls="pqp2" data-pq="t2">${T('ফজিলত','Virtues')}</button></div></div>
  <div class="pq-p" id="pqp1" role="tabpanel" aria-labelledby="pqt1">
@@ -1264,12 +1314,12 @@ function pqOpen(k,el){const m=MS[k];if(!m)return;PQF=el||document.activeElement;
 function pqClose(){const o=$('#pq');if(!o.classList.contains('o'))return;o.classList.remove('o');o.setAttribute('aria-hidden','true');document.body.classList.remove('pqL');if(PQF&&PQF.focus)try{PQF.focus()}catch(e){}}
 function pqTab(n){const s=$('#pqs');[1,2].forEach(j=>{const t=s.querySelector('#pqt'+j),b=s.querySelector('#pqp'+j);t.setAttribute('aria-selected',j==n);b.hidden=j!=n});s.scrollTop=0}
 document.addEventListener('click',ev=>{
- const t=ev.target.closest('.np-g .ms,.xmg .ms');if(t){pqOpen(t.dataset.k,t);return}
+ const t=ev.target.closest('.np-g .ms,.xmg .ms,.xfb .ms');if(t){pqOpen(t.dataset.k,t);return}
  if(ev.target.id=='pq'){pqClose();return}
  const b=ev.target.closest('[data-pq]');if(!b)return;const v=b.dataset.pq;if(v=='x')pqClose();else if(v=='t1')pqTab(1);else if(v=='t2')pqTab(2)});
 document.addEventListener('keydown',ev=>{
  if(ev.key=='Escape'){pqClose();return}
- if((ev.key=='Enter'||ev.key==' ')&&ev.target.matches&&ev.target.matches('.np-g .ms,.xmg .ms')){ev.preventDefault();pqOpen(ev.target.dataset.k,ev.target)}});
+ if((ev.key=='Enter'||ev.key==' ')&&ev.target.matches&&ev.target.matches('.np-g .ms,.xmg .ms,.xfb .ms')){ev.preventDefault();pqOpen(ev.target.dataset.k,ev.target)}});
 window.addEventListener('dcu:district',()=>{const o=$('#pq');if(o&&o.classList.contains('o'))pqClose()});
 
 /* --- আগামী ছুটি ব্যানার + রমজান স্ট্রিপ --- */
