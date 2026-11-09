@@ -99,6 +99,10 @@
     '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   var ICON_BURGER =
     '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+  var ICON_SPARK =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.4 2.4M15.3 15.3l2.4 2.4M17.7 6.3l-2.4 2.4M8.7 15.3l-2.4 2.4"/></svg>';
+  var ICON_HEART =
+    '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.3A4.2 4.2 0 0112 7.6a4.2 4.2 0 017.5 2.6c0 5.7-7.5 10.3-7.5 10.3z"/></svg>';
   var ICON_SEARCH =
     '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>';
   var ICON_MOON =
@@ -197,6 +201,9 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       '<span class="dl-brand-txt"><b>DCU</b><small>Core · শিক্ষার্থী টুলকিট</small></span></a>' +
       '<nav class="dl-nav" id="dlNav" aria-label="প্রধান নেভিগেশন">' + links.join("") + "</nav>" +
       '<div class="dl-actions">' +
+      (file === "cover.html" ? "" :
+        '<a class="dl-cta" href="/cover">' + ICON_SPARK + bi("কভার পেজ বানান", "Make a Cover Page") + "</a>") +
+      '<a class="dl-icon-btn dl-heart"' + (file === "support.html" ? ' aria-current="page"' : "") + ' href="/support" aria-label="সাহায্য করুন" title="সাহায্য করুন">' + ICON_HEART + "</a>" +
       '<button type="button" class="dl-icon-btn dl-search" data-dl-search aria-label="সার্চ করুন" aria-haspopup="dialog" aria-expanded="false" title="সার্চ (Ctrl+K)">' +
       ICON_SEARCH + "</button>" +
       '<button type="button" class="dl-icon-btn dl-theme" data-dl-theme aria-label="থিম পরিবর্তন করুন" aria-pressed="false" title="থিম পরিবর্তন">' +
@@ -730,6 +737,16 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     "@media(min-width:961px){.dl-menu{transform-origin:50% 0;filter:blur(6px);transition:opacity .24s ease,transform .32s cubic-bezier(.2,.9,.25,1.15),visibility .24s,filter .24s ease!important}}",
     ".dl-dd.open .dl-menu{filter:blur(0)}",
     "@media(min-width:961px){.dl-dd:not(.open) .dl-menu{transform:translate(-50%,-10px) scale(.96)!important}.dl-dd.open .dl-menu{transform:translate(-50%,0) scale(1)!important}}",
+    ".dl-cta{display:none;align-items:center;gap:7px;height:40px;padding:0 16px;border-radius:99px;font-size:.86rem;font-weight:750;white-space:nowrap;text-decoration:none;color:#1d1400;background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);box-shadow:0 6px 16px -6px rgba(184,138,62,.7),inset 0 1px 0 rgba(255,255,255,.55);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}",
+    ".dl-cta:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 10px 22px -8px rgba(184,138,62,.85),inset 0 1px 0 rgba(255,255,255,.55)}",
+    ".dl-cta svg{flex:none}",
+    ".dl-cta .cvx-bn,.dl-cta .cvx-en{display:inline}",
+    "html:not([data-lang=\"en\"]) .dl-cta .cvx-en,html[data-lang=\"en\"] .dl-cta .cvx-bn{display:none}",
+    ".dl-heart{display:none;color:#c2410c}",
+    ".dl-heart:hover{border-color:#e0674f;color:#e11d48}",
+    ".dl-heart[aria-current=page]{border-color:var(--dl-gold);background:var(--dl-hover)}",
+    "@media(min-width:961px){.dl-heart{display:grid}}",
+    "@media(min-width:1120px){.dl-cta{display:inline-flex}}",
     "@keyframes cvxIn{from{opacity:0;transform:translateY(8px) scale(.96)}}",
     "@media(prefers-reduced-motion:reduce){.dl-menu,.dl-menu a,.cvx-ic{animation:none!important;transition:none!important;filter:none!important}}"
   ].join("");
