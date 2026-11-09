@@ -99,6 +99,8 @@
     '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
   var ICON_BURGER =
     '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+  var ICON_SEARCH =
+    '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>';
   var ICON_MOON =
     '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>';
   var ICON_SUN =
@@ -195,6 +197,8 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       '<span class="dl-brand-txt"><b>DCU</b><small>Core · শিক্ষার্থী টুলকিট</small></span></a>' +
       '<nav class="dl-nav" id="dlNav" aria-label="প্রধান নেভিগেশন">' + links.join("") + "</nav>" +
       '<div class="dl-actions">' +
+      '<button type="button" class="dl-icon-btn dl-search" data-dl-search aria-label="সার্চ করুন" aria-haspopup="dialog" aria-expanded="false" title="সার্চ (Ctrl+K)">' +
+      ICON_SEARCH + "</button>" +
       '<button type="button" class="dl-icon-btn dl-theme" data-dl-theme aria-label="থিম পরিবর্তন করুন" aria-pressed="false" title="থিম পরিবর্তন">' +
       ICON_MOON + "</button>" +
       '<button type="button" class="dl-icon-btn dl-burger" data-dl-burger aria-label="মেনু খুলুন" aria-expanded="false" aria-controls="dlNav">' +
@@ -630,6 +634,66 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     if (document.fonts) document.fonts.ready.then(go);
   }
 
+  /* ---------- search (Ctrl/Cmd+K, "/" or the header button) ----------
+   * The palette itself lives in dcu-search.js and is fetched only when needed
+   * (or when the browser is idle), so it costs nothing on first paint. */
+  var searchLoad = null;
+  function loadSearch() {
+    if (window.DCUSearch) return Promise.resolve(window.DCUSearch);
+    if (searchLoad) return searchLoad;
+    /* data the palette indexes: the same lists that build the menus */
+    window.DCU_NAV = { TOOLS: TOOLS, TOOL_META: TOOL_META, COVER_TYPES: COVER_TYPES, pageOfPath: pageOfPath };
+    searchLoad = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.src = "/dcu-search.js";
+      s.async = true;
+      s.onload = function () { resolve(window.DCUSearch); };
+      s.onerror = function () { searchLoad = null; reject(new Error("search failed to load")); };
+      (document.head || document.documentElement).appendChild(s);
+    });
+    return searchLoad;
+  }
+
+  function openSearch(q) {
+    loadSearch().then(function (S) { if (S) S.open(q); }).catch(function () { /* offline: ignore */ });
+  }
+
+  function toggleSearch() {
+    if (window.DCUSearch && window.DCUSearch.isOpen()) window.DCUSearch.close();
+    else openSearch();
+  }
+
+  function initSearch() {
+    var btn = document.querySelector("[data-dl-search]");
+    var isMac = /Mac|iPhone|iPad/i.test(navigator.platform || navigator.userAgent || "");
+    if (btn) {
+      btn.title = "সার্চ (" + (isMac ? "⌘K" : "Ctrl+K") + ")";
+      btn.addEventListener("click", function (e) { e.stopPropagation(); toggleSearch(); });
+      btn.addEventListener("pointerenter", function () { loadSearch().catch(function () {}); }, { once: true });
+      btn.addEventListener("focus", function () { loadSearch().catch(function () {}); }, { once: true });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      var k = (e.key || "").toLowerCase();
+      var t = e.target;
+      var typing = t && (t.isContentEditable || /^(input|textarea|select)$/i.test(t.tagName || ""));
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && k === "k") {
+        e.preventDefault();
+        toggleSearch();
+      } else if (k === "/" && !typing && !e.ctrlKey && !e.metaKey && !e.altKey &&
+                 !(file === "tools.html" && activeTab() === "calc")) {
+        /* the scientific calculator uses "/" as divide, so it keeps that key */
+        e.preventDefault();
+        openSearch();
+      }
+    });
+
+    /* warm up quietly once the page has settled */
+    var warm = function () { loadSearch().catch(function () {}); };
+    if ("requestIdleCallback" in window) window.requestIdleCallback(warm, { timeout: 4000 });
+    else setTimeout(warm, 2500);
+  }
+
   /* ---------- boot ---------- */
   var CVX_CSS = [
     'html:not([data-lang="en"]) .cvx-en{display:none}',
@@ -705,6 +769,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     ftr.querySelectorAll("[data-dl-year]").forEach(function (el) { el.textContent = year; });
 
     initTheme();
+    initSearch();
     initNav();
     initHeaderFx();
     initCurrent();
