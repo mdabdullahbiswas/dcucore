@@ -62,7 +62,43 @@
  if(L!='en')return(H<4?'রাত':H<6?'ভোর':H<12?'সকাল':H<15?'দুপুর':H<17?'বিকাল':H<19?'সন্ধ্যা':'রাত')+' '+ts;return ts+' '+(H<12?'AM':'PM')}
   var XPN={fj:['ফজর','Fajr'],sr:['সূর্যোদয়','Sunrise'],dh:['জোহর','Dhuhr'],as:['আসর','Asr'],mg:['মাগরিব','Maghrib'],is:['ইশা','Isha']};
 
+  /* ---------- extra times (built on prayer(); every value is a decimal hour, Dhaka time) ----------
+   * Night-time values can be > 24 (e.g. 25.0 = 1:00 AM next day); fmtTime() handles that.
+   *
+   *   sehri   {e}      sehri ends = Fajr starts
+   *   iftar   {s}      iftar = Maghrib starts (sunset)
+   *   ishraq  {s, e}   starts EX.ishraq min after sunrise, runs to the start of the best Chasht time
+   *   chasht  {s, e, best}  from EX.ishraq min after sunrise to just before Zawal; best = a quarter of the day after sunrise
+   *   zawal   {s, e}   the minutes just before Dhuhr (sun at its peak)
+   *   forbid  [{k:"sr"|"zw"|"ss", s, e}]  three times when prayer is makruh/forbidden
+   *   night   {s, e, mid, third}  Maghrib -> next Fajr; mid = middle of the night; third = start of the last third
+   *   tahajjud {s, e}  last third of the night until Fajr
+   * Windows are conventions, not fixed by the sun: change the numbers in EX if your scholars use others.
+   */
+  var EX = { ishraq: 15, forbidSunrise: 15, zawal: 6, forbidSunset: 15 };   /* minutes */
+  function extras(d) {
+    var p = xpt(d), nx = xpt(new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)), m = 1 / 60;
+    var dayLen = p.mg - p.sr, best = p.sr + dayLen / 4;
+    var nightEnd = nx.fj + 24, nightLen = nightEnd - p.mg, third = p.mg + nightLen * 2 / 3;
+    var zs = p.dh - EX.zawal * m;
+    return {
+      sehri: { e: p.fj },
+      iftar: { s: p.mg },
+      ishraq: { s: p.sr + EX.ishraq * m, e: best },
+      chasht: { s: p.sr + EX.ishraq * m, e: zs, best: best },
+      zawal: { s: zs, e: p.dh },
+      forbid: [
+        { k: "sr", s: p.sr, e: p.sr + EX.forbidSunrise * m },
+        { k: "zw", s: zs, e: p.dh },
+        { k: "ss", s: p.mg - EX.forbidSunset * m, e: p.mg }
+      ],
+      night: { s: p.mg, e: nightEnd, mid: p.mg + nightLen / 2, third: third },
+      tahajjud: { s: third, e: nightEnd }
+    };
+  }
+
   w.DCUTime = {
+    extras: extras, EX: EX,
     digits: digits, bangla: bangla, hijri: hijri, holiday: holiday, prayer: xpt, fmtTime: fmtTime,
     PL: PL, PN: XPN, FX: FX, RL: RL, GM: GM, BM: BM, HM: HM, DN: DN, WD: WD
   };
