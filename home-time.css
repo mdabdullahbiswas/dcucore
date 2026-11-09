@@ -5,22 +5,22 @@
 .ht[hidden]{display:none}
 
 .ht-card{
-  --ht-gold:linear-gradient(135deg,#F6E3A8,#E8C46C 50%,#D4AF37);
+  --ht-gold:linear-gradient(135deg,#F7EBC8 0%,#E2C47C 42%,#B88F3E 100%);
   position:relative;overflow:hidden;isolation:isolate;
   display:grid;grid-template-columns:232px minmax(0,1fr);gap:0 24px;
   border-radius:26px;padding:24px 24px 24px;color:#F1F5F9;
   background:
-    radial-gradient(600px 260px at 100% 0%,rgba(212,175,55,.22),transparent 70%),
-    radial-gradient(420px 220px at 0% 100%,rgba(96,165,250,.14),transparent 70%),
-    linear-gradient(135deg,#0B1F3A 0%,#17386A 62%,#10294d 100%);
-  border:1px solid rgba(255,255,255,.06);
-  box-shadow:0 30px 60px -34px rgba(8,22,45,.75),inset 0 1px 0 rgba(255,255,255,.08);
+    radial-gradient(620px 280px at 100% 0%,rgba(201,162,77,.20),transparent 70%),
+    radial-gradient(460px 240px at 0% 100%,rgba(64,104,168,.18),transparent 70%),
+    linear-gradient(145deg,#050B18 0%,#0B1A33 58%,#08142A 100%);
+  border:1px solid rgba(226,196,124,.24);
+  box-shadow:0 34px 70px -34px rgba(2,8,20,.9),0 0 0 1px rgba(0,0,0,.35),inset 0 1px 0 rgba(247,235,200,.14),inset 0 0 60px rgba(201,162,77,.04);
 }
 /* faint geometric pattern in the corner */
 .ht-card::before{
   content:"";position:absolute;inset:0;z-index:-1;opacity:.5;pointer-events:none;
   background-image:
-    radial-gradient(circle at 1px 1px,rgba(232,196,108,.22) 1px,transparent 1.4px);
+    radial-gradient(circle at 1px 1px,rgba(226,196,124,.20) 1px,transparent 1.4px);
   background-size:22px 22px;
   -webkit-mask:linear-gradient(100deg,transparent 45%,#000);mask:linear-gradient(100deg,transparent 45%,#000);
 }
@@ -37,7 +37,7 @@
 .ht-alt i{font-style:normal;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a8b3c7}
 .ht-badge{align-self:flex-start;padding:8px 12px;border-radius:99px;font-size:.78rem;font-weight:600;line-height:1.3;border:1px solid transparent}
 .ht-badge.is-hol{background:rgba(248,113,113,.16);border-color:rgba(248,113,113,.4);color:#fecaca}
-.ht-badge.is-wk{background:rgba(232,196,108,.15);border-color:rgba(232,196,108,.4);color:#F6E3A8}
+.ht-badge.is-wk{background:rgba(226,196,124,.15);border-color:rgba(226,196,124,.4);color:#F3E4B8}
 .ht-badge.is-rz{background:rgba(52,211,153,.15);border-color:rgba(52,211,153,.4);color:#a7f3d0}
 .ht-main{min-width:0}
 
@@ -62,14 +62,14 @@
 
 /* ----- progress between previous and next prayer ----- */
 .ht-bar{margin:16px 0 16px;height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
-.ht-bar i{display:block;height:100%;width:0;border-radius:inherit;background:#E8C46C;box-shadow:0 0 14px rgba(232,196,108,.6);transition:width 1s linear}
+.ht-bar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#B88F3E,#F2DEA6);box-shadow:0 0 16px rgba(226,196,124,.5);transition:width 1s linear}
 
 /* ----- five prayers ----- */
 .ht-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .ht-p{
   position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:8px;row-gap:3px;text-align:center;
   padding:8px 8px;border-radius:16px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.04);border:1px solid rgba(226,196,124,.14);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   transition:transform .3s var(--ease,ease),background-color .3s,border-color .3s;
 }
@@ -78,7 +78,7 @@
 .ht-p .ht-pn{justify-self:start;text-align:left}
 .ht-p .ht-pt{justify-self:end}
 .ht-p .ht-pp{justify-self:start;text-align:left}
-.ht-p:hover{transform:translateY(-2px);border-color:rgba(232,196,108,.5)}
+.ht-p:hover{transform:translateY(-2px);border-color:rgba(226,196,124,.5)}
 .ht-p svg{width:17px;height:17px;color:#a8b3c7}
 .ht-p .ht-pn{font-size:.86rem;font-weight:600;line-height:1.2}
 .ht-p .ht-pt{font-size:1.05rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -86,13 +86,13 @@
 .ht-p .ht-pn small{font-size:.72em;font-weight:500;opacity:.8}
 .ht-p.is-past{opacity:.5}
 .ht-p.is-next{
-  opacity:1;color:#1d1400;border-color:transparent;transform:translateY(-2px);
+  opacity:1;color:#1a1203;border-color:transparent;transform:translateY(-2px);
   background:var(--ht-gold);
-  box-shadow:0 16px 30px -14px rgba(212,175,55,.75),inset 0 1px 0 rgba(255,255,255,.6);
+  box-shadow:0 16px 32px -14px rgba(184,143,62,.8),0 0 24px -6px rgba(226,196,124,.35),inset 0 1px 0 rgba(255,255,255,.65);
 }
-.ht-p.is-next svg,.ht-p.is-next .ht-pp{color:#5b4300}
+.ht-p.is-next svg,.ht-p.is-next .ht-pp{color:#4d3912}
 .ht-p.is-next::before{
-  content:"";position:absolute;inset:-4px;border-radius:22px;border:1px solid rgba(232,196,108,.55);animation:htPulse 2.4s ease-out infinite;pointer-events:none
+  content:"";position:absolute;inset:-4px;border-radius:22px;border:1px solid rgba(226,196,124,.5);animation:htPulse 2.4s ease-out infinite;pointer-events:none
 }
 @keyframes htPulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.07)}}
 
@@ -102,7 +102,7 @@
 .ht-sun b{color:#a8b3c7;font-weight:500}
 .ht-mt{display:inline-flex;align-items:center;gap:8px;margin-top:0;min-height:44px;padding:0 4px;font:inherit;font-size:.82rem;font-weight:500;color:#a8b3c7;background:none;border:0;cursor:pointer;border-radius:10px}
 .ht-mt:hover{color:#e2e8f0}
-.ht-mt:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-mt:focus-visible{outline:2px solid #E2C47C;outline-offset:2px}
 .ht-mt svg{width:14px;height:14px;transition:transform .25s}
 .ht-mt.is-open svg{transform:rotate(180deg)}
 .ht-mt-d{display:none;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)}
@@ -113,8 +113,8 @@
 .ht-m span{font-size:.72rem;font-weight:600;color:#a8b3c7;line-height:1.3}
 .ht-m b{font-size:.88rem;font-weight:600;color:#e2e8f0;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ht-m b small{font-size:.68rem;font-weight:500;color:#a8b3c7}
-.ht-m.is-rz{background:rgba(232,196,108,.12);border-color:rgba(232,196,108,.45)}
-.ht-m.is-rz span{color:#E8C46C}
+.ht-m.is-rz{background:rgba(226,196,124,.12);border-color:rgba(226,196,124,.45)}
+.ht-m.is-rz span{color:#E2C47C}
 .ht-m.is-on{background:rgba(52,211,153,.14);border-color:rgba(52,211,153,.55)}
 .ht-m.is-on span{color:#a7f3d0}
 @media(max-width:1100px){.ht-more{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -123,7 +123,7 @@
 .ht-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:8px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);font-size:.8rem;color:#a8b3c7}
 .ht-foot b{color:#e2e8f0;font-weight:600}
 .ht-foot .ht-sp{flex:1}
-.ht-rz{display:inline-flex;gap:16px;padding:8px 12px;border-radius:99px;background:rgba(232,196,108,.14);color:#F6E3A8;font-weight:500}
+.ht-rz{display:inline-flex;gap:16px;padding:8px 12px;border-radius:99px;background:rgba(226,196,124,.14);color:#F3E4B8;font-weight:500}
 .ht-link{display:inline-flex;min-height:44px;align-items:center;gap:8px;color:#e2e8f0;font-weight:600;text-decoration:none}
 .ht-link:hover{text-decoration:underline}
 .ht-link svg{width:15px;height:15px}
@@ -136,12 +136,12 @@
   border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b3c7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center/12px;
   -webkit-appearance:none;appearance:none}
 .ht-ds select option{color:#0B1F3A;background:#fff}
-.ht-ds select:focus-visible,.ht-az:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-ds select:focus-visible,.ht-az:focus-visible{outline:2px solid #E2C47C;outline-offset:2px}
 .ht-az,.ht-i{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;padding:0;cursor:pointer;border-radius:50%;
   color:#e2e8f0;background:transparent;border:1px solid rgba(255,255,255,.12);transition:background-color .2s}
 .ht-i{border-color:transparent;color:#a8b3c7}
 .ht-i:hover,.ht-i:focus-visible{color:#e2e8f0}
-.ht-i:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-i:focus-visible{outline:2px solid #E2C47C;outline-offset:2px}
 .ht-i svg{width:17px;height:17px}
 .ht-in{display:none;font-size:.76rem;color:#8e9ab0}
 .ht-foot.show-info .ht-in{display:inline}
