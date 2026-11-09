@@ -182,6 +182,13 @@
   });
   host.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-azan]")) { toggleAzan(); return; }
+    var mb = e.target.closest && e.target.closest("[data-more]");
+    if (mb) {
+      moreOpen = !moreOpen;
+      mb.setAttribute("aria-expanded", moreOpen);
+      mb.classList.toggle("is-open", moreOpen);
+      var box = host.querySelector(".ht-more"); if (box) box.hidden = !moreOpen;
+    }
   });
 
   function distSel() {
@@ -211,7 +218,8 @@
       ' • ' + T("শেষ হবে ", "ends ") + "<b>" + e.t + " " + e.p + "</b></span></div>";
   }
 
-  /* ---------- "more times": sehri, iftar, ishraq, chasht, zawal, tahajjud ---------- */
+  /* ---------- "more times": sehri, iftar, ishraq, chasht, zawal, tahajjud (folded by default) ---------- */
+  var moreOpen = false;
   function moreChips(now) {
     var E = st.ex, T0 = st.today;
     /* before Fajr the night we are in started yesterday evening */
@@ -224,7 +232,11 @@
       { k: "zawal", n: T("যাওয়াল", "Zawal"), a: E.zawal.s, b: E.zawal.e },
       { k: "tahajjud", n: T("তাহাজ্জুদ", "Tahajjud"), a: tj.s, b: tj.e }
     ];
-    return '<div class="ht-more" role="list" aria-label="' + T("আরও সময়", "More times") + '">' + items.map(function (x) {
+    var anyOn = items.some(function (x) { return x.b != null && now.h >= x.a && now.h < x.b; });
+    var chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    return '<button type="button" class="ht-mt' + (moreOpen ? " is-open" : "") + (anyOn ? " has-on" : "") + '" data-more aria-expanded="' + moreOpen + '">' +
+      '<span class="ht-mt-d" aria-hidden="true"></span>' + T("আরও সময়", "More times") + chev + "</button>" +
+      '<div class="ht-more" role="list" aria-label="' + T("আরও সময়", "More times") + '"' + (moreOpen ? "" : " hidden") + ">" + items.map(function (x) {
       var v;
       if (x.b == null) { var c = clock(x.a); v = c.t + " <small>" + c.p + "</small>"; }
       else { var c1 = clock(x.a), c2 = clock(x.b); v = c1.t + "–" + c2.t + " <small>" + c2.p + "</small>"; }
@@ -299,6 +311,8 @@
       var a = ms[i].getAttribute("data-s"), b = ms[i].getAttribute("data-e");
       if (a !== "") ms[i].classList.toggle("is-on", now.h >= +a && now.h < +b);
     }
+    var mt = host.querySelector(".ht-mt");
+    if (mt) mt.classList.toggle("has-on", !!host.querySelector(".ht-m.is-on"));
     var fb = host.querySelector(".ht-fb");
     if (fb && now.h >= +fb.getAttribute("data-e")) fb.parentNode.removeChild(fb);
     els.bar.style.width = Math.min(100, Math.max(0, pct * 100)).toFixed(2) + "%";
