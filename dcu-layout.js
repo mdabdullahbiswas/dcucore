@@ -34,14 +34,23 @@
   /* ---------- data ---------- */
   var NAV = [
     { href: "/", label: "হোম", en: "Home" },
-    { href: "/cover", label: "কভার পেজ", en: "Cover Page" },
-    { href: "/blood", label: "ডোনার", en: "Donors" },
-    { href: "/events", label: "ইভেন্ট", en: "Events" },
-    { href: "/library", label: "লাইব্রেরি", en: "Library" },
-    { href: "/jobs", label: "জব ও টিউশন", en: "Jobs" },
-    { href: "/feedback", label: "মতামত", en: "Feedback" },
-    { href: "/support", label: "সাহায্য", en: "Support" },
-    { href: "/about", label: "আমাদের সম্পর্কে", en: "About" }
+    { href: "/cover", label: "কভার পেজ", en: "Cover Page" }
+  ];
+
+  /* grouped menus: keeps the top bar short (Home · Cover · Tools · Campus · More) */
+  var GROUPS = [
+    { id: "campus", bn: "ক্যাম্পাস", en: "Campus", items: [
+      { href: "/blood", bn: "ডোনার ডিরেক্টরি", en: "Donor Directory" },
+      { href: "/events", bn: "ক্যাম্পাস ইভেন্ট", en: "Campus Events" },
+      { href: "/library", bn: "লাইব্রেরি", en: "Library" },
+      { href: "/jobs", bn: "জব ও টিউশন", en: "Jobs & Tuition" }
+    ] },
+    { id: "more", bn: "আরও", en: "More", right: true, items: [
+      { href: "/faq", bn: "প্রশ্নোত্তর", en: "FAQ" },
+      { href: "/feedback", bn: "মতামত দিন", en: "Give Feedback" },
+      { href: "/support", bn: "সাহায্য করুন", en: "Support Us" },
+      { href: "/about", bn: "আমাদের সম্পর্কে", en: "About" }
+    ] }
   ];
 
   var TOOLS = [
@@ -100,6 +109,24 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     );
   }
 
+  /* ---------- group dropdown (Campus / More) ---------- */
+  function groupDD(g) {
+    var active = g.items.some(function (t) { return isCurrent(t.href); });
+    var items = g.items.map(function (t, i) {
+      var on = isCurrent(t.href);
+      return (
+        '<a href="' + t.href + '" role="menuitem" style="--i:' + i + '"' + (on ? ' class="on" aria-current="page"' : "") + "><b>" +
+        '<span class="cvx-bn">' + esc(t.bn) + '</span><span class="cvx-en">' + esc(t.en) + "</span></b></a>"
+      );
+    }).join("");
+    return (
+      '<div class="dl-dd dl-grp" data-dl-grp="' + g.id + '">' +
+      '<button type="button" class="dl-dd-btn"' + (active ? ' aria-current="page"' : "") +
+      ' aria-haspopup="true" aria-expanded="false">' + bi(g.bn, g.en) + " " + ICON_CHEVRON + "</button>" +
+      '<div class="dl-menu dl-menu-grp' + (g.right ? " dl-menu-r" : "") + '" role="menu">' + items + "</div></div>"
+    );
+  }
+
   /* ---------- header markup ---------- */
   function headerHTML() {
     var links = NAV.map(function (n) {
@@ -123,6 +150,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       '<div class="dl-menu" role="menu">' + items + "</div></div>";
 
     links.splice(2, 0, dd);
+    GROUPS.forEach(function (g) { links.push(groupDD(g)); });
 
     return (
       '<div class="dl-bar">' +
@@ -234,17 +262,31 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     var ddBtn = dd && dd.querySelector(".dl-dd-btn");
     var cvd = host.querySelector("[data-dl-cvd]");
     var cvdBtn = cvd && cvd.querySelector(".dl-dd-btn");
+    var grps = Array.prototype.slice.call(host.querySelectorAll("[data-dl-grp]"));
+
+    function setGrp(w, open) {
+      if (open) {
+        if (dd) setDd(false);
+        setCvd(false);
+        grps.forEach(function (o) { if (o !== w) setGrp(o, false); });
+        w.classList.remove("dl-closed");
+      } else if (w.classList.contains("open")) { w.classList.add("dl-closed"); }
+      w.classList.toggle("open", open);
+      if (!open) { w.removeAttribute("data-hov"); w.removeAttribute("data-pin"); }
+      w.querySelector(".dl-dd-btn").setAttribute("aria-expanded", String(open));
+    }
+    function closeGrps() { grps.forEach(function (w) { setGrp(w, false); }); }
 
     function setMenu(open) {
       nav.classList.toggle("is-open", open);
       burger.setAttribute("aria-expanded", String(open));
       burger.setAttribute("aria-label", open ? "মেনু বন্ধ করুন" : "মেনু খুলুন");
-      if (!open) { if (dd) setDd(false); setCvd(false); }
+      if (!open) { if (dd) setDd(false); setCvd(false); closeGrps(); }
     }
 
     function setDd(open) {
       if (!dd) return;
-      if (open) { setCvd(false); dd.classList.remove("dl-closed"); }
+      if (open) { setCvd(false); closeGrps(); dd.classList.remove("dl-closed"); }
       else if (dd.classList.contains("open")) { dd.classList.add("dl-closed"); }
       dd.classList.toggle("open", open);
       if (!open) { dd.removeAttribute("data-hov"); dd.removeAttribute("data-pin"); }
@@ -255,7 +297,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     function setCvd(open) {
       if (!cvd) return;
-      if (open) { if (dd) setDd(false); cvd.classList.remove("dl-closed"); markActive(); }
+      if (open) { if (dd) setDd(false); closeGrps(); cvd.classList.remove("dl-closed"); markActive(); }
       else if (cvd.classList.contains("open")) { cvd.classList.add("dl-closed"); }
       cvd.classList.toggle("open", open);
       if (!open) { cvd.removeAttribute("data-hov"); cvd.removeAttribute("data-pin"); }
@@ -295,11 +337,19 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       });
     }
 
+    grps.forEach(function (w) {
+      w.querySelector(".dl-dd-btn").addEventListener("click", function (e) {
+        e.stopPropagation();
+        setGrp(w, !w.classList.contains("open"));
+      });
+    });
+
     document.addEventListener("click", function (e) {
       if (!host.contains(e.target)) {
         setMenu(false);
         setDd(false);
         setCvd(false);
+        closeGrps();
       }
     });
 
@@ -308,6 +358,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
         setMenu(false);
         setDd(false);
         setCvd(false);
+        closeGrps();
       }
     });
 
@@ -315,7 +366,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     nav.addEventListener("click", function (e) {
       var a = e.target.closest("a");
       if (a && !(dd && ddBtn === a) && !(cvdBtn === a)) setMenu(false);
-      var menuWrap = e.target.closest && e.target.closest("[data-dl-dd], [data-dl-cvd]");
+      var menuWrap = e.target.closest && e.target.closest("[data-dl-dd], [data-dl-cvd], [data-dl-grp]");
       if (a && menuWrap && menuWrap.contains(a)) {
         menuWrap.classList.add("dl-closed");
         menuWrap._closedAt = Date.now();
@@ -324,11 +375,11 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     });
     /* desktop: hover opens (short close delay), click pins, item-click / outside-click / Esc / scroll closes */
     var hoverMQ = window.matchMedia("(hover: hover) and (min-width: 961px)");
-    [dd, cvd].forEach(function (w) {
+    [dd, cvd].concat(grps).forEach(function (w) {
       if (!w) return;
       var timer = null;
       var isCv = w === cvd;
-      function setW(o) { if (isCv) setCvd(o); else setDd(o); }
+      function setW(o) { if (isCv) setCvd(o); else if (w === dd) setDd(o); else setGrp(w, o); }
       w.addEventListener("pointerenter", function (e) {
         if (e.pointerType === "touch" || !hoverMQ.matches) return;
         clearTimeout(timer);
@@ -351,11 +402,11 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
       }, true);
     });
     function closeAllDd() {
-      [dd, cvd].forEach(function (w) { if (w) { w.removeAttribute("data-hov"); w.removeAttribute("data-pin"); } });
-      setDd(false); setCvd(false);
+      [dd, cvd].concat(grps).forEach(function (w) { if (w) { w.removeAttribute("data-hov"); w.removeAttribute("data-pin"); } });
+      setDd(false); setCvd(false); closeGrps();
     }
     window.addEventListener("scroll", function () {
-      if ((dd && dd.classList.contains("open")) || (cvd && cvd.classList.contains("open"))) closeAllDd();
+      if ((dd && dd.classList.contains("open")) || (cvd && cvd.classList.contains("open")) || grps.some(function (w) { return w.classList.contains("open"); })) closeAllDd();
     }, { passive: true });
   }
 
@@ -478,6 +529,13 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     ".dl-menu-cvx a:hover .cvx-ic{transform:scale(1.08) rotate(-4deg)}",
     ".dl-menu-cvx a.on{background:linear-gradient(135deg,rgba(217,178,106,.22),rgba(217,178,106,.04));box-shadow:inset 0 0 0 1px rgba(184,138,62,.6)}",
     ".dl-menu-cvx a.on .cvx-ic{background:linear-gradient(135deg,#F3E6C4,#D9B26A 50%,#B88A3E);color:#1d1400}",
+    ".dl-menu-grp{width:min(92vw,250px);grid-template-columns:1fr}",
+    ".dl-menu-grp a{flex-direction:row;align-items:center;justify-content:flex-start;padding:11px 14px}",
+    ".dl-menu-grp a b{display:block;min-width:0}",
+    ".dl-menu-grp a b span{display:inline}",
+    "html:not([data-lang=\"en\"]) .dl-menu-grp .cvx-en,html[data-lang=\"en\"] .dl-menu-grp .cvx-bn{display:none}",
+    "@media(min-width:961px){.dl-menu-r{left:auto!important;right:0;transform-origin:100% 0!important}.dl-dd:not(.open) .dl-menu.dl-menu-r{transform:translate(0,-10px) scale(.96)!important}.dl-dd.open .dl-menu.dl-menu-r{transform:translate(0,0) scale(1)!important}.dl-menu-r::before{left:auto;right:26px;transform:rotate(45deg)}}",
+    "@media(max-width:960px){.dl-menu-grp{width:auto}}",
     ".dl-dd.open .dl-menu a{animation:cvxIn .42s calc(var(--i,0)*30ms + 30ms) cubic-bezier(.2,.8,.2,1) both}",
     "@media(min-width:961px){.dl-menu{transform-origin:50% 0;filter:blur(6px);transition:opacity .24s ease,transform .32s cubic-bezier(.2,.9,.25,1.15),visibility .24s,filter .24s ease!important}}",
     ".dl-dd.open .dl-menu{filter:blur(0)}",
