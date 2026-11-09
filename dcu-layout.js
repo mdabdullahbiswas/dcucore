@@ -446,6 +446,84 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
     }, { passive: true });
   }
 
+  /* ---------- header effects: shrink on scroll + sliding active pill ---------- */
+  function initHeaderFx() {
+    var host = document.getElementById("hdr");
+    if (!host) return;
+
+    /* shrink with hysteresis so it never flickers near the threshold */
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var on = host.classList.contains("is-scrolled");
+        if (!on && y > 24) host.classList.add("is-scrolled");
+        else if (on && y < 6) host.classList.remove("is-scrolled");
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    var nav = host.querySelector("#dlNav");
+    if (!nav) return;
+    var ind = document.createElement("span");
+    ind.className = "dl-ind";
+    ind.setAttribute("aria-hidden", "true");
+    nav.insertBefore(ind, nav.firstChild);
+    nav.classList.add("dl-has-ind");
+
+    var hov = null, ready = false, raf = 0;
+    var SEL_REST = ":scope > a[aria-current=\"page\"], :scope > .dl-dd > .dl-dd-btn[aria-current=\"page\"]";
+
+    function restEl() {
+      return nav.querySelector(":scope > .dl-dd.open > .dl-dd-btn") || nav.querySelector(SEL_REST);
+    }
+
+    function place() {
+      raf = 0;
+      var t = hov || restEl();
+      if (window.innerWidth <= 960 || !t) { ind.style.opacity = "0"; return; }
+      var n = nav.getBoundingClientRect(), r = t.getBoundingClientRect();
+      ind.style.width = r.width + "px";
+      ind.style.height = r.height + "px";
+      ind.style.transform = "translate(" + (r.left - n.left) + "px," + (r.top - n.top) + "px)";
+      ind.style.opacity = "1";
+      ind.classList.toggle("is-hov", !!hov && hov !== restEl());
+      if (!ready) {
+        ready = true;
+        requestAnimationFrame(function () { ind.classList.add("dl-ind-on"); });
+      }
+    }
+    function sync() { if (!raf) raf = requestAnimationFrame(place); }
+
+    function targetOf(el) {
+      var dd = el.closest && el.closest(".dl-dd");
+      if (dd && nav.contains(dd)) return dd.querySelector(".dl-dd-btn");
+      var a = el.closest && el.closest("a");
+      return a && a.parentNode === nav ? a : null;
+    }
+
+    nav.addEventListener("pointerover", function (e) {
+      if (e.pointerType === "touch") return;
+      var t = targetOf(e.target);
+      if (t && t !== hov) { hov = t; sync(); }
+    });
+    nav.addEventListener("pointerleave", function () { hov = null; sync(); });
+    nav.addEventListener("focusin", function (e) { var t = targetOf(e.target); if (t) { hov = t; sync(); } });
+    nav.addEventListener("focusout", function () { hov = null; sync(); });
+
+    /* re-place when anything that can move or re-label the items changes */
+    new MutationObserver(sync).observe(nav, { attributes: true, subtree: true, attributeFilter: ["class", "aria-current", "aria-expanded"] });
+    new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-lang"] });
+    window.addEventListener("resize", sync);
+    window.addEventListener("load", sync);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sync);
+    sync();
+  }
+
   /* ---------- current location: highlight the matching menu item ---------- */
   /* tools: the page shows the tab named by #hash (unknown/empty -> card), same as tools.html */
   var TOOL_IDS = ["card", "frame", "routine", "cgpa", "exam", "pdf", "calc", "result"];
@@ -628,6 +706,7 @@ var COVER_TYPES = [{"v": "assignment", "en": "Assignment", "bn": "অ্যা�
 
     initTheme();
     initNav();
+    initHeaderFx();
     initCurrent();
     try { document.dispatchEvent(new CustomEvent("dcu:layout-ready")); } catch (e) { /* old browser */ }
   }
