@@ -9,6 +9,8 @@
  *   DCUTime.prayer(date)        -> {fj, sr, dh, as, mg, is}  decimal hours, Dhaka time
  *   DCUTime.fmtTime(hours, lang) -> "বিকাল ৪:৩২" / "4:32 PM"
  *   DCUTime.digits(n, lang)     -> Bangla digits when lang is not "en"
+ *   DCUTime.DIST                -> [[bn, en, lat, lon], ...] districts; getDistrict() -> index; setDistrict(i) remembers it,
+ *                                  moves PL and fires "dcu:district" on window; districtName(lang)
  *   DCUTime.PN / BM / HM / GM / DN   names as [bn, en] pairs
  */
 (function (w) {
@@ -62,6 +64,35 @@
  if(L!='en')return(H<4?'রাত':H<6?'ভোর':H<12?'সকাল':H<15?'দুপুর':H<17?'বিকাল':H<19?'সন্ধ্যা':'রাত')+' '+ts;return ts+' '+(H<12?'AM':'PM')}
   var XPN={fj:['ফজর','Fajr'],sr:['সূর্যোদয়','Sunrise'],dh:['জোহর','Dhuhr'],as:['আসর','Asr'],mg:['মাগরিব','Maghrib'],is:['ইশা','Isha']};
 
+  /* ---------- districts (approximate centre points; prayer times shift a few minutes with longitude) ---------- */
+  var DIST = [
+    ["ঢাকা","Dhaka",23.8103,90.4125],["গাজীপুর","Gazipur",24.00,90.42],["নারায়ণগঞ্জ","Narayanganj",23.63,90.50],["নরসিংদী","Narsingdi",23.92,90.72],["মানিকগঞ্জ","Manikganj",23.86,90.00],["মুন্সিগঞ্জ","Munshiganj",23.55,90.53],["টাঙ্গাইল","Tangail",24.25,89.92],["কিশোরগঞ্জ","Kishoreganj",24.43,90.78],["ফরিদপুর","Faridpur",23.60,89.84],["রাজবাড়ী","Rajbari",23.76,89.64],["গোপালগঞ্জ","Gopalganj",23.01,89.83],["মাদারীপুর","Madaripur",23.17,90.20],["শরীয়তপুর","Shariatpur",23.22,90.35],
+    ["চট্টগ্রাম","Chattogram",22.36,91.78],["কক্সবাজার","Cox’s Bazar",21.45,91.98],["কুমিল্লা","Cumilla",23.46,91.18],["ব্রাহ্মণবাড়িয়া","Brahmanbaria",23.96,91.11],["চাঁদপুর","Chandpur",23.23,90.65],["লক্ষ্মীপুর","Lakshmipur",22.94,90.84],["নোয়াখালী","Noakhali",22.82,91.10],["ফেনী","Feni",23.02,91.40],["খাগড়াছড়ি","Khagrachhari",23.12,91.98],["রাঙামাটি","Rangamati",22.65,92.17],["বান্দরবান","Bandarban",22.19,92.22],
+    ["সিলেট","Sylhet",24.90,91.87],["মৌলভীবাজার","Moulvibazar",24.48,91.77],["হবিগঞ্জ","Habiganj",24.38,91.42],["সুনামগঞ্জ","Sunamganj",25.07,91.40],
+    ["রাজশাহী","Rajshahi",24.37,88.60],["নাটোর","Natore",24.42,89.00],["নওগাঁ","Naogaon",24.80,88.94],["চাঁপাইনবাবগঞ্জ","Chapainawabganj",24.60,88.28],["পাবনা","Pabna",24.00,89.25],["সিরাজগঞ্জ","Sirajganj",24.45,89.70],["বগুড়া","Bogura",24.85,89.37],["জয়পুরহাট","Joypurhat",25.10,89.02],
+    ["খুলনা","Khulna",22.82,89.55],["বাগেরহাট","Bagerhat",22.65,89.79],["সাতক্ষীরা","Satkhira",22.71,89.07],["যশোর","Jashore",23.17,89.21],["ঝিনাইদহ","Jhenaidah",23.54,89.17],["মাগুরা","Magura",23.49,89.42],["নড়াইল","Narail",23.17,89.50],["কুষ্টিয়া","Kushtia",23.90,89.12],["চুয়াডাঙ্গা","Chuadanga",23.64,88.85],["মেহেরপুর","Meherpur",23.76,88.63],
+    ["বরিশাল","Barishal",22.70,90.37],["ভোলা","Bhola",22.69,90.65],["পটুয়াখালী","Patuakhali",22.36,90.33],["পিরোজপুর","Pirojpur",22.58,89.97],["ঝালকাঠি","Jhalokati",22.64,90.20],["বরগুনা","Barguna",22.15,90.13],
+    ["রংপুর","Rangpur",25.75,89.25],["দিনাজপুর","Dinajpur",25.63,88.64],["ঠাকুরগাঁও","Thakurgaon",26.03,88.47],["পঞ্চগড়","Panchagarh",26.34,88.55],["নীলফামারী","Nilphamari",25.93,88.86],["লালমনিরহাট","Lalmonirhat",25.99,89.45],["কুড়িগ্রাম","Kurigram",25.80,89.64],["গাইবান্ধা","Gaibandha",25.33,89.53],
+    ["ময়মনসিংহ","Mymensingh",24.75,90.41],["জামালপুর","Jamalpur",24.92,89.94],["শেরপুর","Sherpur",25.02,90.02],["নেত্রকোণা","Netrokona",24.87,90.73]
+  ];
+
+  /* The chosen district is remembered (localStorage "dcu-district") and moves PL, so prayer()/extras() follow it on
+   * every page.  Changing it fires "dcu:district" on window (also when another tab changes it). */
+  var distIdx = 0;
+  function readDist() { var v = NaN; try { v = parseInt(localStorage.getItem("dcu-district"), 10); } catch (e) {} return v >= 0 && v < DIST.length ? v : 0; }
+  function applyDist() { PL.lat = DIST[distIdx][2]; PL.lon = DIST[distIdx][3]; }
+  function fireDist() { try { w.dispatchEvent(new CustomEvent("dcu:district", { detail: { index: distIdx } })); } catch (e) {} }
+  function getDistrict() { return distIdx; }
+  function setDistrict(n) {
+    n = +n; if (!(n >= 0 && n < DIST.length)) n = 0;
+    var ch = n !== distIdx; distIdx = n;
+    try { localStorage.setItem("dcu-district", String(n)); } catch (e) {}
+    applyDist(); if (ch) fireDist();
+  }
+  function districtName(L) { return DIST[distIdx][L === "en" ? 1 : 0]; }
+  distIdx = readDist(); applyDist();
+  if (w.addEventListener) w.addEventListener("storage", function (e) { if (e.key === "dcu-district") { var n = readDist(); if (n !== distIdx) { distIdx = n; applyDist(); fireDist(); } } });
+
   /* ---------- extra times (built on prayer(); every value is a decimal hour, Dhaka time) ----------
    * Night-time values can be > 24 (e.g. 25.0 = 1:00 AM next day); fmtTime() handles that.
    *
@@ -99,6 +130,7 @@
 
   w.DCUTime = {
     extras: extras, EX: EX,
+    DIST: DIST, getDistrict: getDistrict, setDistrict: setDistrict, districtName: districtName,
     digits: digits, bangla: bangla, hijri: hijri, holiday: holiday, prayer: xpt, fmtTime: fmtTime,
     PL: PL, PN: XPN, FX: FX, RL: RL, GM: GM, BM: BM, HM: HM, DN: DN, WD: WD
   };
