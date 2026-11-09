@@ -33,7 +33,7 @@
 .ht-my{font-size:.95rem;font-weight:600;color:#cbd5e1}
 .ht-alt{display:flex;flex-direction:column;gap:9px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font-size:.86rem;line-height:1.4;color:#e2e8f0}
 .ht-alt span{display:flex;flex-direction:column}
-.ht-alt i{font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#E8C46C}
+.ht-alt i{font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a8b3c7}
 .ht-badge{align-self:flex-start;padding:5px 12px;border-radius:99px;font-size:.78rem;font-weight:700;line-height:1.3;border:1px solid transparent}
 .ht-badge.is-hol{background:rgba(248,113,113,.16);border-color:rgba(248,113,113,.4);color:#fecaca}
 .ht-badge.is-wk{background:rgba(232,196,108,.15);border-color:rgba(232,196,108,.4);color:#F6E3A8}
@@ -41,21 +41,21 @@
 .ht-main{min-width:0}
 
 /* ----- top: next prayer + countdown ----- */
-.ht-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px 28px;flex-wrap:wrap}
-.ht-kick{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#E8C46C}
+.ht-head{display:flex;align-items:center;justify-content:space-between;gap:18px 28px;flex-wrap:wrap}
+.ht-kick{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a8b3c7}
 .ht-kick svg{width:17px;height:17px}
 .ht-nm{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:6px}
-.ht-nm b{font-size:clamp(2rem,5.2vw,3rem);line-height:1.1;font-weight:800;letter-spacing:-.01em}
+.ht-nm b{font-size:clamp(1.9rem,4.6vw,2.6rem);line-height:1.1;font-weight:800;letter-spacing:-.01em}
 .ht-nt{display:inline-flex;align-items:baseline;gap:7px;color:#cbd5e1}
 .ht-nt i{font-style:normal;font-size:clamp(1.15rem,3vw,1.5rem);font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
-.ht-nt small{font-size:.85rem;font-weight:600;color:#E8C46C}
+.ht-nt small{font-size:.85rem;font-weight:600;color:#a8b3c7}
 
 .ht-nx{margin-top:6px;font-size:.84rem;color:#a8b3c7}
 .ht-nx b{color:#e2e8f0;font-weight:700}
 .ht-cd{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
 .ht-cd small{font-size:.8rem;font-weight:600;color:#a8b3c7}
 .ht-t{
-  font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;line-height:1.1;letter-spacing:.02em;font-variant-numeric:tabular-nums;
+  font-size:clamp(1.5rem,3.4vw,2rem);font-weight:800;line-height:1.1;letter-spacing:.02em;font-variant-numeric:tabular-nums;
   background:linear-gradient(135deg,#F6E3A8,#E8C46C 45%,#D4AF37);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
 
@@ -73,7 +73,7 @@
   transition:transform .3s var(--ease,ease),background-color .3s,border-color .3s;
 }
 .ht-p:hover{transform:translateY(-2px);border-color:rgba(232,196,108,.5)}
-.ht-p svg{width:22px;height:22px;color:#E8C46C}
+.ht-p svg{width:22px;height:22px;color:#a8b3c7}
 .ht-p .ht-pn{font-size:.9rem;font-weight:700;line-height:1.2}
 .ht-p .ht-pt{font-size:1.12rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
 .ht-p .ht-pp{font-size:.72rem;font-weight:600;color:#a8b3c7;line-height:1}
@@ -96,7 +96,7 @@
 /* ----- more times (sehri, iftar, ishraq, chasht, zawal, tahajjud) ----- */
 .ht-more{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}
 .ht-m{display:flex;flex-direction:column;gap:2px;min-width:0;padding:9px 11px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);transition:background-color .3s,border-color .3s}
-.ht-m span{font-size:.72rem;font-weight:700;color:#E8C46C;line-height:1.3}
+.ht-m span{font-size:.72rem;font-weight:700;color:#a8b3c7;line-height:1.3}
 .ht-m b{font-size:.88rem;font-weight:700;color:#e2e8f0;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap}
 .ht-m b small{font-size:.68rem;font-weight:600;color:#a8b3c7}
 .ht-m.is-rz{background:rgba(232,196,108,.12);border-color:rgba(232,196,108,.45)}
@@ -109,7 +109,7 @@
 .ht-foot b{color:#e2e8f0;font-weight:700}
 .ht-foot .ht-sp{flex:1}
 .ht-rz{display:inline-flex;gap:14px;padding:5px 12px;border-radius:99px;background:rgba(232,196,108,.14);color:#F6E3A8;font-weight:600}
-.ht-link{display:inline-flex;align-items:center;gap:6px;color:#E8C46C;font-weight:700;text-decoration:none}
+.ht-link{display:inline-flex;align-items:center;gap:6px;color:#e2e8f0;font-weight:700;text-decoration:none}
 .ht-link:hover{text-decoration:underline}
 .ht-link svg{width:15px;height:15px}
 
@@ -117,15 +117,15 @@
 /* ----- district picker + azan toggle ----- */
 .ht-ds{display:inline-flex;align-items:center}
 .ht-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.ht-ds select{font:inherit;font-size:.8rem;font-weight:600;color:#F6E3A8;cursor:pointer;max-width:150px;padding:5px 26px 5px 12px;border-radius:99px;
-  border:1px solid rgba(232,196,108,.4);background:rgba(232,196,108,.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E8C46C' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center/12px;
+.ht-ds select{font:inherit;font-size:.8rem;font-weight:600;color:#e2e8f0;cursor:pointer;max-width:150px;padding:5px 26px 5px 12px;border-radius:99px;
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8b3c7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center/12px;
   -webkit-appearance:none;appearance:none}
 .ht-ds select option{color:#0B1F3A;background:#fff}
 .ht-ds select:focus-visible,.ht-az:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
 .ht-az{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;padding:5px 12px;border-radius:99px;
-  color:#E8C46C;background:transparent;border:1px solid rgba(232,196,108,.4);transition:background-color .2s}
+  color:#e2e8f0;background:transparent;border:1px solid rgba(255,255,255,.18);transition:background-color .2s}
 .ht-az svg{width:14px;height:14px}
-.ht-az:hover{background:rgba(232,196,108,.14)}
+.ht-az:hover{background:rgba(255,255,255,.08)}
 .ht-az.is-on{color:#1d1400;border-color:transparent;background:linear-gradient(135deg,#F6E3A8,#E8C46C)}
 
 /* ----- language ----- */
@@ -133,17 +133,20 @@ html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none
 
 /* ----- tablet / phone ----- */
 @media(max-width:960px){
-  .ht-card{grid-template-columns:1fr}
-  .ht-date{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 18px;padding:0 0 16px;margin-bottom:18px;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}
-  .ht-dn b{font-size:4rem}
-  .ht-alt{grid-column:1 / -1;flex-direction:row;flex-wrap:wrap;gap:6px 22px;padding-top:10px}
-  .ht-badge{grid-column:1 / -1;justify-self:start}
+  .ht-card{grid-template-columns:1fr;padding-top:18px}
+  .ht-date{display:none}
+  .ht-line{display:flex;flex-wrap:wrap;align-items:center;gap:4px 0;padding:0 0 12px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.12);font-size:.9rem;line-height:1.5;color:#a8b3c7}
+  .ht-line span+span::before{content:"•";margin:0 9px;opacity:.45}
+  .ht-line .ht-l1{font-weight:800;color:#fff}
+  .ht-line .ht-badge{margin-left:10px;padding:2px 10px;font-size:.74rem}
+  .ht-line .ht-badge::before{content:none!important;margin:0!important}
 }
+@media(min-width:961px){.ht-line{display:none}}
 @media(max-width:720px){
   .ht{margin-top:20px}
   .ht-card{padding:20px 16px 16px;border-radius:22px}
   .ht-head{align-items:flex-start}
-  .ht-cd{align-items:flex-start;text-align:left;width:100%}
+  .ht-cd{flex-direction:row;align-items:baseline;justify-content:space-between;text-align:left;width:100%;gap:10px}
   .ht-list{gap:6px}
   .ht-p{padding:11px 2px 10px;border-radius:14px;gap:4px}
   .ht-p svg{width:19px;height:19px}
