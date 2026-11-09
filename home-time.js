@@ -114,7 +114,7 @@
   function rerender() { render(dhakaNow()); }
 
   /* ---------- state ---------- */
-  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, jumu: false };
+  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false };
 
   function compute(now) {
     var key = now.y + "-" + now.m + "-" + now.d;
@@ -133,7 +133,19 @@
       prevH = st.today[k];
     }
     if (!next) { next = "fj"; nextH = st.tomorrow.fj + 24; }
-    return { next: next, prevH: prevH, nextH: nextH };
+
+    /* the prayer that is running now and when it ends:
+       Fajr -> sunrise, Dhuhr -> Asr, Asr -> Maghrib, Maghrib -> Isha, Isha -> next Fajr.
+       Between sunrise and Dhuhr no obligatory prayer is running (cur = ""). */
+    var t = st.today, cur = "", curStart = 0, curEnd = 0;
+    if (now.h < t.fj)      { cur = "is"; curStart = st.yesterday.is - 24; curEnd = t.fj; }
+    else if (now.h < t.sr) { cur = "fj"; curStart = t.fj; curEnd = t.sr; }
+    else if (now.h < t.dh) { cur = ""; }
+    else if (now.h < t.as) { cur = "dh"; curStart = t.dh; curEnd = t.as; }
+    else if (now.h < t.mg) { cur = "as"; curStart = t.as; curEnd = t.mg; }
+    else if (now.h < t.is) { cur = "mg"; curStart = t.mg; curEnd = t.is; }
+    else                   { cur = "is"; curStart = t.is; curEnd = st.tomorrow.fj + 24; }
+    return { next: next, prevH: prevH, nextH: nextH, cur: cur, curStart: curStart, curEnd: curEnd };
   }
 
   function pname(k) {
@@ -187,18 +199,26 @@
 
   function render(now) {
     var c = compute(now);
-    st.next = c.next; st.prevH = c.prevH; st.nextH = c.nextH;
-    var k = c.next, nt = clock(c.nextH % 24);
-    var cdLabel = st.rz && k === "mg" ? T("ইফতারে বাকি", "Until iftar")
-      : st.rz && k === "fj" ? T("সেহরি শেষ হতে বাকি", "Until sehri ends")
-      : T(pname(k) + " শুরু হতে বাকি", "Until " + pname(k));
+    st.next = c.next; st.prevH = c.prevH; st.nextH = c.nextH; st.cur = c.cur;
+    var k = c.next, cur = c.cur;
+    /* headline = the prayer running now; in the gap after sunrise it falls back to the next prayer */
+    var hk = cur || k, hs = cur ? c.curStart : c.nextH, hend = cur ? c.curEnd : c.nextH;
+    st.cdH = hend; st.barA = cur ? c.curStart : c.prevH; st.barB = hend;
+    var nt = clock(hs), nx = clock(c.nextH % 24);
+    var cdLabel = cur
+      ? (st.rz && cur === "is" ? T("ইশা ও সেহরি শেষ হতে বাকি", "Until Isha & sehri end") : T(pname(cur) + " শেষ হতে বাকি", "Until " + pname(cur) + " ends"))
+      : (st.rz && k === "mg" ? T("ইফতারে বাকি", "Until iftar") : T(pname(k) + " শুরু হতে বাকি", "Until " + pname(k)));
+    var kick = cur ? T("চলমান নামাজ", "Current prayer") : T("পরবর্তী নামাজ", "Next prayer");
+    var nxLine = cur
+      ? '<div class="ht-nx">' + T("পরবর্তী", "Next") + ": <b>" + pname(k) + (c.nextH >= 24 ? " " + T("(কাল)", "(tmrw)") : "") + "</b> " + nx.t + " " + nx.p + "</div>"
+      : '<div class="ht-nx">' + T("এখন ফরজ নামাজের ওয়াক্ত নেই", "No obligatory prayer time right now") + "</div>";
 
     var lis = KEYS.map(function (q) {
-      var wrap = q === "fj" && k === "fj" && c.nextH >= 24;   /* after Isha: next is tomorrow's Fajr */
-      var cl = clock(wrap ? st.tomorrow.fj : st.today[q]);
-      var cls = q === k && (c.nextH < 24 || wrap) ? " is-next" : (st.today[q] <= now.h ? " is-past" : "");
+      var yest = q === "is" && cur === "is" && now.h < st.today.fj;   /* after midnight, before Fajr: Isha is still last night's */
+      var cl = clock(yest ? st.yesterday.is : st.today[q]);
+      var cls = q === hk ? " is-next" : (st.today[q] <= now.h && !yest ? " is-past" : "");
       return '<li class="ht-p' + cls + '" data-k="' + q + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[q] + "</svg>" +
-        '<span class="ht-pn">' + pname(q) + (wrap ? " <small>" + T("(কাল)", "(tmrw)") + "</small>" : "") + '</span><span class="ht-pt">' + cl.t + '</span><span class="ht-pp">' + cl.p + "</span></li>";
+        '<span class="ht-pn">' + pname(q) + (yest ? " <small>" + T("(গতকাল)", "(yest.)") + "</small>" : "") + '</span><span class="ht-pt">' + cl.t + '</span><span class="ht-pp">' + cl.p + "</span></li>";
     }).join("");
 
     var rz = st.rz
@@ -210,9 +230,9 @@
       '<div class="ht-card">' + dateHTML(now) +
       '<div class="ht-main">' +
       '<div class="ht-head">' +
-      '<div><span class="ht-kick">' + MOSQUE + T("পরবর্তী নামাজ", "Next prayer") + "</span>" +
-      '<div class="ht-nm"><b>' + pname(k) + '</b><span class="ht-nt"><i>' + nt.t + "</i><small>" + nt.p + "</small></span></div></div>" +
-      '<div class="ht-cd" role="timer"><small>' + cdLabel + '</small><b class="ht-t">' + hms((c.nextH - now.h) * 3600) + "</b></div>" +
+      '<div><span class="ht-kick">' + MOSQUE + kick + "</span>" +
+      '<div class="ht-nm"><b>' + pname(hk) + '</b><span class="ht-nt"><i>' + nt.t + "</i><small>" + nt.p + "</small></span></div>" + nxLine + "</div>" +
+      '<div class="ht-cd" role="timer"><small>' + cdLabel + '</small><b class="ht-t">' + hms((hend - now.h) * 3600) + "</b></div>" +
       "</div>" +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
       '<ul class="ht-list">' + lis + "</ul>" +
@@ -231,8 +251,8 @@
 
   function tick(now) {
     if (!els.t) return;
-    els.t.textContent = hms((st.nextH - now.h) * 3600);
-    var span = st.nextH - st.prevH, pct = span > 0 ? (now.h - st.prevH) / span : 0;
+    els.t.textContent = hms((st.cdH - now.h) * 3600);
+    var span = st.barB - st.barA, pct = span > 0 ? (now.h - st.barA) / span : 0;
     els.bar.style.width = Math.min(100, Math.max(0, pct * 100)).toFixed(2) + "%";
   }
 
@@ -242,7 +262,8 @@
     /* rebuild when the day changed or the awaited prayer time has arrived; otherwise only tick the clock */
     var arrived = st.nextH < 24 && now.h >= st.nextH, fired = st.next;
     if (arrived && now.h - st.nextH < 0.03) notify(fired);   /* only within ~100 s of the time, not after a long sleep */
-    if (!els.t || dayKey !== st.dayKey || arrived) render(now);
+    var ended = st.cdH < 24 && now.h >= st.cdH;
+    if (!els.t || dayKey !== st.dayKey || arrived || ended) render(now);
     else tick(now);
   }
 
