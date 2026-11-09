@@ -1,4 +1,4 @@
-/* home-time.css - prayer times (and later date + calendar) card on the home page.
+/* home-time.css - date + prayer times + mini calendar card on the home page.
  * Always a deep-navy "premium" card so it looks the same in light and dark mode,
  * like the hero panel above it. */
 .ht{max-width:1200px;margin:26px auto 0;padding:0 18px;position:relative;z-index:1}
@@ -6,7 +6,7 @@
 
 .ht-card{
   position:relative;overflow:hidden;isolation:isolate;
-  display:grid;grid-template-columns:232px minmax(0,1fr);gap:0 30px;
+  display:grid;grid-template-columns:232px minmax(0,1fr) 284px;gap:0 28px;
   border-radius:26px;padding:26px 28px 20px;color:#F1F5F9;
   background:
     radial-gradient(600px 260px at 100% 0%,rgba(212,175,55,.22),transparent 70%),
@@ -99,10 +99,44 @@
 .ht-link:hover{text-decoration:underline}
 .ht-link svg{width:15px;height:15px}
 
+
+/* ----- mini calendar (right) ----- */
+.ht-cal{display:flex;flex-direction:column;gap:8px;min-width:0;padding-left:28px;border-left:1px solid rgba(255,255,255,.12)}
+.ht-ch{display:flex;align-items:center;gap:6px}
+.ht-cm{flex:1;min-width:0;text-align:center;color:#fff;text-decoration:none;font-size:1rem;line-height:1.2;white-space:nowrap}
+.ht-cm b{font-weight:800}
+.ht-cm:hover{color:#F6E3A8}
+.ht-ar{flex:none;display:grid;place-items:center;width:30px;height:30px;padding:0;border-radius:50%;cursor:pointer;color:#E8C46C;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);transition:background-color .2s,border-color .2s}
+.ht-ar:hover{background:rgba(232,196,108,.16);border-color:rgba(232,196,108,.5)}
+.ht-ar svg{width:15px;height:15px}
+.ht-td{flex:none;padding:4px 10px;border-radius:99px;cursor:pointer;font:inherit;font-size:.72rem;font-weight:700;color:#1d1400;border:0;background:linear-gradient(135deg,#F6E3A8,#E8C46C)}
+.ht-ar:focus-visible,.ht-td:focus-visible,.ht-c:focus-visible,.ht-cm:focus-visible,.ht-link:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-dow,.ht-cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.ht-dow span{text-align:center;font-size:.68rem;font-weight:700;color:#a8b3c7;padding:2px 0}
+.ht-dow span.o{color:#fda4af}
+.ht-c{position:relative;display:grid;place-items:center;aspect-ratio:1;border-radius:50%;text-decoration:none;color:#e2e8f0;font-size:.82rem;font-variant-numeric:tabular-nums;transition:background-color .2s}
+.ht-c b{font-weight:600;line-height:1}
+.ht-c.is-e{pointer-events:none}
+a.ht-c:hover{background:rgba(255,255,255,.1)}
+.ht-c.is-wk{color:#fda4af}
+.ht-c.is-h::after{content:"";position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#E8C46C;box-shadow:0 0 6px rgba(232,196,108,.8)}
+.ht-c.is-today{color:#1d1400;background:linear-gradient(135deg,#F6E3A8,#E8C46C 55%,#D4AF37);box-shadow:0 0 0 2px rgba(232,196,108,.35)}
+.ht-c.is-today b{font-weight:800}
+.ht-c.is-today::after{background:#5b4300;box-shadow:none}
+.ht-nh{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin-top:4px;padding-top:10px;border-top:1px solid rgba(255,255,255,.1);font-size:.8rem;line-height:1.45;color:#cbd5e1}
+.ht-nh-k{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#E8C46C}
+.ht-nh b{color:#fff;font-weight:700}
+.ht-nh em{font-style:normal;font-weight:700;color:#F6E3A8}
+
 /* ----- language ----- */
 html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none}
 
 /* ----- tablet / phone ----- */
+@media(max-width:1180px){
+  .ht-card{grid-template-columns:232px minmax(0,1fr)}
+  .ht-cal{grid-column:1 / -1;width:100%;max-width:380px;margin:20px auto 0;padding:18px 0 0;border-left:0;border-top:1px solid rgba(255,255,255,.12)}
+}
 @media(max-width:960px){
   .ht-card{grid-template-columns:1fr}
   .ht-date{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 18px;padding:0 0 16px;margin-bottom:18px;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}
@@ -123,8 +157,9 @@ html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none
   .ht-p .ht-pp{font-size:.62rem}
   .ht-p.is-past::after{top:6px;right:6px;width:6px;height:6px}
   .ht-foot .ht-sp{display:none}
+  .ht-cal{max-width:none}
 }
 @media(prefers-reduced-motion:reduce){
-  .ht-p,.ht-bar i{transition:none}
+  .ht-p,.ht-bar i,.ht-c,.ht-ar{transition:none}
   .ht-p.is-next::before{animation:none;opacity:.6}
 }
