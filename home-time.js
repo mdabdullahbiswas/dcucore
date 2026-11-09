@@ -71,22 +71,11 @@
     return dg(pad2(Math.floor(sec / 3600))) + ":" + dg(pad2(Math.floor(sec / 60) % 60)) + ":" + dg(pad2(sec % 60));
   }
 
-  /* ---------- districts (approximate centre points; prayer times shift a few minutes with longitude) ---------- */
-  var DIST = [
-    ["ঢাকা","Dhaka",23.81,90.41],["গাজীপুর","Gazipur",24.00,90.42],["নারায়ণগঞ্জ","Narayanganj",23.63,90.50],["নরসিংদী","Narsingdi",23.92,90.72],["মানিকগঞ্জ","Manikganj",23.86,90.00],["মুন্সিগঞ্জ","Munshiganj",23.55,90.53],["টাঙ্গাইল","Tangail",24.25,89.92],["কিশোরগঞ্জ","Kishoreganj",24.43,90.78],["ফরিদপুর","Faridpur",23.60,89.84],["রাজবাড়ী","Rajbari",23.76,89.64],["গোপালগঞ্জ","Gopalganj",23.01,89.83],["মাদারীপুর","Madaripur",23.17,90.20],["শরীয়তপুর","Shariatpur",23.22,90.35],
-    ["চট্টগ্রাম","Chattogram",22.36,91.78],["কক্সবাজার","Cox’s Bazar",21.45,91.98],["কুমিল্লা","Cumilla",23.46,91.18],["ব্রাহ্মণবাড়িয়া","Brahmanbaria",23.96,91.11],["চাঁদপুর","Chandpur",23.23,90.65],["লক্ষ্মীপুর","Lakshmipur",22.94,90.84],["নোয়াখালী","Noakhali",22.82,91.10],["ফেনী","Feni",23.02,91.40],["খাগড়াছড়ি","Khagrachhari",23.12,91.98],["রাঙামাটি","Rangamati",22.65,92.17],["বান্দরবান","Bandarban",22.19,92.22],
-    ["সিলেট","Sylhet",24.90,91.87],["মৌলভীবাজার","Moulvibazar",24.48,91.77],["হবিগঞ্জ","Habiganj",24.38,91.42],["সুনামগঞ্জ","Sunamganj",25.07,91.40],
-    ["রাজশাহী","Rajshahi",24.37,88.60],["নাটোর","Natore",24.42,89.00],["নওগাঁ","Naogaon",24.80,88.94],["চাঁপাইনবাবগঞ্জ","Chapainawabganj",24.60,88.28],["পাবনা","Pabna",24.00,89.25],["সিরাজগঞ্জ","Sirajganj",24.45,89.70],["বগুড়া","Bogura",24.85,89.37],["জয়পুরহাট","Joypurhat",25.10,89.02],
-    ["খুলনা","Khulna",22.82,89.55],["বাগেরহাট","Bagerhat",22.65,89.79],["সাতক্ষীরা","Satkhira",22.71,89.07],["যশোর","Jashore",23.17,89.21],["ঝিনাইদহ","Jhenaidah",23.54,89.17],["মাগুরা","Magura",23.49,89.42],["নড়াইল","Narail",23.17,89.50],["কুষ্টিয়া","Kushtia",23.90,89.12],["চুয়াডাঙ্গা","Chuadanga",23.64,88.85],["মেহেরপুর","Meherpur",23.76,88.63],
-    ["বরিশাল","Barishal",22.70,90.37],["ভোলা","Bhola",22.69,90.65],["পটুয়াখালী","Patuakhali",22.36,90.33],["পিরোজপুর","Pirojpur",22.58,89.97],["ঝালকাঠি","Jhalokati",22.64,90.20],["বরগুনা","Barguna",22.15,90.13],
-    ["রংপুর","Rangpur",25.75,89.25],["দিনাজপুর","Dinajpur",25.63,88.64],["ঠাকুরগাঁও","Thakurgaon",26.03,88.47],["পঞ্চগড়","Panchagarh",26.34,88.55],["নীলফামারী","Nilphamari",25.93,88.86],["লালমনিরহাট","Lalmonirhat",25.99,89.45],["কুড়িগ্রাম","Kurigram",25.80,89.64],["গাইবান্ধা","Gaibandha",25.33,89.53],
-    ["ময়মনসিংহ","Mymensingh",24.75,90.41],["জামালপুর","Jamalpur",24.92,89.94],["শেরপুর","Sherpur",25.02,90.02],["নেত্রকোণা","Netrokona",24.87,90.73]
-  ];
+  /* ---------- districts: the list and the remembered choice live in dcu-time.js now (shared with the calendar) ---------- */
+  var DIST = DT.DIST;
   function store(k, v) { try { if (v == null) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
-  var distIdx = parseInt(store("dcu-district"), 10);
-  if (!(distIdx >= 0 && distIdx < DIST.length)) distIdx = 0;
-  function applyDistrict() { DT.PL.lat = DIST[distIdx][2]; DT.PL.lon = DIST[distIdx][3]; }
-  applyDistrict();
+  var distIdx = DT.getDistrict();
+  function applyDistrict() { DT.setDistrict(distIdx); }
 
   /* ---------- azan notification (works while the page is open) ---------- */
   var azanOn = store("dcu-azan") === "1" && "Notification" in window && Notification.permission === "granted";
@@ -115,6 +104,10 @@
 
   /* ---------- state ---------- */
   var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, ex: null, exY: null, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false };
+  /* another page or tab changed the district */
+  window.addEventListener("dcu:district", function () {
+    if (DT.getDistrict() !== distIdx) { distIdx = DT.getDistrict(); st.dayKey = ""; st.nh = null; rerender(); }
+  });
 
   function compute(now) {
     var key = now.y + "-" + now.m + "-" + now.d;
@@ -177,7 +170,7 @@
   host.addEventListener("change", function (e) {
     var t = e.target;
     if (!t || t.tagName !== "SELECT" || !t.closest(".ht-ds")) return;
-    distIdx = +t.value; store("dcu-district", String(distIdx));
+    distIdx = +t.value;
     applyDistrict(); st.dayKey = ""; st.nh = null; rerender();
     var again = host.querySelector(".ht-ds select"); if (again) again.focus();
   });
