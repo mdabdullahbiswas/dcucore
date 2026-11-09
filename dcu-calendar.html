@@ -705,6 +705,9 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 .np-g .ms.nx:hover{background:linear-gradient(160deg,var(--gold-light),var(--gold-deep))}
 .np-g .ms.nx:after{background:var(--night);box-shadow:0 0 0 3px #0b1f3a33}
 .np-g .ms:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
+.xmg .ms{position:relative;cursor:pointer}
+.xmg .ms:after{content:"";position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--gold-light);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 25%,transparent)}
+.xmg .ms:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
 .pq{position:fixed;inset:0;z-index:1000;display:grid;align-items:end;justify-items:center;background:color-mix(in srgb,var(--night) 64%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
 .pq.o{opacity:1;visibility:visible}
 body.pqL{overflow:hidden}
@@ -1155,7 +1158,7 @@ const XPN=DCUTime.PN;
 /* আরও সময়: ক্যাটাগরি — সেহরি ও ইফতার • নফল নামাজ (ইশরাক, চাশত, তাহাজ্জুদ) • নামাজের নিষিদ্ধ সময় (সূর্যোদয়, ঠিক দুপুর, সূর্যাস্ত) (DCUTime.extras) */
 const xt1=h=>{const a=xf(h).split(' ');return L=='bn'?a[1]:a[0]},xr=(a,b)=>{const pe=t=>{const s=xf(t).split(' ');return L=='bn'?s[0]:s[1]};return(pe(a)==pe(b)?xt1(a):xf(a))+' – '+xf(b)};
 function xmHTML(d){const x=xex(d),
- card=q=>`<div${q[4]?` data-s="${q[4].s}" data-e="${q[4].e}"`:''}><i aria-hidden="true">${q[0]}</i><small>${q[2]}</small><b>${q[3]}</b></div>`,
+ card=q=>`<div${q[4]?` data-s="${q[4].s}" data-e="${q[4].e}"`:''}${MS[q[1]]?` class="ms" data-k="${q[1]}" role="button" tabindex="0" aria-haspopup="dialog" aria-label="${q[2]} — ${T('মাসায়েল ও ফজিলত','Rulings & virtues')}"`:''}><i aria-hidden="true">${q[0]}</i><small>${q[2]}</small><b>${q[3]}</b></div>`,
  sf=[['🌙','sehri',T('সেহরি শেষ','Sehri ends'),xf(x.sehri.e)],['🌅','iftar',T('ইফতার','Iftar'),xf(x.iftar.s)]],
  nf=[['🌄','ishraq',T('ইশরাক','Ishraq'),xr(x.ishraq.s,x.ishraq.e),x.ishraq],['☀️','chasht',T('চাশত','Chasht'),xr(x.chasht.s,x.chasht.e),x.chasht],['🌌','tahajjud',T('তাহাজ্জুদ (রাত)','Tahajjud (night)'),xr(x.tahajjud.s,x.tahajjud.e)]],
  fb={sr:[T('সূর্যোদয়ের সময়','At sunrise'),'🌄'],zw:[T('ঠিক দুপুর','High noon'),'☀️'],ss:[T('সূর্যাস্তের সময়','At sunset'),'🌇']};
@@ -1173,7 +1176,7 @@ function xtp(){const e=$('#npc');if(!e)return;if(XND!==+tdy()||!e.querySelector(
 const _sd=showDay;showDay=function(d){_sd(d);const a=$('#dpc .evs');if(a)a.insertAdjacentHTML('beforebegin',xsHTML(d))};
 setInterval(xtp,1000);
 
-/* --- নামাজ শিট: টাইলে ক্লিক করলে মাসায়েল ও ফজিলত (এখন ফজর ও যোহর; বাকি ওয়াক্ত পরে MS-এ যোগ হবে) --- */
+/* --- নামাজ শিট: টাইলে ক্লিক করলে মাসায়েল ও ফজিলত (পাঁচ ওয়াক্ত ও ইশরাক, চাশত, তাহাজ্জুদ সবই MS-এ আছে) --- */
 const MS={fj:{ic:'🌌',nm:['ফজর নামাজ','Fajr prayer'],a:'fj',z:'sr',tot:'৪',
  rk:[['২','সুন্নতে মুয়াক্কাদা'],['২','ফরজ']],
  wk:[['শুরু','সুবহে সাদিক (পূর্ব দিগন্তে প্রকৃত আলো ফোটার পর) থেকে ফজরের ওয়াক্ত শুরু হয়।','s'],['শেষ','ঠিক সূর্যোদয়ের আগ মুহূর্ত পর্যন্ত ফজরের ওয়াক্ত বলবৎ থাকে।','e']],
@@ -1189,16 +1192,66 @@ dh:{ic:'☀️',nm:['যোহর নামাজ','Dhuhr prayer'],a:'dh',z:'as'
  ms:[['🕌','রাকাত সংখ্যা','৪ রাকাত সুন্নতে মুয়াক্কাদা, ৪ রাকাত ফরজ, ২ রাকাত সুন্নতে মুয়াক্কাদা এবং ২ রাকাত নফল—মোট ১২ রাকাত।'],
      ['🔇','সির্রি (নীরব) কেরাত','যোহরের নামাজে কেরাত নীরবে (মনে মনে) পড়া হয়, উচ্চস্বরে নয়।']],
  rf:'বাদায়েউস সানায়ে; ফাতাওয়া শামী: ১/৩৫২।',
- fz:[['বিশেষ রহমত — রাসূলুল্লাহ (সা.) বলেছেন','যে ব্যক্তি যোহরের আগের ৪ রাকাত ও পরের ৪ রাকাত নামাজ নিয়মিত পড়ে, আল্লাহ তার ওপর জাহান্নাম হারাম করে দেন।','তিরমিজি: ৪২৮']]}};
+ fz:[['বিশেষ রহমত — রাসূলুল্লাহ (সা.) বলেছেন','যে ব্যক্তি যোহরের আগের ৪ রাকাত ও পরের ৪ রাকাত নামাজ নিয়মিত পড়ে, আল্লাহ তার ওপর জাহান্নাম হারাম করে দেন।','তিরমিজি: ৪২৮']]},
+as:{ic:'🌤',nm:['আসর নামাজ','Asr prayer'],a:'as',z:'mg',tot:'৮',
+ rk:[['৪','সুন্নতে গায়রে মুয়াক্কাদা (মুস্তাহাব, ফরজের আগে)'],['৪','ফরজ']],
+ wk:[['শুরু','যোহরের ওয়াক্ত শেষ হওয়ার সাথে সাথে আসরের ওয়াক্ত শুরু হয়, অর্থাৎ আসল ছায়া বাদে প্রতিটি বস্তুর ছায়া তার দ্বিগুণ হওয়ার পর থেকে।','s'],['শেষ','সূর্যাস্তের ঠিক পূর্ব মুহূর্ত পর্যন্ত। তবে সূর্য হলুদ হওয়ার আগে পড়া উত্তম।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','৪ রাকাত ফরজ। এর আগে ৪ রাকাত সুন্নতে গায়রে মুয়াক্কাদা পড়া মুস্তাহাব।'],
+     ['⚠️','মাকরুহ সময়','ঠিক সূর্যাস্তের আগের ১৫-২০ মিনিটে আসর পড়া মাকরুহ। তাই ওয়াক্ত শেষ হওয়ার ঠিক আগ মুহূর্ত পর্যন্ত তাখির (বিলম্ব) করা থেকে বিরত থাকা আবশ্যক।'],
+     ['🔇','সির্রি (নীরব) কেরাত','আসরের নামাজে কেরাত নীরবে (মনে মনে) পড়া হয়, উচ্চস্বরে নয়।']],
+ rf:'সহিহ বুখারি ও মুসলিম; রদ্দুল মুহতার।',
+ fz:[['মধ্যবর্তী নামাজ (সালাতুল উসতা)','তোমরা সকল নামাজের প্রতি যত্নবান হও, বিশেষ করে মধ্যবর্তী নামাজের প্রতি।','সূরা বাকারা: ২৩৮'],
+     ['আসর ছেড়ে দেওয়ার পরিণতি — রাসূল (সা.) বলেছেন','যে ব্যক্তি আসরের নামাজ ছেড়ে দিল, তার আমল বরবাদ হয়ে গেল।','সহিহ বুখারি: ৫৫৩'],
+     ['জান্নাতের সুসংবাদ','যে ব্যক্তি দুই ঠান্ডা সময়ে (ফজর ও আসর) নামাজ আদায় করবে, সে জান্নাতে প্রবেশ করবে।','সহিহ বুখারি: ৫৭১; সহিহ মুসলিম: ৬৩৫']]},
+mg:{ic:'🌇',nm:['মাগরিব নামাজ','Maghrib prayer'],a:'mg',z:'is',tot:'৭',
+ rk:[['৩','ফরজ'],['২','সুন্নতে মুয়াক্কাদা'],['২','নফল']],
+ wk:[['শুরু','সূর্যাস্তের সাথে সাথেই (পশ্চিম আকাশে লাল আভা থাকা অবস্থায়) মাগরিবের ওয়াক্ত শুরু হয়।','s'],['শেষ','পশ্চিম আকাশের লাল আভা বা শাফাক গায়েব হয়ে যাওয়ার আগ পর্যন্ত।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','৩ রাকাত ফরজ, ২ রাকাত সুন্নতে মুয়াক্কাদা এবং ২ রাকাত নফল—মোট ৭ রাকাত।'],
+     ['⚡','তাড়াতাড়ি আদায় করা','মাগরিব বিলম্বে না পড়ে সূর্যাস্তের সাথে সাথে, অর্থাৎ ওয়াক্ত হওয়ার পরপরই পড়া মুস্তাহাব।'],
+     ['🔊','জেহরী কেরাত','প্রথম দুই রাকাতে ইমাম উচ্চস্বরে কেরাত পড়বেন।']],
+ rf:'তিরমিজি: ১৫০; ফাতাওয়া হিন্দিয়া: ১/৫১।',
+ fz:[['অবিচল ইবাদত','রাসূলুল্লাহ (সা.) মাগরিবের নামাজ সময়মতো আদায় করার ব্যাপারে খুব গুরুত্ব দিয়েছেন। সময়মতো মাগরিব আদায়কারীদের জন্য রয়েছে জান্নাতের সুসংবাদ ও আল্লাহর সন্তুষ্টি।','']]},
+is:{ic:'🌙',nm:['এশা নামাজ','Isha prayer'],a:'is',z:'fj',tot:'১৭',
+ rk:[['৪','সুন্নতে গায়রে মুয়াক্কাদা (ফরজের আগে)'],['৪','ফরজ'],['২','সুন্নতে মুয়াক্কাদা'],['২','নফল'],['৩','ওয়াজিব বিতর'],['২','নফল']],
+ wk:[['শুরু','পশ্চিম আকাশের লাল আভা ও সাদা আভা অদৃশ্য হওয়ার পর, অর্থাৎ মাগরিবের ওয়াক্ত শেষ হওয়ার পর এশার ওয়াক্ত শুরু হয়।','s'],['শেষ','সুবহে সাদিকের আগ পর্যন্ত। তবে রাতের এক তৃতীয়াংশ বা মধ্যরাতের মধ্যে পড়া উত্তম।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','৪ রাকাত সুন্নতে গায়রে মুয়াক্কাদা, ৪ রাকাত ফরজ, ২ রাকাত সুন্নতে মুয়াক্কাদা, ২ রাকাত নফল, ৩ রাকাত ওয়াজিব বিতর এবং ২ রাকাত নফল—মোট ১৭ রাকাত।'],
+     ['🌠','বিতর নামাজ','এশার নামাজের সাথে ৩ রাকাত বিতর পড়া ওয়াজিব। এটি জামাতের সাথে বা একা পড়া যায়।'],
+     ['🔊','জেহরী কেরাত','ফরজের প্রথম দুই রাকাতে ইমাম উচ্চস্বরে কেরাত পড়বেন।']],
+ rf:'সুনানে আবু দাউদ; ফাতাওয়া শামী: ২/৯৪।',
+ fz:[['মুনাফেকি থেকে মুক্তি','ফজরের মতো এশার নামাজ জামাতে আদায় করা মুনাফেকি থেকে মুক্তির অন্যতম বড় উপায়।',''],
+     ['জামাতে এশার ফজিলত — রাসূলুল্লাহ (সা.) বলেছেন','যে ব্যক্তি এশার নামাজ জামাতের সাথে পড়ল, সে যেন অর্ধেক রাত নফল ইবাদত করল...','সহিহ মুসলিম: ৬৫৬']]},
+ishraq:{ic:'🌄',nm:['ইশরাক নামাজ','Ishraq prayer'],x:'ishraq',tot:'২–৪',
+ rk:[['২','কমপক্ষে'],['৪','সর্বোচ্চ']],
+ wk:[['শুরু','সূর্য পুরোপুরি উদিত হওয়ার পর, অর্থাৎ সূর্যোদয়ের অন্তত ১৫ মিনিট পর থেকে ইশরাকের ওয়াক্ত শুরু হয়।','s'],['শেষ','চাশতের ওয়াক্তের সাথে মিলিত। জোহরের আগ পর্যন্ত এর পরিধি ধরা হয়, তবে সূর্যোদয়ের ঠিক পরের ১–২ ঘণ্টা এর মূল সময়।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','ইশরাক নামাজ কমপক্ষে ২ রাকাত এবং সর্বোচ্চ ৪ রাকাত পড়া যায়।'],
+     ['🕋','বিশেষ নিয়ম (ফজরের সাওয়াব)','যে ব্যক্তি ফজর নামাজ জামাতের সাথে পড়ে মসজিদে আল্লাহর জিকিরে বসে থাকে, অতঃপর সূর্যোদয়ের পর দুই রাকাত নামাজ আদায় করে, সে একটি সম্পূর্ণ হজ ও ওমরার সওয়াব লাভ করে।']],
+ rf:'তিরমিজি: ৫৮৬; ফাতাওয়া শামী: ২/২৩।',
+ fz:[['হজ ও ওমরার সওয়াব — রাসূলুল্লাহ (সা.) ইরশাদ করেছেন','যে ব্যক্তি ফজর নামাজ জামাতের সাথে পড়ে, এরপর সূর্যোদয় পর্যন্ত বসে আল্লাহর জিকির করতে থাকে, অতঃপর দুই রাকাত নামাজ আদায় করে, তার জন্য একটি হজ ও একটি ওমরার সওয়াব রয়েছে (পরিপূর্ণ, পরিপূর্ণ, পরিপূর্ণ)।','তিরমিজি: ৫৮৬']]},
+chasht:{ic:'☀️',nm:['চাশত নামাজ (দুহা)','Chasht (Duha) prayer'],x:'chasht',tot:'২–৮',
+ rk:[['২','ন্যূনতম'],['৪–৮','উত্তম (৪, ৬ বা ৮)']],
+ wk:[['শুরু','সূর্য কিছুটা ওপরে ওঠার পর, অর্থাৎ পূর্বাহ্নে। ইশরাকের ওয়াক্তের সাথে মিলিতভাবেই এর শুরু ধরা হয়।','s'],['শেষ','ঠিক দুপুরের মাকরুহ সময় বা যাওয়ালের আগ মুহূর্ত পর্যন্ত চাশতের ওয়াক্ত থাকে।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','চাশত বা সালাতুদ দুহা ন্যূনতম ২ রাকাত। উত্তম হলো ৪, ৬ বা ৮ রাকাত পড়া।'],
+     ['🌿','সুন্নতে মুয়াক্কাদা নয়','এটি অত্যন্ত ফজিলতপূর্ণ নফল নামাজ, যা সাহাবিগণ নিয়মিত আদায় করতেন।']],
+ rf:'সহিহ মুসলিম; বাদায়েউস সানায়ে।',
+ fz:[['সাদকার বদল — রাসূলুল্লাহ (সা.) বলেছেন','মানুষের শরীরে যত জোড় বা অস্থি রয়েছে, প্রতিদিন সকালবেলা সেগুলোর প্রতিটির পক্ষ থেকে একটি করে সাদকা দেওয়া আবশ্যক হয়ে যায়। আর চাশতের দুই রাকাত নামাজ সেই সবকিছুর পক্ষ থেকে যথেষ্ট (সাদকার সমতুল্য) হয়ে যায়।','সহিহ মুসলিম: ৭২০'],
+     ['আল্লাহর সন্তুষ্টি','নিয়মিত চাশত আদায়কারীকে আল্লাহ তাআলা জান্নাতে একটি বিশেষ মাকাম দান করেন।','']]},
+tahajjud:{ic:'🌌',nm:['তাহাজ্জুদ নামাজ (রাতের নফল)','Tahajjud (night prayer)'],x:'tahajjud',tot:'২–১২',
+ rk:[['২','ন্যূনতম'],['৮','সাধারণ আমল'],['১২','সর্বোচ্চ']],
+ wk:[['শুরু','এশার নামাজ আদায়ের পর থেকে রাতের শেষ অংশ পর্যন্ত। তবে রাতের এক তৃতীয়াংশ অতিবাহিত হওয়ার পর বা শেষ রাতে পড়া সবচেয়ে উত্তম।','s'],['শেষ','সুবহে সাদিক বা সেহরির শেষ ওয়াক্ত শুরু হওয়ার আগ পর্যন্ত।','e']],
+ ms:[['😴','শর্ত','তাহাজ্জুদের জন্য রাতের প্রথমভাগে এশার পর কিছু সময় ঘুমিয়ে নেওয়া শর্ত বা মুস্তাহাব। অর্থাৎ ঘুম থেকে জেগে এই নামাজ আদায় করতে হয়।'],
+     ['🕌','রাকাত সংখ্যা','ন্যূনতম ২ রাকাত এবং সর্বোচ্চ ৮ বা ১২ রাকাত পর্যন্ত পড়া যায়। সাধারণত ৮ রাকাত এবং শেষে ৩ রাকাত বিতর পড়া রাসূলুল্লাহ (সা.)-এর নিয়মিত আমল ছিল।']],
+ rf:'সহিহ বুখারি ও মুসলিম; তাফসীরে ইবনে কাসির (সূরা বনী ইসরাইল: ৭৯)।',
+ fz:[['সর্বোত্তম নফল নামাজ — রাসূলুল্লাহ (সা.) বলেছেন','ফরজ নামাজের পর সবচেয়ে উত্তম নামাজ হলো রাতের নামাজ (তাহাজ্জুদ)।','সহিহ মুসলিম: ১১৬৩'],
+     ['মাকামে মাহমুদ — আল্লাহ তাআলা কুরআনে ইরশাদ করেছেন','আর রাতের কিছু অংশে তাহাজ্জুদ আদায় করুন, এটি আপনার জন্য একটি অতিরিক্ত নফল দায়িত্ব। আশা করা যায় আপনার রব আপনাকে ‘মাকামে মাহমুদে’ (প্রশংসিত স্থানে) উন্নীত করবেন।','সূরা বনী ইসরাইল: ৭৯']]}};
 function xcls(q,k){const m=MS[q],i=L=='bn'?0:1;return' class="'+(q==k?'nx':'')+(m?' ms':'')+'"'+(m?' role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+XPN[q][i]+' — '+T('মাসায়েল ও ফজিলত','Rulings & virtues')+'"':'')}
 document.body.insertAdjacentHTML('beforeend','<div class="pq" id="pq" aria-hidden="true"><div class="pq-s" id="pqs" role="dialog" aria-modal="true" aria-labelledby="pqT"></div></div>');
 let PQF=null;
-function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy());
- return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(p[m.a])} • ${T('শেষ ','Ends ')}${xf(p[m.z])}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
+function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy()),W=m.x?xex(tdy())[m.x]:null,S0=W?W.s%24:p[m.a],E0=W?W.e%24:p[m.z];
+ return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(S0)} • ${T('শেষ ','Ends ')}${xf(E0)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
  <div class="pq-tb" role="tablist"><button type="button" role="tab" id="pqt1" aria-selected="true" aria-controls="pqp1" data-pq="t1">${T('মাসায়েল','Rulings')}</button><button type="button" role="tab" id="pqt2" aria-selected="false" aria-controls="pqp2" data-pq="t2">${T('ফজিলত','Virtues')}</button></div></div>
  <div class="pq-p" id="pqp1" role="tabpanel" aria-labelledby="pqt1">
   <div class="pq-sec">${T('ওয়াক্ত বা সময়সীমা','Prayer time')}</div>
-  <div class="pq-w">${m.wk.map(w=>`<div><em>${w[0]}</em><p>${w[1]}</p><b>${xf(w[2]=='s'?p[m.a]:p[m.z])}</b></div>`).join('')}</div>
+  <div class="pq-w">${m.wk.map(w=>`<div><em>${w[0]}</em><p>${w[1]}</p><b>${xf(w[2]=='s'?S0:E0)}</b></div>`).join('')}</div>
   <div class="pq-sec">${T('রাকাত সংখ্যা','Rakats')}</div>
   <div class="pq-rk"${m.rk.length>2?' style="grid-template-columns:1fr 1fr"':''}>${m.rk.map(r=>`<div><b>${r[0]}</b><small>${r[1]}</small></div>`).join('')}<div class="tt"${m.rk.length>2?' style="grid-column:1/-1"':''}><b>${m.tot}</b><small>${T('মোট রাকাত','Total rakats')}</small></div></div>
   <div class="pq-sec">${T('গুরুত্বপূর্ণ মাসআলাসমূহ','Key rulings')}</div>
@@ -1206,17 +1259,17 @@ function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy());
   <div class="pq-rf"><b>📚 ${T('রেফারেন্স','Reference')}:</b> ${m.rf}</div></div>
  <div class="pq-p" id="pqp2" role="tabpanel" aria-labelledby="pqt2" hidden>
   <div class="pq-sec">${T('ফজিলত ও গুরুত্ব','Virtues & importance')}</div>
-  ${m.fz.map(f=>`<div class="pq-q"><h5>${f[0]}</h5><p>“${f[1]}”</p><span class="pq-r">📖 ${f[2]}</span></div>`).join('')}</div>`}
+  ${m.fz.map(f=>`<div class="pq-q"><h5>${f[0]}</h5><p>${f[2]?'“'+f[1]+'”':f[1]}</p>${f[2]?`<span class="pq-r">📖 ${f[2]}</span>`:''}</div>`).join('')}</div>`}
 function pqOpen(k,el){const m=MS[k];if(!m)return;PQF=el||document.activeElement;const o=$('#pq'),s=$('#pqs');s.innerHTML=pqHTML(k);s.scrollTop=0;o.classList.add('o');o.setAttribute('aria-hidden','false');document.body.classList.add('pqL');setTimeout(()=>{const x=s.querySelector('.pq-x');if(x)x.focus()},60)}
 function pqClose(){const o=$('#pq');if(!o.classList.contains('o'))return;o.classList.remove('o');o.setAttribute('aria-hidden','true');document.body.classList.remove('pqL');if(PQF&&PQF.focus)try{PQF.focus()}catch(e){}}
 function pqTab(n){const s=$('#pqs');[1,2].forEach(j=>{const t=s.querySelector('#pqt'+j),b=s.querySelector('#pqp'+j);t.setAttribute('aria-selected',j==n);b.hidden=j!=n});s.scrollTop=0}
 document.addEventListener('click',ev=>{
- const t=ev.target.closest('.np-g .ms');if(t){pqOpen(t.dataset.k,t);return}
+ const t=ev.target.closest('.np-g .ms,.xmg .ms');if(t){pqOpen(t.dataset.k,t);return}
  if(ev.target.id=='pq'){pqClose();return}
  const b=ev.target.closest('[data-pq]');if(!b)return;const v=b.dataset.pq;if(v=='x')pqClose();else if(v=='t1')pqTab(1);else if(v=='t2')pqTab(2)});
 document.addEventListener('keydown',ev=>{
  if(ev.key=='Escape'){pqClose();return}
- if((ev.key=='Enter'||ev.key==' ')&&ev.target.matches&&ev.target.matches('.np-g .ms')){ev.preventDefault();pqOpen(ev.target.dataset.k,ev.target)}});
+ if((ev.key=='Enter'||ev.key==' ')&&ev.target.matches&&ev.target.matches('.np-g .ms,.xmg .ms')){ev.preventDefault();pqOpen(ev.target.dataset.k,ev.target)}});
 window.addEventListener('dcu:district',()=>{const o=$('#pq');if(o&&o.classList.contains('o'))pqClose()});
 
 /* --- আগামী ছুটি ব্যানার + রমজান স্ট্রিপ --- */
