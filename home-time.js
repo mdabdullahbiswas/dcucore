@@ -182,6 +182,12 @@
   });
   host.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-azan]")) { toggleAzan(); return; }
+    var ib = e.target.closest && e.target.closest("[data-info]");
+    if (ib) {
+      var f = ib.closest(".ht-foot"), on = !f.classList.contains("show-info");
+      f.classList.toggle("show-info", on); ib.setAttribute("aria-expanded", on);
+      return;
+    }
     var mb = e.target.closest && e.target.closest("[data-more]");
     if (mb) {
       moreOpen = !moreOpen;
@@ -197,9 +203,9 @@
       DIST.map(function (d, n) { return '<option value="' + n + '"' + (n === distIdx ? " selected" : "") + ">" + d[i] + "</option>"; }).join("") + "</select></label>";
   }
   function azanBtn() {
-    return '<button type="button" class="ht-az' + (azanOn ? " is-on" : "") + '" data-azan aria-pressed="' + azanOn + '">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>' +
-      T(azanOn ? "আজান চালু" : "আজান নোটিফিকেশন", azanOn ? "Azan on" : "Azan alert") + "</button>";
+    var lbl = T(azanOn ? "আজান চালু" : "আজান নোটিফিকেশন", azanOn ? "Azan on" : "Azan alert");
+    return '<button type="button" class="ht-az' + (azanOn ? " is-on" : "") + '" data-azan aria-pressed="' + azanOn + '" aria-label="' + lbl + '" title="' + lbl + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></button>';
   }
 
   /* ---------- forbidden (makruh) prayer times: red badge while one is running ---------- */
@@ -218,6 +224,13 @@
       ' • ' + T("শেষ হবে ", "ends ") + "<b>" + e.t + " " + e.p + "</b></span></div>";
   }
 
+  /* sunrise + sunset: small grey line under the five tiles */
+  function sunHTML() {
+    var sr = clock(st.today.sr), ss = clock(st.today.mg);
+    return '<span class="ht-sun"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" +
+      "<span>" + T("সূর্যাস্ত", "Sunset") + " <b>" + (lang() === "en" ? ss.t + " " + ss.p : ss.p + " " + ss.t) + "</b></span></span>";
+  }
+
   /* ---------- "more times": sehri, iftar, ishraq, chasht, zawal, tahajjud (folded by default) ---------- */
   var moreOpen = false;
   function moreChips(now) {
@@ -234,8 +247,8 @@
     ];
     var anyOn = items.some(function (x) { return x.b != null && now.h >= x.a && now.h < x.b; });
     var chev = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-    return '<button type="button" class="ht-mt' + (moreOpen ? " is-open" : "") + (anyOn ? " has-on" : "") + '" data-more aria-expanded="' + moreOpen + '">' +
-      '<span class="ht-mt-d" aria-hidden="true"></span>' + T("আরও সময়", "More times") + chev + "</button>" +
+    return '<div class="ht-sub"><button type="button" class="ht-mt' + (moreOpen ? " is-open" : "") + (anyOn ? " has-on" : "") + '" data-more aria-expanded="' + moreOpen + '">' +
+      '<span class="ht-mt-d" aria-hidden="true"></span>' + T("আরও সময়", "More times") + chev + "</button>" + sunHTML() + "</div>" +
       '<div class="ht-more" role="list" aria-label="' + T("আরও সময়", "More times") + '"' + (moreOpen ? "" : " hidden") + ">" + items.map(function (x) {
       var v;
       if (x.b == null) { var c = clock(x.a); v = c.t + " <small>" + c.p + "</small>"; }
@@ -276,7 +289,6 @@
     var rz = st.rz
       ? '<span class="ht-rz"><span>' + T("সেহরি শেষ", "Sehri ends") + " <b>" + clock(st.today.fj).t + "</b></span><span>" + T("ইফতার", "Iftar") + " <b>" + clock(st.today.mg).t + "</b></span></span>"
       : "";
-    var sr = clock(st.today.sr), ss = clock(st.today.mg);
     var fbw = activeForbid(now); st.fbk = fbw ? fbw.k : "";
 
     host.innerHTML =
@@ -289,10 +301,10 @@
       "</div>" + forbidHTML(fbw) +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
       '<ul class="ht-list">' + lis + "</ul>" + moreChips(now) +
-      '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" +
-      "<span>" + T("সূর্যাস্ত", "Sunset") + " <b>" + (lang() === "en" ? ss.t + " " + ss.p : ss.p + " " + ss.t) + "</b></span>" +
-      '<span class="ht-sp"></span>' + distSel() + azanBtn() +
-      "<span>" + T("আনুমানিক", "Approx.") + "</span>" +
+      '<div class="ht-foot">' + distSel() + azanBtn() +
+      '<button type="button" class="ht-i" data-info aria-expanded="false" aria-label="' + T("আনুমানিক সময়", "Approximate times") + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.01"/></svg></button>' +
+      '<span class="ht-in">' + T("সময়গুলো আনুমানিক", "Times are approximate") + "</span>" +
+      '<span class="ht-sp"></span>' +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
       "</div></div>";
     host.setAttribute("aria-label", T("নামাজের সময়সূচি", "Prayer times"));
