@@ -163,7 +163,13 @@
       '<span class="ht-my">' + DT.GM[d.getMonth()][i] + " " + dg(d.getFullYear()) + "</span></div>" +
       '<div class="ht-alt"><span><i>' + T("বাংলা", "Bangla") + "</i>" + dg(info.b.d) + " " + DT.BM[info.b.m][i] + " " + dg(info.b.y) + " " + T("বঙ্গাব্দ", "BS") + "</span>" +
       "<span><i>" + T("হিজরি", "Hijri") + "</i>" + dg(info.h.d) + " " + DT.HM[info.h.m][i] + " " + dg(info.h.y) + " " + T("হিজরি", "AH") + "</span></div>" +
-      badge + "</aside>"
+      badge + "</aside>" +
+      /* one-line date header: shown instead of the big block on tablet/phone widths (css decides) */
+      '<div class="ht-line" aria-label="' + T("আজকের তারিখ", "Today’s date") + '">' +
+      '<span class="ht-l1">' + DT.WD[d.getDay()][i] + ", " + dg(d.getDate()) + " " + DT.GM[d.getMonth()][i] + " " + dg(d.getFullYear()) + "</span>" +
+      "<span>" + dg(info.b.d) + " " + DT.BM[info.b.m][i] + " " + dg(info.b.y) + " " + T("বঙ্গাব্দ", "BS") + "</span>" +
+      "<span>" + dg(info.h.d) + " " + DT.HM[info.h.m][i] + " " + dg(info.h.y) + " " + T("হিজরি", "AH") + "</span>" +
+      badge + "</div>"
     );
   }
 
