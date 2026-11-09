@@ -1173,8 +1173,8 @@ function xtp(){const e=$('#npc');if(!e)return;if(XND!==+tdy()||!e.querySelector(
 const _sd=showDay;showDay=function(d){_sd(d);const a=$('#dpc .evs');if(a)a.insertAdjacentHTML('beforebegin',xsHTML(d))};
 setInterval(xtp,1000);
 
-/* --- নামাজ শিট: টাইলে ক্লিক করলে মাসায়েল ও ফজিলত (এখন শুধু ফজর; বাকি ওয়াক্ত পরে MS-এ যোগ হবে) --- */
-const MS={fj:{ic:'🌌',nm:['ফজর নামাজ','Fajr prayer'],tot:'৪',
+/* --- নামাজ শিট: টাইলে ক্লিক করলে মাসায়েল ও ফজিলত (এখন ফজর ও যোহর; বাকি ওয়াক্ত পরে MS-এ যোগ হবে) --- */
+const MS={fj:{ic:'🌌',nm:['ফজর নামাজ','Fajr prayer'],a:'fj',z:'sr',tot:'৪',
  rk:[['২','সুন্নতে মুয়াক্কাদা'],['২','ফরজ']],
  wk:[['শুরু','সুবহে সাদিক (পূর্ব দিগন্তে প্রকৃত আলো ফোটার পর) থেকে ফজরের ওয়াক্ত শুরু হয়।','s'],['শেষ','ঠিক সূর্যোদয়ের আগ মুহূর্ত পর্যন্ত ফজরের ওয়াক্ত বলবৎ থাকে।','e']],
  ms:[['🕌','রাকাত সংখ্যা','২ রাকাত সুন্নতে মুয়াক্কাদা এবং ২ রাকাত ফরজ—মোট ৪ রাকাত। সুন্নতের তাকীদ অত্যন্ত বেশি।'],
@@ -1182,18 +1182,25 @@ const MS={fj:{ic:'🌌',nm:['ফজর নামাজ','Fajr prayer'],tot:'৪'
      ['🔊','জেহরী (জোরে কিরাত)','ইমাম সাহেব উচ্চস্বরে কেরাত পাঠ করবেন।']],
  rf:'হেদায়া; ফাতাওয়া শামী: ২/১২; বুখারি ও মুসলিম।',
  fz:[['আল্লাহর জিম্মায় সুরক্ষা','যে ব্যক্তি ফজরের নামাজ আদায় করল, সে আল্লাহর জিম্মায় (নিরাপত্তায়) চলে গেল...','সহিহ মুসলিম: ৬৫৭'],
-     ['জান্নাতের সুসংবাদ','যে ব্যক্তি দুই ঠান্ডা সময়ে (ফজর ও আসর) নামাজ আদায় করবে, সে জান্নাতে প্রবেশ করবে।','সহিহ বুখারি: ৫৭১; সহিহ মুসলিম: ৬৩৫']]}};
+     ['জান্নাতের সুসংবাদ','যে ব্যক্তি দুই ঠান্ডা সময়ে (ফজর ও আসর) নামাজ আদায় করবে, সে জান্নাতে প্রবেশ করবে।','সহিহ বুখারি: ৫৭১; সহিহ মুসলিম: ৬৩৫']]},
+dh:{ic:'☀️',nm:['যোহর নামাজ','Dhuhr prayer'],a:'dh',z:'as',tot:'১২',
+ rk:[['৪','সুন্নতে মুয়াক্কাদা (ফরজের আগে)'],['৪','ফরজ'],['২','সুন্নতে মুয়াক্কাদা (ফরজের পরে)'],['২','নফল']],
+ wk:[['শুরু','সূর্য ঠিক মধ্যাকাশ (যাওয়াল) থেকে পশ্চিম দিকে একটু হেলে পড়লে, অর্থাৎ দুপুরের মাকরুহ সময় শেষ হওয়ার সাথে সাথেই যোহরের ওয়াক্ত শুরু হয়।','s'],['শেষ','হানাফি মাজহাব অনুযায়ী, আসল ছায়া বাদে বস্তুর ছায়া তার দ্বিগুণ হওয়ার আগ পর্যন্ত যোহরের ওয়াক্ত থাকে।','e']],
+ ms:[['🕌','রাকাত সংখ্যা','৪ রাকাত সুন্নতে মুয়াক্কাদা, ৪ রাকাত ফরজ, ২ রাকাত সুন্নতে মুয়াক্কাদা এবং ২ রাকাত নফল—মোট ১২ রাকাত।'],
+     ['🔇','সির্রি (নীরব) কেরাত','যোহরের নামাজে কেরাত নীরবে (মনে মনে) পড়া হয়, উচ্চস্বরে নয়।']],
+ rf:'বাদায়েউস সানায়ে; ফাতাওয়া শামী: ১/৩৫২।',
+ fz:[['বিশেষ রহমত — রাসূলুল্লাহ (সা.) বলেছেন','যে ব্যক্তি যোহরের আগের ৪ রাকাত ও পরের ৪ রাকাত নামাজ নিয়মিত পড়ে, আল্লাহ তার ওপর জাহান্নাম হারাম করে দেন।','তিরমিজি: ৪২৮']]}};
 function xcls(q,k){const m=MS[q],i=L=='bn'?0:1;return' class="'+(q==k?'nx':'')+(m?' ms':'')+'"'+(m?' role="button" tabindex="0" aria-haspopup="dialog" aria-label="'+XPN[q][i]+' — '+T('মাসায়েল ও ফজিলত','Rulings & virtues')+'"':'')}
 document.body.insertAdjacentHTML('beforeend','<div class="pq" id="pq" aria-hidden="true"><div class="pq-s" id="pqs" role="dialog" aria-modal="true" aria-labelledby="pqT"></div></div>');
 let PQF=null;
 function pqHTML(k){const m=MS[k],i=L=='bn'?0:1,p=xpt(tdy());
- return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(p.fj)} • ${T('শেষ ','Ends ')}${xf(p.sr)}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
+ return`<div class="pq-h"><div class="pq-t"><span class="pq-b" aria-hidden="true">${m.ic}</span><div><h3 id="pqT">${m.nm[i]}</h3><small>${T('শুরু ','Starts ')}${xf(p[m.a])} • ${T('শেষ ','Ends ')}${xf(p[m.z])}</small></div><button type="button" class="pq-x" data-pq="x" aria-label="${T('বন্ধ করুন','Close')}">✕</button></div>
  <div class="pq-tb" role="tablist"><button type="button" role="tab" id="pqt1" aria-selected="true" aria-controls="pqp1" data-pq="t1">${T('মাসায়েল','Rulings')}</button><button type="button" role="tab" id="pqt2" aria-selected="false" aria-controls="pqp2" data-pq="t2">${T('ফজিলত','Virtues')}</button></div></div>
  <div class="pq-p" id="pqp1" role="tabpanel" aria-labelledby="pqt1">
   <div class="pq-sec">${T('ওয়াক্ত বা সময়সীমা','Prayer time')}</div>
-  <div class="pq-w">${m.wk.map(w=>`<div><em>${w[0]}</em><p>${w[1]}</p><b>${xf(w[2]=='s'?p.fj:p.sr)}</b></div>`).join('')}</div>
+  <div class="pq-w">${m.wk.map(w=>`<div><em>${w[0]}</em><p>${w[1]}</p><b>${xf(w[2]=='s'?p[m.a]:p[m.z])}</b></div>`).join('')}</div>
   <div class="pq-sec">${T('রাকাত সংখ্যা','Rakats')}</div>
-  <div class="pq-rk">${m.rk.map(r=>`<div><b>${r[0]}</b><small>${r[1]}</small></div>`).join('')}<div class="tt"><b>${m.tot}</b><small>মোট রাকাত</small></div></div>
+  <div class="pq-rk"${m.rk.length>2?' style="grid-template-columns:1fr 1fr"':''}>${m.rk.map(r=>`<div><b>${r[0]}</b><small>${r[1]}</small></div>`).join('')}<div class="tt"${m.rk.length>2?' style="grid-column:1/-1"':''}><b>${m.tot}</b><small>${T('মোট রাকাত','Total rakats')}</small></div></div>
   <div class="pq-sec">${T('গুরুত্বপূর্ণ মাসআলাসমূহ','Key rulings')}</div>
   ${m.ms.map(c=>`<div class="pq-c"><i aria-hidden="true">${c[0]}</i><div><h5>${c[1]}</h5><p>${c[2]}</p></div></div>`).join('')}
   <div class="pq-rf"><b>📚 ${T('রেফারেন্স','Reference')}:</b> ${m.rf}</div></div>
