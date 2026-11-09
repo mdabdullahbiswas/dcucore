@@ -983,9 +983,121 @@ html body {
 }
 @media (max-width: 960px) { .dl-menu::after { display: none !important; } }
 
-/* ---- নেভিগেশন কম্প্যাক্ট (৯৬১–১২৮০px): "জব ও টিউশন" লিংক যোগ হওয়ায় হেডার যাতে উপচে না পড়ে ---- */
-@media (min-width: 961px) and (max-width: 1280px) {
-  .dl-nav { gap: 1px; }
+/* =====================================================================
+   Premium header look: glass, shrink-on-scroll, sliding active pill
+   ===================================================================== */
+:root {
+  --dl-bar-h: 68px;
+  --dl-bar-hs: 56px;
+  --dl-bg: rgba(255, 255, 255, 0.70);
+  --dl-bg-s: rgba(255, 255, 255, 0.90);
+}
+:root[data-theme="dark"],
+body.dark {
+  --dl-bg: rgba(10, 15, 30, 0.66);
+  --dl-bg-s: rgba(10, 15, 30, 0.90);
+}
+@media (max-width: 960px) {
+  :root { --dl-bar-h: 58px; --dl-bar-hs: 52px; }
+}
+
+/* glass: soft blur + saturation, hairline border, faint top light */
+body #hdr {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 70%),
+    var(--dl-bg);
+  -webkit-backdrop-filter: saturate(170%) blur(18px);
+  backdrop-filter: saturate(170%) blur(18px);
+  border-bottom: 1px solid color-mix(in srgb, var(--dl-line) 65%, transparent);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, margin-bottom 0.3s var(--dl-ease);
+}
+body #hdr::after { opacity: 0.55; transition: opacity 0.3s ease; }
+
+/* shrink on scroll (margin-bottom keeps the page from jumping) */
+.dl-bar {
+  min-height: var(--dl-bar-h);
+  transition: min-height 0.3s var(--dl-ease), padding 0.3s var(--dl-ease);
+}
+body #hdr.is-scrolled {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 70%),
+    var(--dl-bg-s);
+  box-shadow: 0 14px 34px -18px rgba(15, 23, 42, 0.5);
+  margin-bottom: calc(var(--dl-bar-h) - var(--dl-bar-hs));
+}
+body #hdr.is-scrolled::after { opacity: 1; }
+body #hdr.is-scrolled .dl-bar { min-height: var(--dl-bar-hs); padding-top: 5px; padding-bottom: 5px; }
+.dl-brand img { transition: transform 0.3s var(--dl-ease), width 0.3s var(--dl-ease), height 0.3s var(--dl-ease); }
+body #hdr.is-scrolled .dl-brand img { width: 32px; height: 32px; }
+.dl-brand-txt small {
+  max-height: 1.5em;
+  overflow: hidden;
+  transition: max-height 0.3s var(--dl-ease), opacity 0.25s ease;
+}
+body #hdr.is-scrolled .dl-brand-txt small { max-height: 0; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  body #hdr, body #hdr::after, .dl-bar, .dl-brand img, .dl-brand-txt small { transition: none; }
+}
+
+/* lighter, more open menu typography */
+@media (min-width: 961px) {
+  .dl-nav { gap: 6px; }
   .dl-nav > a,
-  .dl-dd-btn { padding: 9px 9px; font-size: 0.9rem; }
+  .dl-dd-btn {
+    padding: 9px 14px;
+    font-size: 0.92rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .dl-nav > a[aria-current="page"],
+  .dl-dd-btn[aria-current="page"] { font-weight: 600; }
+}
+
+/* sliding pill (desktop). JS adds .dl-has-ind to the nav when it is active */
+.dl-ind { display: none; }
+@media (min-width: 961px) {
+  .dl-nav { position: relative; }
+  .dl-nav > a,
+  .dl-dd-btn { z-index: 1; }
+
+  .dl-ind {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    z-index: 0;
+    border-radius: 99px;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(135deg, rgba(232, 196, 108, 0.30), rgba(212, 175, 55, 0.10));
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.5), 0 8px 18px -10px rgba(212, 175, 55, 0.8);
+  }
+  .dl-ind.dl-ind-on {
+    transition: transform 0.4s var(--dl-ease), width 0.4s var(--dl-ease), height 0.4s var(--dl-ease),
+      opacity 0.2s ease, background 0.3s ease, box-shadow 0.3s ease;
+  }
+  .dl-ind.is-hov { background: var(--dl-hover); box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.22); }
+
+  /* the pill replaces per-item backgrounds, underline sweep and the pulsing dot */
+  .dl-nav.dl-has-ind > a:hover,
+  .dl-nav.dl-has-ind .dl-dd-btn:hover,
+  .dl-nav.dl-has-ind .dl-dd.open > .dl-dd-btn,
+  .dl-nav.dl-has-ind > a[aria-current="page"],
+  .dl-nav.dl-has-ind .dl-dd-btn[aria-current="page"],
+  .dl-nav.dl-has-ind > a[aria-current="page"]:hover,
+  .dl-nav.dl-has-ind .dl-dd-btn[aria-current="page"]:hover,
+  .dl-nav.dl-has-ind .dl-dd.open > .dl-dd-btn[aria-current="page"] {
+    background: none;
+    box-shadow: none;
+  }
+  .dl-nav.dl-has-ind > a::after,
+  .dl-nav.dl-has-ind .dl-dd-btn::after,
+  .dl-nav.dl-has-ind > a[aria-current="page"]::before,
+  .dl-nav.dl-has-ind .dl-dd-btn[aria-current="page"]::before { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dl-ind.dl-ind-on { transition: opacity 0.15s ease; }
 }
