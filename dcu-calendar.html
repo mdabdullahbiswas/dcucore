@@ -928,19 +928,43 @@ const TH={night:{n:['রাত','Night'],bg:'#0b1418',ink:'#ffffff',mut:'#b9c9c2
 gold:{n:['সোনালি','Gold'],bg:'#fbf5e4',ink:'#1f2937',mut:'#6b5b3a',gd:'#8a6508',ln:'#b8860b',pt:'#ffffff'},
 emer:{n:['পান্না','Emerald'],bg:'#06281f',ink:'#f5f0d8',mut:'#b6d3c3',gd:'#fbbf24',ln:'#d4a017',pt:'#052e2b'},
 indi:{n:['নীলা','Indigo'],bg:'#1b1747',ink:'#ffffff',mut:'#c7c3ee',gd:'#fcd34d',ln:'#fcd34d',pt:'#1b1747'}};
-let SO={th:'night',fmt:'p',nm:''},SK2=0;try{SO.nm=localStorage.sn||''}catch(e){}
+let SO={th:'night',fmt:'p',nm:'',pr:'0'},SK2=0;try{SO.nm=localStorage.sn||'';SO.pr=localStorage.spr=='1'?'1':'0'}catch(e){}
+/* শেয়ার ছবির নামাজ প্যানেল: ৫ ওয়াক্ত + সেহরি/ইফতার/ইশরাক/চাশত/যাওয়াল/তাহাজ্জুদ + নিষিদ্ধ সময় (DCUTime.extras) */
+function dayPanel(x,d,f,t,i,F,pt){const X=DCUTime.extras(d),p=xpt(d),rz=f.h.m==8,PW=940,X0=70,PN=DCUTime.PN,red=t==TH.gold?'#b91c1c':'#fca5a5',
+ fit=(s,mw,px,wt)=>{let z=px;x.font=wt+' '+z+'px '+F;while(z>16&&x.measureText(s).width>mw){z--;x.font=wt+' '+z+'px '+F}return z},
+ tm=(nu,pe,cx,by,mw,px)=>{let z=px,wn=0,wp=0;const ms=()=>{x.font='700 '+z+'px '+F;wn=x.measureText(nu).width;x.font='500 '+Math.round(z*.52)+'px '+F;wp=x.measureText(pe).width};ms();while(wn+wp+8>mw&&z>20){z-=2;ms()}
+  const sx=cx-(wn+8+wp)/2,bn1=L=='bn',nx=bn1?sx+wp+8:sx,px2=bn1?sx:sx+wn+8;x.textAlign='left';x.font='700 '+z+'px '+F;x.fillStyle=t.ink;x.fillText(nu,nx,by);x.font='500 '+Math.round(z*.52)+'px '+F;x.fillStyle=t.mut;x.fillText(pe,px2,by)};
+ x.save();x.shadowBlur=0;
+ x.fillStyle=t.ink+'14';rr(x,X0,pt,PW,470,28);x.fill();x.strokeStyle=t.ln;x.globalAlpha=.4;x.lineWidth=2;rr(x,X0,pt,PW,470,28);x.stroke();x.globalAlpha=1;
+ x.textAlign='left';x.fillStyle=t.gd;x.font='700 30px '+F;x.fillText(T('নামাজের সময় • ঢাকা','Prayer times • Dhaka'),X0+30,pt+44);
+ x.textAlign='right';x.fillStyle=t.mut;x.font='400 24px '+F;x.fillText(T('আনুমানিক সময়','Approximate'),X0+PW-30,pt+44);
+ const cw=(PW-60)/5;
+ ['fj','dh','as','mg','is'].forEach((k,n)=>{const cx=X0+30+cw*n+cw/2,sp=xf(p[k]).split(' '),nu=L=='bn'?sp[1]:sp[0],pe=L=='bn'?sp[0]:sp[1];
+  x.textAlign='center';x.fillStyle=t.mut;fit(PN[k][i],cw-8,25,'500');x.fillText(PN[k][i],cx,pt+86);tm(nu,pe,cx,pt+136,cw-8,44)});
+ x.fillStyle=t.ln+'55';x.fillRect(X0+30,pt+156,PW-60,2);
+ const ew=(PW-60)/3,ex=[[T('সেহরি শেষ','Sehri ends'),xf(X.sehri.e),rz],[T('ইফতার','Iftar'),xf(X.iftar.s),rz],[T('ইশরাক','Ishraq'),xr(X.ishraq.s,X.ishraq.e)],
+  [T('চাশত','Chasht'),xr(X.chasht.s,X.chasht.e)],[T('যাওয়াল','Zawal'),xr(X.zawal.s,X.zawal.e)],[T('তাহাজ্জুদ (রাত)','Tahajjud (night)'),xr(X.tahajjud.s,X.tahajjud.e)]];
+ ex.forEach((q,n)=>{const cx=X0+30+ew*(n%3)+ew/2,ly=pt+186+76*Math.floor(n/3);
+  if(q[2]){x.fillStyle=t.ln+'30';rr(x,cx-ew/2+4,ly-27,ew-8,72,16);x.fill()}
+  x.textAlign='center';x.fillStyle=t.mut;fit(q[0],ew-20,24,'500');x.fillText(q[0],cx,ly);x.fillStyle=q[2]?t.gd:t.ink;fit(q[1],ew-20,36,'700');x.fillText(q[1],cx,ly+40)});
+ x.fillStyle=t.ln+'55';x.fillRect(X0+30,pt+322,PW-60,2);
+ x.textAlign='left';x.fillStyle=red;x.font='700 26px '+F;x.fillText(T('নামাজ নিষিদ্ধ (মাকরুহ) সময়','Times when prayer is not allowed'),X0+30,pt+358);
+ const fb={sr:T('সূর্যোদয়ের সময়','At sunrise'),zw:T('ঠিক দুপুর','High noon'),ss:T('সূর্যাস্তের সময়','At sunset')};
+ X.forbid.forEach((q,n)=>{const cx=X0+30+ew*n+ew/2,v=xr(q.s,q.e);x.textAlign='center';x.fillStyle=t.mut;fit(fb[q.k],ew-20,22,'500');x.fillText(fb[q.k],cx,pt+398);x.fillStyle=t.ink;fit(v,ew-20,34,'700');x.fillText(v,cx,pt+438)});
+ x.restore()}
 async function dayCanvas(d,k,o){try{await document.fonts.load('700 90px "Hind Siliguri"')}catch(e){}
- const t=TH[o.th],W=1080,H=o.fmt=='s'?1920:1350,PH=o.fmt=='s'?1120:640,i=L=='bn'?0:1,f=k.f,F='"Hind Siliguri",sans-serif',c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+ const t=TH[o.th],W=1080,H=o.fmt=='s'?1920:1350,PR=o.pr=='1',PH=PR?(o.fmt=='s'?760:330):(o.fmt=='s'?1120:640),i=L=='bn'?0:1,f=k.f,F='"Hind Siliguri",sans-serif',c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
  x.fillStyle=t.bg;x.fillRect(0,0,W,H);
  const im=await loadImg(IMG[BNE[bn(new Date(d.getFullYear(),d.getMonth(),16)).m]]);
- if(im){const r=Math.max(W/im.width,PH/im.height),w=im.width*r,h=im.height*r;x.drawImage(im,(W-w)/2,(PH-h)/2,w,h)}
- let g=x.createLinearGradient(0,PH*.55,0,PH);g.addColorStop(0,t.bg+'00');g.addColorStop(1,t.bg);x.fillStyle=g;x.fillRect(0,PH*.55,W,PH*.45+1);
+ if(im){const r=Math.max(W/im.width,PH/im.height),w=im.width*r,h=im.height*r;if(PR){x.save();x.beginPath();x.rect(0,0,W,PH);x.clip()}x.drawImage(im,(W-w)/2,(PH-h)/2,w,h);if(PR)x.restore()}
+ const gs=PR?PH*.82:PH*.55;let g=x.createLinearGradient(0,gs,0,PH);g.addColorStop(0,t.bg+'00');g.addColorStop(1,t.bg);x.fillStyle=g;x.fillRect(0,gs,W,PH-gs+1);
  g=x.createLinearGradient(0,0,0,260);g.addColorStop(0,'rgba(0,0,0,.55)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,260);
  x.textAlign='left';x.fillStyle='#fff';x.shadowColor='rgba(0,0,0,.65)';x.shadowBlur=28;x.font='700 230px '+F;const dn=nb(d.getDate());x.fillText(dn,70,250);const dw=x.measureText(dn).width;
  x.shadowBlur=14;x.font='700 54px '+F;x.fillText(WDN[wdi(d)][i],70+dw+28,168);x.font='500 40px '+F;x.fillText(GM[d.getMonth()][i]+' '+nb(d.getFullYear()),70+dw+28,222);x.shadowBlur=0;
- const y0=PH+36;x.font='700 34px '+F;const bw=x.measureText(k.bdg).width+60;x.fillStyle=k.bc;rr(x,70,y0,bw,64,32);x.fill();x.fillStyle='#fff';x.fillText(k.bdg,100,y0+44);
- const tl=k.title.length;x.fillStyle=t.ink;x.font='700 '+(tl<18?92:tl<30?76:62)+'px '+F;const y=wl(x,k.title,70,y0+175,940,tl<18?104:88,2);
- x.fillStyle=t.mut;x.font='400 34px '+F;wl(x,k.desc,70,y+4,940,50,o.fmt=='s'?3:2);
+ const y0=PH+(PR?24:36);x.font='700 34px '+F;const bw=x.measureText(k.bdg).width+60;x.fillStyle=k.bc;rr(x,70,y0,bw,64,32);x.fill();x.fillStyle='#fff';x.fillText(k.bdg,100,y0+44);
+ const tl=k.title.length;x.fillStyle=t.ink;x.font='700 '+(PR?(tl<30?64:54):(tl<18?92:tl<30?76:62))+'px '+F;let y=wl(x,k.title,70,PR?y0+130:y0+175,940,PR?(tl<30?74:64):(tl<18?104:88),2);
+ if(!PR||o.fmt=='s'){x.fillStyle=t.mut;x.font='400 34px '+F;y=wl(x,k.desc,70,y+4,940,50,o.fmt=='s'?3:2)}
+ if(PR)dayPanel(x,d,f,t,i,F,o.fmt=='s'?y+20:Math.max(y-50,H-250-470));
  if(o.nm){x.font='700 46px '+F;const w=Math.min(940,x.measureText(o.nm).width+110);x.fillStyle=t.ln;rr(x,70,H-232,w,70,35);x.fill();x.fillStyle=t.pt;x.fillText(o.nm,125,H-183)}
  x.fillStyle=t.gd;x.font='600 30px '+F;x.fillText(`${nb(d.getDate())} ${GM[d.getMonth()][i]} ${nb(d.getFullYear())}  •  ${nb(f.b.d)} ${BM[f.b.m][i]} ${nb(f.b.y)}  •  ${bd(f.h.d)} ${HM[f.h.m][i]} ${bd(f.h.y)}`,70,H-118);
  g=x.createLinearGradient(70,0,1010,0);g.addColorStop(0,t.ln);g.addColorStop(1,t.ln+'00');x.fillStyle=g;x.fillRect(70,H-92,940,3);
@@ -948,10 +972,10 @@ async function dayCanvas(d,k,o){try{await document.fonts.load('700 90px "Hind Si
  x.strokeStyle=t.ln;x.globalAlpha=.55;x.lineWidth=2;rr(x,18,18,W-36,H-36,34);x.stroke();x.globalAlpha=1;return c}
 async function drawSH(){const tk=++SK2,c=await dayCanvas(DD,dayData(DD),SO);if(tk!=SK2)return;const v=$('#smv');v.width=c.width;v.height=c.height;v.getContext('2d').drawImage(c,0,0)}
 function openSH(){const i=L=='bn'?0:1,e=$('#sm');
- $('#smc').innerHTML=`<div class="smh"><canvas id="smv" width="1080" height="1350"></canvas><button class="dpx" id="smx" aria-label="close">✕</button></div><div class="smb"><small>🎨 ${T('থিম','Theme')}</small><div class="chs">${Object.keys(TH).map(q=>`<button data-th="${q}" class="${q==SO.th?'on':''}"><i style="background:${TH[q].bg};border-color:${TH[q].ln}"></i>${TH[q].n[i]}</button>`).join('')}</div><small>📐 ${T('সাইজ','Size')}</small><div class="chs"><button data-fm="p" class="${SO.fmt=='p'?'on':''}">${T('পোস্ট ৪:৫','Post 4:5')}</button><button data-fm="s" class="${SO.fmt=='s'?'on':''}">${T('স্টোরি ৯:১৬','Story 9:16')}</button></div><input type="text" id="smn" maxlength="30" placeholder="${T('কার্ডে আপনার নাম (ঐচ্ছিক)','Your name on the card (optional)')}" value="${SO.nm}"><div class="dpa"><button id="smd" style="padding:13px 16px;border-radius:15px">⬇ ${T('সেভ','Save')}</button><button class="gold" id="smg">📤 ${T('শেয়ার','Share')}</button></div><div id="smt"></div></div>`;
+ $('#smc').innerHTML=`<div class="smh"><canvas id="smv" width="1080" height="1350"></canvas><button class="dpx" id="smx" aria-label="close">✕</button></div><div class="smb"><small>🎨 ${T('থিম','Theme')}</small><div class="chs">${Object.keys(TH).map(q=>`<button data-th="${q}" class="${q==SO.th?'on':''}"><i style="background:${TH[q].bg};border-color:${TH[q].ln}"></i>${TH[q].n[i]}</button>`).join('')}</div><small>📐 ${T('সাইজ','Size')}</small><div class="chs"><button data-fm="p" class="${SO.fmt=='p'?'on':''}">${T('পোস্ট ৪:৫','Post 4:5')}</button><button data-fm="s" class="${SO.fmt=='s'?'on':''}">${T('স্টোরি ৯:১৬','Story 9:16')}</button></div><small>🕌 ${T('নামাজের সময়','Prayer times')}</small><div class="chs"><button data-pr="0" class="${SO.pr=='0'?'on':''}">${T('বন্ধ','Off')}</button><button data-pr="1" class="${SO.pr=='1'?'on':''}">${T('চালু','On')}</button></div><input type="text" id="smn" maxlength="30" placeholder="${T('কার্ডে আপনার নাম (ঐচ্ছিক)','Your name on the card (optional)')}" value="${SO.nm}"><div class="dpa"><button id="smd" style="padding:13px 16px;border-radius:15px">⬇ ${T('সেভ','Save')}</button><button class="gold" id="smg">📤 ${T('শেয়ার','Share')}</button></div><div id="smt"></div></div>`;
  e.classList.add('o');e.setAttribute('aria-hidden','false');
  const sc=(sel,ky,v)=>$('#smc').querySelectorAll(sel).forEach(b=>b.onclick=()=>{SO[ky]=b.dataset[v];$('#smc').querySelectorAll(sel).forEach(x=>x.classList.toggle('on',x==b));drawSH()});
- sc('[data-th]','th','th');sc('[data-fm]','fmt','fm');
+ sc('[data-th]','th','th');sc('[data-fm]','fmt','fm');sc('[data-pr]','pr','pr');$('#smc').querySelectorAll('[data-pr]').forEach(b=>b.addEventListener('click',()=>{try{localStorage.spr=SO.pr}catch(e){}}));
  $('#smn').oninput=e=>{SO.nm=e.target.value.replace(/[<>]/g,'');try{localStorage.sn=SO.nm}catch(x){}drawSH()};
  $('#smx').onclick=closeSH;$('#smg').onclick=()=>outSH(false);$('#smd').onclick=()=>outSH(true);drawSH()}
 function closeSH(){$('#sm').classList.remove('o');$('#sm').setAttribute('aria-hidden','true')}
