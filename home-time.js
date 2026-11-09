@@ -103,7 +103,7 @@
   function rerender() { render(dhakaNow()); }
 
   /* ---------- state ---------- */
-  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, ex: null, exY: null, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false };
+  var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, ex: null, exY: null, cur: "", curEnd: 0, cdH: 0, barA: 0, barB: 1, jumu: false, fbk: "" };
   /* another page or tab changed the district */
   window.addEventListener("dcu:district", function () {
     if (DT.getDistrict() !== distIdx) { distIdx = DT.getDistrict(); st.dayKey = ""; st.nh = null; rerender(); }
@@ -189,6 +189,22 @@
       T(azanOn ? "আজান চালু" : "আজান নোটিফিকেশন", azanOn ? "Azan on" : "Azan alert") + "</button>";
   }
 
+  /* ---------- forbidden (makruh) prayer times: red badge while one is running ---------- */
+  function activeForbid(now) {
+    var f = st.ex && st.ex.forbid;
+    if (!f) return null;
+    for (var i = 0; i < f.length; i++) if (now.h >= f[i].s && now.h < f[i].e) return f[i];
+    return null;
+  }
+  function forbidHTML(w) {
+    if (!w) return "";
+    var why = { sr: T("সূর্যোদয়", "sunrise"), zw: T("ঠিক দুপুর", "high noon"), ss: T("সূর্যাস্ত", "sunset") }[w.k] || "";
+    var e = clock(w.e);
+    return '<div class="ht-fb" role="status" data-e="' + w.e + '"><span class="ht-fb-d" aria-hidden="true"></span><span>' +
+      T("এখন নামাজ নিষিদ্ধ সময়", "Prayer not allowed now") + (why ? " (" + why + ")" : "") +
+      ' • ' + T("শেষ হবে ", "ends ") + "<b>" + e.t + " " + e.p + "</b></span></div>";
+  }
+
   /* ---------- "more times": sehri, iftar, ishraq, chasht, zawal, tahajjud ---------- */
   function moreChips(now) {
     var E = st.ex, T0 = st.today;
@@ -243,6 +259,7 @@
       ? '<span class="ht-rz"><span>' + T("সেহরি শেষ", "Sehri ends") + " <b>" + clock(st.today.fj).t + "</b></span><span>" + T("ইফতার", "Iftar") + " <b>" + clock(st.today.mg).t + "</b></span></span>"
       : "";
     var sr = clock(st.today.sr), ss = clock(st.today.mg);
+    var fbw = activeForbid(now); st.fbk = fbw ? fbw.k : "";
 
     host.innerHTML =
       '<div class="ht-card">' + dateHTML(now) +
@@ -251,7 +268,7 @@
       '<div><span class="ht-kick">' + MOSQUE + kick + "</span>" +
       '<div class="ht-nm"><b>' + pname(hk) + '</b><span class="ht-nt"><i>' + nt.t + "</i><small>" + nt.p + "</small></span></div>" + nxLine + "</div>" +
       '<div class="ht-cd" role="timer"><small>' + cdLabel + '</small><b class="ht-t">' + hms((hend - now.h) * 3600) + "</b></div>" +
-      "</div>" +
+      "</div>" + forbidHTML(fbw) +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
       '<ul class="ht-list">' + lis + "</ul>" + moreChips(now) +
       '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" +
@@ -276,6 +293,8 @@
       var a = ms[i].getAttribute("data-s"), b = ms[i].getAttribute("data-e");
       if (a !== "") ms[i].classList.toggle("is-on", now.h >= +a && now.h < +b);
     }
+    var fb = host.querySelector(".ht-fb");
+    if (fb && now.h >= +fb.getAttribute("data-e")) fb.parentNode.removeChild(fb);
     els.bar.style.width = Math.min(100, Math.max(0, pct * 100)).toFixed(2) + "%";
   }
 
@@ -286,7 +305,8 @@
     var arrived = st.nextH < 24 && now.h >= st.nextH, fired = st.next;
     if (arrived && now.h - st.nextH < 0.03) notify(fired);   /* only within ~100 s of the time, not after a long sleep */
     var ended = st.cdH < 24 && now.h >= st.cdH;
-    if (!els.t || dayKey !== st.dayKey || arrived || ended) render(now);
+    var fw = dayKey === st.dayKey ? activeForbid(now) : null, fk = fw ? fw.k : "";
+    if (!els.t || dayKey !== st.dayKey || arrived || ended || fk !== st.fbk) render(now);
     else tick(now);
   }
 
