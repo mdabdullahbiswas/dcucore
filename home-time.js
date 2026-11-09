@@ -71,6 +71,48 @@
     return dg(pad2(Math.floor(sec / 3600))) + ":" + dg(pad2(Math.floor(sec / 60) % 60)) + ":" + dg(pad2(sec % 60));
   }
 
+  /* ---------- districts (approximate centre points; prayer times shift a few minutes with longitude) ---------- */
+  var DIST = [
+    ["ঢাকা","Dhaka",23.81,90.41],["গাজীপুর","Gazipur",24.00,90.42],["নারায়ণগঞ্জ","Narayanganj",23.63,90.50],["নরসিংদী","Narsingdi",23.92,90.72],["মানিকগঞ্জ","Manikganj",23.86,90.00],["মুন্সিগঞ্জ","Munshiganj",23.55,90.53],["টাঙ্গাইল","Tangail",24.25,89.92],["কিশোরগঞ্জ","Kishoreganj",24.43,90.78],["ফরিদপুর","Faridpur",23.60,89.84],["রাজবাড়ী","Rajbari",23.76,89.64],["গোপালগঞ্জ","Gopalganj",23.01,89.83],["মাদারীপুর","Madaripur",23.17,90.20],["শরীয়তপুর","Shariatpur",23.22,90.35],
+    ["চট্টগ্রাম","Chattogram",22.36,91.78],["কক্সবাজার","Cox’s Bazar",21.45,91.98],["কুমিল্লা","Cumilla",23.46,91.18],["ব্রাহ্মণবাড়িয়া","Brahmanbaria",23.96,91.11],["চাঁদপুর","Chandpur",23.23,90.65],["লক্ষ্মীপুর","Lakshmipur",22.94,90.84],["নোয়াখালী","Noakhali",22.82,91.10],["ফেনী","Feni",23.02,91.40],["খাগড়াছড়ি","Khagrachhari",23.12,91.98],["রাঙামাটি","Rangamati",22.65,92.17],["বান্দরবান","Bandarban",22.19,92.22],
+    ["সিলেট","Sylhet",24.90,91.87],["মৌলভীবাজার","Moulvibazar",24.48,91.77],["হবিগঞ্জ","Habiganj",24.38,91.42],["সুনামগঞ্জ","Sunamganj",25.07,91.40],
+    ["রাজশাহী","Rajshahi",24.37,88.60],["নাটোর","Natore",24.42,89.00],["নওগাঁ","Naogaon",24.80,88.94],["চাঁপাইনবাবগঞ্জ","Chapainawabganj",24.60,88.28],["পাবনা","Pabna",24.00,89.25],["সিরাজগঞ্জ","Sirajganj",24.45,89.70],["বগুড়া","Bogura",24.85,89.37],["জয়পুরহাট","Joypurhat",25.10,89.02],
+    ["খুলনা","Khulna",22.82,89.55],["বাগেরহাট","Bagerhat",22.65,89.79],["সাতক্ষীরা","Satkhira",22.71,89.07],["যশোর","Jashore",23.17,89.21],["ঝিনাইদহ","Jhenaidah",23.54,89.17],["মাগুরা","Magura",23.49,89.42],["নড়াইল","Narail",23.17,89.50],["কুষ্টিয়া","Kushtia",23.90,89.12],["চুয়াডাঙ্গা","Chuadanga",23.64,88.85],["মেহেরপুর","Meherpur",23.76,88.63],
+    ["বরিশাল","Barishal",22.70,90.37],["ভোলা","Bhola",22.69,90.65],["পটুয়াখালী","Patuakhali",22.36,90.33],["পিরোজপুর","Pirojpur",22.58,89.97],["ঝালকাঠি","Jhalokati",22.64,90.20],["বরগুনা","Barguna",22.15,90.13],
+    ["রংপুর","Rangpur",25.75,89.25],["দিনাজপুর","Dinajpur",25.63,88.64],["ঠাকুরগাঁও","Thakurgaon",26.03,88.47],["পঞ্চগড়","Panchagarh",26.34,88.55],["নীলফামারী","Nilphamari",25.93,88.86],["লালমনিরহাট","Lalmonirhat",25.99,89.45],["কুড়িগ্রাম","Kurigram",25.80,89.64],["গাইবান্ধা","Gaibandha",25.33,89.53],
+    ["ময়মনসিংহ","Mymensingh",24.75,90.41],["জামালপুর","Jamalpur",24.92,89.94],["শেরপুর","Sherpur",25.02,90.02],["নেত্রকোণা","Netrokona",24.87,90.73]
+  ];
+  function store(k, v) { try { if (v == null) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+  var distIdx = parseInt(store("dcu-district"), 10);
+  if (!(distIdx >= 0 && distIdx < DIST.length)) distIdx = 0;
+  function applyDistrict() { DT.PL.lat = DIST[distIdx][2]; DT.PL.lon = DIST[distIdx][3]; }
+  applyDistrict();
+
+  /* ---------- azan notification (works while the page is open) ---------- */
+  var azanOn = store("dcu-azan") === "1" && "Notification" in window && Notification.permission === "granted";
+  function notify(k) {
+    if (!azanOn) return;
+    var i = lang() === "en" ? 1 : 0, nm = (k === "dh" && st.jumu) ? T("জুমা", "Jumu‘ah") : DT.PN[k][i];
+    var title = T(nm + (/া$/.test(nm) ? "র" : "ের") + " সময় হয়েছে", "It is time for " + nm);
+    var body = DIST[distIdx][i] + " • " + clock(st.today[k]).t + " " + clock(st.today[k]).p;
+    var o = { body: body, icon: "icon-192.png", tag: "dcu-azan" };
+    try {
+      if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) {
+        navigator.serviceWorker.getRegistration().then(function (r) { if (r && r.showNotification) r.showNotification(title, o); else new Notification(title, o); }, function () { new Notification(title, o); });
+      } else new Notification(title, o);
+    } catch (e) { /* not allowed here */ }
+  }
+  function toggleAzan() {
+    if (azanOn) { azanOn = false; store("dcu-azan", "0"); rerender(); return; }
+    if (!("Notification" in window)) { alert(T("এই ব্রাউজারে নোটিফিকেশন চালু করা যায় না।", "This browser does not support notifications.")); return; }
+    Notification.requestPermission().then(function (p) {
+      azanOn = p === "granted"; store("dcu-azan", azanOn ? "1" : "0");
+      if (p === "denied") alert(T("ব্রাউজারের সেটিংসে নোটিফিকেশনের অনুমতি দিন।", "Allow notifications in your browser settings."));
+      rerender();
+    });
+  }
+  function rerender() { render(dhakaNow()); }
+
   /* ---------- state ---------- */
   var st = { dayKey: "", today: null, tomorrow: null, yesterday: null, rz: false, next: "", prevH: 0, nextH: 0, jumu: false };
 
@@ -171,7 +213,15 @@
       "</div>";
   }
 
+  host.addEventListener("change", function (e) {
+    var t = e.target;
+    if (!t || t.tagName !== "SELECT" || !t.closest(".ht-ds")) return;
+    distIdx = +t.value; store("dcu-district", String(distIdx));
+    applyDistrict(); st.dayKey = ""; st.nh = null; rerender();
+    var again = host.querySelector(".ht-ds select"); if (again) again.focus();
+  });
   host.addEventListener("click", function (e) {
+    if (e.target.closest && e.target.closest("[data-azan]")) { toggleAzan(); return; }
     var b = e.target.closest ? e.target.closest("[data-cal]") : null;
     if (!b || !host.contains(b)) return;
     var a = +b.getAttribute("data-cal");
@@ -182,6 +232,17 @@
     var nb = host.querySelector('[data-cal="' + (a === 0 ? "1" : a) + '"]');
     if (nb) nb.focus();
   });
+
+  function distSel() {
+    var i = lang() === "en" ? 1 : 0;
+    return '<label class="ht-ds"><span class="ht-sr">' + T("জেলা", "District") + '</span><select aria-label="' + T("জেলা বাছাই", "Choose district") + '">' +
+      DIST.map(function (d, n) { return '<option value="' + n + '"' + (n === distIdx ? " selected" : "") + ">" + d[i] + "</option>"; }).join("") + "</select></label>";
+  }
+  function azanBtn() {
+    return '<button type="button" class="ht-az' + (azanOn ? " is-on" : "") + '" data-azan aria-pressed="' + azanOn + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>' +
+      T(azanOn ? "আজান চালু" : "আজান নোটিফিকেশন", azanOn ? "Azan on" : "Azan alert") + "</button>";
+  }
 
   /* ---------- render ---------- */
   var els = {};
@@ -205,7 +266,7 @@
     var rz = st.rz
       ? '<span class="ht-rz"><span>' + T("সেহরি শেষ", "Sehri ends") + " <b>" + clock(st.today.fj).t + "</b></span><span>" + T("ইফতার", "Iftar") + " <b>" + clock(st.today.mg).t + "</b></span></span>"
       : "";
-    var sr = clock(st.today.sr);
+    var sr = clock(st.today.sr), ss = clock(st.today.mg);
 
     host.innerHTML =
       '<div class="ht-card">' + dateHTML(now) +
@@ -217,8 +278,10 @@
       "</div>" +
       '<div class="ht-bar" aria-hidden="true"><i></i></div>' +
       '<ul class="ht-list">' + lis + "</ul>" +
-      '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" + rz +
-      '<span class="ht-sp"></span><span>' + T("ঢাকার সময় • আনুমানিক", "Dhaka time • approximate") + "</span>" +
+      '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + (lang() === "en" ? sr.t + " " + sr.p : sr.p + " " + sr.t) + "</b></span>" +
+      "<span>" + T("সূর্যাস্ত", "Sunset") + " <b>" + (lang() === "en" ? ss.t + " " + ss.p : ss.p + " " + ss.t) + "</b></span>" + rz +
+      '<span class="ht-sp"></span>' + distSel() + azanBtn() +
+      "<span>" + T("আনুমানিক", "Approx.") + "</span>" +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
       "</div>" + calHTML(now) + "</div>";
     host.setAttribute("aria-label", T("নামাজের সময়সূচি", "Prayer times"));
@@ -239,7 +302,9 @@
     var now = dhakaNow();
     var dayKey = now.y + "-" + now.m + "-" + now.d;
     /* rebuild when the day changed or the awaited prayer time has arrived; otherwise only tick the clock */
-    if (!els.t || dayKey !== st.dayKey || (st.nextH < 24 && now.h >= st.nextH)) render(now);
+    var arrived = st.nextH < 24 && now.h >= st.nextH, fired = st.next;
+    if (arrived && now.h - st.nextH < 0.03) notify(fired);   /* only within ~100 s of the time, not after a long sleep */
+    if (!els.t || dayKey !== st.dayKey || arrived) render(now);
     else tick(now);
   }
 
