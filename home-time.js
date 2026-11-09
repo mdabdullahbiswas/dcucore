@@ -160,59 +160,6 @@
     );
   }
 
-  /* ---------- mini calendar (right column) ---------- */
-  var cal = { off: 0 };            /* months away from the current month */
-  var CAL_URL = "/dcu-calendar";
-  var CH_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
-  var CH_R = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
-
-  /* next official holiday after today (cached per day) */
-  function nextHoliday(now) {
-    if (st.nh && st.nh.key === st.dayKey) return st.nh.v;
-    var v = null;
-    for (var n = 1; n <= 400; n++) {
-      var info = DT.holiday(dateOf(now, n));
-      if (info.t === "h" && info.r) { v = { n: n, r: info.r }; break; }
-    }
-    st.nh = { key: st.dayKey, v: v };
-    return v;
-  }
-
-  function calHTML(now) {
-    var i = lang() === "en" ? 1 : 0;
-    var v = new Date(now.y, now.m - 1 + cal.off, 1), y = v.getFullYear(), m = v.getMonth();
-    var first = v.getDay(), days = new Date(y, m + 1, 0).getDate();
-    var dow = "", cells = "", k, d;
-
-    for (k = 0; k < 7; k++) dow += '<span class="' + (k > 4 ? "o" : "") + '">' + DT.DN[k][i] + "</span>";
-    for (k = 0; k < first; k++) cells += '<span class="ht-c is-e"></span>';
-    for (d = 1; d <= days; d++) {
-      var dt = new Date(y, m, d), wk = dt.getDay(), info = DT.holiday(dt), hol = info.t === "h";
-      var isToday = y === now.y && m === now.m - 1 && d === now.d;
-      var cls = "ht-c" + (wk > 4 ? " is-wk" : "") + (hol ? " is-h" : "") + (isToday ? " is-today" : "");
-      var label = dg(d) + " " + DT.GM[m][i] + (hol && info.r ? " - " + info.r[i] : "") + (isToday ? " (" + T("আজ", "today") + ")" : "");
-      cells += '<a class="' + cls + '" href="' + CAL_URL + '" aria-label="' + label + '"' + (hol && info.r ? ' title="' + info.r[i] + '"' : "") + "><b>" + dg(d) + "</b></a>";
-    }
-
-    var nh = nextHoliday(now), foot;
-    if (nh) {
-      foot = '<span class="ht-nh-k">' + T("পরের ছুটি", "Next holiday") + "</span><b>" + nh.r[i] + "</b>" +
-        '<em>' + (nh.n === 1 ? T("আগামীকাল", "Tomorrow") : dg(nh.n) + " " + T("দিন বাকি", "days left")) + "</em>";
-    } else foot = '<span class="ht-nh-k">' + T("পরের ছুটির তথ্য নেই", "No upcoming holiday listed") + "</span>";
-
-    return '<div class="ht-cal">' +
-      '<div class="ht-ch">' +
-      '<button type="button" class="ht-ar" data-cal="-1" aria-label="' + T("আগের মাস", "Previous month") + '">' + CH_L + "</button>" +
-      '<a class="ht-cm" href="' + CAL_URL + '"><b>' + DT.GM[m][i] + "</b> " + dg(y) + "</a>" +
-      (cal.off !== 0 ? '<button type="button" class="ht-td" data-cal="0">' + T("আজ", "Today") + "</button>" : "") +
-      '<button type="button" class="ht-ar" data-cal="1" aria-label="' + T("পরের মাস", "Next month") + '">' + CH_R + "</button>" +
-      "</div>" +
-      '<div class="ht-dow" aria-hidden="true">' + dow + "</div>" +
-      '<div class="ht-cg">' + cells + "</div>" +
-      '<div class="ht-nh">' + foot + "</div>" +
-      "</div>";
-  }
-
   host.addEventListener("change", function (e) {
     var t = e.target;
     if (!t || t.tagName !== "SELECT" || !t.closest(".ht-ds")) return;
@@ -222,15 +169,6 @@
   });
   host.addEventListener("click", function (e) {
     if (e.target.closest && e.target.closest("[data-azan]")) { toggleAzan(); return; }
-    var b = e.target.closest ? e.target.closest("[data-cal]") : null;
-    if (!b || !host.contains(b)) return;
-    var a = +b.getAttribute("data-cal");
-    cal.off = a === 0 ? 0 : cal.off + a;
-    var el = host.querySelector(".ht-cal");
-    if (!el) return;
-    el.outerHTML = calHTML(dhakaNow());
-    var nb = host.querySelector('[data-cal="' + (a === 0 ? "1" : a) + '"]');
-    if (nb) nb.focus();
   });
 
   function distSel() {
@@ -283,7 +221,7 @@
       '<span class="ht-sp"></span>' + distSel() + azanBtn() +
       "<span>" + T("আনুমানিক", "Approx.") + "</span>" +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
-      "</div>" + calHTML(now) + "</div>";
+      "</div></div>";
     host.setAttribute("aria-label", T("নামাজের সময়সূচি", "Prayer times"));
     host.hidden = false;
     els.t = host.querySelector(".ht-t");
