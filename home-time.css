@@ -1,0 +1,106 @@
+/* home-time.css - prayer times (and later date + calendar) card on the home page.
+ * Always a deep-navy "premium" card so it looks the same in light and dark mode,
+ * like the hero panel above it. */
+.ht{max-width:1200px;margin:26px auto 0;padding:0 18px;position:relative;z-index:1}
+.ht[hidden]{display:none}
+
+.ht-card{
+  position:relative;overflow:hidden;isolation:isolate;
+  border-radius:26px;padding:26px 28px 20px;color:#F1F5F9;
+  background:
+    radial-gradient(600px 260px at 100% 0%,rgba(212,175,55,.22),transparent 70%),
+    radial-gradient(420px 220px at 0% 100%,rgba(96,165,250,.14),transparent 70%),
+    linear-gradient(135deg,#0B1F3A 0%,#17386A 62%,#10294d 100%);
+  border:1px solid rgba(212,175,55,.32);
+  box-shadow:0 30px 60px -34px rgba(8,22,45,.75),inset 0 1px 0 rgba(255,255,255,.08);
+}
+/* faint geometric pattern in the corner */
+.ht-card::before{
+  content:"";position:absolute;inset:0;z-index:-1;opacity:.5;pointer-events:none;
+  background-image:
+    radial-gradient(circle at 1px 1px,rgba(232,196,108,.22) 1px,transparent 1.4px);
+  background-size:22px 22px;
+  -webkit-mask:linear-gradient(100deg,transparent 45%,#000);mask:linear-gradient(100deg,transparent 45%,#000);
+}
+
+/* ----- top: next prayer + countdown ----- */
+.ht-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px 28px;flex-wrap:wrap}
+.ht-kick{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#E8C46C}
+.ht-kick svg{width:17px;height:17px}
+.ht-nm{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:6px}
+.ht-nm b{font-size:clamp(2rem,5.2vw,3rem);line-height:1.1;font-weight:800;letter-spacing:-.01em}
+.ht-nt{display:inline-flex;align-items:baseline;gap:7px;color:#cbd5e1}
+.ht-nt i{font-style:normal;font-size:clamp(1.15rem,3vw,1.5rem);font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+.ht-nt small{font-size:.85rem;font-weight:600;color:#E8C46C}
+
+.ht-cd{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.ht-cd small{font-size:.8rem;font-weight:600;color:#a8b3c7}
+.ht-t{
+  font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;line-height:1.1;letter-spacing:.02em;font-variant-numeric:tabular-nums;
+  background:linear-gradient(135deg,#F6E3A8,#E8C46C 45%,#D4AF37);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+/* ----- progress between previous and next prayer ----- */
+.ht-bar{margin:18px 0 18px;height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.ht-bar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#B98A2C,#E8C46C);box-shadow:0 0 14px rgba(232,196,108,.6);transition:width 1s linear}
+
+/* ----- five prayers ----- */
+.ht-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.ht-p{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;
+  padding:14px 6px 13px;border-radius:18px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:transform .3s var(--ease,ease),background-color .3s,border-color .3s;
+}
+.ht-p:hover{transform:translateY(-2px);border-color:rgba(232,196,108,.5)}
+.ht-p svg{width:22px;height:22px;color:#E8C46C}
+.ht-p .ht-pn{font-size:.9rem;font-weight:700;line-height:1.2}
+.ht-p .ht-pt{font-size:1.12rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.ht-p .ht-pp{font-size:.72rem;font-weight:600;color:#a8b3c7;line-height:1}
+.ht-p.is-past{opacity:.55}
+.ht-p.is-past::after{
+  content:"";position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)
+}
+.ht-p.is-next{
+  opacity:1;color:#1d1400;border-color:transparent;transform:translateY(-3px);
+  background:linear-gradient(135deg,#F6E3A8,#E8C46C 50%,#D4AF37);
+  box-shadow:0 16px 30px -14px rgba(212,175,55,.75),inset 0 1px 0 rgba(255,255,255,.6);
+}
+.ht-p.is-next svg,.ht-p.is-next .ht-pp{color:#5b4300}
+.ht-p.is-next::before{
+  content:"";position:absolute;inset:-4px;border-radius:22px;border:1px solid rgba(232,196,108,.55);animation:htPulse 2.4s ease-out infinite;pointer-events:none
+}
+@keyframes htPulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.07)}}
+
+/* ----- footer ----- */
+.ht-foot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:.8rem;color:#a8b3c7}
+.ht-foot b{color:#e2e8f0;font-weight:700}
+.ht-foot .ht-sp{flex:1}
+.ht-rz{display:inline-flex;gap:14px;padding:5px 12px;border-radius:99px;background:rgba(232,196,108,.14);color:#F6E3A8;font-weight:600}
+.ht-link{display:inline-flex;align-items:center;gap:6px;color:#E8C46C;font-weight:700;text-decoration:none}
+.ht-link:hover{text-decoration:underline}
+.ht-link svg{width:15px;height:15px}
+
+/* ----- language ----- */
+html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none}
+
+/* ----- tablet / phone ----- */
+@media(max-width:720px){
+  .ht{margin-top:20px}
+  .ht-card{padding:20px 16px 16px;border-radius:22px}
+  .ht-head{align-items:flex-start}
+  .ht-cd{align-items:flex-start;text-align:left;width:100%}
+  .ht-list{gap:6px}
+  .ht-p{padding:11px 2px 10px;border-radius:14px;gap:4px}
+  .ht-p svg{width:19px;height:19px}
+  .ht-p .ht-pn{font-size:.74rem}
+  .ht-p .ht-pt{font-size:.95rem}
+  .ht-p .ht-pp{font-size:.62rem}
+  .ht-p.is-past::after{top:6px;right:6px;width:6px;height:6px}
+  .ht-foot .ht-sp{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .ht-p,.ht-bar i{transition:none}
+  .ht-p.is-next::before{animation:none;opacity:.6}
+}
