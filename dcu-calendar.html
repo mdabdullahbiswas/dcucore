@@ -652,6 +652,7 @@ header.scrolled{box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy,#0b1b2
 .np-hn b{font-size:1.7rem;line-height:1.15;color:#fff}
 .np-hn span{font-size:1.05rem;font-weight:700;color:var(--gold-light);white-space:nowrap}
 .np-hero p{margin:4px 0 10px;color:#ffffffd9;font-weight:600;font-size:.9rem}
+.np-nx{margin-top:10px;font-size:.78rem;font-weight:600;color:#ffffffc9}.np-nx[hidden]{display:none}
 .np-bar{height:6px;border-radius:99px;background:color-mix(in srgb,#fff 16%,transparent);overflow:hidden}
 .np-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold-deep),var(--gold-light));box-shadow:0 0 10px color-mix(in srgb,var(--gold) 70%,transparent);transition:width .8s var(--ease)}
 .np-g{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
@@ -744,6 +745,8 @@ const BM=[['বৈশাখ','Boishakh'],['জ্যৈষ্ঠ','Joishtho'],['
 const HM=[['মুহাররম','Muharram'],['সফর','Safar'],['রবিউল আউয়াল','Rabi I'],['রবিউস সানি','Rabi II'],['জমাদিউল আউয়াল','Jumada I'],['জমাদিউস সানি','Jumada II'],['রজব','Rajab'],['শা’বান','Sha’ban'],['রমজান','Ramadan'],['শাওয়াল','Shawwal'],['জিলকদ','Dhul Qa’dah'],['জিলহজ','Dhul Hijjah']];
 const DN=[['রবি','Sun'],['সোম','Mon'],['মঙ্গল','Tue'],['বুধ','Wed'],['বৃহঃ','Thu'],['শুক্র','Fri'],['শনি','Sat']];
 const bn=DCUTime.bangla;
+/* ইশরাক ও চাশত একই সময়: ইশরাকের শুরু থেকে চাশতের শেষ পর্যন্ত একটাই সময়সীমা (DCUTime.extras অপরিবর্তিত) */
+function xex(d){const x=DCUTime.extras(d),w={s:x.ishraq.s,e:x.chasht.e};return Object.assign({},x,{ishraq:w,chasht:w})}
 function hj(d){return DCUTime.hijri(d,OFF)}
 const cache={};
 function info(d){const k=+d,c=cache[k];if(c)return c;const b=DCUTime.holiday(d,OFF);let r=b.r,t=b.t;
@@ -1006,7 +1009,7 @@ let SO={th:'night',fmt:'p',nm:'',pr:'0'},SK2=0;try{SO.nm=localStorage.sn||'';SO.
 const dn=()=>DCUTime.districtName(L=="bn"?"bn":"en");
 /* শেয়ার ছবির নামাজ প্যানেল: ৫ ওয়াক্ত + ক্যাটাগরি (সেহরি ও ইফতার • নফল নামাজ • নামাজের নিষিদ্ধ সময়) (DCUTime.extras) */
 const PNH=544;
-function dayPanel(x,d,f,t,i,F,pt){const X=DCUTime.extras(d),p=xpt(d),rz=f.h.m==8,PW=940,X0=70,PN=DCUTime.PN,gold=t==TH.gold,red=gold?'#b91c1c':'#fca5a5',
+function dayPanel(x,d,f,t,i,F,pt){const X=xex(d),p=xpt(d),rz=f.h.m==8,PW=940,X0=70,PN=DCUTime.PN,gold=t==TH.gold,red=gold?'#b91c1c':'#fca5a5',
  fit=(s,mw,px,wt)=>{let z=px;x.font=wt+' '+z+'px '+F;while(z>16&&x.measureText(s).width>mw){z--;x.font=wt+' '+z+'px '+F}return z},
  tm=(nu,pe,cx,by,mw,px)=>{let z=px,wn=0,wp=0;const ms=()=>{x.font='700 '+z+'px '+F;wn=x.measureText(nu).width;x.font='500 '+Math.round(z*.52)+'px '+F;wp=x.measureText(pe).width};ms();while(wn+wp+8>mw&&z>20){z-=2;ms()}
   const sx=cx-(wn+8+wp)/2,bn1=L=='bn',nx=bn1?sx+wp+8:sx,px2=bn1?sx:sx+wn+8;x.textAlign='left';x.font='700 '+z+'px '+F;x.fillStyle=t.ink;x.fillText(nu,nx,by);x.font='500 '+Math.round(z*.52)+'px '+F;x.fillStyle=t.mut;x.fillText(pe,px2,by)},
@@ -1092,24 +1095,24 @@ const xf=h=>DCUTime.fmtTime(h,L);
 const XPN=DCUTime.PN;
 /* আরও সময়: ক্যাটাগরি — সেহরি ও ইফতার • নফল নামাজ (ইশরাক, চাশত, তাহাজ্জুদ) • নামাজের নিষিদ্ধ সময় (সূর্যোদয়, ঠিক দুপুর, সূর্যাস্ত) (DCUTime.extras) */
 const xt1=h=>{const a=xf(h).split(' ');return L=='bn'?a[1]:a[0]},xr=(a,b)=>{const pe=t=>{const s=xf(t).split(' ');return L=='bn'?s[0]:s[1]};return(pe(a)==pe(b)?xt1(a):xf(a))+' – '+xf(b)};
-function xmHTML(d){const x=DCUTime.extras(d),
+function xmHTML(d){const x=xex(d),
  card=q=>`<div${q[4]?` data-s="${q[4].s}" data-e="${q[4].e}"`:''}><i aria-hidden="true">${q[0]}</i><small>${q[2]}</small><b>${q[3]}</b></div>`,
  sf=[['🌙','sehri',T('সেহরি শেষ','Sehri ends'),xf(x.sehri.e)],['🌅','iftar',T('ইফতার','Iftar'),xf(x.iftar.s)]],
  nf=[['🌄','ishraq',T('ইশরাক','Ishraq'),xr(x.ishraq.s,x.ishraq.e),x.ishraq],['☀️','chasht',T('চাশত','Chasht'),xr(x.chasht.s,x.chasht.e),x.chasht],['🌌','tahajjud',T('তাহাজ্জুদ (রাত)','Tahajjud (night)'),xr(x.tahajjud.s,x.tahajjud.e)]],
  fb={sr:[T('সূর্যোদয়ের সময়','At sunrise'),'🌄'],zw:[T('ঠিক দুপুর','High noon'),'☀️'],ss:[T('সূর্যাস্তের সময়','At sunset'),'🌇']};
  return`<div class="xcat xc-sf"><h5><i aria-hidden="true">🍽</i>${T('সেহরি ও ইফতার','Sehri & Iftar')}</h5><div class="xmg xm2">${sf.map(card).join('')}</div></div><div class="xcat xc-nf"><h5><i aria-hidden="true">🤲</i>${T('নফল নামাজ','Nafl prayers')}</h5><div class="xmg xm3">${nf.map(card).join('')}</div></div><div class="xcat xc-fb"><h5><i aria-hidden="true">⛔</i>${T('নামাজের নিষিদ্ধ সময়','Forbidden prayer times')}</h5><div class="xfb">${x.forbid.map(f=>`<div data-s="${f.s}" data-e="${f.e}"><span><i aria-hidden="true">${fb[f.k][1]}</i>${fb[f.k][0]}</span><b>${xt1(f.s)} – ${xf(f.e)}</b></div>`).join('')}</div></div>`}
 function xpHTML(d){const p=xpt(d),i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['dh','☀️'],['as','🌤'],['mg','🌇'],['is','🌙']];
- return`<div class="xp" id="xp">${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}<h5>🕌 ${T('নামাজের সময়','Prayer times')} • <select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,n)=>`<option value="${n}"${n==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></h5><div class="xpg">${P5.map(q=>`<div data-k="${q[0]}"><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div><p class="xpn" id="xpn"></p>${xmHTML(d)}<small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। ইশরাক সূর্যোদয়ের ১৫ মিনিট পর শুরু; তাহাজ্জুদ = রাতের শেষ তৃতীয়াংশ। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Ishraq starts 15 min after sunrise; Tahajjud = last third of the night. Please confirm with your mosque / Islamic Foundation timetable.')}</small></div>`}
+ const td=+d==+tdy();return`<div class="xp" id="xp">${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}<h5>🕌 ${td?T('আজকের নামাজের সময়','Today’s prayer times'):T('নামাজের সময়','Prayer times')} • <select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,n)=>`<option value="${n}"${n==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></h5><div class="xpg">${P5.map(q=>`<div data-k="${q[0]}"><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div><p class="xpn" id="xpn"></p>${xmHTML(d)}<small class="xpf">${T('সূর্যোদয়','Sunrise')} ${xf(p.sr)} • ${T('আনুমানিক সময় (হানাফি আসর, ১৮° ফজর/ইশা)। ইশরাক সূর্যোদয়ের ১৫ মিনিট পর শুরু; তাহাজ্জুদ = রাতের শেষ তৃতীয়াংশ। মসজিদ বা ইসলামিক ফাউন্ডেশনের সময়সূচি দেখে নিন।','Approximate (Hanafi Asr, 18° Fajr/Isha). Ishraq starts 15 min after sunrise; Tahajjud = last third of the night. Please confirm with your mosque / Islamic Foundation timetable.')}</small></div>`}
 /* লাইভ টাইমার (ধাপ ৬): আজকের দিনের উপর নির্ভর করে, নির্বাচিত তারিখের উপর নয়। কার্ড নতুন করে না এঁকে জায়গায় জায়গায় আপডেট করে (ড্রপডাউন/"আরও সময়" খোলা থাকলে বন্ধ হয় না)। */
 function xtp(){const e=$('#npc');if(!e)return;if(XND!==+tdy()||!e.querySelector('#npN')){xnpc();return}
  const S=xnps(tdy()),i=L=='bn'?0:1,g=q=>e.querySelector(q);
- g('#npN').textContent=XPN[S.k][i];g('#npA').textContent=xf(S.at);g('#npR').textContent=S.left+(S.ift?'':T(' পর',' left'));
+ const H=xnh(S);g('#npN').textContent=H.n;g('#npA').textContent=H.a;g('#npR').textContent=H.r;const X=g('#npT');X.textContent=H.x;X.hidden=!H.x;
  const P=g('#npP');P.style.width=S.pct+'%';P.parentNode.setAttribute('aria-valuenow',S.pct);
- g('.np-hero>small').textContent=S.ift?T('ইফতারে বাকি','Iftar in'):T('পরবর্তী ওয়াক্ত','Next prayer');
- e.querySelectorAll('.np-g [data-k]').forEach(q=>q.classList.toggle('nx',q.dataset.k==S.k));
+ g('#npL').textContent=H.l;
+ const ck=S.cur?S.cur.k:S.k;e.querySelectorAll('.np-g [data-k]').forEach(q=>q.classList.toggle('nx',q.dataset.k==ck));
  e.querySelectorAll('[data-s]').forEach(q=>q.classList.toggle('on',S.c>=+q.dataset.s&&S.c<+q.dataset.e))}
 const _sd=showDay;showDay=function(d){_sd(d);const a=$('#dpc .evs');if(a)a.insertAdjacentHTML('beforebegin',xsHTML(d))};
-setInterval(xtp,15000);
+setInterval(xtp,1000);
 
 /* --- আগামী ছুটি ব্যানার + রমজান স্ট্রিপ --- */
 function xnext(){const t=tdy();for(let i=0;i<500;i++){const d=xd(t,i),f=info(d);if(f.t=='h')return{d,i,f}}}
@@ -1122,16 +1125,32 @@ function xbanner(){const e=$('#xnb');if(!e)return;const t=tdy(),n=xnext(),i=L=='
 
 /* --- মূল পাতার নামাজ কার্ড (ধাপ ৩: কাঠামো; আরও সময় = ধাপ ৪, প্রিমিয়াম ডিজাইন = ধাপ ৫, লাইভ টাইমার = ধাপ ৬) --- */
 let XNM=false,XND=0;
+function xcd(s){s=Math.max(0,s);const f=n=>String(n).padStart(2,'0');return nb(f(Math.floor(s/3600))+':'+f(Math.floor(s%3600/60))+':'+f(s%60))}
 function xnps(d){const p=xpt(d),rz=info(d).h.m==8,n=new Date(),c=n.getHours()+n.getMinutes()/60+n.getSeconds()/3600,ord=['fj','sr','dh','as','mg','is'];
  let k=ord.find(q=>p[q]>c),h,at;
  if(k){h=p[k]-c;at=p[k]}else{k='fj';at=xpt(xd(d,1)).fj;h=at+24-c}
- const j=ord.indexOf(k),pv=j>0?p[ord[j-1]]:(p.fj>c?xpt(xd(d,-1)).is-24:p.is),m=Math.max(0,Math.floor(h*60));
- return{p,k,at,c,ift:k=='mg'&&rz,pct:Math.round(Math.min(100,Math.max(0,(c-pv)/(c+h-pv)*100))),left:(m>=60?nb(Math.floor(m/60))+T(' ঘণ্টা ',' h '):'')+nb(m%60)+T(' মিনিট',' min')}}
-function xnpcHTML(d){const i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['dh','☀️'],['as','🌤'],['mg','🌇'],['is','🌙']],S=xnps(d),p=S.p,k=S.k,at=S.at,left=S.left,ift=S.ift,pct=S.pct;
+ const j=ord.indexOf(k),pv=j>0?p[ord[j-1]]:(p.fj>c?xpt(xd(d,-1)).is-24:p.is);
+ /* চলমান ওয়াক্ত: ফজর→সূর্যোদয়, যোহর→আসর, আসর→মাগরিব, মাগরিব→ইশা, ইশা→পরের ফজর; সূর্যোদয়–যোহরের মধ্যে ইশরাক/চাশতের সময় */
+ let cur=null;
+ if(c<p.fj)cur={k:'is',s:xpt(xd(d,-1)).is-24,e:p.fj};
+ else if(c<p.sr)cur={k:'fj',s:p.fj,e:p.sr};
+ else if(c<p.dh){const X=xex(d);if(c>=X.ishraq.s&&c<X.ishraq.e)cur={k:'ic',s:X.ishraq.s,e:X.ishraq.e}}
+ else if(c<p.as)cur={k:'dh',s:p.dh,e:p.as};
+ else if(c<p.mg)cur={k:'as',s:p.as,e:p.mg};
+ else if(c<p.is)cur={k:'mg',s:p.mg,e:p.is};
+ else cur={k:'is',s:p.is,e:xpt(xd(d,1)).fj+24};
+ const S=cur?{a:cur.s,b:cur.e}:{a:pv,b:c+h},sec=Math.floor((cur?cur.e-c:h)*3600);
+ return{p,k,at,c,cur,rz,ift:!cur&&k=='mg'&&rz,pct:Math.round(Math.min(100,Math.max(0,(c-S.a)/(S.b-S.a)*100))),left:xcd(sec)}}
+/* হিরো কার্ডের লেখা: চলমান ওয়াক্ত থাকলে তার শেষ হওয়া পর্যন্ত কাউন্টডাউন, নইলে পরবর্তী ওয়াক্তের কাউন্টডাউন */
+function xnh(S){const i=L=='bn'?0:1,c=S.cur,nm=q=>q=='ic'?T('ইশরাক ও চাশত','Ishraq & Chasht'):XPN[q][i];
+ const nxN=(S.k=='mg'&&S.rz)?T('ইফতার','Iftar'):XPN[S.k][i];
+ if(c)return{l:c.k=='ic'?T('ইশরাক ও চাশতের সময় চলছে','Ishraq & Chasht time now'):T('এখন চলছে','Now'),n:nm(c.k),a:T('শেষ ','Ends ')+xf(c.e%24),r:S.left+T(' বাকি',' left'),x:T('পরবর্তী: ','Next: ')+nxN+' • '+xf(S.at%24)};
+ return{l:S.ift?T('ইফতারে বাকি','Iftar in'):T('পরবর্তী ওয়াক্ত','Next prayer'),n:XPN[S.k][i],a:xf(S.at%24),r:S.left+(S.ift?'':T(' পর',' left')),x:''}}
+function xnpcHTML(d){const i=L=='bn'?0:1,rz=info(d).h.m==8,P5=[['fj','🌌'],['dh','☀️'],['as','🌤'],['mg','🌇'],['is','🌙']],S=xnps(d),H=xnh(S),p=S.p,k=S.cur?S.cur.k:S.k,pct=S.pct;
   return`<section class="np" id="xp" aria-label="${T('নামাজের সময়','Prayer times')}">
- <div class="np-h"><h4>🕌 ${T('নামাজের সময়','Prayer times')}<small>${wdy(d)}, ${sdt(d)}</small></h4><select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,j)=>`<option value="${j}"${j==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></div>
+ <div class="np-h"><h4>🕌 ${T('আজকের নামাজের সময়','Today’s prayer times')}<small>${wdy(d)}, ${sdt(d)}</small></h4><select class="xds" id="xds" aria-label="${T('জেলা','District')}">${DCUTime.DIST.map((q,j)=>`<option value="${j}"${j==DCUTime.getDistrict()?' selected':''}>${q[i]}</option>`).join('')}</select></div>
  ${rz?`<div class="xrz"><div><small>🍽 ${T('সেহরির শেষ সময়','Sehri ends')}</small><b>${xf(p.fj)}</b></div><div><small>🌅 ${T('ইফতার','Iftar')}</small><b>${xf(p.mg)}</b></div></div>`:''}
- <div class="np-hero"><small>${ift?T('ইফতারে বাকি','Iftar in'):T('পরবর্তী ওয়াক্ত','Next prayer')}</small><div class="np-hn"><b id="npN">${XPN[k][i]}</b><span id="npA">${xf(at)}</span></div><p id="npR">${left}${ift?'':T(' পর',' left')}</p><div class="np-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i id="npP" style="width:${pct}%"></i></div></div>
+ <div class="np-hero"><small id="npL">${H.l}</small><div class="np-hn"><b id="npN">${H.n}</b><span id="npA">${H.a}</span></div><p id="npR">${H.r}</p><div class="np-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i id="npP" style="width:${pct}%"></i></div><div class="np-nx" id="npT"${H.x?'':' hidden'}>${H.x}</div></div>
  <div class="np-g">${P5.map(q=>`<div data-k="${q[0]}"${q[0]==k?' class="nx"':''}><i>${q[1]}</i><small>${XPN[q[0]][i]}</small><b>${xf(p[q[0]])}</b></div>`).join('')}</div>
  <button type="button" class="np-mb" id="npm" aria-expanded="${XNM}" aria-controls="npx"><span>🕰 ${T('আরও সময় ও নিষিদ্ধ সময়','More times & forbidden times')}</span><i aria-hidden="true">${XNM?'▴':'▾'}</i></button>
  <div class="np-more" id="npx"${XNM?'':' hidden'}>${xmHTML(d)}</div>
