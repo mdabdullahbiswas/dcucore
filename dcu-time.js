@@ -61,7 +61,7 @@
  for(let i=0;i<2;i++)r={fj:ang(18,r.fj/24),sr:ang(.833,r.sr/24),dh:mid(r.dh/24),as:asr(2,r.as/24),mg:ang(.833,r.mg/24,1),is:ang(18,r.is/24,1)};
  var s=PL.tz-PL.lon/15;for(var k in r)r[k]+=s;r.dh+=1/60;return r}
   function fmtTime(h,L){var nb=function(n){return digits(n,L)};h=((h%24)+24)%24;var m=Math.round(h*60),H=Math.floor(m/60)%24,mi=m%60,ts=nb(H%12||12)+':'+nb(String(mi).padStart(2,'0'));
- if(L!='en')return(H<4?'রাত':H<6?'ভোর':H<12?'সকাল':H<15?'দুপুর':H<17?'বিকাল':H<19?'সন্ধ্যা':'রাত')+' '+ts;return ts+' '+(H<12?'AM':'PM')}
+ if(L!='en')return(H<4?'রাত':H<6?'ভোর':H<11?'সকাল':H<15?'দুপুর':H<17?'বিকাল':H<19?'সন্ধ্যা':'রাত')+' '+ts;return ts+' '+(H<12?'AM':'PM')}
   var XPN={fj:['ফজর','Fajr'],sr:['সূর্যোদয়','Sunrise'],dh:['জোহর','Dhuhr'],as:['আসর','Asr'],mg:['মাগরিব','Maghrib'],is:['ইশা','Isha']};
 
   /* ---------- districts (approximate centre points; prayer times shift a few minutes with longitude) ---------- */
