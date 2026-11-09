@@ -193,9 +193,12 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 #routine .bs:active{transform:scale(.97)}
 #routine .dchip,#routine .rt-tgrow,#routine .bs,#routine .bt{min-height:44px}
 /* উক্তি/নোট ইনপুট বক্স — উপরের টগলের একই সেক্টর-কালারে */
-#routine #rhqWrap,#routine #rhnWrap{margin:-4px 2px 14px;padding:12px 14px 14px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-left:3px solid var(--accent);border-radius:0 0 14px 14px;transition:background .3s,border-color .3s}
-#routine #rhqWrap label,#routine #rhnWrap label{color:var(--accent-deep)}
-#routine #rhqWrap input,#routine #rhnWrap input{background:var(--cd)}
+#routine #rhqWrap,#routine #rhnWrap,#routine #rdtWrap{margin:-4px 2px 14px;padding:12px 14px 14px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-left:3px solid var(--accent);border-radius:0 0 14px 14px;transition:background .3s,border-color .3s}
+#routine #rhqWrap label,#routine #rhnWrap label,#routine #rdtWrap label{color:var(--accent-deep)}
+#routine #rhqWrap input,#routine #rhnWrap input,#routine #rdtWrap input{background:var(--cd)}
+#routine #rdtWrap .rdt-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#routine #rdtWrap input[type=date]{flex:1 1 180px;min-width:0;font-weight:700;cursor:pointer}
+#routine #rdtWrap .hint{margin:8px 0 0}
 #routine .dchip{border-radius:999px;border:1.5px solid transparent;background:var(--accent-soft);color:var(--accent-deep);font-weight:600;transition:border-color .2s,transform .2s,box-shadow .25s,background .25s}
 #routine .dchip:hover{border-color:var(--accent);transform:translateY(-1px)}
 #routine .dchip.on{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:0 8px 18px -10px var(--accent)}
@@ -342,6 +345,7 @@ body.dark #routine .bx{--accent-soft:color-mix(in srgb,var(--accent) 15%,transpa
 <button type="button" class="rt-tgrow t" id="rsN" aria-pressed="true"><span class="rt-tgic">📝</span><span class="rt-tglb">নিচের নোট দেখান|Show footer note</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
 <div id="rhnWrap"><label class="t">নিচের নোট|Footer note</label><input id="rhn" maxlength="140" data-p="রুটিন পরিবর্তন হতে পারে — অফিসিয়াল নোটিশ দেখে নিশ্চিত হোন।|Routine may change — please confirm with the official notice."></div>
 <button type="button" class="rt-tgrow t" id="rdN" aria-pressed="false"><span class="rt-tgic">📅</span><span class="rt-tglb">তৈরির তারিখ দেখান|Show creation date</span><span class="rt-sw" aria-hidden="true"><i></i></span></button>
+<div id="rdtWrap" hidden><label class="t" for="rdt">তারিখ বেছে নিন|Choose a date</label><div class="rdt-row"><input id="rdt" type="date"><button type="button" class="bs t" id="rdtT">আজকের তারিখ|Today</button></div><p class="hint t">ফাঁকা রাখলে আজকের তারিখ দেখাবে।|Leave empty to show today's date.</p></div>
 </details></div>
 <div class="bx np"><h2 class="t">ক্লাস যোগ করুন|Add a Class</h2>
 <div class="g3"><div><label class="t">কোর্স|Course</label><input id="rc" data-p="যেমন: CSE-101|e.g. CSE-101" maxlength="40"></div><div><label class="t">শিক্ষক (ঐচ্ছিক)|Teacher (optional)</label><input id="rt" maxlength="40"></div><div><label class="t">রুম (ঐচ্ছিক)|Room (optional)</label><input id="rr" maxlength="20"></div>
@@ -843,8 +847,11 @@ const RFD={rhi:'i',rhd:'d',rht:'t',rhb:'b',rhq:'q',rhn:'n'};
 Object.keys(RFD).forEach(id=>{const el=$('#'+id);if(RS[RFD[id]]!==undefined)el.value=RS[RFD[id]];el.addEventListener('input',()=>{RS[RFD[id]]=el.value;sv('dcuRtS',RS);rtP()})});
 const RI=new Image();let RIok=false;RI.onload=()=>{RIok=true;rtP()};RI.src=(RS.logo||'logo.webp');
 const PSW=(btn,on)=>{if(!btn)return;btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on))};
-const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;PSW($('#rdN'),RS.ds===true);const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.webp'};
+const syncRS=()=>{PSW($('#rsN'),RS.ns!==false);$('#rhnWrap').hidden=RS.ns===false;PSW($('#rqN'),RS.qs!==false);$('#rhqWrap').hidden=RS.qs===false;PSW($('#rdN'),RS.ds===true);$('#rdtWrap').hidden=RS.ds!==true;const lp=$('#rlpv');lp.hidden=RS.logo==='';lp.src=RS.logo||'logo.webp'};
 syncRS();
+$('#rdt').value=RS.dt||'';
+$('#rdt').addEventListener('input',e=>{RS.dt=e.target.value;sv('dcuRtS',RS);rtP()});
+$('#rdtT').onclick=()=>{RS.dt='';$('#rdt').value='';sv('dcuRtS',RS);rtP()};
 $('#rsN').onclick=()=>{RS.ns=RS.ns===false;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rqN').onclick=()=>{RS.qs=RS.qs===false;sv('dcuRtS',RS);syncRS();rtP()};
 $('#rdN').onclick=()=>{RS.ds=RS.ds!==true;sv('dcuRtS',RS);syncRS();rtP()};
@@ -915,7 +922,7 @@ function rtP(nl,SS){
  g=x.createLinearGradient(M,0,W-M,0);g.addColorStop(0,'rgba(212,175,55,0)');g.addColorStop(.5,GD);g.addColorStop(1,'rgba(212,175,55,0)');x.fillStyle=g;x.fillRect(M,fy,TW,2);
  const q=(RS.q||'').trim()||L('নিয়মিত ক্লাস ও অধ্যবসায়ই সাফল্যের চাবিকাঠি।|Regular classes and perseverance are the key to success.');
  if(RS.qs!==false)T(fit('“'+q+'”','italic 600 24px',TW-60),W/2,fy+54,'italic 600 24px',NV2,'center');
- const by=(RS.b||'').trim(),genS=L('তৈরির তারিখ|Generated')+': '+new Date().toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'});
+ const by=(RS.b||'').trim(),dm=/^(\d{4})-(\d\d)-(\d\d)$/.exec(RS.ds===true&&RS.dt||''),dd=dm?new Date(+dm[1],+dm[2]-1,+dm[3]):new Date(),genS=L('তৈরির তারিখ|Generated')+': '+dd.toLocaleDateString(loc,{day:'numeric',month:'short',year:'numeric'});
  const leftS=by?(L('প্রস্তুতকারী|Prepared by')+': '+by+(RS.ds===true?'  ·  '+genS:'')):genS;
  T(fit(leftS,'700 18px',TW-260),M+10,H-62,'700 18px',NV,'left');
  T('dcucore.vercel.app',W-M-10,H-62,'600 16px',GDK,'right');
