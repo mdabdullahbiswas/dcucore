@@ -99,6 +99,25 @@
     return DT.PN[k][lang() === "en" ? 1 : 0];
   }
 
+  /* ---------- date panel: English / Bangla / Hijri date + holiday badge ---------- */
+  function dateHTML(now) {
+    var d = dateOf(now, 0), i = lang() === "en" ? 1 : 0;
+    var info = DT.holiday(d);
+    var badge = "";
+    if (info.r && info.t === "h") badge = '<span class="ht-badge is-hol">' + info.r[i] + "</span>";
+    else if (info.r && info.t === "w") badge = '<span class="ht-badge is-wk">' + T("সাপ্তাহিক ছুটি", "Weekend") + "</span>";
+    else if (info.rz) badge = '<span class="ht-badge is-rz">' + T("রমজান মাস", "Ramadan") + "</span>";
+    return (
+      '<aside class="ht-date" aria-label="' + T("আজকের তারিখ", "Today’s date") + '">' +
+      '<div class="ht-dn"><b>' + dg(d.getDate()) + "</b></div>" +
+      '<div class="ht-dm"><span class="ht-wd">' + DT.WD[d.getDay()][i] + "</span>" +
+      '<span class="ht-my">' + DT.GM[d.getMonth()][i] + " " + dg(d.getFullYear()) + "</span></div>" +
+      '<div class="ht-alt"><span><i>' + T("বাংলা", "Bangla") + "</i>" + dg(info.b.d) + " " + DT.BM[info.b.m][i] + " " + dg(info.b.y) + " " + T("বঙ্গাব্দ", "BS") + "</span>" +
+      "<span><i>" + T("হিজরি", "Hijri") + "</i>" + dg(info.h.d) + " " + DT.HM[info.h.m][i] + " " + dg(info.h.y) + " " + T("হিজরি", "AH") + "</span></div>" +
+      badge + "</aside>"
+    );
+  }
+
   /* ---------- render ---------- */
   var els = {};
 
@@ -123,7 +142,8 @@
     var sr = clock(st.today.sr);
 
     host.innerHTML =
-      '<div class="ht-card">' +
+      '<div class="ht-card">' + dateHTML(now) +
+      '<div class="ht-main">' +
       '<div class="ht-head">' +
       '<div><span class="ht-kick">' + MOSQUE + T("পরবর্তী নামাজ", "Next prayer") + "</span>" +
       '<div class="ht-nm"><b>' + pname(k) + '</b><span class="ht-nt"><i>' + nt.t + "</i><small>" + nt.p + "</small></span></div></div>" +
@@ -134,7 +154,7 @@
       '<div class="ht-foot"><span>' + T("সূর্যোদয়", "Sunrise") + " <b>" + sr.p + " " + sr.t + "</b></span>" + rz +
       '<span class="ht-sp"></span><span>' + T("ঢাকার সময় • আনুমানিক", "Dhaka time • approximate") + "</span>" +
       '<a class="ht-link" href="/dcu-calendar">' + T("ক্যালেন্ডার দেখুন", "Open calendar") + ARROW + "</a></div>" +
-      "</div>";
+      "</div></div>";
     host.setAttribute("aria-label", T("নামাজের সময়সূচি", "Prayer times"));
     host.hidden = false;
     els.t = host.querySelector(".ht-t");
