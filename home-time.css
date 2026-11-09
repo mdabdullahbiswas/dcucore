@@ -156,6 +156,10 @@ html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none
   .ht-p.is-past::after{top:6px;right:6px;width:6px;height:6px}
   .ht-foot .ht-sp{display:none}
 }
+/* ----- forbidden-time warning badge ----- */
+.ht-fb{display:flex;align-items:center;gap:8px;margin-top:12px;padding:9px 12px;border-radius:12px;background:rgba(239,68,68,.16);border:1px solid rgba(248,113,113,.55);color:#fecaca;font-size:.84rem;font-weight:600;line-height:1.4}
+.ht-fb b{color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ht-fb-d{flex:none;width:9px;height:9px;border-radius:50%;background:#f87171;box-shadow:0 0 0 3px rgba(248,113,113,.25)}
 @media(prefers-reduced-motion:reduce){
   .ht-p,.ht-bar i{transition:none}
   .ht-p.is-next::before{animation:none;opacity:.6}
