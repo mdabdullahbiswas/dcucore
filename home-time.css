@@ -130,6 +130,20 @@ a.ht-c:hover{background:rgba(255,255,255,.1)}
 .ht-nh b{color:#fff;font-weight:700}
 .ht-nh em{font-style:normal;font-weight:700;color:#F6E3A8}
 
+/* ----- district picker + azan toggle ----- */
+.ht-ds{display:inline-flex;align-items:center}
+.ht-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ht-ds select{font:inherit;font-size:.8rem;font-weight:600;color:#F6E3A8;cursor:pointer;max-width:150px;padding:5px 26px 5px 12px;border-radius:99px;
+  border:1px solid rgba(232,196,108,.4);background:rgba(232,196,108,.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E8C46C' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center/12px;
+  -webkit-appearance:none;appearance:none}
+.ht-ds select option{color:#0B1F3A;background:#fff}
+.ht-ds select:focus-visible,.ht-az:focus-visible{outline:2px solid #E8C46C;outline-offset:2px}
+.ht-az{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;padding:5px 12px;border-radius:99px;
+  color:#E8C46C;background:transparent;border:1px solid rgba(232,196,108,.4);transition:background-color .2s}
+.ht-az svg{width:14px;height:14px}
+.ht-az:hover{background:rgba(232,196,108,.14)}
+.ht-az.is-on{color:#1d1400;border-color:transparent;background:linear-gradient(135deg,#F6E3A8,#E8C46C)}
+
 /* ----- language ----- */
 html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none}
 
