@@ -66,24 +66,26 @@
 /* ----- five prayers ----- */
 .ht-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .ht-p{
-  position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;
-  padding:14px 6px 13px;border-radius:18px;
-  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;column-gap:7px;row-gap:3px;text-align:center;
+  padding:10px 6px 9px;border-radius:16px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   transition:transform .3s var(--ease,ease),background-color .3s,border-color .3s;
 }
+/* top line: icon + name, bottom line: time + AM/PM word, both pairs meet on the centre line */
+.ht-p svg{justify-self:end}
+.ht-p .ht-pn{justify-self:start;text-align:left}
+.ht-p .ht-pt{justify-self:end}
+.ht-p .ht-pp{justify-self:start;text-align:left}
 .ht-p:hover{transform:translateY(-2px);border-color:rgba(232,196,108,.5)}
-.ht-p svg{width:22px;height:22px;color:#a8b3c7}
-.ht-p .ht-pn{font-size:.9rem;font-weight:700;line-height:1.2}
-.ht-p .ht-pt{font-size:1.12rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
-.ht-p .ht-pp{font-size:.72rem;font-weight:600;color:#a8b3c7;line-height:1}
+.ht-p svg{width:17px;height:17px;color:#a8b3c7}
+.ht-p .ht-pn{font-size:.86rem;font-weight:700;line-height:1.2}
+.ht-p .ht-pt{font-size:1.05rem;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+.ht-p .ht-pp{font-size:.7rem;font-weight:600;color:#a8b3c7;line-height:1}
 .ht-p .ht-pn small{font-size:.72em;font-weight:600;opacity:.8}
-.ht-p.is-past{opacity:.55}
-.ht-p.is-past::after{
-  content:"";position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px rgba(52,211,153,.18)
-}
+.ht-p.is-past{opacity:.5}
 .ht-p.is-next{
-  opacity:1;color:#1d1400;border-color:transparent;transform:translateY(-3px);
+  opacity:1;color:#1d1400;border-color:transparent;transform:translateY(-2px);
   background:linear-gradient(135deg,#F6E3A8,#E8C46C 50%,#D4AF37);
   box-shadow:0 16px 30px -14px rgba(212,175,55,.75),inset 0 1px 0 rgba(255,255,255,.6);
 }
@@ -148,15 +150,16 @@ html:not([data-lang="en"]) .ht .en-t,html[data-lang="en"] .ht .bn-t{display:none
   .ht-head{align-items:flex-start}
   .ht-cd{flex-direction:row;align-items:baseline;justify-content:space-between;text-align:left;width:100%;gap:10px}
   .ht-list{gap:6px}
-  .ht-p{padding:11px 2px 10px;border-radius:14px;gap:4px}
-  .ht-p svg{width:19px;height:19px}
+  /* phone: 5 tiles are too narrow for the two-column layout, so stack them but keep them short */
+  .ht-p{display:flex;flex-direction:column;align-items:center;padding:8px 2px 7px;border-radius:14px;gap:2px}
+  .ht-p svg{width:15px;height:15px}
+  .ht-p .ht-pn{text-align:center}
   .ht-p .ht-pn{font-size:.74rem}
   .ht-p .ht-pt{font-size:.95rem}
   .ht-p .ht-pp{font-size:.62rem}
   .ht-more{gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}   /* 3 columns clipped "11:37–11:43 AM" on phones */
   .ht-m{padding:8px 9px}
   .ht-m b{font-size:.82rem;white-space:normal}   /* if a range is still too wide it wraps instead of being cut */
-  .ht-p.is-past::after{top:6px;right:6px;width:6px;height:6px}
   .ht-foot .ht-sp{display:none}
 }
 /* ----- forbidden-time warning badge ----- */
