@@ -99,11 +99,11 @@
 
       <div class="ls-field" id="ls-course-pick">
         <label class="ls-lbl t" for="ls-course">কোর্স সাজেশন|Course suggestions</label>
-        <select class="ls-in ls-sel" id="ls-course"></select>
+        <select class="ls-in ls-sel" id="ls-course" aria-describedby="ls-course-hint"></select>
         <p class="ls-hint" id="ls-course-hint"></p>
       </div>
 
-      <div class="ls-row">
+      <div class="ls-row" id="ls-code-row">
         <div class="ls-field">
           <label class="ls-lbl t" for="ls-code">কোর্স কোড|Course code</label>
           <input class="ls-in" id="ls-code" type="text" maxlength="20" data-ph="যেমন 222201|e.g. 222201" aria-describedby="err-code">
