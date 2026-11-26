@@ -26,6 +26,7 @@
 try{var t=localStorage.getItem("site-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}
 </script>
 <script src="/dcu-layout.js" defer></script>
+<script src="/i18n-404.js" defer></script>
 <script src="/dcu-lang.js" defer></script>
 <style>
 *{box-sizing:border-box}
@@ -136,7 +137,7 @@ body.dark .nf-c{--accent-soft:color-mix(in srgb,var(--accent) 16%,transparent)}
   <section class="nf-hero" aria-labelledby="nfT">
     <div class="nf-orb nf-o1"></div><div class="nf-orb nf-o2"></div>
 
-    <span class="nf-eb t">ত্রুটি ৪০৪|Error 404</span>
+    <span class="nf-eb t" data-k="1">ত্রুটি ৪০৪</span>
 
     <div class="nf-code" aria-hidden="true">
       <span class="nf-d">4</span>
@@ -144,38 +145,38 @@ body.dark .nf-c{--accent-soft:color-mix(in srgb,var(--accent) 16%,transparent)}
       <span class="nf-d">4</span>
     </div>
 
-    <h1 class="nf-h t" id="nfT">পেজটি খুঁজে পাওয়া যায়নি|We couldn't find this page</h1>
-    <p class="nf-p t">আপনি যে লিংকটি খুঁজছেন সেটি হয়তো সরানো হয়েছে, নাম বদলেছে, অথবা লিংকে ভুল আছে। চিন্তা নেই — নিচ থেকে সহজেই আপনার কাঙ্ক্ষিত টুলে পৌঁছে যেতে পারবেন।|The link may have been moved, renamed, or mistyped. No worries — pick your tool below and you're back on track.</p>
+    <h1 class="nf-h t" id="nfT" data-k="2">পেজটি খুঁজে পাওয়া যায়নি</h1>
+    <p class="nf-p t" data-k="3">আপনি যে লিংকটি খুঁজছেন সেটি হয়তো সরানো হয়েছে, নাম বদলেছে, অথবা লিংকে ভুল আছে। চিন্তা নেই — নিচ থেকে সহজেই আপনার কাঙ্ক্ষিত টুলে পৌঁছে যেতে পারবেন।</p>
 
     <div class="nf-path" id="nfPath" hidden>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5h.01"/></svg>
       <span id="nfPathTxt"></span>
     </div>
 
-    <div class="nf-sg" id="nfSg" role="status"><span class="t">আপনি কি এটি খুঁজছিলেন?|Did you mean</span><a id="nfSgA" href="/"></a></div>
+    <div class="nf-sg" id="nfSg" role="status"><span class="t" data-k="4">আপনি কি এটি খুঁজছিলেন?</span><a id="nfSgA" href="/"></a></div>
 
     <div class="nf-act">
       <a class="nf-btn g" href="/">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
-        <span class="t">হোমে ফিরুন|Back to Home</span>
+        <span class="t" data-k="5">হোমে ফিরুন</span>
       </a>
       <button type="button" class="nf-btn o" id="nfBack">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-        <span class="t">আগের পেজে যান|Go Back</span>
+        <span class="t" data-k="6">আগের পেজে যান</span>
       </button>
     </div>
   </section>
 
   <section class="nf-ex" aria-labelledby="nfEx">
     <div class="nf-eh">
-      <h2 id="nfEx"><span class="t">কোথায় যেতে চান?|Where to next?</span><small class="t">জনপ্রিয় পেজ ও টুলস|Popular pages &amp; tools</small></h2>
+      <h2 id="nfEx"><span class="t" data-k="7">কোথায় যেতে চান?</span><small class="t" data-k="8">জনপ্রিয় পেজ ও টুলস</small></h2>
       <label class="nf-s">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <input type="search" id="nfQ" autocomplete="off" spellcheck="false" aria-label="Search pages">
       </label>
     </div>
     <div class="nf-grid" id="nfGrid"></div>
-    <div class="nf-empty" id="nfEmpty"><span class="t">কিছু পাওয়া যায়নি — অন্য শব্দে খুঁজে দেখুন।|Nothing matched — try another word.</span></div>
+    <div class="nf-empty" id="nfEmpty"><span class="t" data-k="9">কিছু পাওয়া যায়নি — অন্য শব্দে খুঁজে দেখুন।</span></div>
   </section>
 
   <p class="nf-help t">সমস্যাটি কি বারবার হচ্ছে? |Keep landing here? <a href="/feedback"><span class="t">আমাদের জানান|Let us know</span></a></p>
@@ -220,8 +221,8 @@ body.dark .nf-c{--accent-soft:color-mix(in srgb,var(--accent) 16%,transparent)}
   var grid=document.getElementById("nfGrid");
   grid.innerHTML=P.map(function(x,i){
     return '<a class="nf-c" href="'+x.p+'" style="--i:'+i+';--g:'+x.g+'" data-q="'+esc((x.bn+" "+x.en+" "+x.dbn+" "+x.den+" "+x.k+" "+x.p).toLowerCase())+'">'+
-      '<span class="ic">'+svg(x.ic)+'</span><span><b class="t">'+esc(x.bn)+'|'+esc(x.en)+'</b>'+
-      '<span class="d t">'+esc(x.dbn)+'|'+esc(x.den)+'</span></span></a>';
+      '<span class="ic">'+svg(x.ic)+'</span><span><b class="t" data-k="10">'+esc(x.bn)+'</b>'+
+      '<span class="d t" data-k="11">'+esc(x.dbn)+'</span></span></a>';
   }).join("");
 
   /* ---- search ---- */
