@@ -125,6 +125,7 @@ body .ls-hint { margin: 0; color: var(--mu, #475569); font-size: 0.88rem; line-h
 body .ls-count { text-align: right; }
 
 body .ls-row { display: flex; flex-wrap: wrap; gap: 0 14px; }
+body .ls-row[hidden] { display: none; }
 body .ls-row .ls-field { flex: 0 1 190px; }
 body .ls-row .ls-grow { flex: 1 1 240px; }
 body .ls-narrow { max-width: 260px; }
