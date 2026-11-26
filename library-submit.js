@@ -31,6 +31,9 @@ const MIN_FILL_MS = 12000;          // ফর্ম খোলার পর ক�
 const COOLDOWN_MS = 60 * 1000;      // এক ব্রাউজারে দুই জমার মাঝের বিরতি
 const DAILY_MAX = 10;               // এক ব্রাউজারে দিনে সর্বোচ্চ জমা
 const FILE_ID_RE = /^[A-Za-z0-9_-]{10,120}$/;
+const ALL = "__all";               // কোর্স-ড্রপডাউনের “সব কোর্স” অপশনের মান
+const ALL_CODE = "ALL";            // ডেটাবেসে “সব কোর্স” ফাইলের courseCode
+const ALL_NAME = "All courses / সব কোর্স";
 
 /* ---------- ভাষা সহায়ক ---------- */
 const lang = () => document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn";
@@ -181,27 +184,43 @@ function renderDepts() {
   sel.value = list.some(d => d.slug === cur) ? cur : "";
 }
 
-function renderCourses() {
-  const sel = $("ls-course"), hint = $("ls-course-hint"), pick = $("ls-course-pick");
-  const dept = $("ls-dept").value, year = radio("year");
-  const list = dept && year ? D.courses(dept, year) : [];
-  const cur = sel.value;
+const allMode = () => $("ls-course").value === ALL;
+/* “সব কোর্স” বাছা থাকলে কোড/নামের ঘর লুকায়, নইলে দেখায় */
+function syncCourseRow() {
+  $("ls-code-row").hidden = allMode();
+  if (allMode()) {
+    $("ls-course-hint").textContent = L("ফাইলটি এই বিভাগ ও বর্ষের প্রতিটি কোর্সেই দেখা যাবে।|This file will appear in every course of this department and year.");
+  }
+}
 
-  if (!dept || !year) {
-    pick.hidden = true;
-    return;
-  }
-  if (!list.length) {
-    pick.hidden = true;
+function renderCourses() {
+  const sel = $("ls-course"), hint = $("ls-course-hint");
+  const college = radio("college"), dept = $("ls-dept").value, year = radio("year");
+  const cur = sel.value;
+  const opt = (v, t) => '<option value="' + esc(v) + '">' + esc(L(t)) + "</option>";
+
+  /* কিছু বাছা না থাকলে ড্রপডাউন খালি থাকে না: ক্লিক করলে কী করতে হবে সেই বার্তা দেখায় */
+  if (!college || !dept || !year) {
+    const msg = !college ? "আগে কলেজ বেছে নিন|Choose a college first"
+      : !dept ? "আগে বিভাগ বেছে নিন|Choose a department first"
+      : "আগে বর্ষ বেছে নিন|Choose a year first";
+    sel.innerHTML = opt("", msg);
+    sel.value = "";
     hint.textContent = "";
+    syncCourseRow();
     return;
   }
-  pick.hidden = false;
-  sel.innerHTML = '<option value="">' + esc(L("তালিকা থেকে বেছে নিন|Pick from the list")) + "</option>" +
+
+  const list = D.courses(dept, year);
+  sel.innerHTML = opt("", "তালিকা থেকে বেছে নিন|Pick from the list") +
+    opt(ALL, "সব কোর্স (এই বর্ষের প্রতিটি কোর্সে দেখাবে)|All courses (shown in every course of this year)") +
     list.map(c => '<option value="' + esc(c.code) + '">' + esc(c.code + " — " + D.name(c, lang()) + (c.opt ? " (" + L("ঐচ্ছিক|optional") + ")" : "")) + "</option>").join("") +
-    '<option value="__other">' + esc(L("অন্য কোর্স (নিজে লিখব)|Another course (I will type it)")) + "</option>";
+    opt("__other", "অন্য কোর্স (নিজে লিখব)|Another course (I will type it)");
   sel.value = Array.from(sel.options).some(o => o.value === cur) ? cur : "";
-  hint.textContent = L("তালিকায় না থাকলে নিচের ঘরে কোড ও নাম নিজে লিখুন।|If it is not listed, type the code and name below.");
+  hint.textContent = list.length
+    ? L("তালিকায় না থাকলে নিচের ঘরে কোড ও নাম নিজে লিখুন।|If it is not listed, type the code and name below.")
+    : L("এই বর্ষের কোর্সের তালিকা এখনো নেই। “সব কোর্স” বাছুন, অথবা কোড ও নাম নিজে লিখুন।|No course list for this year yet. Choose “All courses”, or type the code and name yourself.");
+  syncCourseRow();
 }
 
 function renderExamYears() {
@@ -247,13 +266,21 @@ $("ls-dept").addEventListener("change", () => { resetListedCourse(); renderCours
 
 /* সাজেশন থেকে ভরা কোড/নাম থাকলে বিভাগ বা বর্ষ বদলানোর সঙ্গে সেগুলো মুছে যায়; হাতে লেখাগুলো থাকে */
 function resetListedCourse() {
+  if (allMode()) return;          // “সব কোর্স” বাছা থাকলে বর্ষ/বিভাগ বদলালেও থাকে
   $("ls-course").value = "";
   if (courseFromList) { $("ls-code").value = ""; $("ls-cname").value = ""; courseFromList = false; }
 }
 
 $("ls-course").addEventListener("change", e => {
   const v = e.target.value;
+  syncCourseRow();
   if (!v) return;
+  if (v === ALL) {
+    courseFromList = false;
+    $("ls-code").value = ""; $("ls-cname").value = "";
+    clearErr("code"); clearErr("cname");
+    return;
+  }
   if (v === "__other") {
     courseFromList = false;
     $("ls-code").value = ""; $("ls-cname").value = "";
@@ -287,7 +314,7 @@ $("ls-agree").addEventListener("change", () => clearErr("agree"));
 
 function suggestedTitle() {
   const ft = D.fileType(radio("ftype"));
-  const base = clean($("ls-code").value + " " + $("ls-cname").value);
+  const base = allMode() ? L("সব কোর্স|All courses") : clean($("ls-code").value + " " + $("ls-cname").value);
   const t = base + (ft ? " — " + D.name(ft, lang()) : "");
   return t.slice(0, 120);
 }
@@ -336,9 +363,11 @@ async function validate(n) {
     if (!radio("college")) bad.push(showErr("college", "কলেজ বেছে নিন।|Choose a college."));
     if (!$("ls-dept").value) bad.push(showErr("dept", "বিভাগ বেছে নিন।|Choose a department."));
     if (!radio("year")) bad.push(showErr("year", "বর্ষ বেছে নিন।|Choose a year."));
-    const code = clean($("ls-code").value), name = clean($("ls-cname").value);
-    if (code.length < 2 || code.length > 20) bad.push(showErr("code", "কোর্স কোড ২ থেকে ২০ অক্ষরের মধ্যে লিখুন।|Enter a course code of 2 to 20 characters."));
-    if (name.length < 2 || name.length > 100) bad.push(showErr("cname", "কোর্সের নাম ২ থেকে ১০০ অক্ষরের মধ্যে লিখুন।|Enter a course name of 2 to 100 characters."));
+    if (!allMode()) {
+      const code = clean($("ls-code").value), name = clean($("ls-cname").value);
+      if (code.length < 2 || code.length > 20) bad.push(showErr("code", "কোর্স কোড ২ থেকে ২০ অক্ষরের মধ্যে লিখুন।|Enter a course code of 2 to 20 characters."));
+      if (name.length < 2 || name.length > 100) bad.push(showErr("cname", "কোর্সের নাম ২ থেকে ১০০ অক্ষরের মধ্যে লিখুন।|Enter a course name of 2 to 100 characters."));
+    }
   }
   if (n === 3) {
     if (!radio("ftype")) bad.push(showErr("ftype", "ফাইলের ধরন বেছে নিন।|Choose a file type."));
@@ -399,8 +428,9 @@ function collectData() {
     driveUrl: link ? link.url : "",
     college, dept,
     year: Number(radio("year")),
-    courseCode: clean($("ls-code").value),
-    courseName: clean($("ls-cname").value),
+    allCourses: allMode(),
+    courseCode: allMode() ? ALL_CODE : clean($("ls-code").value),
+    courseName: allMode() ? ALL_NAME : clean($("ls-cname").value),
     fileType: radio("ftype"),
     examType: radio("etype"),
     examYear: Number($("ls-eyear").value) || 0,
@@ -423,7 +453,7 @@ function renderSummary() {
     ["কলেজ|College", D.name(D.college(d.college), l)],
     ["বিভাগ|Department", D.name(D.department(d.dept), l)],
     ["বর্ষ|Year", D.name(D.year(d.year), l)],
-    ["কোর্স|Course", d.courseCode + " — " + d.courseName],
+    ["কোর্স|Course", d.allCourses ? L("সব কোর্স (এই বিভাগ ও বর্ষের প্রতিটি কোর্সে দেখাবে)|All courses (shown in every course of this department and year)") : d.courseCode + " — " + d.courseName],
     ["ধরন|Type", D.name(D.fileType(d.fileType), l)],
     ["পরীক্ষা|Exam", D.name(D.examType(d.examType), l) + (d.examYear ? ", " + (l === "en" ? d.examYear : d.examYear.toLocaleString("bn-BD", { useGrouping: false })) : "")]
   ];
@@ -508,6 +538,7 @@ async function submit() {
       year: d.year,
       courseCode: d.courseCode,
       courseName: d.courseName,
+      ...(d.allCourses ? { allCourses: true } : {}),
       fileType: d.fileType,
       examType: d.examType,
       examYear: d.examYear,
