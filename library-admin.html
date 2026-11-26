@@ -170,6 +170,127 @@ button.stat:hover{border-color:var(--gold)}
   .item.has-sel>.btn,.item.has-sel>.acts{grid-column:1/-1}
   .stat b{font-size:1.3rem}
 }
+
+/* ================= ডিজাইন আপগ্রেড ================= */
+:root{--r:18px;--ease:cubic-bezier(.2,.8,.2,1);--glow:0 0 0 4px rgba(229,168,59,.22)}
+html{scroll-behavior:smooth}
+body{background:
+  radial-gradient(900px 380px at 100% -80px,rgba(229,168,59,.13),transparent 70%),
+  radial-gradient(800px 360px at -10% -60px,rgba(20,56,106,.12),transparent 70%),var(--bg);background-attachment:fixed}
+html[data-theme=dark] body{background:
+  radial-gradient(900px 380px at 100% -80px,rgba(229,168,59,.07),transparent 70%),
+  radial-gradient(800px 360px at -10% -60px,rgba(40,90,170,.14),transparent 70%),var(--bg);background-attachment:fixed}
+.card{transition:transform .25s var(--ease),box-shadow .25s,border-color .2s}
+.item{position:relative;animation:rise .38s var(--ease) both}
+.item:hover{transform:translateY(-2px);border-color:rgba(229,168,59,.55);box-shadow:0 2px 4px rgba(14,26,46,.05),0 14px 32px rgba(14,26,46,.10)}
+.list>.item:nth-child(2){animation-delay:.03s}.list>.item:nth-child(3){animation-delay:.06s}.list>.item:nth-child(4){animation-delay:.09s}.list>.item:nth-child(n+5){animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* হেডার */
+.bar{padding:14px 18px;border-radius:var(--r);color:#fff;border:0;border-bottom:3px solid var(--gold);
+  background:linear-gradient(135deg,#07192f,#0a2240 55%,#14386a);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.bar::after{content:"";position:absolute;right:-50px;top:-70px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(229,168,59,.28),transparent 68%);pointer-events:none}
+.bar h2{font-size:1.3rem;position:relative;z-index:1}
+.bar h2 small{color:var(--gold2);opacity:.9}
+.bar .who{color:#c9d6ea;position:relative;z-index:1}
+.bar .btn{position:relative;z-index:1;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);color:#fff;backdrop-filter:blur(4px)}
+.bar .btn:hover{background:rgba(255,255,255,.2);border-color:var(--gold)}
+.bar .btn.dng{background:rgba(217,45,32,.22);border-color:rgba(255,140,130,.45);color:#ffd7d3}
+.bar .btn.dng:hover{background:rgba(217,45,32,.4)}
+
+/* বোতাম */
+.btn{box-shadow:0 1px 2px rgba(14,26,46,.05)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,26,46,.12)}
+.btn:active{transform:scale(.97)}
+.btn.pri:hover{filter:brightness(1.04);box-shadow:0 6px 16px rgba(229,168,59,.4)}
+.btn.ok{background:linear-gradient(135deg,#17b865,#0f8f46)}
+.btn.ok:hover{box-shadow:0 6px 16px rgba(18,161,80,.35);border-color:transparent}
+.btn.dng:hover{background:var(--red);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(217,45,32,.3)}
+.in{transition:border-color .2s,box-shadow .2s,background .2s}
+.in:hover{border-color:#cbd5e6}
+html[data-theme=dark] .in:hover{border-color:#34507f}
+
+/* ট্যাব */
+.tabs{gap:6px;padding:5px;border:1px solid var(--ln);border-radius:99px;background:var(--surface);box-shadow:var(--shadow);width:max-content;max-width:100%}
+.tab{min-height:40px;padding:6px 20px;border:0;border-radius:99px;transition:background .2s,color .2s}
+.tab:hover{background:var(--surface2)}
+.tab.on{background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;box-shadow:0 4px 12px rgba(10,34,64,.3)}
+.tab em{background:var(--gold);color:#0a2240}
+
+/* ফিল্টার চিপ */
+.f{transition:transform .15s,border-color .2s,box-shadow .2s}
+.f:hover{border-color:var(--gold);transform:translateY(-1px)}
+.f.on{box-shadow:0 4px 12px rgba(10,34,64,.25)}
+.f.on em{opacity:.9}
+
+/* সারাংশ কার্ড */
+.stat{position:relative;overflow:hidden;padding:14px 16px 14px 20px;border-radius:16px;box-shadow:var(--shadow);transition:transform .2s var(--ease),border-color .2s;animation:rise .4s var(--ease) both}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--ln)}
+.stat.warn::before{background:var(--amber)}.stat.ok::before{background:var(--green)}.stat.dng::before{background:var(--red)}
+button.stat:hover{transform:translateY(-3px)}
+.stat b{font-size:1.7rem;letter-spacing:-.01em}
+
+/* ট্যাগ / পিল */
+.pill{padding:3px 11px}
+.pill.warn::before,.pill.ok::before{content:"";display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:middle;position:relative;top:-1px}
+.pill.warn::before{animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.empty{padding:48px 18px;font-size:1rem}
+.search{background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m13 13 4 4'/%3E%3C/svg%3E") no-repeat 14px 50%;padding-left:42px;border-radius:99px}
+.selbar{backdrop-filter:blur(8px)}
+.note{border-left-width:4px}
+
+/* ডায়ালগ ও ওভারলে */
+.ov{backdrop-filter:blur(5px);animation:fade .2s ease both}
+.dlg{border-radius:22px;animation:pop .32s var(--ease) both;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.dh{background:linear-gradient(135deg,#07192f,#0a2240 60%,#14386a);color:#fff;border-bottom:3px solid var(--gold)}
+.dh .x{background:rgba(255,255,255,.12);color:#fff;transition:background .2s,transform .2s}
+.dh .x:hover{background:rgba(255,255,255,.25);transform:rotate(90deg)}
+.x{transition:background .2s,transform .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+
+/* টোস্ট */
+.toasts{bottom:24px}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);animation:tin .35s var(--ease) both;border-left:5px solid var(--gold)}
+.toast::before{content:"✓";display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:.8rem;font-weight:800}
+.toast.err{border-left-color:#ffb4ac}
+.toast.err::before{content:"!";background:rgba(255,255,255,.25)}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.94)}to{opacity:1;transform:none}}
+
+/* লগইন */
+#gate .card{overflow:hidden;animation:pop .5s var(--ease) both;box-shadow:0 24px 60px rgba(10,34,64,.18)}
+.g-hero{padding:38px 24px 28px;position:relative;overflow:hidden}
+.g-hero::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(229,168,59,.32),transparent 68%)}
+.g-hero h1,.g-hero p{position:relative;z-index:1}
+.g-hero h1::before{content:"📚";display:block;font-size:2.2rem;margin-bottom:8px}
+
+/* ================= কাস্টম কনফার্ম ডায়ালগ ================= */
+.cfm-ov{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(7,16,30,.6);backdrop-filter:blur(6px);animation:fade .18s ease both}
+.cfm-ov.out{animation:fadeout .16s ease both}
+.cfm-ov.out .cfm{animation:popout .16s ease both}
+@keyframes fadeout{to{opacity:0}}
+@keyframes popout{to{opacity:0;transform:scale(.96) translateY(6px)}}
+.cfm{width:100%;max-width:440px;max-height:calc(100vh - 36px);overflow:auto;padding:26px 24px 20px;text-align:center;border-radius:24px;background:var(--surface);color:var(--ink);border:1px solid var(--ln);box-shadow:0 30px 80px rgba(0,0,0,.45);animation:pop .3s var(--ease) both}
+.cfm-ic{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 14px;border-radius:50%;font-size:1.7rem;font-weight:800;background:var(--amberSoft);color:var(--amber);box-shadow:0 0 0 8px rgba(229,168,59,.12);animation:ring .5s var(--ease) both .08s}
+.cfm.dng .cfm-ic{background:var(--redSoft);color:var(--red);box-shadow:0 0 0 8px rgba(217,45,32,.1)}
+.cfm.ok .cfm-ic{background:var(--greenSoft);color:var(--green);box-shadow:0 0 0 8px rgba(18,161,80,.1)}
+@keyframes ring{from{transform:scale(.5) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.cfm h3{font-size:1.18rem;line-height:1.45;overflow-wrap:anywhere}
+.cfm-b{margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--ln);color:var(--mu);font-size:.92rem;line-height:1.65;text-align:left;white-space:pre-line;overflow-wrap:anywhere}
+.cfm-b:empty{display:none}
+.cfm-a{display:flex;gap:10px;margin-top:20px}
+.cfm-a .btn{flex:1;min-height:46px;font-size:.98rem}
+.cfm.dng .cfm-a .btn.go{background:linear-gradient(135deg,#ef4b3f,#c8281c);color:#fff;border-color:transparent}
+.cfm.dng .cfm-a .btn.go:hover{box-shadow:0 6px 18px rgba(217,45,32,.4)}
+.cfm.ok .cfm-a .btn.go{background:linear-gradient(135deg,#17b865,#0f8f46);color:#fff;border-color:transparent}
+.cfm-a .btn.go{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0a2240;border-color:transparent;font-weight:700}
+@media(max-width:420px){.cfm{padding:22px 18px 16px}.cfm-a{flex-direction:column-reverse}}
+
+@media(prefers-reduced-motion:reduce){
+  .item,.stat,.ov,.dlg,.toast,.cfm,.cfm-ov,.cfm-ic,#gate .card{animation:none!important}
+  .pill.warn::before{animation:none}.item:hover,.btn:hover,button.stat:hover,.f:hover{transform:none}
+}
 </style>
 </head>
 <body>
@@ -281,6 +402,50 @@ const DEF = {
   departments: D.departments(),
   courses: D.departments().reduce((a, d) => a.concat(D.courses(d.slug)), [])
 };
+
+
+/* ---------- সুন্দর কনফার্ম ডায়ালগ (ব্রাউজারের confirm()-এর বদলে) ----------
+ * askConfirm({ title, body, ok, cancel, tone:"dng"|"warn"|"ok", icon }) → Promise<boolean> */
+function askConfirm(o) {
+  return new Promise(resolve => {
+    const tone = o.tone || "warn";
+    const icon = o.icon || (tone === "dng" ? "🗑" : tone === "ok" ? "✓" : "!");
+    const prev = document.activeElement;
+    const ov = document.createElement("div");
+    ov.className = "cfm-ov";
+    ov.innerHTML = '<div class="cfm ' + tone + '" role="alertdialog" aria-modal="true" aria-labelledby="cfm-t" aria-describedby="cfm-b">' +
+      '<div class="cfm-ic" aria-hidden="true">' + esc(icon) + "</div>" +
+      '<h3 id="cfm-t">' + esc(o.title) + "</h3>" +
+      '<div class="cfm-b" id="cfm-b">' + esc(o.body || "") + "</div>" +
+      '<div class="cfm-a"><button type="button" class="btn" data-c="0">' + esc(o.cancel || "না, থাক") + '</button>' +
+      '<button type="button" class="btn go" data-c="1">' + esc(o.ok || "হ্যাঁ, নিশ্চিত") + "</button></div></div>";
+    document.body.appendChild(ov);
+    const goBtn = ov.querySelector('[data-c="1"]'), noBtn = ov.querySelector('[data-c="0"]');
+    (tone === "dng" ? noBtn : goBtn).focus();
+    let done = false;
+    const finish = v => {
+      if (done) return; done = true;
+      document.removeEventListener("keydown", onKey, true);
+      ov.classList.add("out");
+      setTimeout(() => ov.remove(), 150);
+      if (prev && document.contains(prev) && prev.focus) { try { prev.focus(); } catch (e) {} }
+      resolve(v);
+    };
+    const onKey = e => {
+      if (e.key === "Escape") { e.preventDefault(); e.stopImmediatePropagation(); finish(false); }
+      else if (e.key === "Tab") {
+        e.preventDefault();
+        (document.activeElement === goBtn ? noBtn : goBtn).focus();
+      }
+    };
+    document.addEventListener("keydown", onKey, true);
+    ov.addEventListener("click", e => {
+      e.stopPropagation();
+      if (e.target === ov) finish(false);
+      else { const b = e.target.closest("[data-c]"); if (b) finish(b.dataset.c === "1"); }
+    });
+  });
+}
 
 /* ---------- টোস্ট ও তারিখ ---------- */
 function toast(msg, type) {
@@ -483,7 +648,7 @@ $("sel-all").addEventListener("change", e => {
 $("bulk").addEventListener("click", async () => {
   const ids = Array.from(SEL).filter(id => { const r = ALL.find(x => x.id === id); return r && stOf(r) === "pending"; });
   if (!ids.length || busy) return;
-  if (!confirm(BN(ids.length) + "টি ফাইল একসঙ্গে অনুমোদন দেবেন?\n\nমনে রাখুন: এতে ফাইলের প্রিভিউ বা “Anyone with the link” সেটিং আলাদা করে যাচাই হয় না। ব্যক্তিগত লিংক আটকাতে আগে নমুনা কয়েকটি দেখে নিন।")) return;
+  if (!await askConfirm({ tone: "ok", icon: "✓", title: BN(ids.length) + "টি ফাইল একসঙ্গে অনুমোদন দেবেন?", body: "মনে রাখুন: এতে ফাইলের প্রিভিউ বা “Anyone with the link” সেটিং আলাদা করে যাচাই হয় না। ব্যক্তিগত লিংক আটকাতে আগে নমুনা কয়েকটি দেখে নিন।", ok: "অনুমোদন দিন" })) return;
   busy = true; $("bulk").disabled = true;
   try {
     await commit(ids.map(id => b => b.update(doc(db, "lib_resources", id), { status: "approved", rejectReason: deleteField(), reviewedAt: serverTimestamp() })));
@@ -513,7 +678,7 @@ async function hideResource(id, quiet) {
 }
 async function deleteResource(id) {
   const r = ALL.find(x => x.id === id); if (busy) return false;
-  if (!confirm("“" + (r ? r.title : id) + "” স্থায়ীভাবে মুছবেন?\n\nশুধু লাইব্রেরির তালিকা থেকে মুছবে, Drive-এর মূল ফাইল মুছবে না। এর রিপোর্টগুলোও মুছে যাবে। মোছার পর একই লিংক আবার জমা দেওয়া যাবে। এটি ফেরানো যাবে না। আপাতত শুধু লুকাতে চাইলে “লুকান” বেছে নিন।")) return false;
+  if (!await askConfirm({ tone: "dng", title: "“" + (r ? r.title : id) + "” স্থায়ীভাবে মুছবেন?", body: "• শুধু লাইব্রেরির তালিকা থেকে মুছবে, Drive-এর মূল ফাইল মুছবে না।\n• এর রিপোর্টগুলোও মুছে যাবে।\n• মোছার পর একই লিংক আবার জমা দেওয়া যাবে।\n• এটি ফেরানো যাবে না।\n\nআপাতত শুধু লুকাতে চাইলে “লুকান” বেছে নিন।", ok: "হ্যাঁ, মুছুন", cancel: "বাতিল" })) return false;
   busy = true;
   let ok = false;
   try {
@@ -539,7 +704,7 @@ async function resolveReports(id, undo) {
 }
 async function deleteReports(id) {
   if (busy) return;
-  if (!confirm("এই ফাইলের সব রিপোর্ট মুছবেন?")) return;
+  if (!await askConfirm({ tone: "dng", title: "এই ফাইলের সব রিপোর্ট মুছবেন?", body: "রিপোর্টগুলো স্থায়ীভাবে মুছে যাবে।", ok: "হ্যাঁ, মুছুন", cancel: "বাতিল" })) return;
   busy = true;
   try {
     const list = REPORTS.filter(x => x.resourceId === id);
@@ -584,11 +749,11 @@ function renderReports() {
   }).join("");
 }
 $("rfilters").addEventListener("click", e => { const b = e.target.closest("[data-rf]"); if (b) { rfilter = b.dataset.rf; renderReports(); } });
-$("rlist").addEventListener("click", e => {
+$("rlist").addEventListener("click", async e => {
   const g = a => { const b = e.target.closest("[" + a + "]"); return b ? b.getAttribute(a) : null; };
   let v;
   if ((v = g("data-ro"))) openReview(v, e.target.closest("[data-ro]"));
-  else if ((v = g("data-rh"))) { if (confirm("ফাইলটি লুকাবেন? পাবলিক লাইব্রেরিতে আর দেখা যাবে না; পরে ফিরিয়ে আনা যাবে। এর খোলা রিপোর্টগুলো সমাধান হিসেবে চিহ্নিত হবে।")) hideResource(v); }
+  else if ((v = g("data-rh"))) { if (await askConfirm({ tone: "warn", icon: "👁", title: "ফাইলটি লুকাবেন?", body: "পাবলিক লাইব্রেরিতে আর দেখা যাবে না; পরে ফিরিয়ে আনা যাবে। এর খোলা রিপোর্টগুলো সমাধান হিসেবে চিহ্নিত হবে।", ok: "লুকান" })) hideResource(v); }
   else if ((v = g("data-rd"))) deleteResource(v);
   else if ((v = g("data-rs"))) resolveReports(v, false);
   else if ((v = g("data-ru"))) resolveReports(v, true);
@@ -853,7 +1018,7 @@ function courseForm(c, pre) {
 /* তালিকা ট্যাবের সব ক্লিক */
 const findCourse = key => { const [d, y, ...c] = key.split("|"); const code = c.join("|"); return D.courses(d, Number(y)).find(x => x.code === code) || null; };
 $("mbody").addEventListener("change", e => { if (e.target.id === "m-dept") { mdept = e.target.value; renderMeta(); } });
-$("mbody").addEventListener("click", e => {
+$("mbody").addEventListener("click", async e => {
   const yb = e.target.closest("[data-my]");
   if (yb) { myear = Number(yb.dataset.my); renderMeta(); return; }
   const b = e.target.closest("[data-m]"); if (!b) return;
@@ -864,12 +1029,12 @@ $("mbody").addEventListener("click", e => {
   if (act === "edit-college") return collegeForm(D.college(k));
   if (act === "hide-college") {
     const c = D.college(k); if (!c) return;
-    if (!confirm("“" + c.bn + "” লুকাবেন?\n\nএর " + BN(nFiles(r => r.college === k)) + "টি ফাইল মুছে যাবে না, কিন্তু কলেজটি ফিল্টার ও জমার ফর্মে দেখাবে না। পরে ফিরিয়ে আনা যাবে।")) return;
+    if (!await askConfirm({ tone: "warn", icon: "👁", title: "“" + c.bn + "” লুকাবেন?", body: "এর " + BN(nFiles(r => r.college === k)) + "টি ফাইল মুছে যাবে না, কিন্তু কলেজটি ফিল্টার ও জমার ফর্মে দেখাবে না। পরে ফিরিয়ে আনা যাবে।", ok: "লুকান" })) return;
     return metaRun(() => metaSet(metaId.college(k), { type: "college", slug: c.slug, bn: c.bn, en: c.en || "", active: false }), "কলেজ লুকানো হয়েছে");
   }
   if (act === "show-college") { const m = mdoc(metaId.college(k)); if (m) return metaRun(() => metaSet(m.id, Object.assign({}, m.data, { active: true })), "কলেজ ফিরেছে"); }
   if (act === "del-college") {
-    if (!confirm(isDefCollege(k) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই কলেজ স্থায়ীভাবে মুছবেন? (ফাইলগুলো মুছবে না)")) return;
+    { const def = isDefCollege(k); if (!await askConfirm(def ? { tone: "warn", icon: "↺", title: "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?", ok: "ডিফল্টে ফেরান" } : { tone: "dng", title: "এই কলেজ স্থায়ীভাবে মুছবেন?", body: "ফাইলগুলো মুছবে না।", ok: "হ্যাঁ, মুছুন" })) return; }
     return metaRun(() => metaDel(metaId.college(k)), "হয়েছে");
   }
 
@@ -877,14 +1042,14 @@ $("mbody").addEventListener("click", e => {
   if (act === "edit-dept") return deptForm(D.department(k));
   if (act === "hide-dept") {
     const d = D.department(k); if (!d) return;
-    if (!confirm("“" + d.bn + "” লুকাবেন?\n\nএর " + BN(nFiles(r => r.dept === k)) + "টি ফাইল মুছে যাবে না, কিন্তু বিভাগটি ফিরিয়ে না আনা পর্যন্ত লাইব্রেরিতে ব্রাউজ করা যাবে না এবং জমার ফর্মে আসবে না।")) return;
+    if (!await askConfirm({ tone: "warn", icon: "👁", title: "“" + d.bn + "” লুকাবেন?", body: "এর " + BN(nFiles(r => r.dept === k)) + "টি ফাইল মুছে যাবে না, কিন্তু বিভাগটি ফিরিয়ে না আনা পর্যন্ত লাইব্রেরিতে ব্রাউজ করা যাবে না এবং জমার ফর্মে আসবে না।", ok: "লুকান" })) return;
     const data = { type: "department", slug: d.slug, bn: d.bn, en: d.en || "", active: false };
     if (d.colleges && d.colleges.length) data.colleges = d.colleges;
     return metaRun(() => metaSet(metaId.department(k), data), "বিভাগ লুকানো হয়েছে");
   }
   if (act === "show-dept") { const m = mdoc(metaId.department(k)); if (m) return metaRun(() => metaSet(m.id, Object.assign({}, m.data, { active: true })), "বিভাগ ফিরেছে"); }
   if (act === "del-dept") {
-    if (!confirm(isDefDept(k) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই বিভাগ স্থায়ীভাবে মুছবেন? (ফাইলগুলো মুছবে না)")) return;
+    { const def = isDefDept(k); if (!await askConfirm(def ? { tone: "warn", icon: "↺", title: "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?", ok: "ডিফল্টে ফেরান" } : { tone: "dng", title: "এই বিভাগ স্থায়ীভাবে মুছবেন?", body: "ফাইলগুলো মুছবে না।", ok: "হ্যাঁ, মুছুন" })) return; }
     return metaRun(() => metaDel(metaId.department(k)), "হয়েছে");
   }
 
@@ -902,7 +1067,7 @@ $("mbody").addEventListener("click", e => {
   }
   if (act === "del-course") {
     const [d, y, ...cc] = k.split("|"), code = cc.join("|");
-    if (!confirm(isDefCourse(d, Number(y), code) ? "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?" : "এই কোর্স সাজেশন স্থায়ীভাবে মুছবেন?")) return;
+    { const def = isDefCourse(d, Number(y), code); if (!await askConfirm(def ? { tone: "warn", icon: "↺", title: "সম্পাদনা মুছে ডিফল্টে ফেরাবেন?", ok: "ডিফল্টে ফেরান" } : { tone: "dng", title: "এই কোর্স সাজেশন স্থায়ীভাবে মুছবেন?", ok: "হ্যাঁ, মুছুন" })) return; }
     return metaRun(() => metaDel(metaId.course(d, Number(y), code)), "হয়েছে");
   }
 });
@@ -1066,7 +1231,7 @@ document.addEventListener("click", async e => {
 
   if (e.target.closest("[data-approve]")) {
     /* ব্যক্তিগত লিংক আটকানো: থাম্বনেইল না এলে নিশ্চিত করতে বলে */
-    if (probeOk === false && !confirm("থাম্বনেইল লোড হয়নি, তাই লিংকটি ব্যক্তিগত হতে পারে। প্রিভিউ ও ইনকগনিটো উইন্ডোতে দেখে নিয়েছেন? তবুও অনুমোদন দেবেন?")) return;
+    if (probeOk === false && !await askConfirm({ tone: "warn", title: "লিংকটি ব্যক্তিগত হতে পারে", body: "থাম্বনেইল লোড হয়নি। প্রিভিউ ও ইনকগনিটো উইন্ডোতে দেখে নিয়েছেন? তবুও অনুমোদন দেবেন?", ok: "তবুও অনুমোদন দিন" })) return;
     apply({ status: "approved", rejectReason: deleteField() }, "অনুমোদিত হয়েছে");
   }
   else if (e.target.closest("[data-save]")) apply({}, "সংরক্ষিত হয়েছে");
