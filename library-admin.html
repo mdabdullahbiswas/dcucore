@@ -437,7 +437,7 @@ function render() {
 
   const q = query.toLowerCase();
   const rows = ALL.filter(r => (filter === "all" || stOf(r) === filter) &&
-    (!q || [r.title, r.courseCode, r.courseName, r.submitter].some(v => String(v || "").toLowerCase().includes(q))));
+    (!q || [r.title, r.courseCode, r.courseName, r.allCourses === true ? "সব কোর্স" : "", r.submitter].some(v => String(v || "").toLowerCase().includes(q))));
 
   const selectable = filter === "pending";
   visPending = selectable ? rows.map(r => r.id) : [];
@@ -456,7 +456,7 @@ function render() {
     return '<div class="card item' + (selectable ? " has-sel" : "") + '">' +
       (selectable ? '<label class="chk"><input type="checkbox" data-sel="' + esc(r.id) + '"' + (SEL.has(r.id) ? " checked" : "") + ' aria-label="বেছে নিন: ' + esc(r.title) + '"></label>' : "") +
       '<div><h3>' + esc(r.title) + ' <span class="pill ' + st[1] + '">' + st[0] + "</span></h3>" +
-      '<div class="meta">' + esc(r.courseCode) + " · " + esc(r.courseName) + "</div>" +
+      '<div class="meta">' + courseTxt(r) + "</div>" +
       '<div class="meta">' + esc(D.name(col, "bn") || r.college) + " · " + esc(D.name(dep, "bn") || r.dept) + " · " + esc((D.year(r.year) || {}).bn || r.year + " বর্ষ") +
       " · " + esc((D.fileType(r.fileType) || {}).bn || r.fileType) + " · " + fd(r.createdAt) +
       (stOf(r) === "approved" ? " · ভিউ " + BN(r.views) + " · ডাউনলোড " + BN(r.downloads) : "") + "</div></div>" +
@@ -569,7 +569,7 @@ function renderReports() {
     const notes = shown.filter(x => x.note).slice(0, 3).map(x => '<div class="note">“' + esc(x.note) + "”</div>").join("");
     const head = r
       ? '<h3>' + esc(r.title) + ' <span class="pill ' + (STATUS[stOf(r)] || STATUS.pending)[1] + '">' + (STATUS[stOf(r)] || STATUS.pending)[0] + "</span></h3>" +
-        '<div class="meta">' + esc(r.courseCode) + " · " + esc(r.courseName) + " · " + esc(D.name(D.college(r.college), "bn") || r.college) + " · " + esc(D.name(D.department(r.dept), "bn") || r.dept) + "</div>"
+        '<div class="meta">' + courseTxt(r) + " · " + esc(D.name(D.college(r.college), "bn") || r.college) + " · " + esc(D.name(D.department(r.dept), "bn") || r.dept) + "</div>"
       : '<h3>ফাইলটি আর নেই <span class="pill mu">মোছা</span></h3><div class="meta">ফাইল ID: ' + esc(g.rid) + "</div>";
     const acts = r
       ? '<button type="button" class="btn sm" data-ro="' + esc(g.rid) + '">ফাইল দেখুন</button>' +
@@ -802,7 +802,7 @@ function metaCourses() {
     list.forEach(c => {
       const key = c.dept + "|" + c.year + "|" + c.code, def = isDefCourse(c.dept, c.year, c.code), ov = mdoc(metaId.course(c.dept, c.year, c.code));
       h += '<div class="card item"><div><h3><span class="code">' + esc(c.code) + "</span>" + esc(c.bn || c.en) + (c.opt ? ' <span class="pill mu">ঐচ্ছিক</span>' : "") + ' <span class="pill mu">' + tagOf(def, !!ov) + "</span></h3>" +
-        '<div class="meta">' + esc(c.en || "") + " · " + BN(c.year) + " বর্ষ · " + BN(nFiles(r => r.dept === c.dept && r.year === c.year && String(r.courseCode).toLowerCase() === c.code.toLowerCase())) + ' ফাইল</div></div><div class="acts">' +
+        '<div class="meta">' + esc(c.en || "") + " · " + BN(c.year) + " বর্ষ · " + BN(nFiles(r => r.dept === c.dept && r.year === c.year && (r.allCourses === true || String(r.courseCode).toLowerCase() === c.code.toLowerCase()))) + ' ফাইল</div></div><div class="acts">' +
         mbtn("edit-course", key, "সম্পাদনা") + mbtn("hide-course", key, "লুকান") + (ov ? mbtn("del-course", key, def ? "ডিফল্টে ফেরান" : "মুছুন", "dng") : "") + "</div></div>";
     });
     h += "</div>";
@@ -961,8 +961,8 @@ function openReview(id, from) {
             '<label>ফাইলের ধরন<select class="in" id="e-ftype">' + opts(D.FILE_TYPES, r.fileType, t => t.id, t => t.bn) + "</select></label>" +
           "</div>" +
           '<div class="r2">' +
-            '<label>কোর্স কোড<input class="in" id="e-code" maxlength="20" value="' + esc(r.courseCode) + '"></label>' +
-            '<label>কোর্সের নাম<input class="in" id="e-cname" maxlength="100" value="' + esc(r.courseName) + '"></label>' +
+            '<label>কোর্স কোড<input class="in" id="e-code" maxlength="20" value="' + esc(r.courseCode) + '"' + (r.allCourses === true ? " readonly" : "") + '></label>' +
+            '<label>কোর্সের নাম<input class="in" id="e-cname" maxlength="100" value="' + esc(r.courseName) + '"' + (r.allCourses === true ? " readonly" : "") + '>' + (r.allCourses === true ? '<span class="sub">“সব কোর্স” ফাইল: এই বিভাগ ও বর্ষের প্রতিটি কোর্সে দেখাবে, তাই কোড ও নাম বদলানো যাবে না।</span>' : "") + '</label>' +
           "</div>" +
           '<div class="r2">' +
             '<label>পরীক্ষার ধরন<select class="in" id="e-etype">' + opts(D.EXAM_TYPES, r.examType, t => t.id, t => t.bn) + "</select></label>" +
@@ -1005,6 +1005,11 @@ function openReview(id, from) {
     if (url) { p.className = "probe ok"; p.innerHTML = '<img src="' + esc(url) + '" alt=""><span>থাম্বনেইল লোড হয়েছে: ফাইলটি খোলা মনে হচ্ছে (আনুমানিক)।</span>'; }
     else { p.className = "probe warn"; p.innerHTML = "<span>থাম্বনেইল লোড হয়নি। লিংকটি ব্যক্তিগত হতে পারে, অথবা এই ধরনের ফাইলের থাম্বনেইল নেই। প্রিভিউ দেখে নিশ্চিত হোন।</span>"; }
   });
+}
+
+/* “সব কোর্স” ফাইলে কোড হিসেবে "ALL" না দেখিয়ে পরিষ্কার লেখা দেখায় */
+function courseTxt(r) {
+  return r.allCourses === true ? "সব কোর্স (প্রতিটি কোর্সে দেখাবে)" : esc(r.courseCode) + " · " + esc(r.courseName);
 }
 
 function closeReview() {
