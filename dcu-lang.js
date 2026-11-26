@@ -3,6 +3,9 @@
  * - Adds a toggle button into the header (.dl-actions).
  * - Header & footer labels are translated through DICT.
  * - Page text written as "বাংলা|English" inside .t elements is switched too.
+ * - Page text can also be written as <span class="t" data-k="12">বাংলা</span>
+ *   with the English kept in a separate per-page file (i18n-<page>.js ->
+ *   window.DCU_I18N = { "12": "English" }). Load that file BEFORE this one.
  * Load AFTER dcu-layout.js:
  *   <script src="dcu-lang.js" defer></script>
  */
@@ -62,8 +65,21 @@
     tracked.push({ node: node, bn: bn, en: en });
   }
 
+  /* data-k="N" + window.DCU_I18N[N]  ->  "বাংলা|English" (then scanned below) */
+  function applyKeys() {
+    var D = window.DCU_I18N;
+    if (!D) return;
+    document.querySelectorAll("[data-k]").forEach(function (el) {
+      var en = D[el.getAttribute("data-k")];
+      if (en == null || el.innerHTML.indexOf("|") !== -1) return;
+      el.innerHTML = el.innerHTML.replace(/\s+$/, "") + "|" + en;
+      el.removeAttribute("data-k");
+    });
+  }
+
   /* "বাংলা|English" inside any .t element */
   function scanPageText() {
+    applyKeys();
     document.querySelectorAll(".t").forEach(function (el) {
       var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       var n;
