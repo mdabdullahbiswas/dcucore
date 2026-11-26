@@ -106,6 +106,8 @@ function norm(id, d) {
     college: str(d.college), dept: str(d.dept),
     year: Number(d.year) || 0,
     code: str(d.courseCode), cname: str(d.courseName),
+    /* “সব কোর্স” ফাইল: আলাদা কোর্স নয়, এই বিভাগ ও বর্ষের প্রতিটি কোর্সেই দেখায় */
+    all: d.allCourses === true || str(d.courseCode) === "ALL",
     ftype: str(d.fileType) || "other", etype: str(d.examType) || "none", eyear: Number(d.examYear) || 0,
     title: str(d.title), desc: str(d.desc),
     /* জমাদাতা নিজে রাজি হলে (showBy) তবেই নাম ও পরিচয় ধরা হয়; পুরোনো ফাইলে এই ফিল্ড নেই, তাই কিছুই দেখায় না */
@@ -283,7 +285,8 @@ function fileCard(f, showDept) {
 
   const exam = [et ? D.name(et, l) : "", f.eyear ? yr(f.eyear) : ""].filter(Boolean).join(" · ");
   const meta = [];
-  if (f.code) meta.push('<span class="lib-file-code">' + esc(f.code) + "</span>");
+  if (f.all) meta.push('<span class="lib-file-code">' + esc(tx("সব কোর্স", "All courses")) + "</span>");
+  else if (f.code) meta.push('<span class="lib-file-code">' + esc(f.code) + "</span>");
   if (exam) meta.push("<span>" + esc(exam) + "</span>");
   if (col) meta.push("<span>" + esc(D.name(col, l)) + "</span>");
   if (dept) meta.push("<span>" + esc(D.name(dept, l)) + "</span>");
@@ -416,10 +419,14 @@ function buildCourses(dept, year, fs) {
   const l = lang(), map = new Map();
   D.courses(dept, year).forEach(c => map.set(courseKey(c.code), { code: c.code, name: D.name(c, l), opt: !!c.opt, files: [] }));
   fs.forEach(f => {
+    if (f.all) return;                       // “সব কোর্স” ফাইল আলাদা কোর্স হবে না
     const k = courseKey(f.code);
     if (!map.has(k)) map.set(k, { code: f.code, name: f.cname, opt: false, files: [] });
     map.get(k).files.push(f);
   });
+  const allFiles = fs.filter(f => f.all);
+  /* প্রতিটি কোর্সের ফাইল-সংখ্যায় “সব কোর্স” ফাইলও যোগ হয় */
+  map.forEach(c => { c.files = c.files.concat(allFiles); });
   return Array.from(map.values()).sort((a, b) => a.code < b.code ? -1 : a.code > b.code ? 1 : 0);
 }
 
@@ -436,6 +443,11 @@ function courseListView(dept, yearObj) {
   ]);
   h += '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(D.name(dept, l)) + " · " + esc(D.name(yearObj, l)) + "</h2>" + headCollege() + "</div>";
 
+  const allOnly = fs.filter(f => f.all);
+  if (!courses.length && allOnly.length) {
+    h += '<p class="lib-dsub">' + esc(tx("এই বর্ষের সব কোর্সের ফাইল", "Files for all courses of this year")) + "</p>";
+    return h + fileSection(allOnly, false);
+  }
   if (!courses.length) {
     h += phase === "error" ? retryBox() :
       emptyBox("book", tx("এই বর্ষে এখনো কোনো ফাইল নেই", "No files for this year yet"),
@@ -548,11 +560,12 @@ function filesView(dept, yearObj, code) {
   const l = lang();
   const home = { dept: "", year: 0, course: "" };
   const key = courseKey(code);
-  const fs = visible().filter(f => f.dept === dept.slug && f.year === yearObj.n && courseKey(f.code) === key);
+  const fs = visible().filter(f => f.dept === dept.slug && f.year === yearObj.n && (f.all || courseKey(f.code) === key));
 
   const known = D.courses(dept.slug, yearObj.n).find(c => courseKey(c.code) === key);
-  const display = known ? D.name(known, l) : (fs[0] ? fs[0].cname : "");
-  const shownCode = known ? known.code : (fs[0] ? fs[0].code : code);
+  const own = fs.find(f => !f.all);
+  const display = known ? D.name(known, l) : (own ? own.cname : "");
+  const shownCode = known ? known.code : (own ? own.code : code);
 
   let h = crumbs([
     { label: tx("লাইব্রেরি", "Library"), v: home },
