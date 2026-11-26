@@ -1,441 +1,769 @@
-/* library-viewer.js — ফাইল ভিউয়ার, ডাউনলোড, প্রিন্ট ও শেয়ার (ধাপ ৭)
+/* library-browse.js — লাইব্রেরির পাবলিক ব্রাউজিং (ধাপ ৬)
  *
- * library-browse.js কার্ডে ক্লিকে "lib:open" ইভেন্ট দেয়; এখানে সেটি ধরে preventDefault করা হয়
- * (তাই Drive-এ নতুন ট্যাবে খোলার ফলব্যাক আর চলে না) এবং পেজ না ছেড়ে মডালে প্রিভিউ দেখানো হয়।
+ * পথ: বিভাগ → বর্ষ → কোর্স → ফাইলের কার্ড। কলেজ ফিল্টার (library.js) সব স্তরে কাজ করে।
+ * হোমে "নতুন যোগ হয়েছে" সারি। শুধু approved ফাইল দেখায়।
  *
- * বাটন:
- *   ডাউনলোড — Drive-এর সরাসরি ডাউনলোড লিংক (Docs/Sheets/Slides হলে PDF এক্সপোর্ট)
- *   প্রিন্ট  — অন্য ডোমেইনের এমবেড ব্রাউজার সরাসরি প্রিন্ট করতে দেয় না, তাই ফাইল Drive ভিউয়ারে খোলে; সেখান থেকে প্রিন্ট
- *   শেয়ার  — সরাসরি লিংক (/library?file=ID); ফোনে শেয়ার-শিট, না থাকলে কপি
- *   Drive-এ খুলুন — প্রিভিউ না এলে ফলব্যাক
+ * ডেটা:
+ *   lib_meta      → LibData.merge() দিয়ে ডিফল্ট তালিকার সঙ্গে মেশে (অ্যাডমিনের যোগ করা বিভাগ/কোর্স)
+ *   lib_resources → where("status","==","approved") — Rules এই কোয়েরিই মেনে নেয়; কোনো ইনডেক্স লাগে না
+ *   একবারে সর্বোচ্চ ১০০০ ফাইল আনে ও ব্রাউজারে সাজায়। ফাইল এর চেয়ে বাড়লে পাতা-ভাগ (pagination) যোগ করতে হবে।
+ *   sessionStorage-এ ৩ মিনিট জমা রাখে, তাই বিভাগ বদলালে বারবার Firestore পড়া হয় না।
  *
- * সরাসরি লিংক: /library?file=ID খুললে লোড শেষে ওই ফাইল নিজে থেকে খোলে।
- * প্রিভিউ লোড হয়েছে কিনা ক্রস-ডোমেইন iframe থেকে জানা যায় না; ১২ সেকেন্ডে load না এলে ফলব্যাক বার্তা দেখায়।
+ * URL: /library#economics  ·  /library#economics-2nd  ·  /library#economics-2nd-222201?type=question&sort=pop&c=dhaka-college
+ *   সার্চ: /library#?q=micro। ব্রাউজারের Back বোতাম কাজ করে।
+ * ধাপ ৯: বুকমার্ক (★, localStorage, লগইন ছাড়া) ও "সংরক্ষিত" তালিকা (#?saved=1)। window.LibMarks এ has/toggle/count।
+ * ধাপ ৮: সার্চ (শিরোনাম, কোড, কোর্সের নাম, বিভাগ), ফিল্টার চিপ (ধরন/পরীক্ষা/সাল), সাজানো (নতুন/জনপ্রিয়)।
  *
- * ধাপ ৯: মডাল খুললে/ডাউনলোডে "lib:viewed" ও "lib:download" ইভেন্ট যায় (detail: { file }); library-extras.js কাউন্টার বাড়ায়।
- *   বাটন: ★ সংরক্ষণ (window.LibMarks), রিপোর্ট (window.LibReport) — কারণ বেছে ও ঐচ্ছিক নোটসহ।
+ * ধাপ ৭ (library-viewer.js) এই ইভেন্ট ধরে মডাল খোলে। লোড শেষে "lib:ready" ইভেন্ট যায়।
+ * ধাপ ৭-এর জন্য:
+ *   কার্ডে ক্লিক করলে document-এ cancelable ইভেন্ট "lib:open" → detail: { file }।
+ *   ধাপ ৭-এর ভিউয়ার e.preventDefault() করলে এখানের ফলব্যাক (Drive-এ নতুন ট্যাবে খোলা) বন্ধ হয়।
+ *   window.LibBrowse.find(id) / .files() দিয়ে ফাইলের তথ্য পাওয়া যায়।
  */
-(function () {
-  "use strict";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where, limit } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  var D = window.LibData, B = window.LibBrowse;
-  if (!D || !B) return;
+const CFG = {
+  apiKey: "AIzaSyBgaBKzAAwzHI7ahGKqzbrX9MknWWIm9j0",
+  authDomain: "dcu-blood-bank.firebaseapp.com",
+  projectId: "dcu-blood-bank",
+  storageBucket: "dcu-blood-bank.firebasestorage.app",
+  messagingSenderId: "835221249900",
+  appId: "1:835221249900:web:facf545941825a4efa5d49"
+};
 
-  var FALLBACK_MS = 12000;
-  var DRIVE_RE = /^https:\/\/(drive|docs)\.google\.com\//;
+const D = window.LibData, UI = window.LibUI;
+const $ = id => document.getElementById(id);
+const elBrowse = $("lib-browse"), elH = $("lib-browse-h"), elGrid = $("lib-grid"),
+      elStatus = $("lib-status"), elDrill = $("lib-drill"), elRecent = $("lib-recent"),
+      elQ = $("lib-q"), elQx = $("lib-q-x"), elSr = $("lib-search-sr"), elBm = $("lib-bm");
+if (!D || !UI || !elDrill) throw new Error("library-browse: LibData, LibUI বা #lib-drill পাওয়া যায়নি");
 
-  function lang() { return document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn"; }
-  function tx(bn, en) { return lang() === "en" ? en : bn; }
-  function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  }
-  function reduced() { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
-  function ico(inner) {
-    return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + "</svg>";
-  }
-  var I = {
-    close: ico('<path d="M6 6l12 12M18 6L6 18"/>'),
-    down: ico('<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>'),
-    print: ico('<path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/>'),
-    share: ico('<circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/>'),
-    ext: ico('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
-    star: ico('<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>'),
-    flag: ico('<path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/>')
+const app = getApps().find(a => a.name === "dcu-library") || initializeApp(CFG, "dcu-library");
+const db = getFirestore(app);
+
+/* ---------- ধ্রুবক ---------- */
+const MAX_FILES = 1000;
+const CACHE_KEY = "dcu-lib-cache-v3";
+const CACHE_TTL = 3 * 60 * 1000;
+const RECENT_COUNT = 6;
+const PAGE = 60;           // সার্চ/ফাইলের তালিকায় একবারে এতটি; বাকিটা "আরও দেখান"
+const NEW_DAYS = 7;
+const ORD = { 1: "1st", 2: "2nd", 3: "3rd", 4: "4th" };
+const ALL_CODE = "ALL";     // library-submit.js “সব কোর্স” ফাইলের courseCode
+const BASE_TITLE = document.title;
+
+/* ---------- ভাষা ও লেখা সহায়ক ---------- */
+const lang = () => document.documentElement.getAttribute("data-lang") === "en" ? "en" : "bn";
+const tx = (bn, en) => lang() === "en" ? en : bn;
+const num = n => lang() === "en" ? String(n) : Number(n).toLocaleString("bn-BD");
+const yr = n => lang() === "en" ? String(n) : Number(n).toLocaleString("bn-BD", { useGrouping: false });
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const reduced = () => window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const str = v => typeof v === "string" ? v.trim() : "";
+const filesWord = n => tx(num(n) + "টি ফাইল", num(n) + (n === 1 ? " file" : " files"));
+const courseKey = c => String(c || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+/* ---------- ফাইলের ধরনের আইকন ---------- */
+const FT_ICONS = {
+  note: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+  question: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>',
+  solution: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+  slide: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+  book: '<path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5C4.7 20 4 19.3 4 18.5v-13zM20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5v-13z"/>',
+  syllabus: '<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
+  lab: '<path d="M9 3h6M10 3v6l-5.5 10a1.5 1.5 0 0 0 1.3 2.2h12.4a1.5 1.5 0 0 0 1.3-2.2L14 9V3M7.5 15h9"/>',
+  other: '<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/>'
+};
+const svg = (inner, size, sw) => '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="none" stroke="currentColor" stroke-width="' + (sw || 1.8) +
+  '" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + inner + "</svg>";
+const CHEVRON = svg('<path d="M9 6l6 6-6 6"/>', 18, 2);
+
+/* ---------- বুকমার্ক (লগইন ছাড়া; শুধু এই ব্রাউজারের localStorage-এ) ---------- */
+const MARK_KEY = "dcu-lib-bm", MARK_MAX = 500;
+const STAR = svg('<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9 6.8 19.7l1-5.9L3.5 9.7l5.9-.8z"/>', 20, 1.8);
+let marks = new Set();
+function loadMarks() {
+  marks = new Set();
+  try {
+    const a = JSON.parse(localStorage.getItem(MARK_KEY));
+    if (Array.isArray(a)) a.slice(-MARK_MAX).forEach(x => { if (typeof x === "string" && /^[A-Za-z0-9_-]{10,120}$/.test(x)) marks.add(x); });
+  } catch (e) { /* নেই বা নষ্ট */ }
+}
+function saveMarks() { try { localStorage.setItem(MARK_KEY, JSON.stringify(Array.from(marks))); } catch (e) { /* ব্লক করা */ } }
+loadMarks();
+
+/* ---------- ডেটা ---------- */
+let files = [];
+let phase = "loading";     // "loading" | "ready" | "error"
+let view = { dept: "", year: 0, course: "" };
+
+function norm(id, d) {
+  const t = d.createdAt;
+  const ms = t && typeof t.toMillis === "function" ? t.toMillis() : (typeof t === "number" ? t : 0);
+  return {
+    id,
+    url: str(d.driveUrl),
+    college: str(d.college), dept: str(d.dept),
+    year: Number(d.year) || 0,
+    code: str(d.courseCode), cname: str(d.courseName),
+    all: d.allCourses === true,     // “সব কোর্স” ফাইল: বিভাগ+বর্ষের প্রতিটি কোর্সে দেখায়
+    ftype: str(d.fileType) || "other", etype: str(d.examType) || "none", eyear: Number(d.examYear) || 0,
+    title: str(d.title), desc: str(d.desc),
+    /* জমাদাতা নিজে রাজি হলে (showBy) তবেই নাম ও পরিচয় ধরা হয়; পুরোনো ফাইলে এই ফিল্ড নেই, তাই কিছুই দেখায় না */
+    by: d.showBy === true ? str(d.submitter) : "",
+    byCollege: d.showBy === true ? str(d.byCollege) : "", byDept: d.showBy === true ? str(d.byDept) : "", bySession: d.showBy === true ? str(d.bySession) : "",
+    views: Number(d.views) || 0, downloads: Number(d.downloads) || 0,
+    ms
   };
-  var REASONS = [
-    ["broken", "লিংক নষ্ট বা ফাইল খোলা যাচ্ছে না", "Broken link or the file won’t open"],
-    ["private", "ফাইল ব্যক্তিগত (অনুমতি চাচ্ছে)", "File is private (asks for permission)"],
-    ["wrong", "ভুল তথ্য (কোর্স, বর্ষ বা শিরোনাম)", "Wrong details (course, year or title)"],
-    ["inappropriate", "অনুপযুক্ত বা অপ্রাসঙ্গিক", "Inappropriate or off-topic"],
-    ["copyright", "কপিরাইট বা অপসারণের অনুরোধ", "Copyright or removal request"],
-    ["other", "অন্য কারণ", "Something else"]
-  ];
+}
 
-  /* ---------- Drive লিংক থেকে প্রিভিউ / ডাউনলোড / প্রিন্টের ঠিকানা ---------- */
-  function links(f) {
-    var u = f.url, m;
-    if (!DRIVE_RE.test(u)) return null;
-    if ((m = u.match(/^https:\/\/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([A-Za-z0-9_-]{10,120})/))) {
-      var kind = m[1], id = m[2], base = "https://docs.google.com/" + kind + "/d/" + id;
-      return {
-        preview: base + "/preview",
-        download: kind === "presentation" ? base + "/export/pdf" : base + "/export?format=pdf",
-        print: base + "/edit",
-        open: base + "/edit",
-        pdfNote: true
-      };
+/* পেজ রিফ্রেশ (F5 / টেনে রিফ্রেশ) হলে ক্যাশ ব্যবহার হবে না: সরাসরি নতুন ডেটা আসবে */
+function isReload() {
+  try {
+    const n = performance.getEntriesByType("navigation")[0];
+    if (n) return n.type === "reload";
+    return performance.navigation && performance.navigation.type === 1;
+  } catch (e) { return false; }
+}
+/* অ্যাডমিন প্যানেল কিছু বদলালে একই ব্রাউজারে এই চিহ্ন বসায়; ক্যাশ তার আগের হলে বাতিল */
+function bustedAt() { try { return Number(localStorage.getItem("dcu-lib-bust")) || 0; } catch (e) { return 0; } }
+
+function readCache() {
+  try {
+    const o = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+    if (o && Array.isArray(o.rows) && Array.isArray(o.meta) && Date.now() - o.t < CACHE_TTL && o.t > bustedAt()) return o;
+  } catch (e) { /* ক্যাশ নেই বা নষ্ট */ }
+  return null;
+}
+function writeCache(meta, rows) {
+  try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), meta, rows })); } catch (e) { /* জায়গা নেই */ }
+}
+
+async function load(fresh) {
+  phase = "loading";
+  renderAll();
+  try {
+    let c = fresh || isReload() ? null : readCache();
+    if (!c) {
+      let metaOk = true;
+      const [m, f] = await Promise.all([
+        getDocs(collection(db, "lib_meta")).catch(err => { metaOk = false; console.warn("lib_meta পড়া যায়নি", err); return null; }),
+        getDocs(query(collection(db, "lib_resources"), where("status", "==", "approved"), limit(MAX_FILES)))
+      ]);
+      c = { t: Date.now(), meta: m ? m.docs.map(d => d.data()) : [], rows: f.docs.map(d => norm(d.id, d.data())) };
+      if (metaOk) writeCache(c.meta, c.rows);
     }
-    m = u.match(/\/file\/d\/([A-Za-z0-9_-]{10,120})/);
-    if (!m) return null;
-    var fid = m[1];
-    return {
-      preview: "https://drive.google.com/file/d/" + fid + "/preview",
-      download: "https://drive.google.com/uc?export=download&id=" + encodeURIComponent(fid),
-      print: "https://drive.google.com/file/d/" + fid + "/view",
-      open: "https://drive.google.com/file/d/" + fid + "/view",
-      pdfNote: false
-    };
+    if (c.meta.length) D.merge(c.meta);
+    files = c.rows.filter(f => f.dept && f.url);
+    phase = "ready";
+    syncFromUrl();      // অ্যাডমিনের যোগ করা নতুন বিভাগের লিংক দিয়ে ঢুকলে এখন চেনা যাবে
+  } catch (err) {
+    console.error("লাইব্রেরির ফাইল আনা যায়নি", err);
+    phase = "error";
   }
+  renderAll();
+  if (phase === "ready") document.dispatchEvent(new CustomEvent("lib:ready"));
+}
 
-  /* ---------- মডালের কাঠামো (প্রথমবার খোলার সময় তৈরি হয়) ---------- */
-  var root, dlg, elTitle, elMeta, elFrameBox, elFallback, elToast, btnClose, elRp;
-  var cur = null, curLinks = null, lastFocus = null, timer = 0, toastTimer = 0, pushed = false, frameSeq = 0;
+/* ---------- সাজানো ও ফিল্টার ---------- */
+const byNew = (a, b) => b.ms - a.ms || (a.title < b.title ? -1 : 1);
+const college = () => UI.college();
+const isForCollege = (f, c) => f.college === c || f.college === D.ALL_COLLEGE.slug;   // “সব কলেজ” ফাইল সব ফিল্টারেই আসে
+const visible = () => { const c = college(); return c ? files.filter(f => isForCollege(f, c)) : files; };
+const countFor = (dept, c) => files.reduce((n, f) => n + (f.dept === dept && (!c || isForCollege(f, c)) ? 1 : 0), 0);
+const isNew = f => f.ms && Date.now() - f.ms < NEW_DAYS * 864e5;
 
-  function build() {
-    if (root) return;
-    root = document.createElement("div");
-    root.className = "lib-vw";
-    root.hidden = true;
-    root.innerHTML =
-      '<div class="lib-vw-bd" data-vw-close></div>' +
-      '<div class="lib-vw-dlg" role="dialog" aria-modal="true" aria-labelledby="lib-vw-title" tabindex="-1">' +
-        '<header class="lib-vw-head">' +
-          '<div class="lib-vw-ht"><h3 id="lib-vw-title" class="lib-vw-title"></h3><p class="lib-vw-meta"></p></div>' +
-          '<button type="button" class="lib-vw-x" data-vw-close></button>' +
-        "</header>" +
-        '<div class="lib-vw-stage">' +
-          '<div class="lib-vw-load" aria-hidden="true"><span class="lib-vw-spin"></span></div>' +
-          '<div class="lib-vw-frame"></div>' +
-          '<div class="lib-vw-fb" hidden role="alert"></div>' +
-          '<div class="lib-vw-rp" hidden></div>' +
-        "</div>" +
-        '<footer class="lib-vw-bar">' +
-          '<button type="button" class="lib-vw-btn pri" data-vw="download"></button>' +
-          '<button type="button" class="lib-vw-btn" data-vw="print"></button>' +
-          '<button type="button" class="lib-vw-btn" data-vw="share"></button>' +
-          '<button type="button" class="lib-vw-btn" data-vw="save" aria-pressed="false"></button>' +
-          '<button type="button" class="lib-vw-btn" data-vw="report"></button>' +
-          '<button type="button" class="lib-vw-btn ghost" data-vw="open"></button>' +
-        "</footer>" +
-        '<div class="lib-vw-toast" role="status" aria-live="polite"></div>' +
-      "</div>";
-    document.body.appendChild(root);
+/* ---------- URL (hash) ----------
+ * পথ:      #economics  ·  #economics-2nd  ·  #economics-2nd-222201
+ * ফিল্টার: পথের পরে ?…  যেমন  #economics-2nd-222201?type=question&exam=final&year=2023&sort=pop&c=dhaka-college
+ *          সার্চ: #?q=micro   (q সার্চ, type ধরন, exam পরীক্ষার ধরন, year পরীক্ষার সাল, sort=pop জনপ্রিয়, c কলেজ) */
+const FLT0 = { q: "", type: "", etype: "", eyear: 0, sort: "new", saved: false };
+const listMode = () => !!flt.q.trim() || flt.saved;
+let flt = Object.assign({}, FLT0);
+let shown = PAGE;
+let applying = false;      // URL থেকে অবস্থা বসানোর সময় true, তাই তখন URL আবার লেখা হয় না
 
-    dlg = root.querySelector(".lib-vw-dlg");
-    elTitle = root.querySelector(".lib-vw-title");
-    elMeta = root.querySelector(".lib-vw-meta");
-    elFrameBox = root.querySelector(".lib-vw-frame");
-    elFallback = root.querySelector(".lib-vw-fb");
-    elRp = root.querySelector(".lib-vw-rp");
-    elToast = root.querySelector(".lib-vw-toast");
-    btnClose = root.querySelector(".lib-vw-x");
-
-    root.addEventListener("click", function (e) {
-      if (e.target.closest("[data-vw-close]")) { closeViewer(); return; }
-      var r = e.target.closest("[data-rp]");
-      if (r) { reportAct(r.getAttribute("data-rp")); return; }
-      var b = e.target.closest("[data-vw]");
-      if (b) act(b.getAttribute("data-vw"));
-    });
-    document.addEventListener("keydown", onKey);
+function hashOf(v) {
+  if (!v.dept) return "";
+  let h = v.dept;
+  if (v.year) { h += "-" + ORD[v.year]; if (v.course) h += "-" + encodeURIComponent(v.course); }
+  return "#" + h;
+}
+function parseRoute(h) {
+  const home = { dept: "", year: 0, course: "" };
+  if (!h) return home;
+  const m = h.match(/^([a-z0-9-]+?)-([1-4])(?:st|nd|rd|th)(?:-(.+))?$/);
+  if (m && D.department(m[1])) {
+    let course = "";
+    if (m[3]) { try { course = decodeURIComponent(m[3]); } catch (e) { course = m[3]; } }
+    return { dept: m[1], year: Number(m[2]), course };
   }
+  if (D.department(h)) return { dept: h, year: 0, course: "" };
+  return home;
+}
+function readUrl() {
+  const raw = location.hash.replace(/^#/, ""), i = raw.indexOf("?");
+  const p = new URLSearchParams(i < 0 ? "" : raw.slice(i + 1));
+  const f = Object.assign({}, FLT0);
+  f.q = (p.get("q") || "").slice(0, 80);
+  f.type = D.fileType(p.get("type")) ? p.get("type") : "";
+  f.etype = D.examType(p.get("exam")) ? p.get("exam") : "";
+  f.eyear = Number(p.get("year")) || 0;
+  f.sort = p.get("sort") === "pop" ? "pop" : "new";
+  f.saved = p.get("saved") === "1";
+  const c = p.get("c") || "";
+  return { view: parseRoute(i < 0 ? raw : raw.slice(0, i)), flt: f, college: D.colleges().some(x => x.slug === c) ? c : "" };
+}
+function urlFor() {
+  const p = new URLSearchParams();
+  const q = flt.q.trim();
+  if (q) p.set("q", q);
+  if (flt.type) p.set("type", flt.type);
+  if (flt.etype) p.set("exam", flt.etype);
+  if (flt.eyear) p.set("year", String(flt.eyear));
+  if (flt.sort === "pop") p.set("sort", "pop");
+  if (flt.saved) p.set("saved", "1");
+  if (college()) p.set("c", college());
+  const qs = p.toString(), h = hashOf(view), base = location.pathname + location.search;
+  if (!qs) return h ? base + h : base;
+  return base + (h || "#") + "?" + qs;
+}
+function updateUrl(push) {
+  if (applying) return;
+  const u = urlFor();
+  if (u === location.pathname + location.search + location.hash) return;
+  try {
+    if (push) history.pushState(null, "", u); else history.replaceState(history.state, "", u);
+  } catch (e) { /* পুরোনো ব্রাউজার */ }
+}
+const sameView = (a, b) => a.dept === b.dept && a.year === b.year && courseKey(a.course) === courseKey(b.course);
+const href = v => hashOf(v) || location.pathname;
 
-  function labels() {
-    btnClose.innerHTML = I.close;
-    btnClose.setAttribute("aria-label", tx("বন্ধ করুন", "Close"));
-    var set = function (k, icon, bn, en) { root.querySelector('[data-vw="' + k + '"]').innerHTML = icon + "<span>" + esc(tx(bn, en)) + "</span>"; };
-    set("download", I.down, "ডাউনলোড", "Download");
-    set("print", I.print, "প্রিন্ট", "Print");
-    set("share", I.share, "শেয়ার", "Share");
-    set("open", I.ext, "Drive-এ খুলুন", "Open in Drive");
-    set("report", I.flag, "রিপোর্ট", "Report");
-    saveLabel();
-  }
+/* ব্যবহারকারীর ক্রিয়ায় (ক্লিক) বিভাগ/বর্ষ/কোর্স বদল: ফিল্টার ও সার্চ নতুন করে শুরু */
+function navigate(v) {
+  if (v.dept && !D.department(v.dept)) v = { dept: "", year: 0, course: "" };
+  const changed = !sameView(v, view) || listMode();
+  view = { dept: v.dept || "", year: v.year || 0, course: v.course || "" };
+  flt.q = ""; flt.type = ""; flt.etype = ""; flt.eyear = 0; flt.saved = false; shown = PAGE;
+  syncSearchBox();
+  if (changed) updateUrl(true);
+  renderAll();
+  elBrowse.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
+  const h = elDrill.querySelector("[data-focus]");
+  if (h) h.focus({ preventScroll: true });
+}
 
-  function saveLabel() {
-    var b = root.querySelector('[data-vw="save"]');
-    var on = !!(cur && window.LibMarks && window.LibMarks.has(cur.id));
+/* URL থেকে পুরো অবস্থা বসানো (Back/Forward, হাতে হ্যাশ বদল, লোডের পর) */
+function syncFromUrl() {
+  const u = readUrl();
+  if (sameView(u.view, view) && JSON.stringify(u.flt) === JSON.stringify(flt) && u.college === college()) return;
+  applying = true;
+  view = u.view; flt = u.flt; shown = PAGE;
+  if (u.college !== college()) UI.setCollege(u.college);
+  applying = false;
+  syncSearchBox();
+  renderAll();
+}
+window.addEventListener("popstate", syncFromUrl);
+window.addEventListener("hashchange", syncFromUrl);
+
+function setFlt(patch) {
+  Object.assign(flt, patch);
+  shown = PAGE;
+  updateUrl(false);
+  renderView();
+}
+
+/* ---------- ফাইলের কার্ড ---------- */
+function fileCard(f, showDept) {
+  const l = lang();
+  const ft = D.fileType(f.ftype) || D.fileType("other");
+  const et = f.etype && f.etype !== "none" ? D.examType(f.etype) : null;
+  const col = D.college(f.college);
+  const dept = showDept ? D.department(f.dept) : null;
+
+  const exam = [et ? D.name(et, l) : "", f.eyear ? yr(f.eyear) : ""].filter(Boolean).join(" · ");
+  const meta = [];
+  if (f.all) meta.push('<span class="lib-file-code">' + esc(tx("সব কোর্স", "All courses")) + "</span>");
+  else if (f.code) meta.push('<span class="lib-file-code">' + esc(f.code) + "</span>");
+  if (exam) meta.push("<span>" + esc(exam) + "</span>");
+  if (col) meta.push("<span>" + esc(D.name(col, l)) + "</span>");
+  if (dept) meta.push("<span>" + esc(D.name(dept, l)) + "</span>");
+  if (f.by) meta.push('<span class="lib-file-by">' + esc(tx("জমা: ", "By ") + f.by) + "</span>");
+
+  return '<div class="lib-fw"><button type="button" class="lib-file" data-id="' + esc(f.id) + '" data-ft="' + esc(f.ftype || "other") + '">' +
+    '<span class="lib-file-ico" aria-hidden="true">' + svg(FT_ICONS[f.ftype] || FT_ICONS.other, 24, 1.8) + "</span>" +
+    '<span class="lib-file-body"><b class="lib-file-title">' + esc(f.title) + "</b>" +
+    '<span class="lib-file-meta">' + meta.join("") + "</span></span>" +
+    '<span class="lib-file-side">' +
+    (isNew(f) ? '<span class="lib-new">' + tx("নতুন", "New") + "</span>" : "") +
+    '<span class="lib-tag">' + esc(D.name(ft, l)) + "</span></span></button>" + starBtn(f.id) + "</div>";
+}
+
+function starLabel(on) { return on ? tx("সংরক্ষণ সরান", "Remove from saved") : tx("সংরক্ষণ করুন", "Save"); }
+function starBtn(id) {
+  const on = marks.has(id);
+  return '<button type="button" class="lib-star" data-star="' + esc(id) + '" aria-pressed="' + on + '" aria-label="' + esc(starLabel(on)) + '" title="' + esc(starLabel(on)) + '">' + STAR + "</button>";
+}
+
+function toggleMark(id) {
+  if (marks.has(id)) marks.delete(id);
+  else { marks.add(id); if (marks.size > MARK_MAX) marks.delete(marks.values().next().value); }
+  saveMarks();
+  document.querySelectorAll("[data-star]").forEach(b => {
+    if (b.getAttribute("data-star") !== id) return;
+    const on = marks.has(id);
     b.setAttribute("aria-pressed", String(on));
-    b.classList.toggle("on", on);
-    b.innerHTML = I.star + "<span>" + esc(on ? tx("সংরক্ষিত", "Saved") : tx("সংরক্ষণ", "Save")) + "</span>";
-  }
-
-  function metaLine(f) {
-    var l = lang(), out = [];
-    var ft = D.fileType(f.ftype); if (ft) out.push(D.name(ft, l));
-    if (f.code) out.push(f.code + (f.cname ? " " + f.cname : ""));
-    var et = f.etype && f.etype !== "none" ? D.examType(f.etype) : null;
-    var ex = [et ? D.name(et, l) : "", f.eyear ? String(f.eyear) : ""].filter(Boolean).join(" ");
-    if (ex) out.push(ex);
-    var c = D.college(f.college); if (c) out.push(D.name(c, l));
-    return out.join(" · ");
-  }
-
-  /* জমাদাতা নিজে রাজি হলে নাম ও (দিলে) কলেজ, বিভাগ, সেশন */
-  function byLine(f) {
-    if (!f.by) return "";
-    var l = lang(), out = [f.by];
-    var c = f.byCollege && D.college(f.byCollege); if (c) out.push(D.name(c, l));
-    var d = f.byDept && D.department(f.byDept); if (d) out.push(D.name(d, l));
-    if (f.bySession) out.push(tx("সেশন ", "Session ") + f.bySession);
-    return tx("জমা দিয়েছেন: ", "Submitted by: ") + out.join(" · ");
-  }
-  function setMeta(f) {
-    elMeta.textContent = metaLine(f);
-    var b = byLine(f);
-    if (b) {
-      var s = document.createElement("span");
-      s.className = "lib-vw-by"; s.textContent = b;
-      elMeta.appendChild(document.createElement("br")); elMeta.appendChild(s);
-    }
-  }
-
-  /* ---------- খোলা ও বন্ধ ---------- */
-  function setFallback(on) {
-    elFallback.hidden = !on;
-    if (!on) { elFallback.innerHTML = ""; return; }
-    elFallback.innerHTML =
-      "<b>" + esc(tx("প্রিভিউ দেখানো যাচ্ছে না", "Can’t show the preview")) + "</b>" +
-      "<p>" + esc(tx("ফাইলটি হয়তো ব্যক্তিগত, সরানো হয়েছে, বা নেটওয়ার্ক ধীর। Drive-এ খুলে দেখুন।",
-                      "The file may be private or removed, or the connection is slow. Try opening it in Drive.")) + "</p>" +
-      '<div class="lib-vw-fbb"><button type="button" class="lib-vw-btn pri" data-vw="open">' + I.ext + "<span>" + esc(tx("Drive-এ খুলুন", "Open in Drive")) + "</span></button>" +
-      '<button type="button" class="lib-vw-btn" data-vw="report-broken">' + I.flag + "<span>" + esc(tx("লিংক নষ্ট রিপোর্ট করুন", "Report broken link")) + "</span></button></div>";
-  }
-
-  /* ---------- রিপোর্ট প্যানেল ---------- */
-  function reportOpen(pre) {
-    if (!cur) return;
-    if (!window.LibReport) { toast(tx("রিপোর্ট এখন পাঠানো যাচ্ছে না। পরে চেষ্টা করুন।", "Reporting isn’t available right now. Try again later.")); return; }
-    if (window.LibReport.done(cur.id)) { toast(tx("আপনি এই ফাইল আগেই রিপোর্ট করেছেন। ধন্যবাদ।", "You already reported this file. Thank you.")); return; }
-    var h = '<form class="lib-vw-rpf" novalidate><fieldset><legend>' + esc(tx("কী সমস্যা?", "What’s wrong?")) + "</legend>";
-    REASONS.forEach(function (r) {
-      h += '<label class="lib-vw-rr"><input type="radio" name="lib-rp" value="' + r[0] + '"' + (pre === r[0] ? " checked" : "") + "><span>" + esc(tx(r[1], r[2])) + "</span></label>";
-    });
-    h += "</fieldset>" +
-      '<label class="lib-vw-rn"><span>' + esc(tx("আরও কিছু বলতে চাইলে (ঐচ্ছিক)", "Anything to add? (optional)")) + '</span><textarea maxlength="300" rows="3"></textarea></label>' +
-      '<div class="lib-vw-rb"><button type="button" class="lib-vw-btn pri" data-rp="send">' + esc(tx("রিপোর্ট পাঠান", "Send report")) + "</button>" +
-      '<button type="button" class="lib-vw-btn" data-rp="cancel">' + esc(tx("বাতিল", "Cancel")) + "</button></div></form>";
-    elRp.innerHTML = h;
-    elRp.hidden = false;
-    var first = elRp.querySelector("input:checked") || elRp.querySelector("input");
-    if (first) first.focus();
-  }
-  function reportClose(refocus) {
-    if (!elRp || elRp.hidden) return;
-    elRp.hidden = true; elRp.innerHTML = "";
-    if (refocus) { var b = root.querySelector('[data-vw="report"]'); if (b) b.focus(); }
-  }
-  function reportAct(k) {
-    if (k === "cancel") { reportClose(true); return; }
-    if (k !== "send" || !cur) return;
-    var pick = elRp.querySelector("input:checked");
-    if (!pick) { toast(tx("একটি কারণ বেছে নিন।", "Please choose a reason.")); return; }
-    var note = elRp.querySelector("textarea").value;
-    var btn = elRp.querySelector('[data-rp="send"]');
-    btn.disabled = true;
-    var f = cur;
-    window.LibReport.send(f, pick.value, note).then(function (res) {
-      if (res === "error") { btn.disabled = false; toast(tx("পাঠানো যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।", "Couldn’t send. Check your connection and try again.")); return; }
-      reportClose(true);
-      toast(res === "dup" ? tx("আপনি এই ফাইল আগেই রিপোর্ট করেছেন। ধন্যবাদ।", "You already reported this file. Thank you.")
-                          : tx("রিপোর্ট পাঠানো হয়েছে। ধন্যবাদ!", "Report sent. Thank you!"));
-    });
-  }
-
-  function loadFrame() {
-    var seq = ++frameSeq;
-    clearTimeout(timer);
-    elFrameBox.innerHTML = "";
-    setFallback(false);
-    root.classList.add("is-loading");
-
-    var fr = document.createElement("iframe");
-    fr.title = cur.title;
-    fr.setAttribute("allow", "fullscreen");
-    fr.setAttribute("referrerpolicy", "no-referrer");
-    fr.addEventListener("load", function () {
-      if (seq !== frameSeq) return;
-      clearTimeout(timer);
-      root.classList.remove("is-loading");
-    });
-    fr.src = curLinks.preview;
-    elFrameBox.appendChild(fr);
-
-    timer = setTimeout(function () {
-      if (seq !== frameSeq) return;
-      root.classList.remove("is-loading");
-      setFallback(true);
-    }, FALLBACK_MS);
-  }
-
-  function openViewer(f, opts) {
-    var lk = links(f);
-    if (!lk) { toastGlobalOpen(f); return; }
-    build();
-    labels();
-    cur = f; curLinks = lk;
-    saveLabel();
-    elTitle.textContent = f.title;
-    setMeta(f);
-    root.querySelector('[data-vw="download"] span').textContent = lk.pdfNote ? tx("PDF ডাউনলোড", "Download PDF") : tx("ডাউনলোড", "Download");
-
-    if (root.hidden) {
-      lastFocus = document.activeElement;
-      root.hidden = false;
-      document.documentElement.classList.add("lib-vw-lock");
-      requestAnimationFrame(function () { root.classList.add("on"); });
-    }
-    loadFrame();
-    btnClose.focus({ preventScroll: true });
-
-    if (!(opts && opts.noPush)) {
-      try {
-        var u = new URL(location.href);
-        u.searchParams.set("file", f.id);
-        history.pushState({ libv: 1 }, "", u.pathname + u.search + u.hash);
-        pushed = true;
-      } catch (e) { pushed = false; }
-    }
-    document.dispatchEvent(new CustomEvent("lib:viewed", { detail: { file: f } }));
-  }
-
-  function hide() {
-    if (!root || root.hidden) return;
-    clearTimeout(timer); frameSeq++;
-    if (elRp) { elRp.hidden = true; elRp.innerHTML = ""; }
-    root.classList.remove("on", "is-loading");
-    root.hidden = true;
-    elFrameBox.innerHTML = "";
-    document.documentElement.classList.remove("lib-vw-lock");
-    cur = null; curLinks = null;
-    if (lastFocus && lastFocus.focus) { try { lastFocus.focus({ preventScroll: true }); } catch (e) { /* নেই */ } }
-    lastFocus = null;
-  }
-
-  function closeViewer() {
-    if (!root || root.hidden) return;
-    if (pushed && history.state && history.state.libv) { pushed = false; history.back(); }   // popstate-এ hide() হবে
-    else {
-      hide();
-      try {
-        var u = new URL(location.href);
-        if (u.searchParams.has("file")) { u.searchParams.delete("file"); history.replaceState(null, "", u.pathname + u.search + u.hash); }
-      } catch (e) { /* ঠিক আছে */ }
-    }
-  }
-
-  window.addEventListener("popstate", function () {
-    if (root && !root.hidden && !(history.state && history.state.libv)) { pushed = false; hide(); }
+    b.setAttribute("aria-label", starLabel(on));
+    b.setAttribute("title", starLabel(on));
   });
+  updateBm();
+  if (flt.saved) renderView();
+  return marks.has(id);
+}
 
-  /* ---------- কী: Esc বন্ধ, Tab মডালের ভেতরেই ঘোরে ---------- */
-  function onKey(e) {
-    if (!root || root.hidden) return;
-    if (e.key === "Escape") {
-      e.preventDefault();
-      if (elRp && !elRp.hidden) reportClose(true); else closeViewer();
-      return;
-    }
-    if (e.key !== "Tab") return;
-    var els = Array.prototype.slice.call(dlg.querySelectorAll("button:not([hidden]):not([disabled]), a[href], iframe, input, textarea"))
-      .filter(function (x) { return !x.closest("[hidden]"); });
-    if (!els.length) return;
-    var first = els[0], last = els[els.length - 1];
-    if (!dlg.contains(document.activeElement)) { first.focus(); e.preventDefault(); return; }
-    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+function updateBm() {
+  if (!elBm) return;
+  const n = phase === "ready" ? files.reduce((c, f) => c + (marks.has(f.id) ? 1 : 0), 0) : marks.size;
+  elBm.setAttribute("aria-pressed", String(flt.saved));
+  elBm.classList.toggle("on", flt.saved);
+  elBm.innerHTML = STAR + "<span>" + esc(tx("সংরক্ষিত", "Saved")) + "</span>" + (n ? "<b>" + esc(num(n)) + "</b>" : "");
+}
+
+function openFile(f) {
+  const ev = new CustomEvent("lib:open", { detail: { file: f }, cancelable: true });
+  const go = document.dispatchEvent(ev);
+  /* ধাপ ৭-এর ভিউয়ার না থাকলে (বা সে preventDefault না করলে): Drive-এ নতুন ট্যাবে খোলা */
+  if (go && /^https:\/\/(drive|docs)\.google\.com\//.test(f.url)) window.open(f.url, "_blank", "noopener,noreferrer");
+}
+
+function onFileClick(e) {
+  const b = e.target.closest && e.target.closest(".lib-file");
+  if (!b) return;
+  const f = files.find(x => x.id === b.getAttribute("data-id"));
+  if (f) openFile(f);
+}
+
+/* ---------- স্কেলেটন, খালি অবস্থা, ত্রুটি ---------- */
+const skFile = () => '<div class="lib-sk-file" aria-hidden="true"><span class="lib-sk lib-sk-ico"></span><span class="lib-sk-lines"><span class="lib-sk lib-sk-l1"></span><span class="lib-sk lib-sk-l2"></span></span><span class="lib-sk lib-sk-tag"></span></div>';
+const skFiles = n => { let h = ""; for (let i = 0; i < n; i++) h += skFile(); return h; };
+
+function emptyBox(icon, title, text, extra) {
+  return '<div class="lib-empty lib-none" role="note"><span class="lib-empty-ico" aria-hidden="true">' + svg(FT_ICONS[icon] || FT_ICONS.other, 30, 1.7) + "</span>" +
+    '<b class="lib-empty-title">' + esc(title) + "</b><p class=\"lib-empty-text\">" + esc(text) + "</p>" + (extra || "") + "</div>";
+}
+const submitBtn = () => '<a class="lib-cta lib-cta-sm" href="/library-submit">' + svg('<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>', 18, 2.2) + "<span>" + tx("ফাইল জমা দিন", "Submit a file") + "</span></a>";
+const retryBox = () => emptyBox("other", tx("ফাইল আনা যায়নি", "Could not load files"),
+  tx("ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।", "Check your connection and try again."),
+  '<button type="button" class="lib-retry" data-lib-retry>' + tx("আবার চেষ্টা করুন", "Try again") + "</button>");
+
+/* ---------- "নতুন যোগ হয়েছে" সারি (হোম) ---------- */
+function renderRecent(el) {
+  if (phase === "loading") { el.setAttribute("aria-busy", "true"); el.innerHTML = skFiles(3); return; }
+  el.setAttribute("aria-busy", "false");
+  if (phase === "error") { el.innerHTML = retryBox(); return; }
+  const list = visible().slice().sort(byNew).slice(0, RECENT_COUNT);
+  if (!list.length) {
+    const c = D.college(college());
+    el.innerHTML = c
+      ? emptyBox("note", tx("এই কলেজের কোনো ফাইল এখনো নেই", "No files for this college yet"),
+          tx("অন্য কলেজ বেছে দেখুন, অথবা আপনিই প্রথম ফাইল জমা দিন।", "Try another college, or be the first to submit a file."), submitBtn())
+      : emptyBox("other", tx("এখনো কোনো ফাইল নেই", "No files yet"),
+          tx("ফাইল জমা হয়ে অ্যাডমিনের অনুমোদন পেলেই এখানে দেখা যাবে।", "Files will show up here once they are submitted and approved by an admin."), submitBtn());
+    return;
   }
+  el.innerHTML = list.map(f => fileCard(f, true)).join("");
+}
 
-  /* ---------- বাটনের কাজ ---------- */
-  function openTab(url) { window.open(url, "_blank", "noopener,noreferrer"); }
+/* ---------- ব্রেডক্রাম্ব ---------- */
+function crumbs(items) {
+  return '<nav class="lib-crumbs" aria-label="' + esc(tx("পথ", "Breadcrumb")) + '"><ol>' + items.map((it, i) => {
+    const last = i === items.length - 1;
+    const label = esc(it.label);
+    if (last) return '<li aria-current="page"><span>' + label + "</span></li>";
+    return '<li><a href="' + esc(href(it.v)) + '" data-dept="' + esc(it.v.dept) + '" data-year="' + (it.v.year || 0) + '" data-course="' + esc(it.v.course || "") + '">' + label + "</a></li>";
+  }).join("") + "</ol></nav>";
+}
 
-  function toast(msg) {
-    if (!elToast) return;
-    elToast.textContent = msg;
-    elToast.classList.add("on");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { elToast.classList.remove("on"); }, 3200);
-  }
+function headCollege() {
+  const c = D.college(college());
+  return c ? '<span class="lib-dhead-col">' + esc(D.name(c, lang())) + "</span>" : "";
+}
 
-  function shareUrl(f) {
-    var u = new URL(location.href);
-    u.hash = ""; u.search = "";
-    u.searchParams.set("file", f.id);
-    return u.toString();
-  }
+/* ---------- বর্ষের তালিকা ---------- */
+function yearView(dept) {
+  const l = lang();
+  const list = visible().filter(f => f.dept === dept.slug);
+  const home = { dept: "", year: 0, course: "" };
 
-  function copy(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
-    return new Promise(function (res, rej) {
-      try {
-        var t = document.createElement("textarea");
-        t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;opacity:0;top:0";
-        document.body.appendChild(t); t.select();
-        var ok = document.execCommand("copy");
-        document.body.removeChild(t);
-        ok ? res() : rej(new Error("copy"));
-      } catch (e) { rej(e); }
-    });
-  }
-
-  function act(k) {
-    if (!cur || !curLinks) return;
-    if (k === "download") {
-      openTab(curLinks.download);
-      toast(tx("ডাউনলোড শুরু হচ্ছে… না হলে Drive-এ খুলে ডাউনলোড করুন।", "Starting download… if nothing happens, open it in Drive and download from there."));
-      document.dispatchEvent(new CustomEvent("lib:download", { detail: { file: cur } }));
-    } else if (k === "print") {
-      openTab(curLinks.print);
-      toast(tx("Drive-এ খুলেছে। সেখানে প্রিন্ট আইকন বা Ctrl+P চাপুন।", "Opened in Drive. Use its print icon or press Ctrl+P there."));
-    } else if (k === "open") {
-      openTab(curLinks.open);
-    } else if (k === "save") {
-      if (!window.LibMarks) return;
-      var on = window.LibMarks.toggle(cur.id);
-      saveLabel();
-      toast(on ? tx("সংরক্ষণ করা হয়েছে (এই ব্রাউজারে)", "Saved (in this browser)") : tx("সংরক্ষণ সরানো হয়েছে", "Removed from saved"));
-    } else if (k === "report") {
-      reportOpen("");
-    } else if (k === "report-broken") {
-      reportOpen("broken");
-    } else if (k === "share") {
-      var url = shareUrl(cur), f = cur;
-      if (navigator.share && /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)) {
-        navigator.share({ title: f.title, text: f.title + " – DCUCore", url: url }).catch(function (e) {
-          if (e && e.name === "AbortError") return;
-          copy(url).then(function () { toast(tx("লিংক কপি হয়েছে", "Link copied")); }, function () { toast(url); });
-        });
-      } else {
-        copy(url).then(function () { toast(tx("লিংক কপি হয়েছে", "Link copied")); }, function () { toast(url); });
-      }
-    }
-  }
-
-  /* Drive লিংক চেনা না গেলে (পুরোনো/অস্বাভাবিক ডেটা): আগের আচরণ, নতুন ট্যাবে খোলা */
-  function toastGlobalOpen(f) {
-    if (DRIVE_RE.test(f.url)) openTab(f.url);
-  }
-
-  /* ---------- ইভেন্ট ---------- */
-  document.addEventListener("lib:open", function (e) {
-    var f = e.detail && e.detail.file;
-    if (!f) return;
-    e.preventDefault();       // ব্রাউজ মডিউলের নতুন-ট্যাব ফলব্যাক বন্ধ
-    openViewer(f);
+  let h = crumbs([{ label: tx("লাইব্রেরি", "Library"), v: home }, { label: D.name(dept, l) }]);
+  h += '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(D.name(dept, l)) + "</h2>" + headCollege() + "</div>";
+  h += '<p class="lib-dsub">' + esc(tx("বর্ষ বেছে নিন", "Choose a year")) + "</p>";
+  h += '<div class="lib-years">';
+  D.YEARS.forEach((y, i) => {
+    const fs = list.filter(f => f.year === y.n);
+    const hasList = D.hasCourses(dept.slug) && D.courses(dept.slug, y.n).length > 0;
+    const sub = phase !== "ready" ? "" : fs.length ? filesWord(fs.length) : (hasList ? tx("কোর্স আছে, ফাইল নেই", "Courses listed, no files yet") : tx("ফাইল নেই", "No files yet"));
+    h += '<a class="lib-year' + (phase === "ready" && !fs.length ? " is-empty" : "") + '" href="' + esc(href({ dept: dept.slug, year: y.n, course: "" })) + '" data-dept="' + esc(dept.slug) + '" data-year="' + y.n + '" data-course="" style="--i:' + i + '">' +
+      '<span class="lib-year-n" aria-hidden="true">' + num(y.n) + "</span>" +
+      '<span class="lib-year-txt"><b>' + esc(D.name(y, l)) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</span>" + CHEVRON + "</a>";
   });
+  h += "</div>";
+  if (phase === "error") h += retryBox();
+  return h;
+}
 
-  /* ভাষা বদলালে মডালের লেখা হালনাগাদ */
-  var prevLang = window.onLang;
-  window.onLang = function () {
-    if (typeof prevLang === "function") { try { prevLang(); } catch (e) { /* অন্য হুক */ } }
-    if (root && !root.hidden && cur) {
-      labels();
-      setMeta(cur);
-      root.querySelector('[data-vw="download"] span').textContent = curLinks.pdfNote ? tx("PDF ডাউনলোড", "Download PDF") : tx("ডাউনলোড", "Download");
-      if (!elFallback.hidden) setFallback(true);
-    }
-  };
+/* ---------- কোর্সের তালিকা ---------- */
+function buildCourses(dept, year, fs) {
+  const l = lang(), map = new Map();
+  D.courses(dept, year).forEach(c => map.set(courseKey(c.code), { code: c.code, name: D.name(c, l), opt: !!c.opt, files: [] }));
+  const shared = fs.filter(f => f.all);           // “সব কোর্স” ফাইল
+  fs.forEach(f => {
+    if (f.all) return;
+    const k = courseKey(f.code);
+    if (!map.has(k)) map.set(k, { code: f.code, name: f.cname, opt: false, files: [] });
+    map.get(k).files.push(f);
+  });
+  /* কোর্সের তালিকা একেবারেই না থাকলে “সব কোর্স” ফাইল দেখানোর জন্য একটি আলাদা সারি */
+  if (!map.size && shared.length) map.set(courseKey(ALL_CODE), { code: ALL_CODE, name: tx("সব কোর্সের ফাইল", "Files for all courses"), opt: false, files: [] });
+  map.forEach(c => shared.forEach(f => c.files.push(f)));   // প্রতিটি কোর্সেই যোগ
+  return Array.from(map.values()).sort((a, b) => a.code < b.code ? -1 : a.code > b.code ? 1 : 0);
+}
 
-  /* সরাসরি লিংক: /library?file=ID */
-  function openFromQuery() {
-    var id;
-    try { id = new URL(location.href).searchParams.get("file"); } catch (e) { return; }
-    if (!id) return;
-    var f = B.find(id);
-    if (f) openViewer(f, { noPush: true });
+function courseListView(dept, yearObj) {
+  const l = lang();
+  const home = { dept: "", year: 0, course: "" };
+  const fs = visible().filter(f => f.dept === dept.slug && f.year === yearObj.n);
+  const courses = buildCourses(dept.slug, yearObj.n, fs);
+
+  let h = crumbs([
+    { label: tx("লাইব্রেরি", "Library"), v: home },
+    { label: D.name(dept, l), v: { dept: dept.slug, year: 0, course: "" } },
+    { label: D.name(yearObj, l) }
+  ]);
+  h += '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(D.name(dept, l)) + " · " + esc(D.name(yearObj, l)) + "</h2>" + headCollege() + "</div>";
+
+  if (!courses.length) {
+    h += phase === "error" ? retryBox() :
+      emptyBox("book", tx("এই বর্ষে এখনো কোনো ফাইল নেই", "No files for this year yet"),
+        tx("আপনার কাছে এই বর্ষের নোট বা প্রশ্ন থাকলে জমা দিন।", "If you have notes or questions for this year, please submit them."), submitBtn());
+    return h;
   }
-  if (B.ready()) openFromQuery();
-  else document.addEventListener("lib:ready", function once() { document.removeEventListener("lib:ready", once); openFromQuery(); });
-})();
+
+  h += '<p class="lib-dsub">' + esc(tx("কোর্স বেছে নিন", "Choose a course")) + "</p>";
+  h += '<div class="lib-courses">';
+  courses.forEach((c, i) => {
+    const n = c.files.length;
+    h += '<a class="lib-course' + (phase === "ready" && !n ? " is-empty" : "") + '" href="' + esc(href({ dept: dept.slug, year: yearObj.n, course: c.code })) + '" data-dept="' + esc(dept.slug) + '" data-year="' + yearObj.n + '" data-course="' + esc(c.code) + '" style="--i:' + Math.min(i, 14) + '">' +
+      '<span class="lib-course-code">' + esc(c.code) + "</span>" +
+      '<span class="lib-course-name">' + esc(c.name || c.code) + (c.opt ? ' <em class="lib-opt">' + esc(tx("ঐচ্ছিক", "Optional")) + "</em>" : "") + "</span>" +
+      '<span class="lib-course-n">' + (phase === "ready" ? esc(n ? filesWord(n) : tx("ফাইল নেই", "No files")) : "") + "</span>" + CHEVRON + "</a>";
+  });
+  h += "</div>";
+  if (phase === "error") h += retryBox();
+  return h;
+}
+
+/* ---------- সাজানো, ফিল্টার বার ও তালিকা ---------- */
+const byPop = (a, b) => (b.downloads * 2 + b.views) - (a.downloads * 2 + a.views) || byNew(a, b);
+
+function applyFlt(list) {
+  return list.filter(f => (!flt.type || f.ftype === flt.type) && (!flt.etype || f.etype === flt.etype) && (!flt.eyear || f.eyear === flt.eyear))
+    .sort(flt.sort === "pop" ? byPop : byNew);
+}
+const anyFlt = () => !!(flt.type || flt.etype || flt.eyear);
+
+function fchip(k, v, label, on) {
+  return '<button type="button" class="lib-fchip' + (on ? " on" : "") + '" data-f="' + k + '" data-v="' + esc(v) + '" data-fk="' + k + ":" + esc(v) + '" aria-pressed="' + on + '">' + esc(label) + "</button>";
+}
+function fgroup(k, label, opts, cur, allLabel) {
+  if (opts.length < 2 && !cur) return "";
+  let h = '<div class="lib-fg" role="group" aria-label="' + esc(label) + '"><span class="lib-fg-l">' + esc(label) + '</span><div class="lib-fg-c">';
+  if (allLabel) h += fchip(k, "", allLabel, !cur);
+  opts.forEach(o => { h += fchip(k, String(o.v), o.label, String(o.v) === String(cur)); });
+  return h + "</div></div>";
+}
+
+function filterBar(base) {
+  const l = lang();
+  const present = (key) => { const set = {}; base.forEach(f => { set[f[key]] = 1; }); return set; };
+  const tp = present("ftype"), ep = present("etype"), yp = present("eyear");
+  const types = D.FILE_TYPES.filter(t => tp[t.id] || t.id === flt.type).map(t => ({ v: t.id, label: D.name(t, l) }));
+  const exams = D.EXAM_TYPES.filter(t => t.id !== "none" && (ep[t.id] || t.id === flt.etype)).map(t => ({ v: t.id, label: D.name(t, l) }));
+  const yset = {}; Object.keys(yp).forEach(y => { if (Number(y) > 0) yset[y] = 1; }); if (flt.eyear) yset[flt.eyear] = 1;
+  const years = Object.keys(yset).map(Number).sort((a, b) => b - a).map(y => ({ v: y, label: yr(y) }));
+  const all = tx("সব", "All");
+
+  let h = '<div class="lib-fbar">';
+  h += fgroup("type", tx("ধরন", "Type"), types, flt.type, all);
+  h += fgroup("etype", tx("পরীক্ষা", "Exam"), exams, flt.etype, all);
+  h += fgroup("eyear", tx("সাল", "Year"), years, flt.eyear || "", all);
+  h += '<div class="lib-fg" role="group" aria-label="' + esc(tx("সাজান", "Sort")) + '"><span class="lib-fg-l">' + esc(tx("সাজান", "Sort")) + '</span><div class="lib-fg-c">' +
+    fchip("sort", "new", tx("নতুন", "Newest"), flt.sort !== "pop") + fchip("sort", "pop", tx("জনপ্রিয়", "Popular"), flt.sort === "pop") + "</div></div>";
+  if (anyFlt()) h += '<button type="button" class="lib-freset" data-f="reset">' + esc(tx("ফিল্টার মুছুন", "Clear filters")) + "</button>";
+  return h + "</div>";
+}
+
+/* base (কলেজ-ফিল্টার করা, সাজানো ছাড়া) থেকে ফিল্টার বার + গণনা + কার্ডের তালিকা। base খালি হলে ডাকবেন না */
+function fileSection(base, showDept) {
+  const list = applyFlt(base);
+  let h = filterBar(base);
+  h += '<p class="lib-dsub" role="status">' + esc(filesWord(list.length)) + (list.length !== base.length ? " " + esc(tx("(মোট " + num(base.length) + "টির মধ্যে)", "(of " + num(base.length) + ")")) : "") + "</p>";
+  if (!list.length) {
+    return h + emptyBox("note", tx("এই ফিল্টারে কোনো ফাইল নেই", "No files match these filters"),
+      tx("অন্য ধরন বা সাল বেছে দেখুন।", "Try a different type or year."),
+      '<button type="button" class="lib-retry" data-f="reset">' + esc(tx("ফিল্টার মুছুন", "Clear filters")) + "</button>");
+  }
+  h += '<div class="lib-files">' + list.slice(0, shown).map(f => fileCard(f, showDept)).join("") + "</div>";
+  if (list.length > shown) h += '<button type="button" class="lib-retry lib-more" data-f="more">' + esc(tx("আরও দেখান", "Show more")) + " (" + esc(num(list.length - shown)) + ")</button>";
+  return h;
+}
+
+/* ---------- সার্চ ---------- */
+function hay(f) {
+  if (f._h) return f._h;
+  const d = D.department(f.dept), c = D.college(f.college);
+  return (f._h = [f.title, f.all ? "সব কোর্স all courses" : f.code, f.all ? "" : f.cname, f.desc, d && d.bn, d && d.en, c && c.bn, c && c.en].filter(Boolean).join(" ").toLowerCase());
+}
+let lastCount = 0;
+function searchView() {
+  const q = flt.q.trim();
+  const tokens = q.toLowerCase().split(/\s+/).filter(Boolean);
+  const title = flt.saved
+    ? tx("সংরক্ষিত ফাইল", "Saved files") + (q ? " · “" + q + "”" : "")
+    : tx("“" + q + "” এর ফলাফল", "Results for “" + q + "”");
+  let h = '<div class="lib-dhead"><h2 tabindex="-1" data-focus>' + esc(title) + "</h2>" + (flt.saved ? "" : headCollege()) + "</div>";
+  if (flt.saved) h += '<p class="lib-dsub">' + esc(tx("এগুলো শুধু এই ব্রাউজারে সংরক্ষিত থাকে; লগইন লাগে না।", "Saved only in this browser; no login needed.")) + "</p>";
+  if (phase === "loading") { lastCount = -1; return h + '<div class="lib-files" aria-busy="true">' + skFiles(4) + "</div>"; }
+  if (phase === "error") { lastCount = -1; return h + retryBox(); }
+  const pool = flt.saved ? files.filter(f => marks.has(f.id)) : visible();
+  const base = pool.filter(f => { if (!tokens.length) return true; const t = hay(f); return tokens.every(k => t.indexOf(k) > -1); });
+  lastCount = base.length;
+  if (flt.saved && !base.length) {
+    return h + emptyBox("other", q ? tx("সংরক্ষিত ফাইলে কিছু মেলেনি", "No saved file matches") : tx("এখনো কিছু সংরক্ষণ করেননি", "Nothing saved yet"),
+      q ? tx("অন্য শব্দে খুঁজুন।", "Try different words.") : tx("ফাইলের কার্ডের ★ চাপলে সেটি এখানে জমা হবে।", "Tap the ★ on a file card to keep it here."));
+  }
+  if (!base.length) {
+    return h + emptyBox("question", tx("কিছু পাওয়া যায়নি", "Nothing found"),
+      tx("শিরোনাম, কোর্স কোড বা কোর্সের নাম দিয়ে আবার খুঁজুন। কলেজ ফিল্টার থাকলে “সব কলেজ” করে দেখুন।", "Try a title, course code or course name. If a college is selected, try “All colleges”."), submitBtn());
+  }
+  return h + fileSection(base, true);
+}
+
+/* ---------- কোর্সের ফাইল ---------- */
+function filesView(dept, yearObj, code) {
+  const l = lang();
+  const home = { dept: "", year: 0, course: "" };
+  const key = courseKey(code);
+  const fs = visible().filter(f => f.dept === dept.slug && f.year === yearObj.n && (f.all || courseKey(f.code) === key));
+
+  const known = D.courses(dept.slug, yearObj.n).find(c => courseKey(c.code) === key);
+  const own = fs.find(f => !f.all);               // এই কোর্সের নিজের ফাইল (“সব কোর্স” নয়)
+  const display = known ? D.name(known, l) : (own ? own.cname : (key === courseKey(ALL_CODE) ? tx("সব কোর্সের ফাইল", "Files for all courses") : ""));
+  const shownCode = known ? known.code : (own ? own.code : code);
+
+  let h = crumbs([
+    { label: tx("লাইব্রেরি", "Library"), v: home },
+    { label: D.name(dept, l), v: { dept: dept.slug, year: 0, course: "" } },
+    { label: D.name(yearObj, l), v: { dept: dept.slug, year: yearObj.n, course: "" } },
+    { label: shownCode }
+  ]);
+  h += '<div class="lib-dhead"><h2 tabindex="-1" data-focus><span class="lib-file-code lib-big">' + esc(shownCode) + "</span> " + esc(display) + "</h2>" + headCollege() + "</div>";
+
+  if (phase === "loading") return h + '<div class="lib-files" aria-busy="true">' + skFiles(4) + "</div>";
+  if (phase === "error") return h + retryBox();
+  if (!fs.length) {
+    return h + emptyBox("note", tx("এই কোর্সে এখনো কোনো ফাইল নেই", "No files for this course yet"),
+      college() ? tx("অন্য কলেজ বেছে দেখুন, অথবা আপনিই প্রথম ফাইল জমা দিন।", "Try another college, or be the first to submit a file.")
+                : tx("আপনিই প্রথম ফাইল জমা দিন।", "Be the first to submit a file."), submitBtn());
+  }
+  return h + fileSection(fs, false);
+}
+
+/* ---------- মূল আঁকা ----------
+ * renderView(): হোম/ড্রিল-ডাউনের কোনটি দেখাবে তা ঠিক করে ও ড্রিল-ডাউন আঁকে।
+ * renderAll(): তার ওপর হোমের কার্ড ও "নতুন যোগ হয়েছে" সারিও আঁকে।
+ * ভাষা বা তালিকা বদলালে library.js নিজেই হোম আঁকে, তাই তখন শুধু renderView() ডাকা হয়। */
+function renderView() {
+  const searching = listMode();
+  const home = !view.dept && !searching;
+  const dept = view.dept && !searching ? D.department(view.dept) : null;
+  if (view.dept && !D.department(view.dept)) { view = { dept: "", year: 0, course: "" }; return renderView(); }
+
+  elGrid.hidden = elStatus.hidden = elH.hidden = elRecent.hidden = !home;
+  elDrill.hidden = home;
+  if (elQx) elQx.hidden = !flt.q;
+
+  updateBm();
+  if (home) { document.title = BASE_TITLE; if (elSr) elSr.textContent = ""; return; }
+
+  if (searching) {
+    elDrill.innerHTML = withFocus(searchView());
+    document.title = (flt.saved ? tx("সংরক্ষিত", "Saved") : flt.q.trim()) + " – " + tx("লাইব্রেরি", "Library") + " – DCUCore";
+    if (elSr) elSr.textContent = lastCount < 0 ? "" : (lastCount ? filesWord(lastCount) : tx("কিছু পাওয়া যায়নি", "Nothing found"));
+    return;
+  }
+  if (elSr) elSr.textContent = "";
+
+  const yearObj = view.year ? D.year(view.year) : null;
+  let html;
+  if (!yearObj) html = yearView(dept);
+  else if (!view.course) html = courseListView(dept, yearObj);
+  else html = filesView(dept, yearObj, view.course);
+
+  elDrill.innerHTML = withFocus(html);
+  const parts = [D.name(dept, lang())];
+  if (yearObj) parts.push(D.name(yearObj, lang()));
+  if (view.course) parts.push(view.course);
+  document.title = parts.join(" · ") + " – " + tx("লাইব্রেরি", "Library") + " – DCUCore";
+}
+
+/* আঁকার পর কীবোর্ড-ফোকাস একই চিপে ফিরিয়ে দেয় (চিপ বদলালে তালিকা নতুন করে আঁকা হয়) */
+function withFocus(html) {
+  const a = document.activeElement;
+  const fk = a && a.getAttribute && elDrill.contains(a) ? a.getAttribute("data-fk") : null;
+  if (fk) setTimeout(() => {
+    const n = elDrill.querySelector('[data-fk="' + fk.replace(/"/g, "") + '"]');
+    if (n) n.focus({ preventScroll: true });
+  }, 0);
+  return html;
+}
+
+function renderAll() {
+  renderView();
+  if (!view.dept && !listMode()) UI.refresh();
+}
+
+/* ---------- সার্চ বক্স ---------- */
+function syncSearchBox() {
+  if (!elQ) return;
+  if (elQ.value.trim() !== flt.q.trim()) elQ.value = flt.q;
+  if (elQx) elQx.hidden = !flt.q;
+}
+function labelSearch() {
+  if (!elQ) return;
+  elQ.placeholder = tx("শিরোনাম, কোর্স কোড বা কোর্সের নাম খুঁজুন…", "Search title, course code or course name…");
+  elQ.setAttribute("aria-label", tx("লাইব্রেরিতে খুঁজুন", "Search the library"));
+  if (elQx) elQx.setAttribute("aria-label", tx("সার্চ মুছুন", "Clear search"));
+}
+let qTimer = 0;
+function applyQuery(v) {
+  flt.q = v.replace(/\s+/g, " ").replace(/^ /, "").slice(0, 80);
+  shown = PAGE;
+  updateUrl(false);
+  renderAll();
+}
+if (elQ) {
+  elQ.addEventListener("input", () => { clearTimeout(qTimer); const v = elQ.value; if (elQx) elQx.hidden = !v; qTimer = setTimeout(() => applyQuery(v), 220); });
+  elQ.addEventListener("keydown", e => {
+    if (e.key === "Escape" && elQ.value) { e.preventDefault(); clearTimeout(qTimer); elQ.value = ""; applyQuery(""); }
+    else if (e.key === "Enter") { clearTimeout(qTimer); applyQuery(elQ.value); }
+  });
+}
+if (elQx) elQx.addEventListener("click", () => { clearTimeout(qTimer); elQ.value = ""; applyQuery(""); elQ.focus(); });
+
+/* ---------- ক্লিক ---------- */
+function onStarClick(e) {
+  const b = e.target.closest && e.target.closest("[data-star]");
+  if (!b) return false;
+  toggleMark(b.getAttribute("data-star"));
+  return true;
+}
+
+function onFilterClick(b) {
+  const k = b.getAttribute("data-f"), v = b.getAttribute("data-v") || "";
+  if (k === "more") { shown += PAGE; renderView(); return; }
+  if (k === "reset") { setFlt({ type: "", etype: "", eyear: 0 }); return; }
+  if (k === "sort") { setFlt({ sort: v === "pop" ? "pop" : "new" }); return; }
+  if (k === "type") setFlt({ type: flt.type === v ? "" : v });
+  else if (k === "etype") setFlt({ etype: flt.etype === v ? "" : v });
+  else if (k === "eyear") setFlt({ eyear: flt.eyear === Number(v) ? 0 : (Number(v) || 0) });
+}
+
+elDrill.addEventListener("click", e => {
+  if (onStarClick(e)) return;
+  const fb = e.target.closest && e.target.closest("[data-f]");
+  if (fb) { onFilterClick(fb); return; }
+  const a = e.target.closest && e.target.closest("a[data-dept]");
+  if (a) {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;   // নতুন ট্যাবে খোলা যায়
+    e.preventDefault();
+    navigate({ dept: a.getAttribute("data-dept"), year: Number(a.getAttribute("data-year")) || 0, course: a.getAttribute("data-course") || "" });
+    return;
+  }
+  onFileClick(e);
+});
+elRecent.addEventListener("click", e => { if (!onStarClick(e)) onFileClick(e); });
+
+/* সংরক্ষিত বাটন */
+if (elBm) elBm.addEventListener("click", () => {
+  flt.saved = !flt.saved; shown = PAGE;
+  updateUrl(false);
+  renderAll();
+  if (flt.saved) elBrowse.scrollIntoView({ behavior: reduced() ? "auto" : "smooth", block: "start" });
+});
+
+/* অন্য ট্যাবে বুকমার্ক বদলালে এখানেও মেলানো */
+window.addEventListener("storage", e => { if (e.key === MARK_KEY) { loadMarks(); renderAll(); } });
+
+/* পুনরায় চেষ্টা */
+document.addEventListener("click", e => {
+  if (e.target.closest && e.target.closest("[data-lib-retry]")) load(true);
+});
+
+/* বিভাগের কার্ডে ক্লিক (library.js এই ইভেন্ট দেয়) */
+document.addEventListener("lib:dept", e => navigate({ dept: e.detail.slug, year: 0, course: "" }));
+
+/* কলেজ ফিল্টার বদলালে: সব স্তরে (বিভাগ/বর্ষ/কোর্স/সার্চ) প্রযোজ্য, আর লিংকেও ওঠে */
+document.addEventListener("lib:college", () => {
+  updateUrl(false);
+  /* হোমে library.js নিজেই কার্ড আঁকে (অ্যানিমেশনসহ); এখানে শুধু ফাইলের সারি */
+  if (view.dept || listMode()) renderView(); else renderRecent($("lib-files"));
+});
+
+/* ভাষা ও তালিকা বদলালে নতুন করে আঁকা (library.js-এর হুকের পরে চলে) */
+const prevLang = window.onLang;
+window.onLang = function () {
+  if (typeof prevLang === "function") { try { prevLang(); } catch (e) { /* অন্য হুক */ } }
+  labelSearch();
+  renderView();
+};
+const prevChange = D.onChange;
+D.onChange = function () {
+  if (typeof prevChange === "function") prevChange();
+  renderView();
+};
+
+/* ---------- চালু ---------- */
+UI.setFilesRenderer(renderRecent);
+UI.setCountFn((dept, c) => phase === "ready" ? countFor(dept, c) : 0);
+
+window.LibMarks = {
+  has: id => marks.has(id),
+  toggle: toggleMark,
+  count: () => marks.size
+};
+
+window.LibBrowse = {
+  files: () => files.slice(),
+  find: id => files.find(f => f.id === id) || null,
+  view: () => ({ dept: view.dept, year: view.year, course: view.course }),
+  go: v => navigate(v || {}),
+  ready: () => phase === "ready",
+  reload: () => load(true)
+};
+
+labelSearch();
+{
+  const u = readUrl();
+  applying = true;
+  view = u.view; flt = u.flt;
+  if (u.college) UI.setCollege(u.college);
+  applying = false;
+}
+syncSearchBox();
+const startedOnRoute = !!view.dept || listMode();
+renderAll();
+if (startedOnRoute) setTimeout(() => elBrowse.scrollIntoView({ behavior: "auto", block: "start" }), 60);
+load(false);
